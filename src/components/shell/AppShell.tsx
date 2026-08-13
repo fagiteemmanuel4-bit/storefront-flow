@@ -31,7 +31,6 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-
   // No store yet → the account isn't usable until one exists.
   useEffect(() => {
     if (!isLoading && memberships.length === 0) {
@@ -117,7 +116,6 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
               </span>
               <span className="hidden text-sm font-semibold sm:inline">Menu</span>
             </button>
-
           </div>
         </div>
       </header>
@@ -182,4 +180,3 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
     </div>
   );
 }
-
