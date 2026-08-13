@@ -143,7 +143,12 @@ export function ExportDataDialog({
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="export-to">To</Label>
-              <Input id="export-to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+              <Input
+                id="export-to"
+                type="date"
+                value={to}
+                onChange={(e) => setTo(e.target.value)}
+              />
             </div>
           </div>
         )}

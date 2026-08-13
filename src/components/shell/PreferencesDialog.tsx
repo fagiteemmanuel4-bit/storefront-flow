@@ -10,7 +10,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { DEFAULT_PREFERENCES, readPreferences, writePreferences, type Preferences } from "@/lib/preferences";
+import {
+  DEFAULT_PREFERENCES,
+  readPreferences,
+  writePreferences,
+  type Preferences,
+} from "@/lib/preferences";
 
 const ROWS: { key: keyof Preferences; label: string; hint: string }[] = [
   { key: "sound", label: "Sale sound", hint: "Chime when a sale is saved" },
