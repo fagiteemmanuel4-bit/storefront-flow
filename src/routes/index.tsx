@@ -56,9 +56,7 @@ function Landing() {
             <span className="text-label-caps inline-flex items-center rounded-full bg-accent-soft px-3 py-1 text-accent-ink">
               Built for street giants
             </span>
-            <h1 className="text-display-lg mt-5">
-              Run the whole shop from the counter.
-            </h1>
+            <h1 className="text-display-lg mt-5">Run the whole shop from the counter.</h1>
             <p className="mt-5 max-w-lg text-lg text-muted-foreground">
               Kudi is a point of sale and stock book for small retail businesses. Fast enough for a
               queue, honest enough for the books.

@@ -32,9 +32,15 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
 });
 
 const schema = z.object({
-  name: z.string().trim().min(2, "Give the shop a name").max(80, "Keep the name under 80 characters"),
+  name: z
+    .string()
+    .trim()
+    .min(2, "Give the shop a name")
+    .max(80, "Keep the name under 80 characters"),
   branchName: z.string().trim().min(1, "Name this location").max(80),
-  currency: z.string().refine((v) => SUPPORTED_CURRENCIES.some((c) => c.code === v), "Pick a currency"),
+  currency: z
+    .string()
+    .refine((v) => SUPPORTED_CURRENCIES.some((c) => c.code === v), "Pick a currency"),
   taxRate: z
     .number({ invalid_type_error: "Enter a number" })
     .min(0, "Can't be negative")
@@ -154,7 +160,9 @@ function OnboardingPage() {
                   ))}
                 </SelectContent>
               </Select>
-              {errors["currency"] && <p className="text-sm text-destructive">{errors["currency"]}</p>}
+              {errors["currency"] && (
+                <p className="text-sm text-destructive">{errors["currency"]}</p>
+              )}
             </div>
 
             <div className="space-y-2">
