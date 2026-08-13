@@ -24,8 +24,9 @@ const NAV = [
 ] as const;
 
 export function AppShell({ title, children }: { title: string; children: ReactNode }) {
-  const { store, branch, branches, memberships, setActiveStore, setActiveBranch, isLoading } =
+  const { store, branch, branches, memberships, role, setActiveStore, setActiveBranch, isLoading } =
     useStoreContext();
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [menuOpen, setMenuOpen] = useState(false);
