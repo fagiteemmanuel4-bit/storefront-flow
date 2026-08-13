@@ -101,15 +101,21 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 </Link>
               ))}
             </nav>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="touch-target"
-              aria-label="Sign out"
-              onClick={() => void handleSignOut()}
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(true)}
+              className="touch-target group flex items-center gap-2 rounded-full border border-border bg-secondary px-3 py-2 transition-all hover:bg-accent-soft active:scale-95"
             >
-              <LogOut className="size-4" aria-hidden />
-            </Button>
+              <span className="flex flex-col items-center justify-center gap-[3px]">
+                <span className="block h-[2px] w-4 rounded-full bg-foreground transition-transform group-hover:-translate-y-[1px]" />
+                <span className="block h-[2px] w-4 rounded-full bg-foreground" />
+                <span className="block h-[2px] w-4 rounded-full bg-foreground transition-transform group-hover:translate-y-[1px]" />
+              </span>
+              <span className="hidden text-sm font-semibold sm:inline">Menu</span>
+            </button>
+
           </div>
         </div>
       </header>
