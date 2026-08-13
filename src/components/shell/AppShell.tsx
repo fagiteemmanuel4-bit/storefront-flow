@@ -168,6 +168,19 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
           })}
         </div>
       </nav>
+
+      <AppMenuSheet
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        store={store}
+        branchName={branch?.name ?? null}
+        role={role}
+        onSignOut={() => {
+          setMenuOpen(false);
+          void handleSignOut();
+        }}
+      />
     </div>
   );
 }
+
