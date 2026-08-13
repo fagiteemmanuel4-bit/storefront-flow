@@ -28,7 +28,9 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
     useStoreContext();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [menuOpen, setMenuOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
 
   // No store yet → the account isn't usable until one exists.
   useEffect(() => {
