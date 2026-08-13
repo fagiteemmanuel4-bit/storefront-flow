@@ -7,7 +7,6 @@ import { activeStoreCache } from "@/lib/active-store";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { AppMenuSheet } from "@/components/shell/AppMenuSheet";
 
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
