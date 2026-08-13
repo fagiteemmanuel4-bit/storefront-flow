@@ -50,8 +50,13 @@ export async function downloadStoreWorkbook(store: StoreInfo, range: ExportRange
   const sales = salesRes.data ?? [];
 
   const saleIds = sales.map((s) => s.id);
-  let items: { sale_id: string; product_name: string; quantity: number; unit_price: number; line_total: number }[] =
-    [];
+  let items: {
+    sale_id: string;
+    product_name: string;
+    quantity: number;
+    unit_price: number;
+    line_total: number;
+  }[] = [];
   if (saleIds.length > 0) {
     const itemsRes = await supabase
       .from("sale_items")
@@ -146,7 +151,13 @@ export async function downloadStoreWorkbook(store: StoreInfo, range: ExportRange
       stock: qty,
       value: qty * price,
       low: p.low_stock_threshold,
-      status: !p.is_active ? "Inactive" : qty <= 0 ? "Out of stock" : qty <= p.low_stock_threshold ? "Low" : "OK",
+      status: !p.is_active
+        ? "Inactive"
+        : qty <= 0
+          ? "Out of stock"
+          : qty <= p.low_stock_threshold
+            ? "Low"
+            : "OK",
     });
     if (qty <= p.low_stock_threshold) {
       row.getCell("status").font = { bold: true, color: { argb: "FFB3261E" } };
@@ -240,7 +251,11 @@ export async function downloadStoreWorkbook(store: StoreInfo, range: ExportRange
   });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  const slug = store.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "store";
+  const slug =
+    store.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "") || "store";
   link.href = url;
   link.download = `${slug}-export-${new Date().toISOString().slice(0, 10)}.xlsx`;
   document.body.appendChild(link);

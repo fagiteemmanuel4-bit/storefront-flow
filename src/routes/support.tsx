@@ -7,7 +7,8 @@ export const Route = createFileRoute("/support")({
       { title: "Help centre — Kudi point of sale" },
       {
         name: "description",
-        content: "Getting started with Kudi: set up your shop, add stock, and ring up your first sale.",
+        content:
+          "Getting started with Kudi: set up your shop, add stock, and ring up your first sale.",
       },
       { property: "og:title", content: "Help centre — Kudi point of sale" },
       { property: "og:description", content: "Set up your shop and ring up your first sale." },

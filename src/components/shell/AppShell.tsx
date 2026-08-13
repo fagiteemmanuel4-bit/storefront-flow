@@ -1,11 +1,12 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, type ReactNode } from "react";
-import { BarChart3, LogOut, Package, ScanLine, Store } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { BarChart3, Package, ScanLine, Store } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { activeStoreCache } from "@/lib/active-store";
 import { useStoreContext } from "@/components/shell/StoreProvider";
-import { Button } from "@/components/ui/button";
+import { AppMenuSheet } from "@/components/shell/AppMenuSheet";
+
 import {
   Select,
   SelectContent,
@@ -22,10 +23,12 @@ const NAV = [
 ] as const;
 
 export function AppShell({ title, children }: { title: string; children: ReactNode }) {
-  const { store, branch, branches, memberships, setActiveStore, setActiveBranch, isLoading } =
+  const { store, branch, branches, memberships, role, setActiveStore, setActiveBranch, isLoading } =
     useStoreContext();
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [menuOpen, setMenuOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   // No store yet → the account isn't usable until one exists.
@@ -99,15 +102,20 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 </Link>
               ))}
             </nav>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="touch-target"
-              aria-label="Sign out"
-              onClick={() => void handleSignOut()}
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(true)}
+              className="touch-target group flex items-center gap-2 rounded-full border border-border bg-secondary px-3 py-2 transition-all hover:bg-accent-soft active:scale-95"
             >
-              <LogOut className="size-4" aria-hidden />
-            </Button>
+              <span className="flex flex-col items-center justify-center gap-[3px]">
+                <span className="block h-[2px] w-4 rounded-full bg-foreground transition-transform group-hover:-translate-y-[1px]" />
+                <span className="block h-[2px] w-4 rounded-full bg-foreground" />
+                <span className="block h-[2px] w-4 rounded-full bg-foreground transition-transform group-hover:translate-y-[1px]" />
+              </span>
+              <span className="hidden text-sm font-semibold sm:inline">Menu</span>
+            </button>
           </div>
         </div>
       </header>
@@ -157,6 +165,18 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
           })}
         </div>
       </nav>
+
+      <AppMenuSheet
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        store={store}
+        branchName={branch?.name ?? null}
+        role={role}
+        onSignOut={() => {
+          setMenuOpen(false);
+          void handleSignOut();
+        }}
+      />
     </div>
   );
 }
