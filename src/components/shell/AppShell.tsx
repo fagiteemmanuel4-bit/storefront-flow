@@ -1,10 +1,12 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, type ReactNode } from "react";
-import { BarChart3, LogOut, Package, ScanLine, Store } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { BarChart3, Package, ScanLine, Store } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { activeStoreCache } from "@/lib/active-store";
 import { useStoreContext } from "@/components/shell/StoreProvider";
+import { AppMenuSheet } from "@/components/shell/AppMenuSheet";
+
 import { Button } from "@/components/ui/button";
 import {
   Select,
