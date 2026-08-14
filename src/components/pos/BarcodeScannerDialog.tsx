@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Camera, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { BottomSheet, BottomSheetContent, BottomSheetHeader, BottomSheetTitle } from "@/components/ui/bottom-sheet";
 import { errorMessage } from "@/lib/format";
 
 type BarcodeDetectorLike = {
@@ -121,13 +121,13 @@ export function BarcodeScannerDialog({
   }, [open, onDetected, onOpenChange]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <BottomSheet open={open} onOpenChange={onOpenChange}>
+      <BottomSheetContent className="mx-auto w-full max-w-md">
+        <BottomSheetHeader>
+          <BottomSheetTitle className="flex items-center gap-2">
             <Camera className="size-4" aria-hidden /> Scan a barcode
-          </DialogTitle>
-        </DialogHeader>
+          </BottomSheetTitle>
+        </BottomSheetHeader>
         <div className="overflow-hidden rounded-xl border border-border bg-foreground/90">
           {failed ? (
             <div className="flex min-h-40 items-center justify-center p-6 text-center text-sm text-background">
@@ -147,7 +147,7 @@ export function BarcodeScannerDialog({
         <Button variant="outline" className="touch-target" onClick={() => onOpenChange(false)}>
           <X className="size-4" aria-hidden /> Close scanner
         </Button>
-      </DialogContent>
-    </Dialog>
+      </BottomSheetContent>
+    </BottomSheet>
   );
 }

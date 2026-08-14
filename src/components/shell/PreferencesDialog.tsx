@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetFooter,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -43,12 +43,12 @@ export function PreferencesDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Change preference</DialogTitle>
-          <DialogDescription>How the app behaves on this device only.</DialogDescription>
-        </DialogHeader>
+    <BottomSheet open={open} onOpenChange={onOpenChange}>
+      <BottomSheetContent className="mx-auto w-full max-w-md">
+        <BottomSheetHeader>
+          <BottomSheetTitle>Change preference</BottomSheetTitle>
+          <BottomSheetDescription>How the app behaves on this device only.</BottomSheetDescription>
+        </BottomSheetHeader>
 
         <div className="space-y-2">
           {ROWS.map((row) => (
@@ -71,10 +71,10 @@ export function PreferencesDialog({
           ))}
         </div>
 
-        <DialogFooter>
+        <BottomSheetFooter>
           <Button onClick={() => onOpenChange(false)}>Done</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </BottomSheetFooter>
+      </BottomSheetContent>
+    </BottomSheet>
   );
 }

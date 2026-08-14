@@ -5,13 +5,13 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { activeStoreCache } from "@/lib/active-store";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetFooter,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -54,7 +54,7 @@ export function DeleteStoreDialog({
   }
 
   return (
-    <Dialog
+    <BottomSheet
       open={open}
       onOpenChange={(next) => {
         if (busy) return;
@@ -62,14 +62,14 @@ export function DeleteStoreDialog({
         onOpenChange(next);
       }}
     >
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-destructive">Delete store</DialogTitle>
-          <DialogDescription>
+      <BottomSheetContent className="mx-auto w-full max-w-md">
+        <BottomSheetHeader>
+          <BottomSheetTitle className="text-destructive">Delete store</BottomSheetTitle>
+          <BottomSheetDescription>
             This permanently removes {store?.name ?? "this shop"}, its products, stock and sales
             history. It cannot be undone — download your data first.
-          </DialogDescription>
-        </DialogHeader>
+          </BottomSheetDescription>
+        </BottomSheetHeader>
 
         <div className="space-y-1.5">
           <Label htmlFor="delete-confirm">
@@ -83,15 +83,15 @@ export function DeleteStoreDialog({
           />
         </div>
 
-        <DialogFooter>
+        <BottomSheetFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>
             Keep my shop
           </Button>
           <Button variant="destructive" onClick={() => void handleDelete()} disabled={busy}>
             {busy ? "Deleting…" : "Delete forever"}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </BottomSheetFooter>
+      </BottomSheetContent>
+    </BottomSheet>
   );
 }

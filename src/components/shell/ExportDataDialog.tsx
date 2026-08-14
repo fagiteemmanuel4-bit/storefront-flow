@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetFooter,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -102,14 +102,14 @@ export function ExportDataDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={(next) => !busy && onOpenChange(next)}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Download store data</DialogTitle>
-          <DialogDescription>
+    <BottomSheet open={open} onOpenChange={(next) => !busy && onOpenChange(next)}>
+      <BottomSheetContent className="mx-auto w-full max-w-md">
+        <BottomSheetHeader>
+          <BottomSheetTitle>Download store data</BottomSheetTitle>
+          <BottomSheetDescription>
             Products, stock per location, sales and best sellers — one Excel workbook.
-          </DialogDescription>
-        </DialogHeader>
+          </BottomSheetDescription>
+        </BottomSheetHeader>
 
         <div className="grid grid-cols-2 gap-2">
           {PRESETS.map((p) => (
@@ -153,7 +153,7 @@ export function ExportDataDialog({
           </div>
         )}
 
-        <DialogFooter>
+        <BottomSheetFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>
             Cancel
           </Button>
@@ -165,8 +165,8 @@ export function ExportDataDialog({
             )}
             {busy ? "Building…" : "Download"}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </BottomSheetFooter>
+      </BottomSheetContent>
+    </BottomSheet>
   );
 }

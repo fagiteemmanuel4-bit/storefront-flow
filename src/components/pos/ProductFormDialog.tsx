@@ -7,12 +7,12 @@ import { errorMessage } from "@/lib/format";
 import type { ProductWithStock } from "@/lib/pos-types";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from "@/components/ui/bottom-sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BarcodeScannerDialog } from "@/components/pos/BarcodeScannerDialog";
@@ -143,14 +143,14 @@ export function ProductFormDialog({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{product ? "Edit product" : "Add product"}</DialogTitle>
-            <DialogDescription>
+      <BottomSheet open={open} onOpenChange={onOpenChange}>
+        <BottomSheetContent className="max-h-[90dvh] overflow-y-auto mx-auto w-full max-w-lg">
+          <BottomSheetHeader>
+            <BottomSheetTitle>{product ? "Edit product" : "Add product"}</BottomSheetTitle>
+            <BottomSheetDescription>
               Prices are shared across every location. Stock counts are per location.
-            </DialogDescription>
-          </DialogHeader>
+            </BottomSheetDescription>
+          </BottomSheetHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <Field label="Name" error={errors["name"]}>
@@ -249,8 +249,8 @@ export function ProductFormDialog({
               </Button>
             </div>
           </form>
-        </DialogContent>
-      </Dialog>
+        </BottomSheetContent>
+      </BottomSheet>
 
       <BarcodeScannerDialog
         open={scanning}

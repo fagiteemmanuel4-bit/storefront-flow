@@ -16,12 +16,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from "@/components/ui/bottom-sheet";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/pos")({
@@ -392,31 +392,31 @@ function PosPage() {
         </div>
       )}
 
-      <Dialog open={cartOpen} onOpenChange={setCartOpen}>
-        <DialogContent className="flex max-h-[86dvh] flex-col sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Current sale</DialogTitle>
-            <DialogDescription>Review the cart, then take payment.</DialogDescription>
-          </DialogHeader>
+      <BottomSheet open={cartOpen} onOpenChange={setCartOpen}>
+        <BottomSheetContent className="flex max-h-[86dvh] flex-col mx-auto w-full max-w-md">
+          <BottomSheetHeader>
+            <BottomSheetTitle>Current sale</BottomSheetTitle>
+            <BottomSheetDescription>Review the cart, then take payment.</BottomSheetDescription>
+          </BottomSheetHeader>
           {cartPanel}
-        </DialogContent>
-      </Dialog>
+        </BottomSheetContent>
+      </BottomSheet>
 
       <BarcodeScannerDialog open={scanning} onOpenChange={setScanning} onDetected={handleScan} />
 
-      <Dialog open={Boolean(receipt)} onOpenChange={(open) => !open && setReceipt(null)}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+      <BottomSheet open={Boolean(receipt)} onOpenChange={(open) => !open && setReceipt(null)}>
+        <BottomSheetContent className="mx-auto w-full max-w-sm">
+          <BottomSheetHeader>
+            <BottomSheetTitle className="flex items-center gap-2">
               <span className="flex size-7 items-center justify-center rounded-full bg-success text-success-foreground">
                 <Check className="size-4" aria-hidden />
               </span>
               Sale saved
-            </DialogTitle>
-            <DialogDescription>
+            </BottomSheetTitle>
+            <BottomSheetDescription>
               Receipt {receipt?.reference} · {receipt ? formatDateTime(receipt.at) : ""}
-            </DialogDescription>
-          </DialogHeader>
+            </BottomSheetDescription>
+          </BottomSheetHeader>
           <div className="space-y-2 border-y border-dashed border-border py-4 text-sm">
             {receipt?.lines.map((line) => (
               <div key={line.name} className="flex justify-between gap-3">
@@ -457,8 +457,8 @@ function PosPage() {
               New sale
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </BottomSheetContent>
+      </BottomSheet>
     </AppShell>
   );
 }

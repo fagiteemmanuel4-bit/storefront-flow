@@ -15,15 +15,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetFooter,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from "@/components/ui/bottom-sheet";
 
 export const Route = createFileRoute("/_authenticated/products")({
   head: () => ({
@@ -247,32 +245,32 @@ function ProductsPage() {
         onDetected={(value) => setSearch(value)}
       />
 
-      <AlertDialog
+      <BottomSheet
         open={Boolean(pendingDelete)}
         onOpenChange={(open) => !open && setPendingDelete(null)}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Remove {pendingDelete?.name}?</AlertDialogTitle>
-            <AlertDialogDescription>
+        <BottomSheetContent className="mx-auto w-full max-w-md">
+          <BottomSheetHeader>
+            <BottomSheetTitle>Remove {pendingDelete?.name}?</BottomSheetTitle>
+            <BottomSheetDescription>
               The product and its stock counts are deleted. Past sales keep their record of what was
               sold.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Keep it</AlertDialogCancel>
-            <AlertDialogAction
+            </BottomSheetDescription>
+          </BottomSheetHeader>
+          <BottomSheetFooter>
+            <Button variant="outline" disabled={deleting} onClick={() => setPendingDelete(null)}>
+              Keep it
+            </Button>
+            <Button
+              variant="destructive"
               disabled={deleting}
-              onClick={(event) => {
-                event.preventDefault();
-                void handleDelete();
-              }}
+              onClick={() => void handleDelete()}
             >
               {deleting ? "Removing…" : "Remove product"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </BottomSheetFooter>
+        </BottomSheetContent>
+      </BottomSheet>
     </AppShell>
   );
 }
