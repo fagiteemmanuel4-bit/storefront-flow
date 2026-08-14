@@ -122,7 +122,7 @@ export function BarcodeScannerDialog({
 
   return (
     <BottomSheet open={open} onOpenChange={onOpenChange}>
-      <BottomSheetContent className="max-w-md">
+      <BottomSheetContent className="mx-auto w-full max-w-md">
         <BottomSheetHeader>
           <BottomSheetTitle className="flex items-center gap-2">
             <Camera className="size-4" aria-hidden /> Scan a barcode

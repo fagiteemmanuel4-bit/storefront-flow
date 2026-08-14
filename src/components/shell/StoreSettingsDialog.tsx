@@ -84,7 +84,7 @@ export function StoreSettingsDialog({
 
   return (
     <BottomSheet open={open} onOpenChange={onOpenChange}>
-      <BottomSheetContent className="max-w-md">
+      <BottomSheetContent className="mx-auto w-full max-w-md">
         <BottomSheetHeader>
           <BottomSheetTitle>{isProfile ? "Store profile" : "Settings"}</BottomSheetTitle>
           <BottomSheetDescription>

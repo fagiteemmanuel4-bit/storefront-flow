@@ -103,7 +103,7 @@ export function ExportDataDialog({
 
   return (
     <BottomSheet open={open} onOpenChange={(next) => !busy && onOpenChange(next)}>
-      <BottomSheetContent className="max-w-md">
+      <BottomSheetContent className="mx-auto w-full max-w-md">
         <BottomSheetHeader>
           <BottomSheetTitle>Download store data</BottomSheetTitle>
           <BottomSheetDescription>

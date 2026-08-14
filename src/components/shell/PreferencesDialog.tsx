@@ -44,7 +44,7 @@ export function PreferencesDialog({
 
   return (
     <BottomSheet open={open} onOpenChange={onOpenChange}>
-      <BottomSheetContent className="max-w-md">
+      <BottomSheetContent className="mx-auto w-full max-w-md">
         <BottomSheetHeader>
           <BottomSheetTitle>Change preference</BottomSheetTitle>
           <BottomSheetDescription>How the app behaves on this device only.</BottomSheetDescription>

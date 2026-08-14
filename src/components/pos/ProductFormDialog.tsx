@@ -144,7 +144,7 @@ export function ProductFormDialog({
   return (
     <>
       <BottomSheet open={open} onOpenChange={onOpenChange}>
-        <BottomSheetContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
+        <BottomSheetContent className="max-h-[90dvh] overflow-y-auto mx-auto w-full max-w-lg">
           <BottomSheetHeader>
             <BottomSheetTitle>{product ? "Edit product" : "Add product"}</BottomSheetTitle>
             <BottomSheetDescription>

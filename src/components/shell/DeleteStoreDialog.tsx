@@ -62,7 +62,7 @@ export function DeleteStoreDialog({
         onOpenChange(next);
       }}
     >
-      <BottomSheetContent className="max-w-md">
+      <BottomSheetContent className="mx-auto w-full max-w-md">
         <BottomSheetHeader>
           <BottomSheetTitle className="text-destructive">Delete store</BottomSheetTitle>
           <BottomSheetDescription>

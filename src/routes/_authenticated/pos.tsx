@@ -393,7 +393,7 @@ function PosPage() {
       )}
 
       <BottomSheet open={cartOpen} onOpenChange={setCartOpen}>
-        <BottomSheetContent className="flex max-h-[86dvh] flex-col sm:max-w-md">
+        <BottomSheetContent className="flex max-h-[86dvh] flex-col mx-auto w-full max-w-md">
           <BottomSheetHeader>
             <BottomSheetTitle>Current sale</BottomSheetTitle>
             <BottomSheetDescription>Review the cart, then take payment.</BottomSheetDescription>
@@ -405,7 +405,7 @@ function PosPage() {
       <BarcodeScannerDialog open={scanning} onOpenChange={setScanning} onDetected={handleScan} />
 
       <BottomSheet open={Boolean(receipt)} onOpenChange={(open) => !open && setReceipt(null)}>
-        <BottomSheetContent className="sm:max-w-sm">
+        <BottomSheetContent className="mx-auto w-full max-w-sm">
           <BottomSheetHeader>
             <BottomSheetTitle className="flex items-center gap-2">
               <span className="flex size-7 items-center justify-center rounded-full bg-success text-success-foreground">
