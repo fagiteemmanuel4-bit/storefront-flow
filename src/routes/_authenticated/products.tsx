@@ -247,32 +247,32 @@ function ProductsPage() {
         onDetected={(value) => setSearch(value)}
       />
 
-      <AlertDialog
+      <BottomSheet
         open={Boolean(pendingDelete)}
         onOpenChange={(open) => !open && setPendingDelete(null)}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Remove {pendingDelete?.name}?</AlertDialogTitle>
-            <AlertDialogDescription>
+        <BottomSheetContent className="mx-auto w-full max-w-md">
+          <BottomSheetHeader>
+            <BottomSheetTitle>Remove {pendingDelete?.name}?</BottomSheetTitle>
+            <BottomSheetDescription>
               The product and its stock counts are deleted. Past sales keep their record of what was
               sold.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Keep it</AlertDialogCancel>
-            <AlertDialogAction
+            </BottomSheetDescription>
+          </BottomSheetHeader>
+          <BottomSheetFooter>
+            <Button variant="outline" disabled={deleting} onClick={() => setPendingDelete(null)}>
+              Keep it
+            </Button>
+            <Button
+              variant="destructive"
               disabled={deleting}
-              onClick={(event) => {
-                event.preventDefault();
-                void handleDelete();
-              }}
+              onClick={() => void handleDelete()}
             >
               {deleting ? "Removing…" : "Remove product"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </BottomSheetFooter>
+        </BottomSheetContent>
+      </BottomSheet>
     </AppShell>
   );
 }
