@@ -1,0 +1,51 @@
+/**
+ * Release notes shown to every signed-in user once per version.
+ * Add a new entry at the top whenever we ship something worth announcing —
+ * the popup shows automatically for anyone who hasn't seen that version yet.
+ */
+export type AppUpdate = {
+  version: string;
+  date: string;
+  title: string;
+  items: string[];
+};
+
+export const APP_UPDATES: AppUpdate[] = [
+  {
+    version: "2026.08.1",
+    date: "14 Aug 2026",
+    title: "Shelves, smoother sheets & password recovery",
+    items: [
+      "Group products on shelves you name yourself — Books, Drinks, Accessories, anything.",
+      "Filter your stock list by shelf in one tap.",
+      "Every pop-up now locks the page behind it, so no more accidental background scrolling.",
+      "Forgot your password? Reset it straight from the sign-in screen.",
+    ],
+  },
+];
+
+export const LATEST_UPDATE: AppUpdate = APP_UPDATES[0]!;
+
+const STORAGE_KEY = "kudi.last-seen-update";
+
+export function getLastSeenUpdate(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function markUpdateSeen(version: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, version);
+  } catch {
+    // Storage can be unavailable (private mode) — the popup simply shows again.
+  }
+}
+
+export function hasUnseenUpdate(): boolean {
+  return getLastSeenUpdate() !== LATEST_UPDATE.version;
+}

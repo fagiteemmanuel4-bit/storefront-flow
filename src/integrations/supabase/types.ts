@@ -110,6 +110,7 @@ export type Database = {
           low_stock_threshold: number
           name: string
           price: number
+          shelf_id: string | null
           sku: string
           store_id: string
           updated_at: string
@@ -125,6 +126,7 @@ export type Database = {
           low_stock_threshold?: number
           name: string
           price?: number
+          shelf_id?: string | null
           sku?: string
           store_id: string
           updated_at?: string
@@ -140,11 +142,19 @@ export type Database = {
           low_stock_threshold?: number
           name?: string
           price?: number
+          shelf_id?: string | null
           sku?: string
           store_id?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "products_shelf_id_fkey"
+            columns: ["shelf_id"]
+            isOneToOne: false
+            referencedRelation: "shelves"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "products_store_id_fkey"
             columns: ["store_id"]
@@ -283,6 +293,38 @@ export type Database = {
           },
           {
             foreignKeyName: "sales_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shelves: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shelves_store_id_fkey"
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "stores"
