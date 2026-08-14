@@ -3,13 +3,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetFooter,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -83,16 +83,16 @@ export function StoreSettingsDialog({
   const isProfile = mode === "profile";
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{isProfile ? "Store profile" : "Settings"}</DialogTitle>
-          <DialogDescription>
+    <BottomSheet open={open} onOpenChange={onOpenChange}>
+      <BottomSheetContent className="max-w-md">
+        <BottomSheetHeader>
+          <BottomSheetTitle>{isProfile ? "Store profile" : "Settings"}</BottomSheetTitle>
+          <BottomSheetDescription>
             {isProfile
               ? "How your shop shows up on receipts and in the app."
               : "Selling rules that apply across the shop."}
-          </DialogDescription>
-        </DialogHeader>
+          </BottomSheetDescription>
+        </BottomSheetHeader>
 
         <div className="space-y-4">
           {isProfile ? (
@@ -153,7 +153,7 @@ export function StoreSettingsDialog({
           )}
         </div>
 
-        <DialogFooter>
+        <BottomSheetFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Close
           </Button>
@@ -162,8 +162,8 @@ export function StoreSettingsDialog({
               {save.isPending ? "Saving…" : "Save changes"}
             </Button>
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </BottomSheetFooter>
+      </BottomSheetContent>
+    </BottomSheet>
   );
 }
