@@ -33,20 +33,29 @@ export function BarcodeScannerDialog({
   open,
   onOpenChange,
   onDetected,
+  continuous = false,
+  footer,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onDetected: (value: string) => void;
+  /** Keep the camera running after a hit so several items can be scanned in a row. */
+  continuous?: boolean;
+  footer?: React.ReactNode;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [status, setStatus] = useState<string>("Starting camera…");
   const [failed, setFailed] = useState(false);
+  const onDetectedRef = useRef(onDetected);
+  onDetectedRef.current = onDetected;
 
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
     let stream: MediaStream | null = null;
     let frame = 0;
+    let lastValue = "";
+    let lastAt = 0;
 
     const ctor = getDetectorCtor();
 
