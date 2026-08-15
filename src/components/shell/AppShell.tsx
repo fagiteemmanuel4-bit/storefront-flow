@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { activeStoreCache } from "@/lib/active-store";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { AppMenuSheet } from "@/components/shell/AppMenuSheet";
+import { UpdatesSheet } from "@/components/shell/UpdatesSheet";
 
 import {
   Select,
@@ -165,6 +166,8 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
           })}
         </div>
       </nav>
+
+      <UpdatesSheet />
 
       <AppMenuSheet
         open={menuOpen}

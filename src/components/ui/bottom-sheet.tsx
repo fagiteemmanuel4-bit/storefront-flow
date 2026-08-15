@@ -9,10 +9,32 @@ import { cn } from "@/lib/utils";
  */
 const BottomSheet = ({
   shouldScaleBackground = true,
+  onOpenChange,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
-  <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
-);
+}: React.ComponentProps<typeof DrawerPrimitive.Root>) => {
+  // Remember what was focused before opening so focus can be returned on close.
+  const opener = React.useRef<HTMLElement | null>(null);
+
+  return (
+    <DrawerPrimitive.Root
+      shouldScaleBackground={shouldScaleBackground}
+      onOpenChange={(open) => {
+        if (open) {
+          opener.current = document.activeElement as HTMLElement | null;
+        } else {
+          const target = opener.current;
+          opener.current = null;
+          // Wait for the sheet to unmount before restoring focus.
+          window.setTimeout(() => {
+            if (target && document.contains(target)) target.focus({ preventScroll: true });
+          }, 250);
+        }
+        onOpenChange?.(open);
+      }}
+      {...props}
+    />
+  );
+};
 BottomSheet.displayName = "BottomSheet";
 
 const BottomSheetTrigger = DrawerPrimitive.Trigger;
@@ -40,13 +62,13 @@ const BottomSheetContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex max-h-[92dvh] flex-col rounded-t-[28px] border border-border bg-surface shadow-2xl outline-none",
+        "fixed inset-x-0 bottom-0 z-50 mx-auto mt-24 flex max-h-[92dvh] w-full max-w-xl flex-col rounded-t-[28px] border border-border bg-surface shadow-2xl outline-none sm:mb-4 sm:rounded-[32px] sm:border-border/70",
         className,
       )}
       {...props}
     >
       <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full bg-border" aria-hidden />
-      <div className="flex flex-col gap-4 overflow-y-auto px-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-4">
+      <div className="flex flex-col gap-4 overflow-y-auto px-5 pt-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:px-7 sm:pb-7">
         {children}
       </div>
     </DrawerPrimitive.Content>
