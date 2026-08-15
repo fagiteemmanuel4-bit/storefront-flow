@@ -11,6 +11,8 @@ import { BarcodeScannerDialog } from "@/components/pos/BarcodeScannerDialog";
 import { formatMoney } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
 import { canManageCatalog, type ProductWithStock } from "@/lib/pos-types";
+import { fetchShelves } from "@/lib/shelves";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,6 +69,7 @@ function ProductsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<ProductWithStock | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [shelfFilter, setShelfFilter] = useState<string>("all");
 
   const storeId = store?.id ?? null;
   const branchId = branch?.id ?? null;
@@ -79,14 +82,30 @@ function ProductsPage() {
     queryFn: () => fetchProductsWithStock(storeId as string, branchId as string),
   });
 
+  const shelvesQuery = useQuery({
+    queryKey: ["shelves", storeId],
+    enabled: Boolean(storeId),
+    queryFn: () => fetchShelves(storeId as string),
+  });
+  const shelves = shelvesQuery.data ?? [];
+  const shelfName = useMemo(
+    () => new Map(shelves.map((s) => [s.id, s.name])),
+    [shelves],
+  );
+
   const products = useMemo(() => {
-    const list = productsQuery.data ?? [];
+    let list = productsQuery.data ?? [];
+    if (shelfFilter !== "all") {
+      list = list.filter((p) =>
+        shelfFilter === "none" ? !p.shelf_id : p.shelf_id === shelfFilter,
+      );
+    }
     const term = search.trim().toLowerCase();
     if (!term) return list;
     return list.filter((p) =>
       [p.name, p.sku, p.barcode, p.category].some((field) => field.toLowerCase().includes(term)),
     );
-  }, [productsQuery.data, search]);
+  }, [productsQuery.data, search, shelfFilter]);
 
   async function refresh() {
     await queryClient.invalidateQueries({ queryKey: ["products"] });
@@ -147,6 +166,28 @@ function ProductsPage() {
         )}
       </div>
 
+      {shelves.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {[{ id: "all", name: "All shelves" }, ...shelves, { id: "none", name: "Unshelved" }].map(
+            (shelf) => (
+              <button
+                key={shelf.id}
+                type="button"
+                onClick={() => setShelfFilter(shelf.id)}
+                className={cn(
+                  "rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors",
+                  shelfFilter === shelf.id
+                    ? "border-transparent bg-accent text-foreground"
+                    : "border-border bg-surface text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {shelf.name}
+              </button>
+            ),
+          )}
+        </div>
+      )}
+
       <div className="surface-card mt-5 overflow-hidden">
         {productsQuery.isLoading ? (
           <div className="space-y-3 p-5">
@@ -181,7 +222,11 @@ function ProductsPage() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium">{product.name}</p>
                     <p className="truncate text-xs text-muted-foreground">
-                      {[product.category, product.barcode && `#${product.barcode}`]
+                      {[
+                        product.shelf_id ? shelfName.get(product.shelf_id) : null,
+                        product.category,
+                        product.barcode && `#${product.barcode}`,
+                      ]
                         .filter(Boolean)
                         .join(" · ") || "No barcode"}
                     </p>

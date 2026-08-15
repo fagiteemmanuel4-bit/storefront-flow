@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { ScanLine } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Plus, ScanLine } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,7 +16,15 @@ import {
 } from "@/components/ui/bottom-sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { BarcodeScannerDialog } from "@/components/pos/BarcodeScannerDialog";
+import { createShelf, fetchShelves } from "@/lib/shelves";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Product name is required").max(120),
@@ -56,6 +65,34 @@ export function ProductFormDialog({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [scanning, setScanning] = useState(false);
+  const [shelfId, setShelfId] = useState<string>("none");
+  const [newShelf, setNewShelf] = useState("");
+  const [addingShelf, setAddingShelf] = useState(false);
+  const [creatingShelf, setCreatingShelf] = useState(false);
+  const queryClient = useQueryClient();
+
+  const shelvesQuery = useQuery({
+    queryKey: ["shelves", storeId],
+    enabled: Boolean(storeId) && open,
+    queryFn: () => fetchShelves(storeId),
+  });
+  const shelves = shelvesQuery.data ?? [];
+
+  async function handleCreateShelf() {
+    setCreatingShelf(true);
+    try {
+      const shelf = await createShelf(storeId, newShelf);
+      await queryClient.invalidateQueries({ queryKey: ["shelves", storeId] });
+      setShelfId(shelf.id);
+      setNewShelf("");
+      setAddingShelf(false);
+      toast.success(`Shelf "${shelf.name}" created`);
+    } catch (error) {
+      toast.error(errorMessage(error, "We couldn't create that shelf."));
+    } finally {
+      setCreatingShelf(false);
+    }
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -68,6 +105,9 @@ export function ProductFormDialog({
     setCost(product ? String(product.cost) : "0");
     setThreshold(product ? String(product.low_stock_threshold) : "5");
     setQuantity(product ? String(product.quantity) : "0");
+    setShelfId(product?.shelf_id ?? "none");
+    setAddingShelf(false);
+    setNewShelf("");
   }, [open, product]);
 
   async function handleSubmit(event: React.FormEvent) {
@@ -102,6 +142,7 @@ export function ProductFormDialog({
         price: values.price,
         cost: values.cost,
         low_stock_threshold: values.lowStockThreshold,
+        shelf_id: shelfId === "none" ? null : shelfId,
       };
 
       let productId = product?.id ?? null;
@@ -182,6 +223,60 @@ export function ProductFormDialog({
                   <ScanLine className="size-4" aria-hidden /> Scan
                 </Button>
               </div>
+            </Field>
+
+            <Field label="Shelf">
+              {addingShelf ? (
+                <div className="flex gap-2">
+                  <Input
+                    value={newShelf}
+                    onChange={(e) => setNewShelf(e.target.value)}
+                    className="h-12"
+                    maxLength={60}
+                    placeholder="e.g. Books, Drinks, Accessories"
+                  />
+                  <Button
+                    type="button"
+                    className="h-12 shrink-0"
+                    disabled={creatingShelf}
+                    onClick={() => void handleCreateShelf()}
+                  >
+                    {creatingShelf ? "Saving…" : "Save"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-12 shrink-0"
+                    onClick={() => setAddingShelf(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Select value={shelfId} onValueChange={setShelfId}>
+                    <SelectTrigger className="h-12 flex-1">
+                      <SelectValue placeholder="No shelf" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No shelf</SelectItem>
+                      {shelves.map((shelf) => (
+                        <SelectItem key={shelf.id} value={shelf.id}>
+                          {shelf.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-12 shrink-0"
+                    onClick={() => setAddingShelf(true)}
+                  >
+                    <Plus className="size-4" aria-hidden /> New
+                  </Button>
+                </div>
+              )}
             </Field>
 
             <div className="grid gap-4 sm:grid-cols-2">

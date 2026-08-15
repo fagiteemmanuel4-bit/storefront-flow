@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { activeStoreCache } from "@/lib/active-store";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { AppMenuSheet } from "@/components/shell/AppMenuSheet";
+import { UpdatesSheet } from "@/components/shell/UpdatesSheet";
 
 import {
   Select,
@@ -48,8 +49,8 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
 
   return (
     <div className="min-h-screen bg-background pb-24 lg:pb-0">
-      <header className="sticky top-0 z-40 border-b border-border bg-surface/85 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
+      <header className="sticky top-0 z-40 border-b border-border/70 bg-surface/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6 lg:px-10">
           <Link to="/pos" className="flex items-center gap-2">
             <span className="flex size-8 items-center justify-center rounded-full bg-accent">
               <span className="size-3 rotate-45 rounded-[3px] bg-foreground" />
@@ -86,15 +87,15 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 </SelectContent>
               </Select>
             )}
-            <nav className="hidden items-center gap-1 lg:flex">
+            <nav className="hidden items-center gap-1 rounded-full border border-border bg-secondary/60 p-1 lg:flex">
               {NAV.map((item) => (
                 <Link
                   key={item.to}
                   to={item.to}
                   className={cn(
-                    "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "rounded-full px-4 py-2 text-sm font-semibold transition-all",
                     pathname === item.to
-                      ? "bg-secondary text-foreground"
+                      ? "bg-surface text-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground",
                   )}
                 >
@@ -120,15 +121,15 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
         </div>
       </header>
 
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3 lg:mb-8">
           <div>
             <p className="text-label-caps flex items-center gap-1.5 text-muted-foreground">
               <Store className="size-3.5" aria-hidden />
               {store?.name ?? "Loading shop"}
               {branch ? ` · ${branch.name}` : ""}
             </p>
-            <h1 className="mt-1 text-title-lg">{title}</h1>
+            <h1 className="mt-1 text-title-lg lg:text-display-md">{title}</h1>
           </div>
         </div>
         {children}
@@ -165,6 +166,8 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
           })}
         </div>
       </nav>
+
+      <UpdatesSheet />
 
       <AppMenuSheet
         open={menuOpen}
