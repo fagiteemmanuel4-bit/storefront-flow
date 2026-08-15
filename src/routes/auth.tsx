@@ -30,7 +30,7 @@ const passwordSchema = z.string().min(8, "Use at least 8 characters").max(72);
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recover">("signin");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,6 +40,15 @@ function AuthPage() {
 
   useEffect(() => {
     let cancelled = false;
+    // A password-recovery link lands here with a recovery hash — set a new password instead.
+    const hash = window.location.hash;
+    const isRecovery = hash.includes("type=recovery");
+    if (isRecovery) {
+      setMode("recover");
+      return () => {
+        cancelled = true;
+      };
+    }
     void supabase.auth.getUser().then(({ data }) => {
       if (!cancelled && data.user) void navigate({ to: "/pos", replace: true });
     });
@@ -50,11 +59,28 @@ function AuthPage() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    const parsedEmail = emailSchema.safeParse(email);
+    const parsedEmail = emailSchema.safeParse(mode === "recover" ? "recover@kudi.app" : email);
     if (!parsedEmail.success) {
       toast.error(parsedEmail.error.issues[0]!.message);
       return;
     }
+    if (mode === "reset") {
+      setBusy(true);
+      setNotice(null);
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(parsedEmail.data, {
+          redirectTo: `${window.location.origin}/auth`,
+        });
+        if (error) throw new Error(error.message);
+        setNotice("Check your email for a reset link. Open it on this device to set a new password.");
+      } catch (error) {
+        toast.error(errorMessage(error, "We couldn't send that reset link."));
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     const parsedPassword = passwordSchema.safeParse(password);
     if (!parsedPassword.success) {
       toast.error(parsedPassword.error.issues[0]!.message);
@@ -68,6 +94,13 @@ function AuthPage() {
     setBusy(true);
     setNotice(null);
     try {
+      if (mode === "recover") {
+        const { error } = await supabase.auth.updateUser({ password: parsedPassword.data });
+        if (error) throw new Error(error.message);
+        toast.success("Password updated");
+        void navigate({ to: "/pos", replace: true });
+        return;
+      }
       if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email: parsedEmail.data,
@@ -112,12 +145,22 @@ function AuthPage() {
 
       <div className="mx-auto mt-10 w-full max-w-md">
         <h1 className="text-display-md">
-          {mode === "signin" ? "Open your till" : "Create your shop account"}
+          {mode === "signin"
+            ? "Open your till"
+            : mode === "signup"
+              ? "Create your shop account"
+              : mode === "reset"
+                ? "Reset your password"
+                : "Set a new password"}
         </h1>
         <p className="mt-2 text-muted-foreground">
           {mode === "signin"
             ? "Sign in to keep selling."
-            : "Free to start. You'll name your shop on the next screen."}
+            : mode === "signup"
+              ? "Free to start. You'll name your shop on the next screen."
+              : mode === "reset"
+                ? "We'll email you a link to choose a new password."
+                : "Choose a new password for your account."}
         </p>
 
         <form onSubmit={handleSubmit} className="surface-card mt-6 space-y-4 p-5 sm:p-6">
@@ -134,6 +177,7 @@ function AuthPage() {
               />
             </div>
           )}
+          {mode !== "recover" && (
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -146,8 +190,24 @@ function AuthPage() {
               required
             />
           </div>
+          )}
+          {mode !== "reset" && (
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">{mode === "recover" ? "New password" : "Password"}</Label>
+              {mode === "signin" && (
+                <button
+                  type="button"
+                  className="text-sm font-semibold text-accent-ink underline"
+                  onClick={() => {
+                    setMode("reset");
+                    setNotice(null);
+                  }}
+                >
+                  Forgot password?
+                </button>
+              )}
+            </div>
             <Input
               id="password"
               type="password"
@@ -158,6 +218,7 @@ function AuthPage() {
               required
             />
           </div>
+          )}
 
           {mode === "signup" && (
             <label className="flex items-start gap-3 text-sm text-muted-foreground">
@@ -186,23 +247,33 @@ function AuthPage() {
           )}
 
           <Button type="submit" className="h-12 w-full" disabled={busy}>
-            {busy ? "Working…" : mode === "signin" ? "Sign in" : "Create account"}
+            {busy
+              ? "Working…"
+              : mode === "signin"
+                ? "Sign in"
+                : mode === "signup"
+                  ? "Create account"
+                  : mode === "reset"
+                    ? "Send reset link"
+                    : "Save new password"}
           </Button>
         </form>
 
-        <p className="mt-5 text-center text-sm text-muted-foreground">
-          {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
-          <button
-            type="button"
-            className="font-semibold text-foreground underline"
-            onClick={() => {
-              setMode(mode === "signin" ? "signup" : "signin");
-              setNotice(null);
-            }}
-          >
-            {mode === "signin" ? "Create an account" : "Sign in instead"}
-          </button>
-        </p>
+        {mode !== "recover" && (
+          <p className="mt-5 text-center text-sm text-muted-foreground">
+            {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
+            <button
+              type="button"
+              className="font-semibold text-foreground underline"
+              onClick={() => {
+                setMode(mode === "signin" ? "signup" : "signin");
+                setNotice(null);
+              }}
+            >
+              {mode === "signin" ? "Create an account" : "Sign in instead"}
+            </button>
+          </p>
+        )}
       </div>
     </div>
   );
