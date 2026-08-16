@@ -246,11 +246,28 @@ function AuthPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="h-12"
               autoComplete="email"
+              disabled={mode === "otpcode"}
               required
             />
           </div>
           )}
-          {mode !== "reset" && (
+          {mode === "otpcode" && (
+            <div className="space-y-2">
+              <Label htmlFor="code">6-digit code</Label>
+              <Input
+                id="code"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                value={otpToken}
+                onChange={(e) => setOtpToken(e.target.value)}
+                className="numeric h-14 text-center text-2xl tracking-[0.4em]"
+                maxLength={6}
+                placeholder="000000"
+                required
+              />
+            </div>
+          )}
+          {mode !== "reset" && mode !== "otp" && mode !== "otpcode" && (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">{mode === "recover" ? "New password" : "Password"}</Label>
@@ -278,6 +295,7 @@ function AuthPage() {
             />
           </div>
           )}
+
 
           {mode === "signup" && (
             <label className="flex items-start gap-3 text-sm text-muted-foreground">
