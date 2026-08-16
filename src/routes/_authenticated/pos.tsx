@@ -107,14 +107,16 @@ function PosPage() {
     (value: string) => {
       const match = products.find((p) => p.barcode && p.barcode === value.trim());
       if (!match) {
-        setSearch(value);
+        // Keep the camera running — just tell the cashier this code isn't known yet.
         toast.error(`No product with barcode ${value}. Add it under Stock first.`);
         return;
       }
       addToCart(match);
+      toast.success(`${match.name} added`);
     },
     [products, addToCart],
   );
+
 
   function changeQty(productId: string, delta: number) {
     setCart((current) =>
