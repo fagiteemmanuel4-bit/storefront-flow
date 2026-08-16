@@ -30,13 +30,17 @@ const passwordSchema = z.string().min(8, "Use at least 8 characters").max(72);
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recover">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recover" | "otp" | "otpcode">(
+    "signin",
+  );
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otpToken, setOtpToken] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+
 
   useEffect(() => {
     let cancelled = false;
