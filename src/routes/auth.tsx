@@ -332,11 +332,53 @@ function AuthPage() {
                   ? "Create account"
                   : mode === "reset"
                     ? "Send reset link"
-                    : "Save new password"}
+                    : mode === "otp"
+                      ? "Email me a code"
+                      : mode === "otpcode"
+                        ? "Verify code"
+                        : "Save new password"}
           </Button>
+
+          {(mode === "signin" || mode === "signup") && (
+            <button
+              type="button"
+              className="w-full text-center text-sm font-semibold text-accent-ink underline"
+              onClick={() => {
+                setMode("otp");
+                setNotice(null);
+              }}
+            >
+              Use an email code instead
+            </button>
+          )}
+          {mode === "otp" && (
+            <button
+              type="button"
+              className="w-full text-center text-sm font-semibold text-foreground underline"
+              onClick={() => {
+                setMode("signin");
+                setNotice(null);
+              }}
+            >
+              Use a password instead
+            </button>
+          )}
+          {mode === "otpcode" && (
+            <button
+              type="button"
+              className="w-full text-center text-sm font-semibold text-foreground underline"
+              onClick={() => {
+                setOtpToken("");
+                setMode("otp");
+                setNotice(null);
+              }}
+            >
+              Send a new code
+            </button>
+          )}
         </form>
 
-        {mode !== "recover" && (
+        {(mode === "signin" || mode === "signup") && (
           <p className="mt-5 text-center text-sm text-muted-foreground">
             {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
             <button
@@ -351,6 +393,7 @@ function AuthPage() {
             </button>
           </p>
         )}
+
       </div>
     </div>
   );
