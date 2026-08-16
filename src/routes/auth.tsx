@@ -201,7 +201,11 @@ function AuthPage() {
               ? "Create your shop account"
               : mode === "reset"
                 ? "Reset your password"
-                : "Set a new password"}
+                : mode === "otp"
+                  ? "Sign in with an email code"
+                  : mode === "otpcode"
+                    ? "Enter your verification code"
+                    : "Set a new password"}
         </h1>
         <p className="mt-2 text-muted-foreground">
           {mode === "signin"
@@ -210,8 +214,13 @@ function AuthPage() {
               ? "Free to start. You'll name your shop on the next screen."
               : mode === "reset"
                 ? "We'll email you a link to choose a new password."
-                : "Choose a new password for your account."}
+                : mode === "otp"
+                  ? "No password needed — we'll email you a 6-digit code."
+                  : mode === "otpcode"
+                    ? `Type the 6-digit code we sent to ${email}.`
+                    : "Choose a new password for your account."}
         </p>
+
 
         <form onSubmit={handleSubmit} className="surface-card mt-6 space-y-4 p-5 sm:p-6">
           {mode === "signup" && (
