@@ -30,13 +30,17 @@ const passwordSchema = z.string().min(8, "Use at least 8 characters").max(72);
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recover">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recover" | "otp" | "otpcode">(
+    "signin",
+  );
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otpToken, setOtpToken] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+
 
   useEffect(() => {
     let cancelled = false;
@@ -80,6 +84,52 @@ function AuthPage() {
       }
       return;
     }
+
+    // Passwordless: email a 6-digit verification code, then exchange it for a session.
+    if (mode === "otp") {
+      setBusy(true);
+      setNotice(null);
+      try {
+        const { error } = await supabase.auth.signInWithOtp({
+          email: parsedEmail.data,
+          options: { shouldCreateUser: true, data: { full_name: fullName.trim() } },
+        });
+        if (error) throw new Error(error.message);
+        setMode("otpcode");
+        setNotice(`We sent a 6-digit code to ${parsedEmail.data}. It expires in about an hour.`);
+      } catch (error) {
+        toast.error(errorMessage(error, "We couldn't send that code."));
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
+    if (mode === "otpcode") {
+      const code = otpToken.replace(/\D/g, "");
+      if (code.length !== 6) {
+        toast.error("Enter the 6-digit code from your email.");
+        return;
+      }
+      setBusy(true);
+      try {
+        const { data, error } = await supabase.auth.verifyOtp({
+          email: parsedEmail.data,
+          token: code,
+          type: "email",
+        });
+        if (error) throw new Error(error.message);
+        if (!data.session) throw new Error("That code didn't complete sign in. Try again.");
+        toast.success("Email verified");
+        void navigate({ to: "/pos", replace: true });
+      } catch (error) {
+        toast.error(errorMessage(error, "That code is wrong or expired."));
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
 
     const parsedPassword = passwordSchema.safeParse(password);
     if (!parsedPassword.success) {
@@ -151,7 +201,11 @@ function AuthPage() {
               ? "Create your shop account"
               : mode === "reset"
                 ? "Reset your password"
-                : "Set a new password"}
+                : mode === "otp"
+                  ? "Sign in with an email code"
+                  : mode === "otpcode"
+                    ? "Enter your verification code"
+                    : "Set a new password"}
         </h1>
         <p className="mt-2 text-muted-foreground">
           {mode === "signin"
@@ -160,8 +214,13 @@ function AuthPage() {
               ? "Free to start. You'll name your shop on the next screen."
               : mode === "reset"
                 ? "We'll email you a link to choose a new password."
-                : "Choose a new password for your account."}
+                : mode === "otp"
+                  ? "No password needed — we'll email you a 6-digit code."
+                  : mode === "otpcode"
+                    ? `Type the 6-digit code we sent to ${email}.`
+                    : "Choose a new password for your account."}
         </p>
+
 
         <form onSubmit={handleSubmit} className="surface-card mt-6 space-y-4 p-5 sm:p-6">
           {mode === "signup" && (
@@ -187,11 +246,28 @@ function AuthPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="h-12"
               autoComplete="email"
+              disabled={mode === "otpcode"}
               required
             />
           </div>
           )}
-          {mode !== "reset" && (
+          {mode === "otpcode" && (
+            <div className="space-y-2">
+              <Label htmlFor="code">6-digit code</Label>
+              <Input
+                id="code"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                value={otpToken}
+                onChange={(e) => setOtpToken(e.target.value)}
+                className="numeric h-14 text-center text-2xl tracking-[0.4em]"
+                maxLength={6}
+                placeholder="000000"
+                required
+              />
+            </div>
+          )}
+          {mode !== "reset" && mode !== "otp" && mode !== "otpcode" && (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">{mode === "recover" ? "New password" : "Password"}</Label>
@@ -219,6 +295,7 @@ function AuthPage() {
             />
           </div>
           )}
+
 
           {mode === "signup" && (
             <label className="flex items-start gap-3 text-sm text-muted-foreground">
@@ -255,11 +332,53 @@ function AuthPage() {
                   ? "Create account"
                   : mode === "reset"
                     ? "Send reset link"
-                    : "Save new password"}
+                    : mode === "otp"
+                      ? "Email me a code"
+                      : mode === "otpcode"
+                        ? "Verify code"
+                        : "Save new password"}
           </Button>
+
+          {(mode === "signin" || mode === "signup") && (
+            <button
+              type="button"
+              className="w-full text-center text-sm font-semibold text-accent-ink underline"
+              onClick={() => {
+                setMode("otp");
+                setNotice(null);
+              }}
+            >
+              Use an email code instead
+            </button>
+          )}
+          {mode === "otp" && (
+            <button
+              type="button"
+              className="w-full text-center text-sm font-semibold text-foreground underline"
+              onClick={() => {
+                setMode("signin");
+                setNotice(null);
+              }}
+            >
+              Use a password instead
+            </button>
+          )}
+          {mode === "otpcode" && (
+            <button
+              type="button"
+              className="w-full text-center text-sm font-semibold text-foreground underline"
+              onClick={() => {
+                setOtpToken("");
+                setMode("otp");
+                setNotice(null);
+              }}
+            >
+              Send a new code
+            </button>
+          )}
         </form>
 
-        {mode !== "recover" && (
+        {(mode === "signin" || mode === "signup") && (
           <p className="mt-5 text-center text-sm text-muted-foreground">
             {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
             <button
@@ -274,6 +393,7 @@ function AuthPage() {
             </button>
           </p>
         )}
+
       </div>
     </div>
   );
