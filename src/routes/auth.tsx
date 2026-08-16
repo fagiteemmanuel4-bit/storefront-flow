@@ -85,6 +85,52 @@ function AuthPage() {
       return;
     }
 
+    // Passwordless: email a 6-digit verification code, then exchange it for a session.
+    if (mode === "otp") {
+      setBusy(true);
+      setNotice(null);
+      try {
+        const { error } = await supabase.auth.signInWithOtp({
+          email: parsedEmail.data,
+          options: { shouldCreateUser: true, data: { full_name: fullName.trim() } },
+        });
+        if (error) throw new Error(error.message);
+        setMode("otpcode");
+        setNotice(`We sent a 6-digit code to ${parsedEmail.data}. It expires in about an hour.`);
+      } catch (error) {
+        toast.error(errorMessage(error, "We couldn't send that code."));
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
+    if (mode === "otpcode") {
+      const code = otpToken.replace(/\D/g, "");
+      if (code.length !== 6) {
+        toast.error("Enter the 6-digit code from your email.");
+        return;
+      }
+      setBusy(true);
+      try {
+        const { data, error } = await supabase.auth.verifyOtp({
+          email: parsedEmail.data,
+          token: code,
+          type: "email",
+        });
+        if (error) throw new Error(error.message);
+        if (!data.session) throw new Error("That code didn't complete sign in. Try again.");
+        toast.success("Email verified");
+        void navigate({ to: "/pos", replace: true });
+      } catch (error) {
+        toast.error(errorMessage(error, "That code is wrong or expired."));
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
+
     const parsedPassword = passwordSchema.safeParse(password);
     if (!parsedPassword.success) {
       toast.error(parsedPassword.error.issues[0]!.message);
