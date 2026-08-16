@@ -402,7 +402,22 @@ function PosPage() {
         </BottomSheetContent>
       </BottomSheet>
 
-      <BarcodeScannerDialog open={scanning} onOpenChange={setScanning} onDetected={handleScan} />
+      <BarcodeScannerDialog
+        open={scanning}
+        onOpenChange={setScanning}
+        onDetected={handleScan}
+        continuous
+        footer={
+          <div className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm">
+            <span className="text-muted-foreground">
+              {cart.reduce((sum, l) => sum + l.quantity, 0)} item
+              {cart.reduce((sum, l) => sum + l.quantity, 0) === 1 ? "" : "s"} in cart
+            </span>
+            <span className="numeric font-semibold">{formatMoney(total, currency)}</span>
+          </div>
+        }
+      />
+
 
       <BottomSheet open={Boolean(receipt)} onOpenChange={(open) => !open && setReceipt(null)}>
         <BottomSheetContent className="mx-auto w-full max-w-sm">
