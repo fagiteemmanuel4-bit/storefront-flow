@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
+  ArrowLeft,
   BarChart3,
   TrendingUp,
   DollarSign,
@@ -234,8 +235,32 @@ function ReportsPage() {
       .slice(0, 5);
   }, [filteredSaleItems]);
 
+  const navigate = useNavigate();
+
   return (
-    <AppShell title="Reports & Insight">
+    <div className="min-h-screen bg-background pb-20">
+      <header className="sticky top-0 z-40 border-b border-border/70 bg-surface/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => void navigate({ to: "/pos" })}
+              className="touch-target flex size-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-accent"
+              aria-label="Back"
+            >
+              <ArrowLeft className="size-5" />
+            </button>
+            <div>
+              <h1 className="font-display text-lg font-bold tracking-tight sm:text-xl">
+                Reports & Insight
+              </h1>
+              <p className="text-xs text-muted-foreground">{store?.name ?? "Deeper trading insight"}</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       {/* Date Range Selector */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-medium text-muted-foreground">
@@ -436,7 +461,8 @@ function ReportsPage() {
           </div>
         )}
       </div>
-    </AppShell>
+      </main>
+    </div>
   );
 }
 

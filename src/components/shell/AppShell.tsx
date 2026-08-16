@@ -1,7 +1,7 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
-import { BarChart3, FileBarChart, Package, Receipt, ScanLine, Store } from "lucide-react";
+import { AlertTriangle, BarChart3, Package, ScanLine, Store, WifiOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { activeStoreCache } from "@/lib/active-store";
 import { useStoreContext } from "@/components/shell/StoreProvider";
@@ -20,8 +20,6 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { to: "/pos", label: "Sell", icon: ScanLine },
   { to: "/products", label: "Stock", icon: Package },
-  { to: "/reports", label: "Reports", icon: FileBarChart },
-  { to: "/expenses", label: "Expenses", icon: Receipt },
   { to: "/dashboard", label: "Today", icon: BarChart3 },
 ] as const;
 
@@ -32,7 +30,35 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isOffline, setIsOffline] = useState(() => localStorage.getItem("kudi_offline_mode") === "true");
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  const storeId = store?.id ?? null;
+
+  // Query low stock items to trigger danger alert triangle icon if any alert exists
+  const lowStockAlertQuery = useQuery({
+    queryKey: ["appshell-low-stock", storeId, branch?.id],
+    enabled: Boolean(storeId && branch?.id),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("branch_stock")
+        .select("quantity, products!inner(low_stock_threshold)")
+        .eq("store_id", storeId as string)
+        .eq("branch_id", branch!.id);
+      if (error) return [];
+      return (data ?? []).filter((row) => row.products && row.quantity <= row.products.low_stock_threshold);
+    },
+  });
+
+  const hasAlert = Boolean(lowStockAlertQuery.data && lowStockAlertQuery.data.length > 0);
+
+  useEffect(() => {
+    function handleStorage() {
+      setIsOffline(localStorage.getItem("kudi_offline_mode") === "true");
+    }
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   // No store yet → the account isn't usable until one exists.
   useEffect(() => {
@@ -54,6 +80,14 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
       <header className="sticky top-0 z-40 border-b border-border/70 bg-surface/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6 lg:px-10">
           <Link to="/pos" className="flex items-center gap-2">
+            {isOffline && (
+              <span
+                className="flex size-7 items-center justify-center rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400"
+                title="Offline mode active — sales queued"
+              >
+                <WifiOff className="size-4" />
+              </span>
+            )}
             <span className="flex size-8 items-center justify-center rounded-full bg-accent">
               <span className="size-3 rotate-45 rounded-[3px] bg-foreground" />
             </span>
@@ -105,20 +139,30 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 </Link>
               ))}
             </nav>
-            <button
-              type="button"
-              aria-label="Open menu"
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen(true)}
-              className="touch-target group flex items-center gap-2 rounded-full border border-border bg-secondary px-3 py-2 transition-all hover:bg-accent-soft active:scale-95"
-            >
-              <span className="flex flex-col items-center justify-center gap-[3px]">
-                <span className="block h-[2px] w-4 rounded-full bg-foreground transition-transform group-hover:-translate-y-[1px]" />
-                <span className="block h-[2px] w-4 rounded-full bg-foreground" />
-                <span className="block h-[2px] w-4 rounded-full bg-foreground transition-transform group-hover:translate-y-[1px]" />
-              </span>
-              <span className="hidden text-sm font-semibold sm:inline">Menu</span>
-            </button>
+            <div className="flex items-center gap-1.5">
+              {hasAlert && (
+                <span
+                  title="Alerts present: low stock items"
+                  className="flex size-7 animate-pulse items-center justify-center rounded-full bg-destructive/20 text-destructive"
+                >
+                  <AlertTriangle className="size-4" />
+                </span>
+              )}
+              <button
+                type="button"
+                aria-label="Open menu"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen(true)}
+                className="touch-target group flex items-center gap-2 rounded-full border border-border bg-secondary px-3 py-2 transition-all hover:bg-accent-soft active:scale-95"
+              >
+                <span className="flex flex-col items-center justify-center gap-[3px]">
+                  <span className="block h-[2px] w-4 rounded-full bg-foreground transition-transform group-hover:-translate-y-[1px]" />
+                  <span className="block h-[2px] w-4 rounded-full bg-foreground" />
+                  <span className="block h-[2px] w-4 rounded-full bg-foreground transition-transform group-hover:translate-y-[1px]" />
+                </span>
+                <span className="hidden text-sm font-semibold sm:inline">Menu</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>

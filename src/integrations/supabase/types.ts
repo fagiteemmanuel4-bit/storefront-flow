@@ -60,6 +60,50 @@ export type Database = {
           },
         ]
       }
+      customers: {
+        Row: {
+          created_at: string
+          debt_balance: number
+          email: string
+          id: string
+          name: string
+          notes: string
+          phone: string
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          debt_balance?: number
+          email?: string
+          id?: string
+          name: string
+          notes?: string
+          phone?: string
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          debt_balance?: number
+          email?: string
+          id?: string
+          name?: string
+          notes?: string
+          phone?: string
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expenses: {
         Row: {
           amount: number

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { toast } from "sonner";
 import {
   BadgeCheck,
   Bot,
@@ -20,6 +21,7 @@ import {
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { StoreSettingsDialog } from "@/components/shell/StoreSettingsDialog";
 import { PreferencesDialog } from "@/components/shell/PreferencesDialog";
 import { ExportDataDialog } from "@/components/shell/ExportDataDialog";
@@ -33,8 +35,6 @@ const COMING_SOON = [
   { label: "Credit tracking", icon: CreditCard, hint: "Who owes you what" },
   { label: "AI assistant", icon: Bot, hint: "Ask about your shop" },
   { label: "Receipt printing", icon: Printer, hint: "Bluetooth printers" },
-  { label: "Customers", icon: BadgeCheck, hint: "Know your regulars" },
-  { label: "Offline mode", icon: WifiOff, hint: "Sell without network" },
 ] as const;
 
 function MenuRow({
@@ -98,6 +98,21 @@ export function AppMenuSheet({
   const [exportOpen, setExportOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
+  const [offlineMode, setOfflineMode] = useState(
+    () => localStorage.getItem("kudi_offline_mode") === "true",
+  );
+
+  function handleToggleOffline(checked: boolean) {
+    setOfflineMode(checked);
+    localStorage.setItem("kudi_offline_mode", checked ? "true" : "false");
+    window.dispatchEvent(new Event("storage"));
+    if (checked) {
+      toast.info("Offline mode enabled: Sales will be saved locally & synced automatically when back online.");
+    } else {
+      toast.success("Online mode restored: All offline activity synced.");
+    }
+  }
+
   const isOwner = role === "owner";
 
   function openDialog(setter: (v: boolean) => void) {
@@ -143,6 +158,32 @@ export function AppMenuSheet({
                 </span>
               </div>
             </Link>
+            <Link to="/customers" onClick={() => onOpenChange(false)} className="block">
+              <div className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors text-foreground hover:bg-secondary">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent-soft">
+                  <BadgeCheck className="size-4" aria-hidden />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold">Customers</span>
+                  <span className="block truncate text-xs text-muted-foreground">Regulars & credit ledger</span>
+                </span>
+              </div>
+            </Link>
+
+            <div className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors text-foreground hover:bg-secondary">
+              <div className="flex items-center gap-3">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent-soft">
+                  <WifiOff className="size-4" aria-hidden />
+                </span>
+                <div className="min-w-0">
+                  <span className="block text-sm font-semibold">Offline mode</span>
+                  <span className="block truncate text-xs text-muted-foreground">
+                    Sell without network & auto-sync
+                  </span>
+                </div>
+              </div>
+              <Switch checked={offlineMode} onCheckedChange={handleToggleOffline} />
+            </div>
             <Link to="/expenses" onClick={() => onOpenChange(false)} className="block">
               <div className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors text-foreground hover:bg-secondary">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent-soft">
