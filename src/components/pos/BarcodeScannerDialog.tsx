@@ -137,7 +137,7 @@ export function BarcodeScannerDialog({
       cancelAnimationFrame(frame);
       stream?.getTracks().forEach((t) => t.stop());
     };
-  }, [open, onDetected, onOpenChange]);
+  }, [open, continuous, onOpenChange]);
 
   return (
     <BottomSheet open={open} onOpenChange={onOpenChange}>
@@ -163,9 +163,11 @@ export function BarcodeScannerDialog({
           )}
         </div>
         {!failed && <p className="text-center text-sm text-muted-foreground">{status}</p>}
+        {footer}
         <Button variant="outline" className="touch-target" onClick={() => onOpenChange(false)}>
-          <X className="size-4" aria-hidden /> Close scanner
+          <X className="size-4" aria-hidden /> {continuous ? "Done scanning" : "Close scanner"}
         </Button>
+
       </BottomSheetContent>
     </BottomSheet>
   );
