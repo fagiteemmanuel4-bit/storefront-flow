@@ -102,9 +102,18 @@ export function BarcodeScannerDialog({
             const results = await detector.detect(videoRef.current);
             const value = results[0]?.rawValue?.trim();
             if (value && !cancelled) {
-              onDetected(value);
-              onOpenChange(false);
-              return;
+              const now = Date.now();
+              const isDuplicate = value === lastValue && now - lastAt < 1200;
+              if (!isDuplicate) {
+                lastValue = value;
+                lastAt = now;
+                onDetectedRef.current(value);
+                if (!continuous) {
+                  onOpenChange(false);
+                  return;
+                }
+                setStatus(`Added ${value} — keep scanning`);
+              }
             }
           } catch {
             /* transient decode failures are normal between frames */
@@ -112,6 +121,7 @@ export function BarcodeScannerDialog({
           frame = requestAnimationFrame(() => void tick());
         };
         frame = requestAnimationFrame(() => void tick());
+
       } catch (error) {
         if (!cancelled) {
           setFailed(true);
