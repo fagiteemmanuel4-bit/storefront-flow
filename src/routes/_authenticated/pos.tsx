@@ -107,14 +107,16 @@ function PosPage() {
     (value: string) => {
       const match = products.find((p) => p.barcode && p.barcode === value.trim());
       if (!match) {
-        setSearch(value);
+        // Keep the camera running — just tell the cashier this code isn't known yet.
         toast.error(`No product with barcode ${value}. Add it under Stock first.`);
         return;
       }
       addToCart(match);
+      toast.success(`${match.name} added`);
     },
     [products, addToCart],
   );
+
 
   function changeQty(productId: string, delta: number) {
     setCart((current) =>
@@ -402,7 +404,22 @@ function PosPage() {
         </BottomSheetContent>
       </BottomSheet>
 
-      <BarcodeScannerDialog open={scanning} onOpenChange={setScanning} onDetected={handleScan} />
+      <BarcodeScannerDialog
+        open={scanning}
+        onOpenChange={setScanning}
+        onDetected={handleScan}
+        continuous
+        footer={
+          <div className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm">
+            <span className="text-muted-foreground">
+              {cart.reduce((sum, l) => sum + l.quantity, 0)} item
+              {cart.reduce((sum, l) => sum + l.quantity, 0) === 1 ? "" : "s"} in cart
+            </span>
+            <span className="numeric font-semibold">{formatMoney(total, currency)}</span>
+          </div>
+        }
+      />
+
 
       <BottomSheet open={Boolean(receipt)} onOpenChange={(open) => !open && setReceipt(null)}>
         <BottomSheetContent className="mx-auto w-full max-w-sm">
