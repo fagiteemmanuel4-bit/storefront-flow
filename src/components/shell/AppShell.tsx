@@ -1,7 +1,7 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
-import { BarChart3, Package, ScanLine, Store } from "lucide-react";
+import { BarChart3, FileBarChart, Package, Receipt, ScanLine, Store } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { activeStoreCache } from "@/lib/active-store";
 import { useStoreContext } from "@/components/shell/StoreProvider";
@@ -20,6 +20,8 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { to: "/pos", label: "Sell", icon: ScanLine },
   { to: "/products", label: "Stock", icon: Package },
+  { to: "/reports", label: "Reports", icon: FileBarChart },
+  { to: "/expenses", label: "Expenses", icon: Receipt },
   { to: "/dashboard", label: "Today", icon: BarChart3 },
 ] as const;
 
