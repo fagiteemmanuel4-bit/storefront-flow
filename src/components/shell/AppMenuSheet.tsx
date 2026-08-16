@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   BadgeCheck,
   Bot,
@@ -30,11 +31,9 @@ const COMING_SOON = [
   { label: "Multi-branch", icon: Building2, hint: "Run several locations" },
   { label: "Staff accounts", icon: Users, hint: "PIN logins for your team" },
   { label: "Credit tracking", icon: CreditCard, hint: "Who owes you what" },
-  { label: "Reports", icon: FileBarChart, hint: "Deeper trading insight" },
   { label: "AI assistant", icon: Bot, hint: "Ask about your shop" },
   { label: "Receipt printing", icon: Printer, hint: "Bluetooth printers" },
   { label: "Customers", icon: BadgeCheck, hint: "Know your regulars" },
-  { label: "Expenses", icon: Receipt, hint: "Track what you spend" },
   { label: "Offline mode", icon: WifiOff, hint: "Sell without network" },
 ] as const;
 
@@ -133,6 +132,28 @@ export function AppMenuSheet({
           </SheetHeader>
 
           <div className="mt-3 space-y-0.5">
+            <Link to="/reports" onClick={() => onOpenChange(false)} className="block">
+              <div className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors text-foreground hover:bg-secondary">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent-soft">
+                  <FileBarChart className="size-4" aria-hidden />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold">Reports</span>
+                  <span className="block truncate text-xs text-muted-foreground">Deeper trading insight</span>
+                </span>
+              </div>
+            </Link>
+            <Link to="/expenses" onClick={() => onOpenChange(false)} className="block">
+              <div className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors text-foreground hover:bg-secondary">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent-soft">
+                  <Receipt className="size-4" aria-hidden />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold">Expenses</span>
+                  <span className="block truncate text-xs text-muted-foreground">Track what you spend</span>
+                </span>
+              </div>
+            </Link>
             <MenuRow
               icon={Store}
               label="Store profile"
