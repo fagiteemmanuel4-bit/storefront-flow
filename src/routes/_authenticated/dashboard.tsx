@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, Receipt, TrendingUp } from "lucide-react";
+import { AlertTriangle, ArrowRight, Bell, Globe2, Receipt, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { AppShell } from "@/components/shell/AppShell";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { formatMoney } from "@/lib/currency";
@@ -9,173 +10,28 @@ import { formatDateTime } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({
-    meta: [
-      { title: "Today's trading — Kudi" },
-      { name: "description", content: "Revenue, recent sales and low-stock alerts for your shop." },
-      { property: "og:title", content: "Today's trading — Kudi" },
-      { property: "og:description", content: "Revenue, recent sales and low-stock alerts." },
-    ],
-  }),
+  head: () => ({ meta: [{ title: "Today's trading — Kudi" }, { name: "description", content: "Revenue, recent sales and low-stock alerts for your shop." }] }),
   component: DashboardPage,
 });
 
 function DashboardPage() {
   const { store, branch } = useStoreContext();
-  const storeId = store?.id ?? null;
-  const currency = store?.currency ?? "NGN";
-
-  const salesQuery = useQuery({
-    queryKey: ["sales", storeId],
-    enabled: Boolean(storeId),
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("sales")
-        .select("id, reference, total, payment_method, created_at, branch_id")
-        .eq("store_id", storeId as string)
-        .order("created_at", { ascending: false })
-        .limit(25);
-      if (error) throw new Error(error.message);
-      return data ?? [];
-    },
-  });
-
-  const lowStockQuery = useQuery({
-    queryKey: ["low-stock", storeId, branch?.id],
-    enabled: Boolean(storeId && branch?.id),
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("branch_stock")
-        .select("quantity, products!inner(id, name, low_stock_threshold)")
-        .eq("store_id", storeId as string)
-        .eq("branch_id", branch!.id);
-      if (error) throw new Error(error.message);
-      return (data ?? [])
-        .filter((row) => row.products && row.quantity <= row.products.low_stock_threshold)
-        .sort((a, b) => a.quantity - b.quantity);
-    },
-  });
-
+  const storeId = store?.id ?? null; const currency = store?.currency ?? "NGN";
+  const salesQuery = useQuery({ queryKey: ["sales", storeId], enabled: Boolean(storeId), queryFn: async () => { const { data, error } = await supabase.from("sales").select("id, reference, total, payment_method, created_at, branch_id").eq("store_id", storeId as string).order("created_at", { ascending: false }).limit(25); if (error) throw new Error(error.message); return data ?? []; } });
+  const lowStockQuery = useQuery({ queryKey: ["low-stock", storeId, branch?.id], enabled: Boolean(storeId && branch?.id), queryFn: async () => { const { data, error } = await supabase.from("branch_stock").select("quantity, products!inner(id, name, low_stock_threshold)").eq("store_id", storeId as string).eq("branch_id", branch!.id); if (error) throw new Error(error.message); return (data ?? []).filter((row) => row.products && row.quantity <= row.products.low_stock_threshold).sort((a, b) => a.quantity - b.quantity); } });
+  const onlineStoreQuery = useQuery({ queryKey: ["dashboard-online-store", storeId], enabled: Boolean(storeId), queryFn: async () => { const { data, error } = await onlineSupabase.from("online_stores").select("slug,display_name,is_published,setup_completed").eq("store_id", storeId as string).maybeSingle(); if (error) throw new Error(error.message); return data; } });
+  const onlineOrdersQuery = useQuery({ queryKey: ["dashboard-online-orders", storeId], enabled: Boolean(storeId && onlineStoreQuery.data?.setup_completed), queryFn: async () => { const { data, error } = await onlineSupabase.from("online_orders").select("id").eq("store_id", storeId as string).eq("status", "pending"); if (error) throw new Error(error.message); return data?.length ?? 0; } });
   const sales = salesQuery.data ?? [];
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-  const todaySales = sales.filter((s) => new Date(s.created_at) >= startOfToday);
-  const todayRevenue = todaySales.reduce((sum, s) => sum + Number(s.total), 0);
+  const startOfToday = new Date(); startOfToday.setHours(0, 0, 0, 0);
+  const todaySales = sales.filter((s) => new Date(s.created_at) >= startOfToday); const todayRevenue = todaySales.reduce((sum, s) => sum + Number(s.total), 0);
+  const online = onlineStoreQuery.data;
 
-  return (
-    <AppShell title="Today's trading">
-      <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard
-          icon={<TrendingUp className="size-4" aria-hidden />}
-          label="Revenue today"
-          value={salesQuery.isLoading ? null : formatMoney(todayRevenue, currency)}
-        />
-        <StatCard
-          icon={<Receipt className="size-4" aria-hidden />}
-          label="Sales today"
-          value={salesQuery.isLoading ? null : String(todaySales.length)}
-        />
-        <StatCard
-          icon={<AlertTriangle className="size-4" aria-hidden />}
-          label="Low on stock"
-          value={lowStockQuery.isLoading ? null : String(lowStockQuery.data?.length ?? 0)}
-          tone={lowStockQuery.data && lowStockQuery.data.length > 0 ? "warning" : "default"}
-        />
-      </div>
+  return <AppShell title="Today's trading"><div className="grid gap-4 sm:grid-cols-3"><StatCard icon={<TrendingUp className="size-4" />} label="Revenue today" value={salesQuery.isLoading ? null : formatMoney(todayRevenue, currency)} /><StatCard icon={<Receipt className="size-4" />} label="Sales today" value={salesQuery.isLoading ? null : String(todaySales.length)} /><StatCard icon={<AlertTriangle className="size-4" />} label="Low on stock" value={lowStockQuery.isLoading ? null : String(lowStockQuery.data?.length ?? 0)} tone={lowStockQuery.data && lowStockQuery.data.length > 0 ? "warning" : "default"} /></div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-        <section className="surface-card overflow-hidden">
-          <h2 className="border-b border-border px-5 py-4 font-display text-base font-semibold">
-            Recent sales
-          </h2>
-          {salesQuery.isLoading ? (
-            <div className="space-y-3 p-5">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-          ) : sales.length === 0 ? (
-            <p className="p-5 text-sm text-muted-foreground">
-              No sales recorded yet. Ring one up from the Sell screen.
-            </p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {sales.map((sale) => (
-                <li key={sale.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
-                  <div className="min-w-0">
-                    <p className="numeric text-sm font-semibold">{sale.reference}</p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {formatDateTime(sale.created_at)} · {sale.payment_method}
-                    </p>
-                  </div>
-                  <span className="numeric shrink-0 text-sm font-bold">
-                    {formatMoney(Number(sale.total), currency)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+    {online?.setup_completed ? <section className="mt-6 border border-border bg-accent-soft p-5"><div className="flex flex-wrap items-center justify-between gap-5"><div className="flex items-center gap-4"><span className="flex size-12 items-center justify-center bg-accent"><Globe2 className="size-6" /></span><div><p className="text-label-caps text-accent-ink">Virtual store ready</p><h2 className="mt-1 font-display text-xl font-semibold">{online.display_name}</h2><p className="mt-1 text-sm text-muted-foreground">{onlineOrdersQuery.data ? `${onlineOrdersQuery.data} pending online order${onlineOrdersQuery.data === 1 ? "" : "s"}` : "Your ecommerce storefront is live."}</p></div></div><div className="flex flex-wrap gap-2"><Link to="/online-store/catalog" className="touch-target inline-flex items-center gap-2 border border-border bg-surface px-4 py-2.5 text-sm font-semibold">Manage products</Link><Link to="/online-store/orders" className="touch-target inline-flex items-center gap-2 bg-foreground px-4 py-2.5 text-sm font-semibold text-background"><Bell className="size-4" /> Orders <ArrowRight className="size-4" /></Link></div></div></section> : <section className="mt-6 border border-dashed border-border bg-surface p-5"><div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-label-caps text-muted-foreground">Sell beyond the counter</p><h2 className="mt-1 font-display text-xl font-semibold">Create your online store</h2><p className="mt-1 max-w-xl text-sm text-muted-foreground">Publish selected products, receive customer orders and share one clean storefront link.</p></div><button type="button" onClick={() => window.open("/online-store/setup", "_blank", "noopener,noreferrer")} className="touch-target inline-flex items-center gap-2 bg-accent px-5 py-3 text-sm font-semibold">Set up online store <ArrowRight className="size-4" /></button></div></section>}
 
-        <section className="surface-card overflow-hidden">
-          <h2 className="border-b border-border px-5 py-4 font-display text-base font-semibold">
-            Low stock {branch ? `· ${branch.name}` : ""}
-          </h2>
-          {lowStockQuery.isLoading ? (
-            <div className="space-y-3 p-5">
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-            </div>
-          ) : (lowStockQuery.data?.length ?? 0) === 0 ? (
-            <p className="p-5 text-sm text-muted-foreground">
-              Everything is above its low-stock threshold.
-            </p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {lowStockQuery.data?.map((row) => (
-                <li
-                  key={row.products!.id}
-                  className="flex items-center justify-between gap-3 px-5 py-3"
-                >
-                  <span className="truncate text-sm">{row.products!.name}</span>
-                  <span className="numeric rounded-full bg-warning-soft px-2.5 py-0.5 text-xs font-bold text-accent-ink">
-                    {row.quantity} left
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </div>
-    </AppShell>
-  );
+    <div className="mt-6 grid gap-6 lg:grid-cols-[1.6fr_1fr]"><section className="surface-card overflow-hidden"><h2 className="border-b border-border px-5 py-4 font-display text-base font-semibold">Recent sales</h2>{salesQuery.isLoading ? <div className="space-y-3 p-5"><Skeleton className="h-10 w-full" /><Skeleton className="h-10 w-full" /></div> : sales.length === 0 ? <p className="p-5 text-sm text-muted-foreground">No sales recorded yet. Ring one up from the Sell screen.</p> : <ul className="divide-y divide-border">{sales.map((sale) => <li key={sale.id} className="flex items-center justify-between gap-3 px-5 py-3.5"><div className="min-w-0"><p className="numeric text-sm font-semibold">{sale.reference}</p><p className="truncate text-xs text-muted-foreground">{formatDateTime(sale.created_at)} · {sale.payment_method}</p></div><span className="numeric shrink-0 text-sm font-bold">{formatMoney(Number(sale.total), currency)}</span></li>)}</ul>}</section>
+    <section className="surface-card overflow-hidden"><h2 className="border-b border-border px-5 py-4 font-display text-base font-semibold">Low stock {branch ? `· ${branch.name}` : ""}</h2>{lowStockQuery.isLoading ? <div className="space-y-3 p-5"><Skeleton className="h-8 w-full" /><Skeleton className="h-8 w-full" /></div> : (lowStockQuery.data?.length ?? 0) === 0 ? <p className="p-5 text-sm text-muted-foreground">Everything is above its low-stock threshold.</p> : <ul className="divide-y divide-border">{lowStockQuery.data?.map((row) => <li key={row.products!.id} className="flex items-center justify-between gap-3 px-5 py-3"><span className="truncate text-sm">{row.products!.name}</span><span className="numeric rounded-full bg-warning-soft px-2.5 py-0.5 text-xs font-bold text-accent-ink">{row.quantity} left</span></li>)}</ul>}</section></div>
+  </AppShell>;
 }
-
-function StatCard({
-  icon,
-  label,
-  value,
-  tone = "default",
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string | null;
-  tone?: "default" | "warning";
-}) {
-  return (
-    <div className="surface-card p-5">
-      <p className="text-label-caps flex items-center gap-1.5 text-muted-foreground">
-        {icon}
-        {label}
-      </p>
-      {value === null ? (
-        <Skeleton className="mt-3 h-8 w-28" />
-      ) : (
-        <p
-          className={`numeric mt-2 text-3xl font-bold ${tone === "warning" ? "text-accent-ink" : ""}`}
-        >
-          {value}
-        </p>
-      )}
-    </div>
-  );
-}
+function StatCard({ icon, label, value, tone = "default" }: { icon: React.ReactNode; label: string; value: string | null; tone?: "default" | "warning" }) { return <div className="surface-card p-5"><p className="text-label-caps flex items-center gap-1.5 text-muted-foreground">{icon}{label}</p>{value === null ? <Skeleton className="mt-3 h-8 w-28" /> : <p className={`numeric mt-2 text-3xl font-bold ${tone === "warning" ? "text-accent-ink" : ""}`}>{value}</p>}</div>; }
