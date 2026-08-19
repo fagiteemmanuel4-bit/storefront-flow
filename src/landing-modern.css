@@ -1,0 +1,326 @@
+/* Kudi landing page — modern visual layer. Scoped to the public landing route so app/POS screens stay untouched. */
+
+body:has(#features) {
+  --landing-ink: oklch(0.18 0.01 82);
+  --landing-muted: oklch(0.48 0.015 82);
+  --landing-line: oklch(0.90 0.012 90);
+  --landing-warm: oklch(0.985 0.012 88);
+  background: var(--landing-warm);
+  color: var(--landing-ink);
+}
+
+body:has(#features) main {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 50% -10%, color-mix(in oklch, var(--color-accent) 16%, transparent), transparent 34rem),
+    linear-gradient(180deg, oklch(0.992 0.006 88), oklch(0.975 0.012 88) 42%, oklch(0.992 0.006 88));
+}
+
+body:has(#features) main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: .34;
+  background-image: radial-gradient(oklch(0.35 0.02 80 / .14) .7px, transparent .7px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+body:has(#features) main::after {
+  content: "";
+  position: absolute;
+  top: 18rem;
+  right: -18rem;
+  z-index: -1;
+  width: 42rem;
+  height: 42rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, color-mix(in oklch, var(--color-accent) 13%, transparent), transparent 68%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+/* Header: floating glass, rather than a hard full-width bar. */
+body:has(#features) header.sticky {
+  margin: .75rem auto 0;
+  width: min(calc(100% - 1.5rem), 82rem);
+  border: 1px solid color-mix(in oklch, var(--color-border) 78%, transparent) !important;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--color-surface) 82%, transparent) !important;
+  box-shadow: 0 14px 45px -30px oklch(0.18 0 0 / .34);
+}
+
+body:has(#features) header.sticky > div {
+  padding-top: .7rem;
+  padding-bottom: .7rem;
+}
+
+body:has(#features) header.sticky nav a,
+body:has(#features) header.sticky nav a:visited {
+  transition: color .2s ease, background .2s ease;
+}
+
+body:has(#features) header.sticky nav a:hover {
+  color: var(--color-accent-ink);
+}
+
+/* Hero */
+body:has(#features) main > section:first-child {
+  min-height: min(860px, calc(100vh - 2rem));
+  display: flex;
+  align-items: center;
+  padding-top: 7rem;
+  padding-bottom: 8rem;
+}
+
+body:has(#features) main > section:first-child > div:last-child {
+  position: relative;
+}
+
+body:has(#features) main > section:first-child h1 {
+  max-width: 12ch;
+  font-size: clamp(3.4rem, 7.2vw, 6.6rem) !important;
+  line-height: .9 !important;
+  letter-spacing: -.055em !important;
+  text-wrap: balance;
+}
+
+body:has(#features) main > section:first-child h1 .text-accent-ink {
+  position: relative;
+  white-space: nowrap;
+}
+
+body:has(#features) main > section:first-child h1 .text-accent-ink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 2%;
+  bottom: -.08em;
+  height: .08em;
+  border-radius: 999px;
+  background: var(--color-accent);
+  transform: rotate(-1.5deg);
+  opacity: .8;
+}
+
+body:has(#features) main > section:first-child p {
+  max-width: 38rem;
+}
+
+body:has(#features) main > section:first-child .inline-flex.rounded-xl.bg-accent {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 35px -18px color-mix(in oklch, var(--color-accent) 75%, transparent);
+}
+
+body:has(#features) main > section:first-child .inline-flex.rounded-xl.bg-accent::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-110%);
+  background: linear-gradient(105deg, transparent 25%, oklch(1 0 0 / .35), transparent 70%);
+  animation: kudi-button-shine 5s ease-in-out infinite;
+}
+
+@keyframes kudi-button-shine {
+  0%, 55%, 100% { transform: translateX(-110%); }
+  72% { transform: translateX(110%); }
+}
+
+/* Hero image becomes a product-style visual card. */
+body:has(#features) main > section:first-child img {
+  filter: saturate(.88) contrast(1.03);
+  transition: transform .7s cubic-bezier(.2,.8,.2,1), filter .4s ease;
+}
+
+body:has(#features) main > section:first-child .relative.overflow-hidden.rounded-\[1\.75rem\]:hover img {
+  transform: scale(1.035);
+  filter: saturate(1) contrast(1.04);
+}
+
+body:has(#features) main > section:first-child .relative.overflow-hidden.rounded-\[1\.75rem\] {
+  box-shadow: 0 38px 90px -42px oklch(0.18 0 0 / .48), 0 8px 30px -18px oklch(0.18 0 0 / .2);
+}
+
+/* Add a subtle architectural frame around the hero visual. */
+body:has(#features) main > section:first-child .relative.lg\:pl-5::before {
+  content: "";
+  position: absolute;
+  inset: 2.25rem -1rem -1.5rem 2rem;
+  border: 1px solid color-mix(in oklch, var(--color-accent) 35%, var(--color-border));
+  border-radius: 2.25rem;
+  transform: rotate(2deg);
+  z-index: -2;
+}
+
+body:has(#features) main > section:first-child .relative.lg\:pl-5::after {
+  content: "";
+  position: absolute;
+  width: 8rem;
+  height: 8rem;
+  right: -2rem;
+  top: 10%;
+  border-radius: 50%;
+  background: var(--color-accent);
+  opacity: .12;
+  filter: blur(20px);
+  z-index: -3;
+}
+
+/* Trust/stat strip */
+body:has(#features) main > section:nth-child(2) {
+  position: relative;
+  margin: 0 auto;
+  width: min(100% - 1.5rem, 82rem);
+  border: 1px solid oklch(1 0 0 / .08) !important;
+  border-radius: 1.5rem;
+  box-shadow: 0 24px 55px -35px oklch(0 0 0 / .55);
+}
+
+/* Section rhythm */
+body:has(#features) main > section:not(:first-child):not(:nth-child(2)) {
+  position: relative;
+}
+
+body:has(#features) main > section:nth-child(3)::before,
+body:has(#features) main > section:nth-child(5)::before,
+body:has(#features) main > section:nth-child(7)::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: min(80%, 72rem);
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, var(--landing-line), transparent);
+}
+
+/* Feature cards */
+body:has(#features) article {
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease, border-color .28s ease;
+}
+
+body:has(#features) article:hover {
+  border-color: color-mix(in oklch, var(--color-accent) 35%, var(--color-border));
+}
+
+body:has(#features) main > section:nth-child(3) article {
+  position: relative;
+  overflow: hidden;
+}
+
+body:has(#features) main > section:nth-child(3) article::after {
+  content: "";
+  position: absolute;
+  width: 9rem;
+  height: 9rem;
+  right: -5rem;
+  bottom: -5rem;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--color-accent) 12%, transparent);
+  transition: transform .35s ease;
+}
+
+body:has(#features) main > section:nth-child(3) article:hover::after {
+  transform: scale(1.35);
+}
+
+/* Capability grid feels like a modern product index. */
+body:has(#features) main > section:nth-child(4) {
+  background:
+    linear-gradient(180deg, oklch(0.985 0.008 88), oklch(0.965 0.015 88));
+}
+
+body:has(#features) main > section:nth-child(4) article {
+  min-height: 12rem;
+  background: color-mix(in oklch, var(--color-surface) 76%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+/* How-it-works becomes a timeline-like reading experience. */
+body:has(#features) #how-it-works article {
+  position: relative;
+}
+
+body:has(#features) #how-it-works article:hover {
+  transform: translateX(5px);
+}
+
+body:has(#features) #how-it-works article:first-child {
+  box-shadow: inset 3px 0 var(--color-accent), var(--shadow-lift);
+}
+
+/* FAQ */
+body:has(#features) #faq details {
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+body:has(#features) #faq details:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklch, var(--color-accent) 30%, var(--color-border));
+}
+
+body:has(#features) #faq summary span {
+  transition: transform .2s ease;
+}
+
+body:has(#features) #faq details[open] summary span {
+  transform: rotate(45deg);
+}
+
+/* CTA: more like a modern product launch panel. */
+body:has(#features) main > section:last-of-type > div {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 85% 10%, oklch(1 0 0 / .22), transparent 20rem),
+    radial-gradient(circle at 10% 100%, oklch(1 0 0 / .14), transparent 18rem),
+    var(--color-accent) !important;
+}
+
+body:has(#features) main > section:last-of-type > div::before {
+  content: "";
+  position: absolute;
+  width: 20rem;
+  height: 20rem;
+  right: -8rem;
+  top: -9rem;
+  border: 1px solid oklch(1 0 0 / .22);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3rem oklch(1 0 0 / .04), 0 0 0 6rem oklch(1 0 0 / .025);
+}
+
+/* Keep all motion comfortable. */
+@media (prefers-reduced-motion: reduce) {
+  body:has(#features) *,
+  body:has(#features) *::before,
+  body:has(#features) *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+@media (max-width: 767px) {
+  body:has(#features) header.sticky {
+    margin-top: .5rem;
+    width: calc(100% - 1rem);
+  }
+
+  body:has(#features) main > section:first-child {
+    min-height: auto;
+    padding-top: 5.5rem;
+    padding-bottom: 5.5rem;
+  }
+
+  body:has(#features) main > section:first-child h1 {
+    font-size: clamp(3rem, 15vw, 4.25rem) !important;
+  }
+
+  body:has(#features) main > section:first-child .relative.lg\:pl-5::before {
+    inset: 1.5rem -.4rem -.75rem .8rem;
+  }
+}
