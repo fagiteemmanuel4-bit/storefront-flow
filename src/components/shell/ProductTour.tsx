@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useStoreContext } from "@/components/shell/StoreProvider";
 
 export type TourStep = { title: string; body: string; target?: string };
 
@@ -17,7 +16,6 @@ const DEFAULT_STEPS: TourStep[] = [
 function keyFor(userId: string | null) { return `kudi.tour.seen.${userId ?? "device"}`; }
 
 export function ProductTour({ steps = DEFAULT_STEPS, force = false, onDone }: { steps?: TourStep[]; force?: boolean; onDone?: () => void }) {
-  const { store } = useStoreContext();
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
@@ -54,9 +52,8 @@ export function ProductTour({ steps = DEFAULT_STEPS, force = false, onDone }: { 
 
   if (!open || !step) return null;
   return <div className="fixed inset-0 z-[100] bg-black/25 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label="Kudi guided tour">
-    <div className="pointer-events-none absolute inset-0" />
     <div className="absolute bottom-5 left-1/2 w-[min(92vw,430px)] -translate-x-1/2 sm:bottom-8">
-      <div className="pointer-events-auto overflow-hidden rounded-3xl border border-border bg-surface shadow-2xl">
+      <div className="overflow-hidden rounded-3xl border border-border bg-surface shadow-2xl">
         <div className="h-1 bg-secondary"><div className="h-full bg-accent transition-all duration-500" style={{ width: progress }} /></div>
         <div className="p-6">
           <div className="flex items-start gap-3"><span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink"><Sparkles className="size-5" /></span><div className="min-w-0 flex-1"><p className="text-label-caps text-muted-foreground">Kudi tour · {index + 1} of {steps.length}</p><h2 className="mt-1 font-display text-xl font-bold">{step.title}</h2></div><button aria-label="Skip tour" onClick={finish} className="rounded-full p-2 text-muted-foreground hover:bg-secondary"><X className="size-4" /></button></div>
