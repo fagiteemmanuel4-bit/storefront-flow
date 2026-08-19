@@ -11,6 +11,7 @@ export type OnlineProductRow = { id: string; store_id: string; product_id: strin
 export type OnlineOrderRow = { id: string; store_id: string; online_store_id: string; order_number: string; customer_name: string; customer_email: string; customer_phone: string; shipping_address: string; customer_note: string; payment_method: string; status: string; subtotal: number; shipping_fee: number; total: number; created_at: string; updated_at: string };
 export type OnlineOrderItemRow = { id: string; order_id: string; store_id: string; product_id: string; product_name: string; unit_price: number; quantity: number; line_total: number };
 export type OnlineCatalogRow = { store_id: string; slug: string; display_name: string; logo_url: string; display_email: string; display_phone: string; store_description: string; currency: string; product_id: string; name: string; sku: string; category: string; price: number; image_url: string; image_urls: string[]; featured: boolean; description: string };
+export type PublicStoreCatalogRow = { product_id: string; name: string; category: string; price: number; image_url: string; image_urls: string[]; featured: boolean; description: string; stock_quantity: number };
 export type OnlineStoreHeroRow = { store_id: string; slug: string; id: string; image_url: string; title: string; subtitle: string; sort_order: number };
 
 export type OnlineDatabase = {
@@ -27,7 +28,10 @@ export type OnlineDatabase = {
       online_catalog: { Row: OnlineCatalogRow; Insert: never; Update: never; Relationships: [] };
       online_store_heroes: { Row: OnlineStoreHeroRow; Insert: never; Update: never; Relationships: [] };
     };
-    Functions: { create_online_order: { Args: { _slug: string; _customer_name: string; _customer_email: string; _customer_phone: string; _shipping_address: string; _customer_note: string; _payment_method: string; _items: Json }; Returns: string } };
+    Functions: {
+      create_online_order: { Args: { _slug: string; _customer_name: string; _customer_email: string; _customer_phone: string; _shipping_address: string; _customer_note: string; _payment_method: string; _items: Json }; Returns: string };
+      get_public_store_catalog: { Args: { _slug: string }; Returns: PublicStoreCatalogRow[] };
+    };
     Enums: Record<string, never>; CompositeTypes: Record<string, never>;
   };
 };
