@@ -74,7 +74,10 @@ function AuthPage() {
     if (mode === "otp") {
       setBusy(true); setNotice(null);
       try {
-        const { error } = await supabase.auth.signInWithOtp({ email: parsedEmail.data, options: { shouldCreateUser: false } });
+        const { error } = await supabase.auth.signInWithOtp({
+          email: parsedEmail.data,
+          options: { shouldCreateUser: false },
+        });
         if (error) throw new Error(error.message);
         setMode("otpcode");
         setNotice(`We sent a 6-digit code to ${parsedEmail.data}. Enter it below to finish signing in.`);
@@ -101,9 +104,15 @@ function AuthPage() {
     const parsedPassword = passwordSchema.safeParse(password);
     if (!parsedPassword.success) { toast.error(parsedPassword.error.issues[0]!.message); return; }
 
+    // Parse the name once and keep the validated value available to the actual
+    // sign-up request. Previously this was block-scoped and caused
+    // "parsedName is not defined" at runtime when creating an account.
+    const parsedName = mode === "signup" ? nameSchema.safeParse(fullName) : null;
     if (mode === "signup") {
-      const parsedName = nameSchema.safeParse(fullName);
-      if (!parsedName.success) { toast.error(parsedName.error.issues[0]!.message); return; }
+      if (!parsedName?.success) {
+        toast.error(parsedName?.error.issues[0]?.message ?? "Enter your full name");
+        return;
+      }
       if (!accepted) { toast.error("Please accept the Terms and Privacy Policy to continue."); return; }
     }
 
@@ -127,8 +136,11 @@ function AuthPage() {
           },
         });
         if (error) throw new Error(error.message);
+
+        // With email confirmation enabled Supabase returns no session until
+        // the user clicks the verification link. Never treat that as a failure.
         if (!data.session) {
-          setNotice("Your account was created. Check your email and confirm your address before signing in.");
+          setNotice("Your account was created successfully. We sent a verification link to your email. Confirm it before signing in.");
           return;
         }
         void navigate({ to: "/onboarding", replace: true });
