@@ -27,12 +27,11 @@ export const Route = createFileRoute("/auth")({
 
 const emailSchema = z.string().trim().email("Enter a valid email address").max(255);
 const passwordSchema = z.string().min(8, "Use at least 8 characters").max(72);
+const nameSchema = z.string().trim().min(2, "Enter your full name").max(120);
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recover" | "otp" | "otpcode">(
-    "signin",
-  );
+  const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recover" | "otp" | "otpcode">("signin");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,13 +40,10 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
-
   useEffect(() => {
     let cancelled = false;
-    // A password-recovery link lands here with a recovery hash — set a new password instead.
     const hash = window.location.hash;
-    const isRecovery = hash.includes("type=recovery");
-    if (isRecovery) {
+    if (hash.includes("type=recovery")) {
       setMode("recover");
       return () => {
         cancelled = true;
@@ -63,11 +59,13 @@ function AuthPage() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    const parsedEmail = emailSchema.safeParse(mode === "recover" ? "recover@kudi.app" : email);
+
+    const parsedEmail = emailSchema.safeParse(email);
     if (!parsedEmail.success) {
       toast.error(parsedEmail.error.issues[0]!.message);
       return;
     }
+
     if (mode === "reset") {
       setBusy(true);
       setNotice(null);
@@ -85,20 +83,21 @@ function AuthPage() {
       return;
     }
 
-    // Passwordless: email a 6-digit verification code, then exchange it for a session.
+    // Email-code sign-in is deliberately existing-users-only.
+    // shouldCreateUser=false prevents a typo/new email from silently creating an account.
     if (mode === "otp") {
       setBusy(true);
       setNotice(null);
       try {
         const { error } = await supabase.auth.signInWithOtp({
           email: parsedEmail.data,
-          options: { shouldCreateUser: true, data: { full_name: fullName.trim() } },
+          options: { shouldCreateUser: false },
         });
         if (error) throw new Error(error.message);
         setMode("otpcode");
-        setNotice(`We sent a 6-digit code to ${parsedEmail.data}. It expires in about an hour.`);
+        setNotice(`We sent a 6-digit code to ${parsedEmail.data}. Enter it below to finish signing in.`);
       } catch (error) {
-        toast.error(errorMessage(error, "We couldn't send that code."));
+        toast.error(errorMessage(error, "We couldn't send a code. Make sure you already have a Kudi account."));
       } finally {
         setBusy(false);
       }
@@ -119,8 +118,8 @@ function AuthPage() {
           type: "email",
         });
         if (error) throw new Error(error.message);
-        if (!data.session) throw new Error("That code didn't complete sign in. Try again.");
-        toast.success("Email verified");
+        if (!data.session || !data.user) throw new Error("That code didn't complete sign in. Try again.");
+        toast.success("Signed in successfully");
         void navigate({ to: "/pos", replace: true });
       } catch (error) {
         toast.error(errorMessage(error, "That code is wrong or expired."));
@@ -130,15 +129,22 @@ function AuthPage() {
       return;
     }
 
-
     const parsedPassword = passwordSchema.safeParse(password);
     if (!parsedPassword.success) {
       toast.error(parsedPassword.error.issues[0]!.message);
       return;
     }
-    if (mode === "signup" && !accepted) {
-      toast.error("Please accept the Terms and Privacy Policy to continue.");
-      return;
+
+    if (mode === "signup") {
+      const parsedName = nameSchema.safeParse(fullName);
+      if (!parsedName.success) {
+        toast.error(parsedName.error.issues[0]!.message);
+        return;
+      }
+      if (!accepted) {
+        toast.error("Please accept the Terms and Privacy Policy to continue.");
+        return;
+      }
     }
 
     setBusy(true);
@@ -151,6 +157,7 @@ function AuthPage() {
         void navigate({ to: "/pos", replace: true });
         return;
       }
+
       if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email: parsedEmail.data,
@@ -161,10 +168,9 @@ function AuthPage() {
           },
         });
         if (error) throw new Error(error.message);
+
         if (!data.session) {
-          setNotice(
-            "Check your email and click the confirmation link to activate your account, then sign in.",
-          );
+          setNotice("Your account was created. Check your email and confirm your address before signing in.");
           return;
         }
         void navigate({ to: "/onboarding", replace: true });
@@ -174,7 +180,7 @@ function AuthPage() {
           password: parsedPassword.data,
         });
         if (error) throw new Error(error.message);
-        if (!data.session) throw new Error("Sign in did not complete. Please try again.");
+        if (!data.session || !data.user) throw new Error("Sign in did not complete. Please try again.");
         void navigate({ to: "/pos", replace: true });
       }
     } catch (error) {
@@ -211,16 +217,15 @@ function AuthPage() {
           {mode === "signin"
             ? "Sign in to keep selling."
             : mode === "signup"
-              ? "Free to start. You'll name your shop on the next screen."
+              ? "Create your account with your name and a password."
               : mode === "reset"
                 ? "We'll email you a link to choose a new password."
                 : mode === "otp"
-                  ? "No password needed — we'll email you a 6-digit code."
+                  ? "Use this only if you already have a Kudi account."
                   : mode === "otpcode"
                     ? `Type the 6-digit code we sent to ${email}.`
                     : "Choose a new password for your account."}
         </p>
-
 
         <form onSubmit={handleSubmit} className="surface-card mt-6 space-y-4 p-5 sm:p-6">
           {mode === "signup" && (
@@ -233,24 +238,27 @@ function AuthPage() {
                 className="h-12"
                 autoComplete="name"
                 maxLength={120}
+                required
               />
             </div>
           )}
+
           {mode !== "recover" && (
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-12"
-              autoComplete="email"
-              disabled={mode === "otpcode"}
-              required
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-12"
+                autoComplete="email"
+                disabled={mode === "otpcode"}
+                required
+              />
+            </div>
           )}
+
           {mode === "otpcode" && (
             <div className="space-y-2">
               <Label htmlFor="code">6-digit code</Label>
@@ -259,7 +267,7 @@ function AuthPage() {
                 inputMode="numeric"
                 autoComplete="one-time-code"
                 value={otpToken}
-                onChange={(e) => setOtpToken(e.target.value)}
+                onChange={(e) => setOtpToken(e.target.value.replace(/\D/g, "").slice(0, 6))}
                 className="numeric h-14 text-center text-2xl tracking-[0.4em]"
                 maxLength={6}
                 placeholder="000000"
@@ -267,35 +275,35 @@ function AuthPage() {
               />
             </div>
           )}
-          {mode !== "reset" && mode !== "otp" && mode !== "otpcode" && (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">{mode === "recover" ? "New password" : "Password"}</Label>
-              {mode === "signin" && (
-                <button
-                  type="button"
-                  className="text-sm font-semibold text-accent-ink underline"
-                  onClick={() => {
-                    setMode("reset");
-                    setNotice(null);
-                  }}
-                >
-                  Forgot password?
-                </button>
-              )}
-            </div>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="h-12"
-              autoComplete={mode === "signin" ? "current-password" : "new-password"}
-              required
-            />
-          </div>
-          )}
 
+          {mode !== "reset" && mode !== "otp" && mode !== "otpcode" && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">{mode === "recover" ? "New password" : "Password"}</Label>
+                {mode === "signin" && (
+                  <button
+                    type="button"
+                    className="text-sm font-semibold text-accent-ink underline"
+                    onClick={() => {
+                      setMode("reset");
+                      setNotice(null);
+                    }}
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </div>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-12"
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                required
+              />
+            </div>
+          )}
 
           {mode === "signup" && (
             <label className="flex items-start gap-3 text-sm text-muted-foreground">
@@ -307,21 +315,14 @@ function AuthPage() {
               />
               <span>
                 I have read and accept the{" "}
-                <Link to="/terms" className="font-semibold text-accent-ink underline">
-                  Terms of Service
-                </Link>{" "}
+                <Link to="/terms" className="font-semibold text-accent-ink underline">Terms of Service</Link>{" "}
                 and{" "}
-                <Link to="/privacy" className="font-semibold text-accent-ink underline">
-                  Privacy Policy
-                </Link>
-                .
+                <Link to="/privacy" className="font-semibold text-accent-ink underline">Privacy Policy</Link>.
               </span>
             </label>
           )}
 
-          {notice && (
-            <p className="rounded-lg bg-accent-soft p-3 text-sm text-accent-ink">{notice}</p>
-          )}
+          {notice && <p className="rounded-lg bg-accent-soft p-3 text-sm text-accent-ink">{notice}</p>}
 
           <Button type="submit" className="h-12 w-full" disabled={busy}>
             {busy
@@ -393,7 +394,6 @@ function AuthPage() {
             </button>
           </p>
         )}
-
       </div>
     </div>
   );
