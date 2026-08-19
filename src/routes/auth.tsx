@@ -104,15 +104,11 @@ function AuthPage() {
     const parsedPassword = passwordSchema.safeParse(password);
     if (!parsedPassword.success) { toast.error(parsedPassword.error.issues[0]!.message); return; }
 
-    // Parse the name once and keep the validated value available to the actual
-    // sign-up request. Previously this was block-scoped and caused
-    // "parsedName is not defined" at runtime when creating an account.
-    const parsedName = mode === "signup" ? nameSchema.safeParse(fullName) : null;
+    let validatedName: string | undefined;
     if (mode === "signup") {
-      if (!parsedName?.success) {
-        toast.error(parsedName?.error.issues[0]?.message ?? "Enter your full name");
-        return;
-      }
+      const parsedName = nameSchema.safeParse(fullName);
+      if (!parsedName.success) { toast.error(parsedName.error.issues[0]!.message); return; }
+      validatedName = parsedName.data;
       if (!accepted) { toast.error("Please accept the Terms and Privacy Policy to continue."); return; }
     }
 
@@ -132,13 +128,14 @@ function AuthPage() {
           password: parsedPassword.data,
           options: {
             emailRedirectTo: `${window.location.origin}/email-confirmed`,
-            data: { full_name: parsedName.data },
+            data: { full_name: validatedName },
           },
         });
         if (error) throw new Error(error.message);
 
-        // With email confirmation enabled Supabase returns no session until
-        // the user clicks the verification link. Never treat that as a failure.
+        // Email confirmation is enabled in Supabase. A successful signup may
+        // therefore return without a session until the user confirms the link.
+        if (!data.user) throw new Error("Kudi couldn't create the account. Please try again.");
         if (!data.session) {
           setNotice("Your account was created successfully. We sent a verification link to your email. Confirm it before signing in.");
           return;
