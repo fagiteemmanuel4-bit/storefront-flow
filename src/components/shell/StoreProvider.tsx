@@ -22,15 +22,27 @@ type StoreContextValue = {
 
 const StoreContext = createContext<StoreContextValue | null>(null);
 
-async function fetchMemberships(): Promise<Membership[]> {
-  const { data, error } = await supabase
-    .from("store_members")
-    .select("role, stores!inner(*)")
-    .order("created_at", { ascending: true });
-  if (error) throw new Error(error.message);
-  return (data ?? [])
+async function fetchMemberships(userId: string): Promise<Membership[]> {
+  const [{ data: memberRows, error: memberError }, { data: ownedStores, error: ownerError }] = await Promise.all([
+    supabase.from("store_members").select("role, stores!inner(*)").order("created_at", { ascending: true }),
+    supabase.from("stores").select("*").eq("owner_id", userId).order("created_at", { ascending: true }),
+  ]);
+
+  if (memberError) throw new Error(memberError.message);
+  if (ownerError) throw new Error(ownerError.message);
+
+  const memberships = (memberRows ?? [])
     .filter((row): row is typeof row & { stores: StoreRow } => Boolean(row.stores))
-    .map((row) => ({ store: row.stores, role: row.role }));
+    .map((row) => ({ store: row.stores, role: row.role as StoreRole }));
+
+  // Recovery path for older stores where the owner row exists but a store_members
+  // row is missing. Owner access is granted by RLS and restored in memory here.
+  const known = new Set(memberships.map((membership) => membership.store.id));
+  for (const store of ownedStores ?? []) {
+    if (!known.has(store.id)) memberships.push({ store: store as StoreRow, role: "owner" });
+  }
+
+  return memberships.sort((a, b) => String(a.store.created_at).localeCompare(String(b.store.created_at)));
 }
 
 async function fetchBranches(storeId: string): Promise<BranchRow[]> {
@@ -51,14 +63,15 @@ export function StoreProvider({ userId, children }: { userId: string; children: 
 
   const membershipsQuery = useQuery({
     queryKey: ["memberships", userId],
-    queryFn: fetchMemberships,
+    queryFn: () => fetchMemberships(userId),
+    staleTime: 30_000,
+    retry: 2,
   });
 
   const memberships = useMemo(() => membershipsQuery.data ?? [], [membershipsQuery.data]);
 
-  // Reconcile the cached store id against what the user can actually access.
   useEffect(() => {
-    if (memberships.length === 0) return;
+    if (membershipsQuery.isLoading || membershipsQuery.isError || memberships.length === 0) return;
     const valid = storeId && memberships.some((m) => m.store.id === storeId);
     if (!valid) {
       const next = memberships[0]!.store.id;
@@ -67,25 +80,27 @@ export function StoreProvider({ userId, children }: { userId: string; children: 
       setBranchId(null);
       activeStoreCache.setBranchId(null);
     }
-  }, [memberships, storeId]);
+  }, [memberships, membershipsQuery.isError, membershipsQuery.isLoading, storeId]);
 
   const branchesQuery = useQuery({
     queryKey: ["branches", storeId],
     queryFn: () => fetchBranches(storeId as string),
     enabled: Boolean(storeId),
+    staleTime: 30_000,
+    retry: 2,
   });
 
   const branches = useMemo(() => branchesQuery.data ?? [], [branchesQuery.data]);
 
   useEffect(() => {
-    if (branches.length === 0) return;
+    if (branchesQuery.isLoading || branchesQuery.isError || branches.length === 0) return;
     const valid = branchId && branches.some((b) => b.id === branchId);
     if (!valid) {
       const next = branches[0]!.id;
       setBranchId(next);
       activeStoreCache.setBranchId(next);
     }
-  }, [branches, branchId]);
+  }, [branches, branchesQuery.isError, branchesQuery.isLoading, branchId]);
 
   const setActiveStore = useCallback((next: string) => {
     setStoreId(next);
@@ -100,8 +115,9 @@ export function StoreProvider({ userId, children }: { userId: string; children: 
   }, []);
 
   const refresh = useCallback(async () => {
-    await queryClient.invalidateQueries();
-  }, [queryClient]);
+    await queryClient.invalidateQueries({ queryKey: ["memberships", userId] });
+    await queryClient.invalidateQueries({ queryKey: ["branches", storeId] });
+  }, [queryClient, storeId, userId]);
 
   const membership = memberships.find((m) => m.store.id === storeId) ?? null;
 
