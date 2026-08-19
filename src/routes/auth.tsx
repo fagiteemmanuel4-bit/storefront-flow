@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -26,6 +27,10 @@ const emailSchema = z.string().trim().email("Enter a valid email address").max(2
 const passwordSchema = z.string().min(8, "Use at least 8 characters").max(72);
 const nameSchema = z.string().trim().min(2, "Enter your full name").max(120);
 
+function normalizeEmail(value: string) {
+  return value.trim().toLowerCase();
+}
+
 function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recover" | "otp" | "otpcode">("signin");
@@ -34,6 +39,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [otpToken, setOtpToken] = useState("");
   const [accepted, setAccepted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -52,20 +58,21 @@ function AuthPage() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    const parsedEmail = emailSchema.safeParse(email);
+    const parsedEmail = emailSchema.safeParse(normalizeEmail(email));
     if (!parsedEmail.success) {
       toast.error(parsedEmail.error.issues[0]!.message);
       return;
     }
+    const normalizedEmail = parsedEmail.data;
 
     if (mode === "reset") {
       setBusy(true); setNotice(null);
       try {
-        const { error } = await supabase.auth.resetPasswordForEmail(parsedEmail.data, {
+        const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
           redirectTo: `${window.location.origin}/auth`,
         });
         if (error) throw new Error(error.message);
-        setNotice("Check your email for a reset link. Open it on this device to set a new password.");
+        setNotice("If an account exists for this email, a password reset link has been sent.");
       } catch (error) { toast.error(errorMessage(error, "We couldn't send that reset link.")); }
       finally { setBusy(false); }
       return;
@@ -75,13 +82,14 @@ function AuthPage() {
       setBusy(true); setNotice(null);
       try {
         const { error } = await supabase.auth.signInWithOtp({
-          email: parsedEmail.data,
+          email: normalizedEmail,
           options: { shouldCreateUser: false },
         });
         if (error) throw new Error(error.message);
+        setEmail(normalizedEmail);
         setMode("otpcode");
-        setNotice(`We sent a 6-digit code to ${parsedEmail.data}. Enter it below to finish signing in.`);
-      } catch (error) { toast.error(errorMessage(error, "We couldn't send a code. Make sure you already have a Kudi account.")); }
+        setNotice(`We sent a 6-digit code to ${normalizedEmail}. Enter it below to finish signing in.`);
+      } catch (error) { toast.error(errorMessage(error, "We couldn't send a code. Make sure this email already has a Kudi account.")); }
       finally { setBusy(false); }
       return;
     }
@@ -91,9 +99,9 @@ function AuthPage() {
       if (code.length !== 6) { toast.error("Enter the 6-digit code from your email."); return; }
       setBusy(true);
       try {
-        const { data, error } = await supabase.auth.verifyOtp({ email: parsedEmail.data, token: code, type: "email" });
+        const { data, error } = await supabase.auth.verifyOtp({ email: normalizedEmail, token: code, type: "email" });
         if (error) throw new Error(error.message);
-        if (!data.session || !data.user) throw new Error("That code didn't complete sign in. Try again.");
+        if (!data.session || !data.user) throw new Error("That code didn't complete sign in. Try requesting a new code.");
         toast.success("Signed in successfully");
         void navigate({ to: "/pos", replace: true });
       } catch (error) { toast.error(errorMessage(error, "That code is wrong or expired.")); }
@@ -124,7 +132,7 @@ function AuthPage() {
 
       if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
-          email: parsedEmail.data,
+          email: normalizedEmail,
           password: parsedPassword.data,
           options: {
             emailRedirectTo: `${window.location.origin}/email-confirmed`,
@@ -132,9 +140,6 @@ function AuthPage() {
           },
         });
         if (error) throw new Error(error.message);
-
-        // Email confirmation is enabled in Supabase. A successful signup may
-        // therefore return without a session until the user confirms the link.
         if (!data.user) throw new Error("Kudi couldn't create the account. Please try again.");
         if (!data.session) {
           setNotice("Your account was created successfully. We sent a verification link to your email. Confirm it before signing in.");
@@ -142,21 +147,29 @@ function AuthPage() {
         }
         void navigate({ to: "/onboarding", replace: true });
       } else {
-        const { data, error } = await supabase.auth.signInWithPassword({ email: parsedEmail.data, password: parsedPassword.data });
-        if (error) throw new Error(error.message);
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password: parsedPassword.data,
+        });
+        if (error) {
+          if (error.message.toLowerCase().includes("email not confirmed")) {
+            setNotice("Your email has not been confirmed yet. Open the verification link we sent to you, then sign in again.");
+          }
+          throw new Error(error.message);
+        }
         if (!data.session || !data.user) throw new Error("Sign in did not complete. Please try again.");
         void navigate({ to: "/pos", replace: true });
       }
-    } catch (error) { toast.error(errorMessage(error, "That didn't work. Please try again.")); }
+    } catch (error) { toast.error(errorMessage(error, "That didn't work. Please check your email and password, then try again.")); }
     finally { setBusy(false); }
   }
+
+  const passwordFieldVisible = mode !== "reset" && mode !== "otp" && mode !== "otpcode";
 
   return (
     <div className="flex min-h-screen flex-col bg-background px-4 py-10 sm:px-6">
       <Link to="/" className="mx-auto flex items-center gap-2">
-        <span className="flex size-8 items-center justify-center rounded-full bg-accent">
-          <span className="size-3 rotate-45 rounded-[3px] bg-foreground" />
-        </span>
+        <span className="flex size-8 items-center justify-center rounded-full bg-accent"><span className="size-3 rotate-45 rounded-[3px] bg-foreground" /></span>
         <span className="font-display text-xl font-bold tracking-tight">KUDI.</span>
       </Link>
       <div className="mx-auto mt-10 w-full max-w-md">
@@ -166,7 +179,7 @@ function AuthPage() {
           {mode === "signup" && <div className="space-y-2"><Label htmlFor="name">Your name</Label><Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="h-12 rounded-xl" autoComplete="name" maxLength={120} required /></div>}
           {mode !== "recover" && <div className="space-y-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-12 rounded-xl" autoComplete="email" disabled={mode === "otpcode"} required /></div>}
           {mode === "otpcode" && <div className="space-y-2"><Label htmlFor="code">6-digit code</Label><Input id="code" inputMode="numeric" autoComplete="one-time-code" value={otpToken} onChange={(e) => setOtpToken(e.target.value.replace(/\D/g, "").slice(0, 6))} className="numeric h-14 rounded-xl text-center text-2xl tracking-[0.4em]" maxLength={6} placeholder="000000" required /></div>}
-          {mode !== "reset" && mode !== "otp" && mode !== "otpcode" && <div className="space-y-2"><div className="flex items-center justify-between"><Label htmlFor="password">{mode === "recover" ? "New password" : "Password"}</Label>{mode === "signin" && <button type="button" className="text-sm font-semibold text-accent-ink underline" onClick={() => { setMode("reset"); setNotice(null); }}>Forgot password?</button>}</div><Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-12 rounded-xl" autoComplete={mode === "signin" ? "current-password" : "new-password"} required /></div>}
+          {passwordFieldVisible && <div className="space-y-2"><div className="flex items-center justify-between"><Label htmlFor="password">{mode === "recover" ? "New password" : "Password"}</Label>{mode === "signin" && <button type="button" className="text-sm font-semibold text-accent-ink underline" onClick={() => { setMode("reset"); setNotice(null); }}>Forgot password?</button>}</div><div className="relative"><Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className="h-12 rounded-xl pr-11" autoComplete={mode === "signin" ? "current-password" : "new-password"} required /><button type="button" onClick={() => setShowPassword((value) => !value)} className="absolute right-2 top-1/2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground" aria-label={showPassword ? "Hide password" : "Show password"}>{showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}</button></div></div>}
           {mode === "signup" && <label className="flex items-start gap-3 text-sm text-muted-foreground"><Checkbox checked={accepted} onCheckedChange={(value) => setAccepted(value === true)} className="mt-0.5" aria-label="Accept terms and privacy policy" /><span>I have read and accept the <Link to="/terms" className="font-semibold text-accent-ink underline">Terms of Service</Link> and <Link to="/privacy" className="font-semibold text-accent-ink underline">Privacy Policy</Link>.</span></label>}
           {notice && <p className="rounded-xl bg-accent-soft p-3 text-sm text-accent-ink">{notice}</p>}
           <Button type="submit" className="h-12 w-full rounded-xl" disabled={busy}>{busy ? "Working…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : mode === "reset" ? "Send reset link" : mode === "otp" ? "Email me a code" : mode === "otpcode" ? "Verify code" : "Save new password"}</Button>
