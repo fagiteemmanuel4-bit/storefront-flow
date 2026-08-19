@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useLocation } from "@tanstack/react-router";
 import { Flag, MessageSquareWarning, Star, X } from "lucide-react";
 import { toast } from "sonner";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { Button } from "@/components/ui/button";
 
 export function StoreFeedbackFloating() {
-  const [slug, setSlug] = useState<string | null>(null);
+  const location = useLocation();
+  const match = location.pathname.match(/^\/store\/([^/]+)\/?$/);
+  const slug = match ? decodeURIComponent(match[1]) : null;
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"rating" | "report">("rating");
   const [rating, setRating] = useState(0);
@@ -14,16 +17,6 @@ export function StoreFeedbackFloating() {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    const read = () => {
-      const match = window.location.pathname.match(/^\/store\/([^/]+)\/?$/);
-      setSlug(match ? decodeURIComponent(match[1]) : null);
-    };
-    read();
-    window.addEventListener("popstate", read);
-    return () => window.removeEventListener("popstate", read);
-  }, []);
 
   if (!slug) return null;
 
