@@ -13,6 +13,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { NotFoundScreen } from "@/components/shell/NotFoundScreen";
+import { StoreFeedbackFloating } from "@/components/site/StoreFeedbackFloating";
 import { Button } from "@/components/ui/button";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
@@ -109,8 +110,8 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <StoreFeedbackFloating />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
