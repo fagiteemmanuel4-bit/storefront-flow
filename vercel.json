@@ -3,5 +3,11 @@
   "framework": null,
   "installCommand": "npm install",
   "buildCommand": "npm run build",
-  "regions": ["fra1"]
+  "regions": ["fra1"],
+  "env": {
+    "SUPABASE_URL": "https://lhizunrljottkhemdfei.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_9V2Ha45XQmdGogzJggcDtw_-XHuxwyn",
+    "VITE_SUPABASE_URL": "https://lhizunrljottkhemdfei.supabase.co",
+    "VITE_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_9V2Ha45XQmdGogzJggcDtw_-XHuxwyn"
+  }
 }
