@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { BottomSheet, BottomSheetContent, BottomSheetDescription, BottomSheetFooter, BottomSheetHeader, BottomSheetTitle } from "@/components/ui/bottom-sheet";
@@ -14,6 +14,7 @@ import type { StoreRow } from "@/lib/pos-types";
 type Mode = "profile" | "settings";
 
 export function StoreSettingsDialog({ store, mode, canEdit, open, onOpenChange }: { store: StoreRow | null; mode: Mode; canEdit: boolean; open: boolean; onOpenChange: (open: boolean) => void }) {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [currency, setCurrency] = useState("NGN");
@@ -39,7 +40,7 @@ export function StoreSettingsDialog({ store, mode, canEdit, open, onOpenChange }
   const isProfile = mode === "profile";
   return <BottomSheet open={open} onOpenChange={onOpenChange}><BottomSheetContent className="mx-auto w-full max-w-md"><BottomSheetHeader><BottomSheetTitle>{isProfile ? "Store profile" : "Settings"}</BottomSheetTitle><BottomSheetDescription>{isProfile ? "How your shop shows up on receipts and in the app." : "Selling rules that apply across the shop."}</BottomSheetDescription></BottomSheetHeader>
     <div className="space-y-4">
-      {isProfile ? <><div className="space-y-1.5"><Label htmlFor="store-name">Shop name</Label><Input id="store-name" value={name} disabled={!canEdit} onChange={(e) => setName(e.target.value)} /></div><div className="rounded-xl border border-border bg-secondary/50 p-3 text-sm text-muted-foreground">Created {store ? new Date(store.created_at).toLocaleDateString() : "—"}</div>{canEdit && <Link to="/online-store/customize" onClick={() => onOpenChange(false)} className="flex h-12 items-center justify-center rounded-xl border border-border bg-secondary/40 px-4 text-sm font-semibold transition hover:bg-secondary">Customize online storefront</Link>}</> : <><div className="space-y-1.5"><Label htmlFor="store-currency">Currency</Label><Select value={currency} onValueChange={setCurrency} disabled={!canEdit}><SelectTrigger id="store-currency"><SelectValue /></SelectTrigger><SelectContent>{SUPPORTED_CURRENCIES.map((c) => <SelectItem key={c.code} value={c.code}>{c.symbol} · {c.label}</SelectItem>)}</SelectContent></Select></div><div className="grid grid-cols-2 gap-3"><div className="space-y-1.5"><Label htmlFor="store-tax">Tax rate (%)</Label><Input id="store-tax" inputMode="decimal" value={taxRate} disabled={!canEdit} onChange={(e) => setTaxRate(e.target.value)} /></div><div className="space-y-1.5"><Label htmlFor="store-low">Low stock at</Label><Input id="store-low" inputMode="numeric" value={lowStock} disabled={!canEdit} onChange={(e) => setLowStock(e.target.value)} /></div></div></>}
+      {isProfile ? <><div className="space-y-1.5"><Label htmlFor="store-name">Shop name</Label><Input id="store-name" value={name} disabled={!canEdit} onChange={(e) => setName(e.target.value)} /></div><div className="rounded-xl border border-border bg-secondary/50 p-3 text-sm text-muted-foreground">Created {store ? new Date(store.created_at).toLocaleDateString() : "—"}</div>{canEdit && <button type="button" onClick={() => { onOpenChange(false); void navigate({ to: "/online-store/customize" as never }); }} className="flex h-12 w-full items-center justify-center rounded-xl border border-border bg-secondary/40 px-4 text-sm font-semibold transition hover:bg-secondary">Customize online storefront</button>}</> : <><div className="space-y-1.5"><Label htmlFor="store-currency">Currency</Label><Select value={currency} onValueChange={setCurrency} disabled={!canEdit}><SelectTrigger id="store-currency"><SelectValue /></SelectTrigger><SelectContent>{SUPPORTED_CURRENCIES.map((c) => <SelectItem key={c.code} value={c.code}>{c.symbol} · {c.label}</SelectItem>)}</SelectContent></Select></div><div className="grid grid-cols-2 gap-3"><div className="space-y-1.5"><Label htmlFor="store-tax">Tax rate (%)</Label><Input id="store-tax" inputMode="decimal" value={taxRate} disabled={!canEdit} onChange={(e) => setTaxRate(e.target.value)} /></div><div className="space-y-1.5"><Label htmlFor="store-low">Low stock at</Label><Input id="store-low" inputMode="numeric" value={lowStock} disabled={!canEdit} onChange={(e) => setLowStock(e.target.value)} /></div></div></>}
     </div>
     <BottomSheetFooter><Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button>{canEdit && <Button onClick={() => save.mutate()} disabled={save.isPending}>{save.isPending ? "Saving…" : "Save changes"}</Button>}</BottomSheetFooter>
   </BottomSheetContent></BottomSheet>;
