@@ -34,11 +34,22 @@
 @utility numeric { font-family: var(--font-display); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 @utility touch-target { min-height: 44px; min-width: 44px; }
 @utility surface-card { background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-2xl); }
-@utility field { width: 100%; min-height: 48px; border: 1px solid var(--color-border); background-color: var(--color-surface); padding: 0.75rem 0.875rem; color: var(--color-foreground); outline: none; transition: box-shadow 150ms ease, border-color 150ms ease; } 
+@utility field { width: 100%; min-height: 48px; border: 1px solid var(--color-border); border-radius: var(--radius-xl); background-color: var(--color-surface); padding: 0.75rem 0.875rem; color: var(--color-foreground); outline: none; transition: box-shadow 150ms ease, border-color 150ms ease, transform 150ms ease; }
 .field:focus { border-color: var(--color-ring); box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-ring) 18%, transparent); }
 .field::placeholder { color: var(--color-muted-foreground); }
 @keyframes kudi-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes kudi-slide-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes verified-pop { from { opacity: 0; transform: scale(.65) rotate(-12deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
 @utility animate-rise { animation: kudi-rise 0.6s cubic-bezier(0.19,1,0.22,1) both; }
 @utility animate-line-in { animation: kudi-slide-in 0.28s cubic-bezier(0.19,1,0.22,1) both; }
+
+/* Public storefront polish */
+.storefront-shell { background: radial-gradient(circle at 50% 0%, color-mix(in oklch, var(--color-accent) 10%, transparent), transparent 32rem); }
+.storefront-card { border: 1px solid var(--color-border); border-radius: 1.5rem; background: var(--color-surface); box-shadow: var(--shadow-lift); overflow: hidden; }
+
+/* Keep the mobile menu behavior intact; on desktop the sheet becomes a centered settings-style panel. */
+@media (min-width: 768px) {
+  [data-slot="sheet-content"].kudi-desktop-menu { left: 50% !important; right: auto !important; top: 50% !important; bottom: auto !important; width: min(760px, calc(100vw - 3rem)) !important; height: min(760px, calc(100vh - 3rem)) !important; max-width: none !important; max-height: calc(100vh - 3rem) !important; transform: translate(-50%, -50%) !important; border-radius: 1.75rem !important; border: 1px solid var(--color-border) !important; box-shadow: var(--shadow-float) !important; }
+}
+
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
