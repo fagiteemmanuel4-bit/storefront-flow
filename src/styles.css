@@ -47,9 +47,27 @@
 .storefront-shell { background: radial-gradient(circle at 50% 0%, color-mix(in oklch, var(--color-accent) 10%, transparent), transparent 32rem); }
 .storefront-card { border: 1px solid var(--color-border); border-radius: 1.5rem; background: var(--color-surface); box-shadow: var(--shadow-lift); overflow: hidden; }
 
-/* Keep the mobile menu behavior intact; on desktop the sheet becomes a centered settings-style panel. */
+/* Desktop settings-style menu */
 @media (min-width: 768px) {
   [data-slot="sheet-content"].kudi-desktop-menu { left: 50% !important; right: auto !important; top: 50% !important; bottom: auto !important; width: min(760px, calc(100vw - 3rem)) !important; height: min(760px, calc(100vh - 3rem)) !important; max-width: none !important; max-height: calc(100vh - 3rem) !important; transform: translate(-50%, -50%) !important; border-radius: 1.75rem !important; border: 1px solid var(--color-border) !important; box-shadow: var(--shadow-float) !important; }
+}
+
+/* POS current-sale panel: give the cart a stable desktop geometry instead of allowing long names/buttons to squash each other. */
+@media (min-width: 1024px) {
+  [class*="lg:grid-cols-[1.7fr_1fr]"] { grid-template-columns: minmax(0, 1.45fr) minmax(410px, 0.9fr) !important; align-items: start; }
+  aside.surface-card.sticky.top-24 { min-width: 0; max-height: calc(100dvh - 7rem); overflow: hidden; display: flex; flex-direction: column; }
+  aside.surface-card.sticky.top-24 > .flex.h-full.flex-col { min-height: 0; overflow: hidden; }
+  aside.surface-card.sticky.top-24 .flex.h-full.flex-col > .flex-1 { min-height: 0; overflow-y: auto; overflow-x: hidden; padding-right: 2px; scrollbar-gutter: stable; }
+  aside.surface-card.sticky.top-24 .flex.h-full.flex-col > .flex-1 > div > div { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; }
+  aside.surface-card.sticky.top-24 .flex.h-full.flex-col > .flex-1 > div > div > .min-w-0 { min-width: 0; }
+  aside.surface-card.sticky.top-24 .flex.h-full.flex-col > .flex-1 > div > div > .min-w-0 p:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  aside.surface-card.sticky.top-24 .flex.h-full.flex-col > .flex-1 > div > div > .w-20 { width: 6.5rem; white-space: nowrap; }
+  aside.surface-card.sticky.top-24 .flex.h-full.flex-col > .mt-4 { flex: 0 0 auto; background: var(--color-surface); padding-top: 1rem; }
+}
+
+@media (max-width: 1100px) and (min-width: 1024px) {
+  [class*="lg:grid-cols-[1.7fr_1fr]"] { grid-template-columns: minmax(0, 1fr) minmax(360px, 0.85fr) !important; }
+  aside.surface-card.sticky.top-24 { padding: 1rem !important; }
 }
 
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
