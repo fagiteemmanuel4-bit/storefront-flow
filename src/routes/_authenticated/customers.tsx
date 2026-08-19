@@ -1,0 +1,47 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { BadgeCheck, Mail, Phone, Plus, Search, Trash2, UserRound } from "lucide-react";
+import { toast } from "sonner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { AppShell } from "@/components/shell/AppShell";
+import { useStoreContext } from "@/components/shell/StoreProvider";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+export const Route = createFileRoute("/_authenticated/customers")({ ssr: false, component: CustomersPage });
+
+type Customer = { id: string; name: string; phone: string; email: string; notes: string; total_spent: number; visit_count: number; last_visit_at: string | null };
+
+function CustomersPage() {
+  const { store, role } = useStoreContext();
+  const queryClient = useQueryClient();
+  const [search, setSearch] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [saving, setSaving] = useState(false);
+  const canDelete = role === "owner" || role === "manager";
+  const query = useQuery({ queryKey: ["customers", store?.id], enabled: Boolean(store?.id), queryFn: async () => { const { data, error } = await supabase.from("customers").select("id,name,phone,email,notes,total_spent,visit_count,last_visit_at").eq("store_id", store!.id).order("last_visit_at", { ascending: false, nullsFirst: false }).order("name"); if (error) throw new Error(error.message); return (data ?? []) as Customer[]; } });
+  const customers = useMemo(() => { const term = search.trim().toLowerCase(); return (query.data ?? []).filter((c) => !term || [c.name, c.phone, c.email].some((v) => v.toLowerCase().includes(term))); }, [query.data, search]);
+
+  async function addCustomer() {
+    if (!store?.id || !name.trim()) return toast.error("Enter a customer name.");
+    setSaving(true);
+    try { const { error } = await supabase.from("customers").insert({ store_id: store.id, name: name.trim(), phone: phone.trim(), email: email.trim() }); if (error) throw new Error(error.message); setName(""); setPhone(""); setEmail(""); await queryClient.invalidateQueries({ queryKey: ["customers", store.id] }); toast.success("Customer added"); } catch (e) { toast.error(e instanceof Error ? e.message : "Could not add customer"); } finally { setSaving(false); }
+  }
+
+  async function removeCustomer(id: string) {
+    if (!canDelete || !window.confirm("Remove this customer? Existing sales will stay in your records.")) return;
+    const { error } = await supabase.from("customers").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    await queryClient.invalidateQueries({ queryKey: ["customers", store?.id] });
+    toast.success("Customer removed");
+  }
+
+  return <AppShell title="Customers"><div data-tour="customers" className="space-y-5"><div className="grid gap-4 lg:grid-cols-[1fr_auto]"><div className="surface-card p-5"><div className="flex items-center gap-2"><BadgeCheck className="size-5 text-accent-ink" /><div><h2 className="font-display text-lg font-bold">Know your regulars</h2><p className="text-sm text-muted-foreground">Save customers and build a simple visit and spend history.</p></div></div><div className="mt-4 grid gap-2 sm:grid-cols-[1fr_1fr_1fr_auto]"><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Customer name" /><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" /><Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email (optional)" type="email" /><Button onClick={() => void addCustomer()} disabled={saving}><Plus className="mr-2 size-4" />Add</Button></div></div><div className="surface-card p-5"><p className="text-label-caps text-muted-foreground">Your customer base</p><p className="mt-2 font-display text-3xl font-bold">{query.data?.length ?? 0}</p><p className="mt-1 text-xs text-muted-foreground">saved customers</p></div></div>
+    <div className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name, phone or email" className="h-12 pl-9" /></div>
+    {query.isLoading ? <div className="surface-card p-8 text-center text-sm text-muted-foreground">Loading customers…</div> : customers.length === 0 ? <div className="surface-card p-10 text-center"><UserRound className="mx-auto size-8 text-muted-foreground" /><p className="mt-3 font-semibold">No customers yet</p><p className="mt-1 text-sm text-muted-foreground">Add your regulars here, then attach them to sales at checkout.</p></div> : <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{customers.map((customer) => <article key={customer.id} className="surface-card p-5"><div className="flex items-start gap-3"><span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-ink font-bold">{customer.name.trim().slice(0,1).toUpperCase()}</span><div className="min-w-0 flex-1"><h3 className="truncate font-display font-bold">{customer.name}</h3><div className="mt-1 space-y-1 text-xs text-muted-foreground">{customer.phone && <p className="flex items-center gap-1.5"><Phone className="size-3" />{customer.phone}</p>}{customer.email && <p className="flex items-center gap-1.5 truncate"><Mail className="size-3" />{customer.email}</p>}</div></div>{canDelete && <Button variant="ghost" size="icon" className="text-destructive" onClick={() => void removeCustomer(customer.id)}><Trash2 className="size-4" /></Button>}</div><div className="mt-5 grid grid-cols-2 gap-2"><div className="rounded-xl bg-secondary p-3"><p className="text-[10px] uppercase tracking-wider text-muted-foreground">Visits</p><p className="mt-1 font-bold">{customer.visit_count}</p></div><div className="rounded-xl bg-secondary p-3"><p className="text-[10px] uppercase tracking-wider text-muted-foreground">Spent</p><p className="mt-1 font-bold">{new Intl.NumberFormat(undefined, { style: "currency", currency: store?.currency ?? "NGN" }).format(Number(customer.total_spent))}</p></div></div>{customer.last_visit_at && <p className={cn("mt-3 text-xs text-muted-foreground")}>Last visit {new Date(customer.last_visit_at).toLocaleDateString()}</p>}</article>)}</div>}
+  </div></AppShell>;
+}
