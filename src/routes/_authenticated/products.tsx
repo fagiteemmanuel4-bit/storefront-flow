@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Pencil, Plus, ScanLine, Search, Trash2 } from "lucide-react";
+import { Archive, ArrowDownUp, CheckSquare, Download, Minus, Pencil, Plus, ScanLine, Search, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/shell/AppShell";
@@ -12,48 +12,21 @@ import { formatMoney } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
 import { canManageCatalog, type ProductWithStock } from "@/lib/pos-types";
 import { fetchShelves } from "@/lib/shelves";
+import { startKeyboardScanner } from "@/lib/hardware";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  BottomSheet,
-  BottomSheetContent,
-  BottomSheetDescription,
-  BottomSheetFooter,
-  BottomSheetHeader,
-  BottomSheetTitle,
-} from "@/components/ui/bottom-sheet";
 
-export const Route = createFileRoute("/_authenticated/products")({
-  head: () => ({
-    meta: [
-      { title: "Stock & products — Kudi" },
-      {
-        name: "description",
-        content: "Add products, scan barcodes and keep per-location stock counts accurate.",
-      },
-      { property: "og:title", content: "Stock & products — Kudi" },
-      { property: "og:description", content: "Products, barcodes and per-location stock." },
-    ],
-  }),
-  component: ProductsPage,
-});
+export const Route = createFileRoute("/_authenticated/products")({ component: ProductsPage });
+type StatusFilter = "all" | "low" | "out";
+type SortMode = "name" | "stock" | "value";
 
-export async function fetchProductsWithStock(
-  storeId: string,
-  branchId: string,
-): Promise<ProductWithStock[]> {
-  const [{ data: products, error: productError }, { data: stock, error: stockError }] =
-    await Promise.all([
-      supabase
-        .from("products")
-        .select("*")
-        .eq("store_id", storeId)
-        .eq("is_active", true)
-        .order("name"),
-      supabase.from("branch_stock").select("product_id, quantity").eq("branch_id", branchId),
-    ]);
+export async function fetchProductsWithStock(storeId: string, branchId: string): Promise<ProductWithStock[]> {
+  const [{ data: products, error: productError }, { data: stock, error: stockError }] = await Promise.all([
+    supabase.from("products").select("*").eq("store_id", storeId).eq("is_active", true).order("name"),
+    supabase.from("branch_stock").select("product_id, quantity").eq("branch_id", branchId),
+  ]);
   if (productError) throw new Error(productError.message);
   if (stockError) throw new Error(stockError.message);
   const byProduct = new Map((stock ?? []).map((s) => [s.product_id, s.quantity]));
@@ -61,261 +34,33 @@ export async function fetchProductsWithStock(
 }
 
 function ProductsPage() {
-  const { store, branch, role } = useStoreContext();
-  const queryClient = useQueryClient();
-  const [search, setSearch] = useState("");
-  const [scanning, setScanning] = useState(false);
-  const [editing, setEditing] = useState<ProductWithStock | null>(null);
-  const [formOpen, setFormOpen] = useState(false);
-  const [pendingDelete, setPendingDelete] = useState<ProductWithStock | null>(null);
-  const [deleting, setDeleting] = useState(false);
-  const [shelfFilter, setShelfFilter] = useState<string>("all");
-
-  const storeId = store?.id ?? null;
-  const branchId = branch?.id ?? null;
-  const currency = store?.currency ?? "NGN";
-  const mayManage = canManageCatalog(role);
-
-  const productsQuery = useQuery({
-    queryKey: ["products", storeId, branchId],
-    enabled: Boolean(storeId && branchId),
-    queryFn: () => fetchProductsWithStock(storeId as string, branchId as string),
-  });
-
-  const shelvesQuery = useQuery({
-    queryKey: ["shelves", storeId],
-    enabled: Boolean(storeId),
-    queryFn: () => fetchShelves(storeId as string),
-  });
+  const { store, branch, role } = useStoreContext(); const queryClient = useQueryClient();
+  const [search, setSearch] = useState(""); const [scanning, setScanning] = useState(false); const [editing, setEditing] = useState<ProductWithStock | null>(null); const [formOpen, setFormOpen] = useState(false); const [pendingDelete, setPendingDelete] = useState<ProductWithStock | null>(null); const [deleting, setDeleting] = useState(false);
+  const [shelfFilter, setShelfFilter] = useState("all"); const [categoryFilter, setCategoryFilter] = useState("all"); const [status, setStatus] = useState<StatusFilter>("all"); const [sort, setSort] = useState<SortMode>("name"); const [selected, setSelected] = useState<Set<string>>(new Set()); const [adjusting, setAdjusting] = useState(false);
+  const storeId = store?.id ?? null, branchId = branch?.id ?? null, currency = store?.currency ?? "NGN", mayManage = canManageCatalog(role);
+  const productsQuery = useQuery({ queryKey: ["products", storeId, branchId], enabled: Boolean(storeId && branchId), queryFn: () => fetchProductsWithStock(storeId as string, branchId as string) });
+  const shelvesQuery = useQuery({ queryKey: ["shelves", storeId], enabled: Boolean(storeId), queryFn: () => fetchShelves(storeId as string) });
   const shelves = shelvesQuery.data ?? [];
-  const shelfName = useMemo(
-    () => new Map(shelves.map((s) => [s.id, s.name])),
-    [shelves],
-  );
-
-  const products = useMemo(() => {
-    let list = productsQuery.data ?? [];
-    if (shelfFilter !== "all") {
-      list = list.filter((p) =>
-        shelfFilter === "none" ? !p.shelf_id : p.shelf_id === shelfFilter,
-      );
-    }
-    const term = search.trim().toLowerCase();
-    if (!term) return list;
-    return list.filter((p) =>
-      [p.name, p.sku, p.barcode, p.category].some((field) => field.toLowerCase().includes(term)),
-    );
-  }, [productsQuery.data, search, shelfFilter]);
-
-  async function refresh() {
-    await queryClient.invalidateQueries({ queryKey: ["products"] });
-    await queryClient.invalidateQueries({ queryKey: ["low-stock"] });
-  }
-
-  async function handleDelete() {
-    if (!pendingDelete) return;
-    setDeleting(true);
-    try {
-      const { error } = await supabase.from("products").delete().eq("id", pendingDelete.id);
-      if (error) throw new Error(error.message);
-      await refresh();
-      toast.success(`${pendingDelete.name} removed`);
-      setPendingDelete(null);
-    } catch (error) {
-      toast.error(errorMessage(error, "We couldn't remove this product."));
-    } finally {
-      setDeleting(false);
-    }
-  }
-
-  return (
-    <AppShell title="Stock & products">
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative min-w-0 flex-1">
-          <Search
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden
-          />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, SKU or barcode"
-            className="h-12 pl-9"
-            aria-label="Search products"
-          />
-        </div>
-        <Button
-          variant="outline"
-          className="h-12 touch-target"
-          onClick={() => setScanning(true)}
-          aria-label="Search by scanning a barcode"
-        >
-          <ScanLine className="size-4" aria-hidden />
-          <span className="hidden sm:inline">Scan</span>
-        </Button>
-        {mayManage && (
-          <Button
-            className="h-12 touch-target"
-            onClick={() => {
-              setEditing(null);
-              setFormOpen(true);
-            }}
-          >
-            <Plus className="size-4" aria-hidden /> Add product
-          </Button>
-        )}
-      </div>
-
-      {shelves.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {[{ id: "all", name: "All shelves" }, ...shelves, { id: "none", name: "Unshelved" }].map(
-            (shelf) => (
-              <button
-                key={shelf.id}
-                type="button"
-                onClick={() => setShelfFilter(shelf.id)}
-                className={cn(
-                  "rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors",
-                  shelfFilter === shelf.id
-                    ? "border-transparent bg-accent text-foreground"
-                    : "border-border bg-surface text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {shelf.name}
-              </button>
-            ),
-          )}
-        </div>
-      )}
-
-      <div className="surface-card mt-5 overflow-hidden">
-        {productsQuery.isLoading ? (
-          <div className="space-y-3 p-5">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        ) : productsQuery.error ? (
-          <p className="p-5 text-sm text-destructive">
-            {errorMessage(productsQuery.error, "Products could not be loaded.")}
-          </p>
-        ) : products.length === 0 ? (
-          <div className="p-8 text-center">
-            <p className="font-display text-lg font-semibold">
-              {search ? "Nothing matched that search" : "No products yet"}
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {search
-                ? "Try a different name or barcode."
-                : "Add your first product to start selling."}
-            </p>
-          </div>
-        ) : (
-          <ul className="divide-y divide-border">
-            {products.map((product) => {
-              const low = product.quantity <= product.low_stock_threshold;
-              return (
-                <li
-                  key={product.id}
-                  className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3.5 sm:px-5"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{product.name}</p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {[
-                        product.shelf_id ? shelfName.get(product.shelf_id) : null,
-                        product.category,
-                        product.barcode && `#${product.barcode}`,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ") || "No barcode"}
-                    </p>
-                  </div>
-                  <span
-                    className={`numeric rounded-md px-2.5 py-1 text-xs font-bold ${
-                      low ? "bg-warning-soft text-accent-ink" : "bg-secondary text-muted-foreground"
-                    }`}
-                  >
-                    {product.quantity} in stock
-                  </span>
-                  <span className="numeric w-24 text-right text-sm font-bold">
-                    {formatMoney(Number(product.price), currency)}
-                  </span>
-                  {mayManage && (
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="touch-target"
-                        aria-label={`Edit ${product.name}`}
-                        onClick={() => {
-                          setEditing(product);
-                          setFormOpen(true);
-                        }}
-                      >
-                        <Pencil className="size-4" aria-hidden />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="touch-target text-destructive"
-                        aria-label={`Delete ${product.name}`}
-                        onClick={() => setPendingDelete(product)}
-                      >
-                        <Trash2 className="size-4" aria-hidden />
-                      </Button>
-                    </div>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
-
-      {storeId && branchId && (
-        <ProductFormDialog
-          open={formOpen}
-          onOpenChange={setFormOpen}
-          storeId={storeId}
-          branchId={branchId}
-          product={editing}
-          onSaved={refresh}
-        />
-      )}
-
-      <BarcodeScannerDialog
-        open={scanning}
-        onOpenChange={setScanning}
-        onDetected={(value) => setSearch(value)}
-      />
-
-      <BottomSheet
-        open={Boolean(pendingDelete)}
-        onOpenChange={(open) => !open && setPendingDelete(null)}
-      >
-        <BottomSheetContent className="mx-auto w-full max-w-md">
-          <BottomSheetHeader>
-            <BottomSheetTitle>Remove {pendingDelete?.name}?</BottomSheetTitle>
-            <BottomSheetDescription>
-              The product and its stock counts are deleted. Past sales keep their record of what was
-              sold.
-            </BottomSheetDescription>
-          </BottomSheetHeader>
-          <BottomSheetFooter>
-            <Button variant="outline" disabled={deleting} onClick={() => setPendingDelete(null)}>
-              Keep it
-            </Button>
-            <Button
-              variant="destructive"
-              disabled={deleting}
-              onClick={() => void handleDelete()}
-            >
-              {deleting ? "Removing…" : "Remove product"}
-            </Button>
-          </BottomSheetFooter>
-        </BottomSheetContent>
-      </BottomSheet>
-    </AppShell>
-  );
+  const categories = useMemo(() => Array.from(new Set((productsQuery.data ?? []).map((p) => p.category).filter(Boolean))).sort(), [productsQuery.data]);
+  useEffect(() => startKeyboardScanner(({ value }) => { const match = (productsQuery.data ?? []).find((p) => p.barcode === value); if (match) { setSearch(value); toast.success(`${match.name} scanned`); } }), [productsQuery.data]);
+  const products = useMemo(() => { let list = productsQuery.data ?? []; if (shelfFilter !== "all") list = list.filter((p) => shelfFilter === "none" ? !p.shelf_id : p.shelf_id === shelfFilter); if (categoryFilter !== "all") list = list.filter((p) => p.category === categoryFilter); if (status === "low") list = list.filter((p) => p.quantity > 0 && p.quantity <= p.low_stock_threshold); if (status === "out") list = list.filter((p) => p.quantity < 1); const term = search.trim().toLowerCase(); if (term) list = list.filter((p) => [p.name, p.sku, p.barcode, p.category].some((f) => f.toLowerCase().includes(term))); return [...list].sort((a,b) => sort === "name" ? a.name.localeCompare(b.name) : sort === "stock" ? a.quantity - b.quantity : Number(b.price) * b.quantity - Number(a.price) * a.quantity); }, [productsQuery.data, shelfFilter, categoryFilter, status, search, sort]);
+  const selectedVisible = products.filter((p) => selected.has(p.id)); const allSelected = products.length > 0 && selectedVisible.length === products.length;
+  const stockValue = products.reduce((sum, p) => sum + Number(p.price) * p.quantity, 0);
+  function toggle(id: string) { setSelected((prev) => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; }); }
+  function selectVisible() { setSelected((prev) => { const n = new Set(prev); if (allSelected) products.forEach((p) => n.delete(p.id)); else products.forEach((p) => n.add(p.id)); return n; }); }
+  async function refresh() { await queryClient.invalidateQueries({ queryKey: ["products"] }); await queryClient.invalidateQueries({ queryKey: ["low-stock"] }); setSelected(new Set()); }
+  async function adjustSelected(delta: number) { if (!mayManage || !branchId || selectedVisible.length === 0) return; setAdjusting(true); try { for (const product of selectedVisible) { const next = Math.max(0, product.quantity + delta); const { error } = await supabase.from("branch_stock").update({ quantity: next }).eq("branch_id", branchId).eq("product_id", product.id); if (error) throw new Error(error.message); } await refresh(); toast.success(`${selectedVisible.length} stock level${selectedVisible.length === 1 ? "" : "s"} updated`); } catch (e) { toast.error(errorMessage(e, "Stock could not be updated.")); } finally { setAdjusting(false); } }
+  async function archiveSelected() { if (!mayManage || selectedVisible.length === 0) return; setAdjusting(true); try { const ids = selectedVisible.map((p) => p.id); const { error } = await supabase.from("products").update({ is_active: false }).in("id", ids); if (error) throw new Error(error.message); await refresh(); toast.success(`${ids.length} product${ids.length === 1 ? "" : "s"} archived`); } catch (e) { toast.error(errorMessage(e, "Products could not be archived.")); } finally { setAdjusting(false); } }
+  function exportCsv() { const header = ["Name","SKU","Barcode","Category","Stock","Low stock threshold","Price","Stock value"]; const lines = products.map((p) => [p.name,p.sku,p.barcode,p.category,p.quantity,p.low_stock_threshold,p.price,Number(p.price)*p.quantity].map((v) => `"${String(v ?? "").replaceAll('"','""')}"`).join(",")); const blob = new Blob([[header.join(","), ...lines].join("\n")], { type: "text/csv;charset=utf-8" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `kudi-stock-${new Date().toISOString().slice(0,10)}.csv`; a.click(); URL.revokeObjectURL(url); toast.success("Stock CSV exported"); }
+  async function handleDelete() { if (!pendingDelete) return; setDeleting(true); try { const { error } = await supabase.from("products").delete().eq("id", pendingDelete.id); if (error) throw new Error(error.message); await refresh(); toast.success(`${pendingDelete.name} removed`); setPendingDelete(null); } catch (e) { toast.error(errorMessage(e, "We couldn't remove this product.")); } finally { setDeleting(false); } }
+  return <AppShell title="Stock & products">
+    <div className="flex flex-wrap items-center gap-2"><div className="relative min-w-0 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name, SKU or barcode" className="h-12 pl-9" /></div><Button variant="outline" className="h-12 touch-target" onClick={() => setScanning(true)}><ScanLine className="size-4" /><span className="hidden sm:inline">Camera scan</span></Button><Button variant="outline" className="h-12 touch-target" onClick={exportCsv}><Download className="size-4" /><span className="hidden sm:inline">Export</span></Button>{mayManage && <Button className="h-12 touch-target" onClick={() => { setEditing(null); setFormOpen(true); }}><Plus className="size-4" /> Add product</Button>}</div>
+    <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4"><div className="surface-card p-4"><p className="text-label-caps text-muted-foreground">Visible items</p><p className="mt-1 text-2xl font-bold">{products.length}</p></div><div className="surface-card p-4"><p className="text-label-caps text-muted-foreground">Stock value</p><p className="mt-1 text-2xl font-bold">{formatMoney(stockValue, currency)}</p></div><div className="surface-card p-4"><p className="text-label-caps text-muted-foreground">Low stock</p><p className="mt-1 text-2xl font-bold">{(productsQuery.data ?? []).filter((p) => p.quantity > 0 && p.quantity <= p.low_stock_threshold).length}</p></div><div className="surface-card p-4"><p className="text-label-caps text-muted-foreground">Out of stock</p><p className="mt-1 text-2xl font-bold">{(productsQuery.data ?? []).filter((p) => p.quantity < 1).length}</p></div></div>
+    <div className="mt-4 flex flex-wrap gap-2"><select className="field h-10 w-auto" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}><option value="all">All categories</option>{categories.map((c) => <option key={c} value={c}>{c}</option>)}</select><select className="field h-10 w-auto" value={status} onChange={(e) => setStatus(e.target.value as StatusFilter)}><option value="all">All stock</option><option value="low">Low stock</option><option value="out">Out of stock</option></select><select className="field h-10 w-auto" value={sort} onChange={(e) => setSort(e.target.value as SortMode)}><option value="name">Sort by name</option><option value="stock">Sort by stock</option><option value="value">Sort by stock value</option></select>{shelves.length > 0 && <select className="field h-10 w-auto" value={shelfFilter} onChange={(e) => setShelfFilter(e.target.value)}><option value="all">All shelves</option>{shelves.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}<option value="none">Unshelved</option></select>}</div>
+    {selected.size > 0 && <div className="sticky top-2 z-30 mt-3 flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-surface/95 p-3 shadow-lg backdrop-blur"><span className="font-semibold">{selected.size} selected</span><Button size="sm" variant="outline" disabled={!mayManage || adjusting} onClick={() => void adjustSelected(1)}><Plus className="mr-1 size-4" />Stock +1</Button><Button size="sm" variant="outline" disabled={!mayManage || adjusting} onClick={() => void adjustSelected(-1)}><Minus className="mr-1 size-4" />Stock -1</Button><Button size="sm" variant="outline" disabled={!mayManage || adjusting} onClick={() => void archiveSelected()}><Archive className="mr-1 size-4" />Archive</Button><button className="ml-auto rounded-lg p-2 hover:bg-secondary" onClick={() => setSelected(new Set())}><X className="size-4" /></button></div>}
+    <div className="surface-card mt-4 overflow-hidden"><div className="flex items-center gap-3 border-b border-border px-4 py-3"><button type="button" onClick={selectVisible} disabled={!mayManage || products.length === 0} className="flex items-center gap-2 text-sm font-semibold"><CheckSquare className="size-4" />{allSelected ? "Clear visible" : "Select visible"}</button><span className="text-xs text-muted-foreground">{selectedVisible.length} visible selected</span><span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground"><ArrowDownUp className="size-3.5" />{sort}</span></div>{productsQuery.isLoading ? <div className="space-y-3 p-5"><Skeleton className="h-14 w-full" /><Skeleton className="h-14 w-full" /></div> : productsQuery.error ? <p className="p-5 text-sm text-destructive">{errorMessage(productsQuery.error, "Products could not be loaded.")}</p> : products.length === 0 ? <div className="p-10 text-center"><p className="font-display text-lg font-semibold">No matching products</p><p className="mt-1 text-sm text-muted-foreground">Adjust your filters or add a product.</p></div> : <ul className="divide-y divide-border">{products.map((product) => { const low = product.quantity <= product.low_stock_threshold; const checked = selected.has(product.id); return <li key={product.id} className={cn("flex flex-wrap items-center gap-3 px-4 py-3.5 sm:px-5", checked && "bg-accent-soft/50")}><button type="button" disabled={!mayManage} onClick={() => toggle(product.id)} className={cn("flex size-5 shrink-0 items-center justify-center rounded border", checked ? "border-foreground bg-foreground text-background" : "border-border")}>{checked && <CheckSquare className="size-3.5" />}</button><div className="min-w-0 flex-1"><p className="truncate font-medium">{product.name}</p><p className="truncate text-xs text-muted-foreground">{[product.category, product.sku && `SKU ${product.sku}`, product.barcode && `#${product.barcode}`].filter(Boolean).join(" · ") || "No SKU/barcode"}</p></div><span className={cn("numeric rounded-md px-2.5 py-1 text-xs font-bold", low ? "bg-warning-soft text-accent-ink" : "bg-secondary text-muted-foreground")}>{product.quantity} in stock</span><span className="numeric hidden w-28 text-right text-sm font-bold sm:inline">{formatMoney(Number(product.price) * product.quantity, currency)}</span><span className="numeric w-24 text-right text-sm font-bold">{formatMoney(Number(product.price), currency)}</span>{mayManage && <div className="flex gap-1"><Button variant="ghost" size="icon" className="touch-target" onClick={() => { setEditing(product); setFormOpen(true); }}><Pencil className="size-4" /></Button><Button variant="ghost" size="icon" className="touch-target text-destructive" onClick={() => setPendingDelete(product)}><Trash2 className="size-4" /></Button></div>}</li>; })}</ul>}</div>
+    {storeId && branchId && <ProductFormDialog open={formOpen} onOpenChange={setFormOpen} storeId={storeId} branchId={branchId} product={editing} onSaved={refresh} />}
+    <BarcodeScannerDialog open={scanning} onOpenChange={setScanning} onDetected={(value) => setSearch(value)} />
+    {pendingDelete && <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/60 p-4 sm:items-center"><div className="w-full max-w-md rounded-3xl border border-border bg-surface p-6 shadow-2xl"><h2 className="font-display text-lg font-bold">Remove {pendingDelete.name}?</h2><p className="mt-2 text-sm text-muted-foreground">This removes the product. Past sales remain in your records.</p><div className="mt-6 flex gap-2"><Button variant="outline" className="flex-1" disabled={deleting} onClick={() => setPendingDelete(null)}>Keep it</Button><Button variant="destructive" className="flex-1" disabled={deleting} onClick={() => void handleDelete()}>{deleting ? "Removing…" : "Remove"}</Button></div></div></div>}
+  </AppShell>;
 }
