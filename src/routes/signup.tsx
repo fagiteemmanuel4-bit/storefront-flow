@@ -29,28 +29,23 @@ function SignupPage() {
 
     setLoading(true);
     try {
-      // Email confirmation is intentionally disabled in Supabase.
-      // Signup creates the account; verification is completed through the 6-digit OTP flow.
       const { data, error: signupError } = await supabase.auth.signUp({
         email: normalizedEmail,
         password,
-        options: {
-          data: { full_name: parsedName },
-        },
+        options: { data: { full_name: parsedName } },
       });
 
       if (signupError) throw signupError;
       if (!data.user) throw new Error("Unable to create your account. Please try again.");
 
-      // Do not leave the new account authenticated after signup. OTP verification
-      // is the only route from signup into the application.
+      // Supabase email confirmation is disabled. Signup itself does not send a link.
+      // We explicitly send an OTP and require the user to verify it before entering Kudi.
       await supabase.auth.signOut();
 
       const { error: otpError } = await supabase.auth.signInWithOtp({
         email: normalizedEmail,
         options: { shouldCreateUser: false },
       });
-
       if (otpError) throw otpError;
 
       sessionStorage.setItem("kudi_otp_email", normalizedEmail);
@@ -70,31 +65,18 @@ function SignupPage() {
           <h1 className="text-2xl font-semibold">Create your Kudi account</h1>
           <p className="text-sm text-muted-foreground mt-1">Set up your account, then verify your email with a code.</p>
         </div>
-
         {error && <div className="rounded-2xl border p-3 text-sm text-destructive">{error}</div>}
-
         <input className="w-full rounded-2xl border px-4 py-3" value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" autoComplete="name" />
         <input className="w-full rounded-2xl border px-4 py-3" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" type="email" autoComplete="email" />
-
         <div className="relative">
           <input className="w-full rounded-2xl border px-4 py-3 pr-12" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type={showPassword ? "text" : "password"} autoComplete="new-password" />
           <button type="button" onClick={() => setShowPassword((value) => !value)} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-xl p-2" aria-label={showPassword ? "Hide password" : "Show password"}>
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         </div>
-
-        <label className="flex items-start gap-3 text-sm">
-          <input type="checkbox" checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)} className="mt-1" />
-          <span>I agree to the Terms and Privacy Policy.</span>
-        </label>
-
-        <button disabled={loading} className="w-full rounded-2xl border px-4 py-3 font-medium disabled:opacity-50">
-          {loading ? "Creating account…" : "Create account"}
-        </button>
-
-        <p className="text-center text-sm text-muted-foreground">
-          Already have an account? <Link to="/login" className="underline">Sign in</Link>
-        </p>
+        <label className="flex items-start gap-3 text-sm"><input type="checkbox" checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)} className="mt-1" /><span>I agree to the Terms and Privacy Policy.</span></label>
+        <button disabled={loading} className="w-full rounded-2xl border px-4 py-3 font-medium disabled:opacity-50">{loading ? "Creating account…" : "Create account"}</button>
+        <p className="text-center text-sm text-muted-foreground">Already have an account? <Link to="/login" className="underline">Sign in</Link></p>
       </form>
     </main>
   );
