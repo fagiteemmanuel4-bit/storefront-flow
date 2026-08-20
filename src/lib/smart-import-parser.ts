@@ -9,7 +9,7 @@ export type SmartImportRow = {
   lowStockThreshold: number;
 };
 
-function clean(value: unknown) { return String(value ?? "").trim(); }
+function clean(value: unknown) { return String(value ?? "").replace(/\s+/g, " ").trim(); }
 
 function money(value: unknown) {
   const raw = clean(value).replace(/[₦$€£,\s]/g, "").toLowerCase();
@@ -27,57 +27,93 @@ function categoryFor(text: string) {
   return "";
 }
 
+const headingPattern = /^(price|basic details|special features|free software installation|condition|useful for|brand|model|type|storage|ram|supported os|battery|battery health|battery backup|bluetooth|hdmi|webcam|usb|chrome|microsoft office|vlc|with|features|details|specifications?)\b/i;
+const detailPattern = /^(brand|model|type|storage|ram|supported os|battery|battery health|battery backup|bluetooth|hdmi|webcam|usb|chrome|microsoft office|vlc)\s*[:=-]/i;
+
+function stripBullet(value: string) {
+  return clean(value).replace(/^[•●▪🔸🔹➤→*\-]+\s*/, "").trim();
+}
+
 function productCandidate(line: string) {
-  const value = clean(line).replace(/^[•●▪🔸🔹➤→-]+\s*/, "");
-  if (!value || value.length < 3 || value.length > 140) return false;
-  if (/^(price|basic details|special features|free software installation|condition|useful for|brand|model|type|storage|ram|supported os|battery|bluetooth|hdmi|webcam|usb|chrome|microsoft office|vlc|with)$/i.test(value)) return false;
-  if (/^[A-Z][A-Z\s\d&-]{3,}$/.test(value) && !/[a-z]/.test(value)) return false;
-  if ((value.match(/:/g) || []).length >= 2) return false;
+  const value = stripBullet(line);
+  if (!value || value.length < 3 || value.length > 180) return false;
+  if (headingPattern.test(value) || detailPattern.test(value)) return false;
   if (/^(yes|no|excellent|good|available|windows|chrome|vlc|microsoft office)$/i.test(value)) return false;
+  if ((value.match(/:/g) || []).length >= 2) return false;
+  if (/^\d+(?:\.\d+)?\s*(?:gb|tb|mb|inch|inches|hours?|pcs?|pieces?|ports?)\b/i.test(value)) return false;
   return /[a-zA-Z]/.test(value);
 }
 
 function extractPrice(line: string) {
-  const currency = line.match(/(?:price\s*[:=-]?\s*)?(?:₦|NGN|N)\s*([0-9][0-9,]*(?:\.\d{1,2})?\s*[kKmM]?)/i);
-  if (currency) return { price: money(currency[1]), index: currency.index ?? 0, end: (currency.index ?? 0) + currency[0].length };
-  const labelled = line.match(/price\s*[:=-]\s*([0-9][0-9,]*(?:\.\d{1,2})?\s*[kKmM]?)/i);
-  if (labelled) return { price: money(labelled[1]), index: labelled.index ?? 0, end: (labelled.index ?? 0) + labelled[0].length };
-  const direct = line.match(/(?:^|\s)([0-9]{1,3}(?:,[0-9]{3})+(?:\.\d{1,2})?|[0-9]{4,}(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?\s*[kKmM])(?:\s*$|\s)/);
-  if (direct) return { price: money(direct[1]), index: direct.index ?? 0, end: (direct.index ?? 0) + direct[0].length };
+  const value = clean(line);
+  const currency = value.match(/(?:price|selling\s+price|sale\s+price)\s*[:=-]?\s*(?:₦|NGN|N)?\s*([0-9][0-9,]*(?:\.\d{1,2})?\s*[kKmM]?)/i)
+    || value.match(/(?:₦|NGN)\s*([0-9][0-9,]*(?:\.\d{1,2})?\s*[kKmM]?)/i);
+  if (currency) return { price: money(currency[1]), index: currency.index ?? 0, end: (currency.index ?? 0) + currency[0].length, labelled: true };
+
+  // Only accept an unlabelled number when it is clearly a price at the end of a product-like line.
+  // This prevents RAM, storage, screen size, battery hours and USB counts from becoming prices.
+  const direct = value.match(/(?:^|\s)(?:₦|NGN)?\s*([0-9]{1,3}(?:,[0-9]{3})+(?:\.\d{1,2})?|[0-9]{4,}(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?\s*[kKmM])\s*$/i);
+  if (direct) return { price: money(direct[1]), index: direct.index ?? 0, end: (direct.index ?? 0) + direct[0].length, labelled: false };
   return null;
 }
 
+function findProductTitle(lines: string[], priceIndex: number, priceLine: string, priceStart: number) {
+  // First preference: a product title written before an explicit price on the same line.
+  if (priceStart > 0) {
+    const before = stripBullet(priceLine.slice(0, priceStart).replace(/[|–—:-]+\s*$/, ""));
+    if (productCandidate(before)) return before;
+  }
+
+  // Otherwise, look backwards for the nearest plausible title. Skip specification rows,
+  // headings and short metadata lines. A title containing a known retail/product noun wins.
+  const candidates: Array<{ name: string; score: number; index: number }> = [];
+  for (let distance = 1; distance <= 8; distance += 1) {
+    const index = priceIndex - distance;
+    if (index < 0) break;
+    const candidate = stripBullet(lines[index]);
+    if (!productCandidate(candidate)) continue;
+    let score = 0;
+    if (/[a-z]/i.test(candidate)) score += 1;
+    if (/\b(model|laptop|phone|tablet|watch|shoe|shirt|dress|bag|milk|milo|rice|earbuds|headset|charger|glasses|computer|printer|tv|television)\b/i.test(candidate)) score += 4;
+    if (/\b(dell|hp|lenovo|apple|iphone|samsung|tecno|infinix|nike|adidas|coke|coca|peak|milo)\b/i.test(candidate)) score += 3;
+    if (candidate.length >= 12) score += 1;
+    if (detailPattern.test(candidate) || headingPattern.test(candidate)) score -= 10;
+    candidates.push({ name: candidate, score, index });
+  }
+  candidates.sort((a, b) => b.score - a.score || b.index - a.index);
+  return candidates[0]?.name || "";
+}
+
 export function parseSmartText(text: string): SmartImportRow[] {
-  const lines = text.split(/\r?\n/).map((line) => line.replace(/\s+/g, " ").trim()).filter(Boolean);
+  const lines = text.split(/\r?\n/).map(clean).filter(Boolean);
   const rows: SmartImportRow[] = [];
-  const used = new Set<number>();
+  const usedTitles = new Set<number>();
 
   for (let i = 0; i < lines.length; i += 1) {
     const line = lines[i];
     const extracted = extractPrice(line);
     if (!extracted || extracted.price <= 0) continue;
 
-    let name = line.slice(0, extracted.index).replace(/(?:price\s*[:=-]?|[–—:-])\s*$/i, "").trim();
-    if (!productCandidate(name)) {
-      for (let distance = 1; distance <= 4; distance += 1) {
-        const candidateIndex = i - distance;
-        if (candidateIndex < 0 || used.has(candidateIndex)) continue;
-        const candidate = lines[candidateIndex];
-        if (!productCandidate(candidate)) continue;
-        name = candidate;
-        used.add(candidateIndex);
+    const title = findProductTitle(lines, i, line, extracted.index);
+    if (!productCandidate(title)) continue;
+
+    let titleIndex = -1;
+    for (let distance = 1; distance <= 8; distance += 1) {
+      const candidateIndex = i - distance;
+      if (candidateIndex >= 0 && stripBullet(lines[candidateIndex]) === title) {
+        titleIndex = candidateIndex;
         break;
       }
     }
-    if (!productCandidate(name)) continue;
+    if (titleIndex >= 0) usedTitles.add(titleIndex);
 
-    const context = lines.slice(Math.max(0, i - 4), Math.min(lines.length, i + 3)).join(" ");
-    const packMatch = context.match(/(\d+)\s*(?:pcs?|pieces?)\s*(?:per|\/)\s*pack/i) || context.match(/(\d+)\s*pcs?\s*\/\s*pack/i);
+    const context = lines.slice(Math.max(0, i - 8), Math.min(lines.length, i + 4)).join(" ");
+    const packMatch = context.match(/(\d+)\s*(?:pcs?|pieces?)\s*(?:per|\/)\s*pack/i);
     const quantityMatch = context.match(/(\d+)\s*(?:packs?|pk)\b/i);
     const quantity = quantityMatch ? Math.max(0, Number(quantityMatch[1]) * (packMatch ? Number(packMatch[1]) : 1)) : 0;
 
     rows.push({
-      name: name.replace(/[–—:-]+\s*$/, "").trim(),
+      name: title,
       sku: "",
       barcode: "",
       category: categoryFor(context),
