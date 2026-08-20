@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BarChart3, BookOpen, Boxes, CircleHelp, CreditCard, Globe2, Mail, Printer, Receipt, ScanLine, Settings2, ShieldCheck, ShoppingCart, Smartphone, Store, Users, Zap } from "lucide-react";
+import { ArrowRight, BarChart3, BookOpen, Boxes, CircleHelp, CreditCard, Globe2, Mail, Menu, Printer, Receipt, ScanLine, Settings2, ShieldCheck, ShoppingCart, Smartphone, Store, Users, X, Zap } from "lucide-react";
 
 const COLUMNS = [
   { title: "Product", links: [["Features", "#features"], ["How it works", "#how-it-works"], ["Why Kudi", "#about"], ["Inventory", "#inventory"], ["Insights", "#insights"], ["Team access", "#teams"]] },
@@ -9,26 +10,47 @@ const COLUMNS = [
 
 const RESOURCES = [["Help Centre", "/support", CircleHelp], ["Guides & documentation", "/support", BookOpen], ["Getting started", "/support", Zap], ["Hardware Center", "/hardware", ScanLine], ["Receipt printing help", "/support", Printer], ["Contact support", "/support", Mail]] as const;
 
+const NAV_ITEMS = [["Features", "#features"], ["How it works", "#how-it-works"], ["Online store", "#online-store"], ["Insights", "#insights"]] as const;
+
 export function SiteHeader() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const closeMenu = () => setMobileOpen(false);
+
   return <>
     <style>{`
       @keyframes kudi-header-in { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: translateY(0); } }
       @keyframes kudi-brand-pop { 0% { opacity: 0; transform: scale(.72) rotate(-18deg); } 70% { transform: scale(1.06) rotate(3deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
       @keyframes kudi-orb-in { from { opacity: 0; transform: scale(.55); } to { opacity: .9; transform: scale(1); } }
+      @keyframes kudi-mobile-in { from { opacity: 0; transform: translateY(-8px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
       @media (prefers-reduced-motion: reduce) { .kudi-motion, .kudi-motion * { animation: none !important; transition: none !important; } }
     `}</style>
     <header className="kudi-motion sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur-xl" style={{ animation: "kudi-header-in .7s cubic-bezier(.22,1,.36,1) both" }}>
       <div className="pointer-events-none absolute left-[16%] top-[-70px] h-32 w-32 rounded-full bg-accent/15 blur-3xl" style={{ animation: "kudi-orb-in 1.2s .15s ease-out both" }} />
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-        <Link to="/" className="group flex shrink-0 items-center gap-2">
+        <Link to="/" className="group flex shrink-0 items-center gap-2" onClick={closeMenu}>
           <span className="flex size-8 items-center justify-center rounded-full bg-accent shadow-sm transition-transform duration-300 group-hover:scale-110" style={{ animation: "kudi-brand-pop .75s .1s cubic-bezier(.22,1,.36,1) both" }}><span className="size-3 rotate-45 rounded-[3px] bg-foreground" /></span>
           <span className="font-display text-xl font-bold tracking-tight transition-transform duration-300 group-hover:translate-x-0.5">KUDI.</span>
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-          <a href="#features" className="hover:text-accent-ink">Features</a><a href="#how-it-works" className="hover:text-accent-ink">How it works</a><a href="#online-store" className="hover:text-accent-ink">Online store</a><a href="#insights" className="hover:text-accent-ink">Insights</a><Link to="/support" className="hover:text-accent-ink">Help</Link>
+          {NAV_ITEMS.map(([label, href]) => <a key={label} href={href} className="relative py-2 transition-colors hover:text-accent-ink after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-accent after:transition-all hover:after:w-full">{label}</a>)}
+          <Link to="/support" className="transition-colors hover:text-accent-ink">Help</Link>
         </nav>
-        <div className="flex items-center gap-2"><Link to="/support" className="hidden rounded-full px-4 py-2.5 text-sm font-semibold hover:bg-secondary sm:inline-flex">Help</Link><Link to="/auth" className="inline-flex items-center rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent hover:text-accent-foreground">Open register</Link></div>
+        <div className="flex items-center gap-2">
+          <Link to="/support" className="hidden rounded-full px-4 py-2.5 text-sm font-semibold hover:bg-secondary sm:inline-flex">Help</Link>
+          <Link to="/auth" className="hidden items-center rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent hover:text-accent-foreground sm:inline-flex">Open register</Link>
+          <button type="button" aria-label={mobileOpen ? "Close navigation" : "Open navigation"} aria-expanded={mobileOpen} onClick={() => setMobileOpen((open) => !open)} className="inline-flex size-10 items-center justify-center rounded-full border border-border bg-background transition-colors hover:bg-secondary sm:hidden">
+            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
+      {mobileOpen && <div className="kudi-motion border-t border-border bg-surface/98 px-4 pb-5 pt-3 shadow-lift sm:hidden" style={{ animation: "kudi-mobile-in .22s ease-out both" }}>
+        <nav className="grid gap-1">
+          {NAV_ITEMS.map(([label, href]) => <a key={label} href={href} onClick={closeMenu} className="rounded-xl px-4 py-3.5 text-sm font-semibold transition-colors hover:bg-secondary">{label}</a>)}
+          <Link to="/support" onClick={closeMenu} className="rounded-xl px-4 py-3.5 text-sm font-semibold transition-colors hover:bg-secondary">Help Centre</Link>
+          <Link to="/auth" onClick={closeMenu} className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-foreground px-4 py-3.5 text-sm font-semibold text-background transition-all hover:bg-accent hover:text-accent-foreground">Open register <ArrowRight className="size-4" /></Link>
+        </nav>
+      </div>}
     </header>
   </>;
 }
