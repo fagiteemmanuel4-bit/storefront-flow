@@ -3,10 +3,12 @@ import { ArrowRight, BarChart3, Check, ChevronRight, Globe2, PackageCheck, Recei
 import { LandingMedia } from "@/components/site/LandingMedia";
 import { LandingDetails } from "@/components/site/LandingDetails";
 import { LandingUpgrades } from "@/components/site/LandingUpgrades";
-import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
+import { LandingHeader } from "@/components/site/LandingHeader";
+import { SiteFooter } from "@/components/site/SiteChrome";
+import "@/landing-hero.css";
 
 const SITE_URL = "https://storefront-flow.vercel.app";
-const HERO_VIDEO = "https://pixabay.com/videos/download/x-23258_medium.mp4";
+const HERO_VIDEO = "https://cdn.pixabay.com/video/2019/02/01/21117-315137086_tiny.mp4";
 
 const ILLUSTRATIONS = {
   retail: "https://unpkg.com/undraw-svg@1.0.0/svgs/shopping-bags.svg",
@@ -47,28 +49,27 @@ function Illustration({ src, alt, className = "" }: { src: string; alt: string; 
 function Landing() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-surface text-foreground">
-      <SiteHeader />
+      <LandingHeader />
       <main>
-        <section className="relative isolate min-h-[760px] overflow-hidden bg-foreground text-background sm:min-h-[820px]">
-          <video className="absolute inset-0 h-full w-full object-cover opacity-55" src={HERO_VIDEO} autoPlay muted loop playsInline preload="auto" aria-hidden="true" />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,10,10,.94)_0%,rgba(10,10,10,.78)_42%,rgba(10,10,10,.25)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,179,0,.24),transparent_30%)]" />
-          <div className="relative mx-auto flex min-h-[760px] max-w-7xl items-end px-4 pb-20 pt-28 sm:min-h-[820px] sm:px-6 sm:pb-28 lg:items-center">
+        <section className="kudi-hero relative isolate flex min-h-[100svh] overflow-hidden bg-foreground text-background">
+          <video className="absolute inset-0 h-full w-full object-cover" src={HERO_VIDEO} autoPlay muted loop playsInline preload="auto" aria-hidden="true" />
+          <div className="kudi-hero-video-fade absolute inset-0" aria-hidden="true" />
+          <div className="kudi-hero-vignette absolute inset-0" aria-hidden="true" />
+          <div className="relative mx-auto flex min-h-[100svh] w-full max-w-7xl items-end px-4 pb-16 pt-24 sm:px-6 sm:pb-20 lg:items-center lg:pb-0">
             <div className="max-w-3xl animate-[fade-in-up_.75s_ease-out_both]">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/30 px-3 py-1.5 text-xs font-semibold backdrop-blur-md"><span className="flex size-5 items-center justify-center rounded-full bg-accent text-accent-foreground"><Sparkles className="size-3" /></span>Built for busy retail</div>
-              <h1 className="mt-6 font-display text-5xl font-bold tracking-[-.05em] sm:text-[5.4rem] sm:leading-[.9]">Your shop moves fast. <span className="text-accent">Kudi keeps up.</span></h1>
-              <p className="mt-7 max-w-2xl text-lg leading-8 text-white/75 sm:text-xl">Sales, stock, expenses, payments, reports and your online store — brought into one clear workspace built around how real shops operate.</p>
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/35 px-3 py-1.5 text-xs font-semibold backdrop-blur-md"><span className="flex size-5 items-center justify-center rounded-full bg-accent text-accent-foreground"><Sparkles className="size-3" /></span>Built for busy retail</div>
+              <h1 className="mt-6 max-w-4xl font-display text-5xl font-bold tracking-[-.05em] sm:text-[5.4rem] sm:leading-[.9]">Your shop moves fast. <span className="text-accent">Kudi keeps up.</span></h1>
+              <p className="mt-7 max-w-2xl text-lg leading-8 text-white/78 sm:text-xl">Sales, stock, expenses, payments, reports and your online store — brought into one clear workspace built around how real shops operate.</p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row"><Link to="/auth" className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-7 py-3.5 font-semibold text-accent-foreground shadow-float transition hover:-translate-y-0.5">Start selling free<ArrowRight className="size-4" /></Link><a href="#features" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-7 py-3.5 font-semibold backdrop-blur-md transition hover:bg-white/15">Explore Kudi<ChevronRight className="size-4" /></a></div>
-              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs text-white/65">{["Quick setup", "Built for everyday retail", "Your data, your shop"].map((item) => <span key={item} className="inline-flex items-center gap-2"><Check className="size-4 text-accent" />{item}</span>)}</div>
+              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs text-white/68">{["Quick setup", "Built for everyday retail", "Your data, your shop"].map((item) => <span key={item} className="inline-flex items-center gap-2"><Check className="size-4 text-accent" />{item}</span>)}</div>
             </div>
           </div>
-          <div className="absolute bottom-6 right-6 hidden max-w-xs rounded-2xl border border-white/15 bg-black/45 p-4 text-sm text-white/80 shadow-float backdrop-blur-md lg:block"><p className="text-xs font-bold uppercase tracking-[.16em] text-accent">Kudi live</p><p className="mt-1 font-semibold text-white">One operation. Every important detail connected.</p></div>
+          <div className="absolute bottom-7 right-6 hidden max-w-xs rounded-2xl border border-white/15 bg-black/40 p-4 text-sm text-white/80 shadow-float backdrop-blur-md lg:block"><p className="text-xs font-bold uppercase tracking-[.16em] text-accent">Kudi live</p><p className="mt-1 font-semibold text-white">One operation. Every important detail connected.</p></div>
         </section>
 
         <section className="border-b border-border px-4 py-10 sm:px-6 sm:py-14"><div className="mx-auto grid max-w-7xl items-center gap-10 md:grid-cols-[1fr_auto]"><div><p className="text-label-caps text-accent-ink">The Kudi idea</p><h2 className="text-display-sm mt-3">Run the shop. Don't run after the paperwork.</h2></div><Illustration src={ILLUSTRATIONS.retail} alt="Illustration of retail shopping bags and commerce" className="max-w-[18rem] justify-self-center md:max-w-[22rem]" /></div></section>
 
         <LandingMedia />
-
         <section id="features" className="overflow-hidden px-4 py-20 sm:px-6 sm:py-28"><div className="mx-auto max-w-7xl"><div className="grid items-end gap-10 lg:grid-cols-[1fr_.65fr]"><div><p className="text-label-caps text-accent-ink">One system. Less guesswork.</p><h2 className="text-display-md mt-4">Everything you need to keep the counter moving.</h2></div><p className="leading-7 text-muted-foreground">Kudi turns the everyday jobs of a shop into connected workflows, so you spend less time copying information between tools.</p></div><div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-4">{FEATURES.map(([Icon, title, body], index) => <article key={title} className="group border-b border-border pb-7 transition hover:-translate-y-1"><div className="flex items-center justify-between"><span className="flex size-12 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink"><Icon className="size-5" /></span><span className="font-display text-5xl font-bold text-border transition group-hover:text-accent/30">0{index + 1}</span></div><h3 className="mt-6 font-display text-xl font-bold">{title}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{body}</p></article>)}</div></div></section>
 
         <section className="overflow-hidden border-y border-border bg-background px-4 py-20 sm:px-6 sm:py-28"><div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1fr_.9fr]"><div><p className="text-label-caps text-accent-ink">Mobile + desktop</p><h2 className="text-display-md mt-4">Your business doesn't stay in one place. Kudi doesn't either.</h2><p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">Move between the counter, stockroom and phone without losing the context of what happened.</p><div className="mt-9 grid gap-4 sm:grid-cols-3"><div><p className="font-display text-xl font-bold">Counter</p><p className="mt-1 text-sm text-muted-foreground">Fast checkout and scanning.</p></div><div><p className="font-display text-xl font-bold">Stockroom</p><p className="mt-1 text-sm text-muted-foreground">Accurate inventory and alerts.</p></div><div><p className="font-display text-xl font-bold">Online</p><p className="mt-1 text-sm text-muted-foreground">Catalogue and customer orders.</p></div></div></div><Illustration src={ILLUSTRATIONS.mobile} alt="Illustration of a mobile retail website experience" className="mx-auto max-w-[34rem]" /></div></section>
@@ -81,7 +82,6 @@ function Landing() {
 
         <LandingUpgrades />
         <LandingDetails />
-
         <section id="security" className="px-4 py-20 sm:px-6 sm:py-28"><div className="mx-auto max-w-5xl text-center"><div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink"><ShieldCheck className="size-7" /></div><h2 className="text-display-sm mt-6">Your business deserves a system you can trust.</h2><p className="mx-auto mt-4 max-w-2xl leading-7 text-muted-foreground">Keep shop records organised, control access and build your operation on a system designed to grow with you.</p><div className="mt-10 grid gap-8 text-left sm:grid-cols-3">{[[ShieldCheck, "Protected workspace", "Authentication and controlled shop access are built into the experience."], [Zap, "Built for busy days", "Fast flows and clear information help you spend less time on admin."], [Globe2, "Ready to grow online", "Connect your physical operation with a simple shareable storefront."]].map(([Icon, title, body]) => <div key={title as string}><Icon className="size-5 text-accent-ink" /><h3 className="mt-4 font-display font-bold">{title as string}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{body as string}</p></div>)}</div></div></section>
 
         <section id="faq" className="px-4 py-20 sm:px-6 sm:py-28"><div className="mx-auto max-w-4xl"><div className="text-center"><p className="text-label-caps text-accent-ink">Questions</p><h2 className="text-display-md mt-4">A clearer answer before you start.</h2></div><div className="mt-10 grid gap-3">{[["Is Kudi built for mobile and desktop?", "Yes. The experience is responsive, with workflows designed for both counter computers and mobile devices."], ["Can I use external scanners and printers?", "Yes. Compatible camera, USB, Bluetooth and serial hardware workflows are supported where the browser and device allow them."], ["Can I sell online?", "Yes. You can publish products to an online catalogue and manage online orders from the same workspace."], ["Can my team use the store?", "Yes. Store roles help owners, managers and cashiers work with appropriate access."]].map(([question, answer]) => <details key={question} className="group border-b border-border py-5"><summary className="cursor-pointer list-none font-semibold">{question}<span className="float-right text-muted-foreground">+</span></summary><p className="max-w-2xl pt-3 text-sm leading-6 text-muted-foreground">{answer}</p></details>)}</div><div className="mt-8 flex justify-center"><Link to="/support" className="inline-flex items-center gap-2 font-semibold text-accent-ink hover:underline">Visit Help Centre<ArrowRight className="size-4" /></Link></div></div></section>
@@ -111,7 +111,7 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "canonical", href: SITE_URL },
-      { rel: "preconnect", href: "https://pixabay.com" },
+      { rel: "preconnect", href: "https://cdn.pixabay.com" },
       { rel: "preconnect", href: "https://unpkg.com" },
       { rel: "preload", as: "video", href: HERO_VIDEO, crossOrigin: "anonymous" },
     ],
