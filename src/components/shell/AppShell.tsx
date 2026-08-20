@@ -5,10 +5,12 @@ import { BarChart3, CloudUpload, FileBarChart, FileSpreadsheet, Globe2, Package,
 import { supabase } from "@/integrations/supabase/client";
 import { activeStoreCache } from "@/lib/active-store";
 import { getOfflineSales, removeOfflineSale } from "@/lib/offline-sales";
+import { getKudiNotification } from "@/lib/kudi-ai";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { AppMenuSheet } from "@/components/shell/AppMenuSheet";
 import { UpdatesSheet } from "@/components/shell/UpdatesSheet";
 import { ProductTour } from "@/components/shell/ProductTour";
+import { SmartNoticeHost, emitKudiNotice } from "@/components/shell/SmartNoticeHost";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
@@ -32,11 +34,72 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
   const routeLoading = routerStatus === "pending";
   const canImport = role === "owner" || role === "manager";
 
-  useEffect(() => { setOnline(navigator.onLine); const on = () => setOnline(true); const off = () => setOnline(false); window.addEventListener("online", on); window.addEventListener("offline", off); return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); }; }, []);
-  useEffect(() => { const refresh = () => setQueued(getOfflineSales().length); refresh(); window.addEventListener("kudi-offline-queue-changed", refresh); return () => window.removeEventListener("kudi-offline-queue-changed", refresh); }, []);
-  useEffect(() => { if (!isLoading && memberships.length === 0) void navigate({ to: "/onboarding", replace: true }); }, [isLoading, memberships.length, navigate]);
-  useEffect(() => { if (!online || !store?.id) return; let cancelled = false; async function sync() { const queue = getOfflineSales().filter((sale) => sale.storeId === store.id); for (const sale of queue) { if (cancelled) return; const { error } = await supabase.rpc("create_sale", { _store_id: sale.storeId, _branch_id: sale.branchId, _payment_method: sale.paymentMethod, _items: sale.items, _note: sale.note, _customer_id: sale.customerId, _offline_id: sale.offlineId }); if (error) { console.warn("Kudi offline sale waiting to sync", error.message); continue; } removeOfflineSale(sale.offlineId); await queryClient.invalidateQueries({ queryKey: ["products", sale.storeId, sale.branchId] }); await queryClient.invalidateQueries({ queryKey: ["customers", sale.storeId] }); } } void sync(); const onOnline = () => void sync(); window.addEventListener("online", onOnline); return () => { cancelled = true; window.removeEventListener("online", onOnline); }; }, [online, store?.id, queryClient]);
-  async function handleSignOut() { await queryClient.cancelQueries(); queryClient.clear(); activeStoreCache.clear(); await supabase.auth.signOut(); void navigate({ to: "/auth", replace: true }); }
+  useEffect(() => {
+    setOnline(navigator.onLine);
+    const on = () => setOnline(true);
+    const off = () => setOnline(false);
+    window.addEventListener("online", on);
+    window.addEventListener("offline", off);
+    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
+  }, []);
+
+  useEffect(() => {
+    const refresh = () => setQueued(getOfflineSales().length);
+    refresh();
+    window.addEventListener("kudi-offline-queue-changed", refresh);
+    return () => window.removeEventListener("kudi-offline-queue-changed", refresh);
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading && memberships.length === 0) void navigate({ to: "/onboarding", replace: true });
+  }, [isLoading, memberships.length, navigate]);
+
+  useEffect(() => {
+    if (!online || !store?.id) return;
+    let cancelled = false;
+    async function sync() {
+      const queue = getOfflineSales().filter((sale) => sale.storeId === store.id);
+      for (const sale of queue) {
+        if (cancelled) return;
+        const { error } = await supabase.rpc("create_sale", { _store_id: sale.storeId, _branch_id: sale.branchId, _payment_method: sale.paymentMethod, _items: sale.items, _note: sale.note, _customer_id: sale.customerId, _offline_id: sale.offlineId });
+        if (error) { console.warn("Kudi offline sale waiting to sync", error.message); continue; }
+        removeOfflineSale(sale.offlineId);
+        await queryClient.invalidateQueries({ queryKey: ["products", sale.storeId, sale.branchId] });
+        await queryClient.invalidateQueries({ queryKey: ["customers", sale.storeId] });
+      }
+    }
+    void sync();
+    const onOnline = () => void sync();
+    window.addEventListener("online", onOnline);
+    return () => { cancelled = true; window.removeEventListener("online", onOnline); };
+  }, [online, store?.id, queryClient]);
+
+  useEffect(() => {
+    if (!store?.id) return;
+    let previous = online;
+    const handle = async () => {
+      if (previous === online) return;
+      previous = online;
+      const event = online ? "general" : "general";
+      const { message } = await getKudiNotification(event, online
+        ? { state: "online", queued }
+        : { state: "offline", queued });
+      emitKudiNotice({
+        title: online ? "You're back online" : "You're offline",
+        message: online ? (queued > 0 ? `Kudi is reconnecting and will sync ${queued} queued sale${queued === 1 ? "" : "s"}.` : message) : "You can keep working. Kudi will queue supported sales until your connection returns.",
+        tone: online ? "success" : "warning",
+      });
+    };
+    void handle();
+  }, [online, queued, store?.id]);
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    activeStoreCache.clear();
+    await supabase.auth.signOut();
+    void navigate({ to: "/auth", replace: true });
+  }
 
   return <div className="kudi-app-shell min-h-screen bg-background pb-24 lg:pb-0">
     {routeLoading && <div className="kudi-route-progress" role="status" aria-label="Loading page"><span /></div>}
@@ -56,6 +119,6 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
     </header>
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10"><div className="mb-6 flex flex-wrap items-end justify-between gap-3 lg:mb-8"><div><p className="text-label-caps flex items-center gap-1.5 text-muted-foreground"><Globe2 className="size-3.5" aria-hidden />{store?.name ?? "Loading shop"}{branch ? ` · ${branch.name}` : ""}</p><h1 className="mt-1 text-title-lg lg:text-display-md">{title}</h1></div></div>{children}</div>
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 backdrop-blur lg:hidden" aria-label="Primary"><div className="mx-auto flex max-w-md items-stretch justify-around px-2 pb-[env(safe-area-inset-bottom)]">{NAV.slice(0, 5).map((item) => { const Icon = item.icon; const active = pathname === item.to; return <Link key={item.to} to={item.to} data-tour={item.tour} className={cn("touch-target flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[11px] font-semibold", active ? "text-accent-ink" : "text-muted-foreground")}><span className={cn("flex h-8 w-14 items-center justify-center rounded-full", active ? "bg-accent-soft" : "bg-transparent")}><Icon className="size-5" /></span>{item.label}</Link>; })}</div></nav>
-    <UpdatesSheet /><ProductTour /><AppMenuSheet open={menuOpen} onOpenChange={setMenuOpen} store={store} branchName={branch?.name ?? null} role={role} onSignOut={() => { setMenuOpen(false); void handleSignOut(); }} />
+    <SmartNoticeHost /><UpdatesSheet /><ProductTour /><AppMenuSheet open={menuOpen} onOpenChange={setMenuOpen} store={store} branchName={branch?.name ?? null} role={role} onSignOut={() => { setMenuOpen(false); void handleSignOut(); }} />
   </div>;
 }
