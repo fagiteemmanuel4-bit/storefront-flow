@@ -1,0 +1,99 @@
+import { ArrowRight, Play, ScanLine, ShoppingBag, Sparkles } from "lucide-react";
+
+const VIDEOS = [
+  {
+    src: "https://pixabay.com/videos/download/x-23258_medium.mp4",
+    label: "Sell with confidence",
+    title: "From counter to customer in seconds.",
+  },
+  {
+    src: "https://pixabay.com/videos/download/x-1006_medium.mp4",
+    label: "Run the operation",
+    title: "Keep your shop moving while Kudi keeps the details straight.",
+  },
+  {
+    src: "https://pixabay.com/videos/download/x-21117_medium.mp4",
+    label: "Take it online",
+    title: "Turn your catalogue into a storefront customers can actually use.",
+  },
+] as const;
+
+export function LandingMedia() {
+  return (
+    <>
+      <section className="relative overflow-hidden border-y border-border bg-foreground px-4 py-16 text-background sm:px-6 sm:py-24">
+        <div aria-hidden className="pointer-events-none absolute -right-32 top-0 size-[32rem] rounded-full bg-accent/20 blur-3xl" />
+        <div className="mx-auto max-w-7xl">
+          <div className="grid items-end gap-8 lg:grid-cols-[.8fr_1.2fr]">
+            <div>
+              <p className="text-label-caps text-accent">See Kudi in motion</p>
+              <h2 className="mt-4 font-display text-4xl font-bold tracking-tight sm:text-5xl">Your business is alive. Your software should feel alive too.</h2>
+              <p className="mt-5 max-w-xl text-base leading-7 text-background/65">We use motion where it helps explain the workflow — not as decoration. Kudi connects the counter, stockroom and online store into one operating rhythm.</p>
+            </div>
+            <div className="flex items-center gap-3 text-sm text-background/55">
+              <span className="flex size-9 items-center justify-center rounded-full bg-accent text-accent-foreground"><Play className="size-4 fill-current" /></span>
+              Short visual stories • lightweight • responsive
+            </div>
+          </div>
+
+          <div className="mt-12 grid gap-5 lg:grid-cols-[1.35fr_.65fr]">
+            <article className="group relative min-h-[26rem] overflow-hidden rounded-[2rem] border border-background/10 bg-background/5 shadow-float">
+              <video className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]" src={VIDEOS[0].src} autoPlay muted loop playsInline preload="metadata" aria-label={VIDEOS[0].title} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/5" />
+              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/35 px-3 py-1.5 text-xs font-semibold backdrop-blur-md"><ScanLine className="size-3.5 text-accent" />{VIDEOS[0].label}</span>
+                <h3 className="mt-4 max-w-2xl font-display text-3xl font-bold sm:text-4xl">{VIDEOS[0].title}</h3>
+              </div>
+            </article>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
+              {VIDEOS.slice(1).map((video) => (
+                <article key={video.src} className="group relative min-h-[12rem] overflow-hidden rounded-[2rem] border border-background/10 bg-background/5">
+                  <video className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]" src={video.src} autoPlay muted loop playsInline preload="metadata" aria-label={video.title} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-5">
+                    <p className="text-xs font-bold uppercase tracking-[.16em] text-accent">{video.label}</p>
+                    <h3 className="mt-2 font-display text-xl font-bold">{video.title}</h3>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 py-20 sm:px-6 sm:py-28">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid items-center gap-10 lg:grid-cols-[.8fr_1.2fr]">
+            <div>
+              <p className="text-label-caps text-accent-ink">Built around the real shop</p>
+              <h2 className="text-display-md mt-4">Less dashboard. More visual context.</h2>
+              <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">Kudi's story should look like the merchant's day: products on shelves, customers at the counter, stock moving and orders arriving online.</p>
+              <div className="mt-8 space-y-4">
+                {[
+                  [Sparkles, "See what matters", "Clear signals for sales, stock and orders without a wall of numbers."],
+                  [ShoppingBag, "Make products the hero", "Images, galleries and storefront previews help merchants understand what customers will see."],
+                  [ArrowRight, "Move from action to outcome", "Every workflow ends with something useful: a sale, updated stock, an order or a decision."],
+                ].map(([Icon, title, body]) => (
+                  <div key={title as string} className="flex gap-4 rounded-2xl border border-border bg-background p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lift">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-ink"><Icon className="size-4" /></span>
+                    <div><h3 className="font-display font-bold">{title as string}</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">{body as string}</p></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-border bg-secondary shadow-float">
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-transparent to-foreground/20" />
+              <div className="grid min-h-[28rem] grid-cols-2 gap-3 p-3 sm:min-h-[34rem] sm:p-4">
+                <div className="overflow-hidden rounded-[1.75rem] bg-background"><img src="/assets/hero-shop.jpg" alt="Kudi merchant workspace" className="h-full w-full object-cover transition duration-700 hover:scale-105" /></div>
+                <div className="grid gap-3">
+                  <div className="overflow-hidden rounded-[1.75rem] bg-foreground p-6 text-background"><p className="text-xs uppercase tracking-[.16em] text-accent">Kudi flow</p><p className="mt-3 font-display text-2xl font-bold">Stock → sale → order</p><div className="mt-8 h-2 rounded-full bg-background/10"><div className="h-full w-3/4 rounded-full bg-accent" /></div></div>
+                  <div className="overflow-hidden rounded-[1.75rem] bg-accent p-6 text-accent-foreground"><p className="text-xs uppercase tracking-[.16em] opacity-70">Online store</p><p className="mt-3 font-display text-2xl font-bold">Your products deserve to be seen.</p><div className="mt-8 flex -space-x-3"><span className="size-12 rounded-full border-4 border-accent bg-background/80" /><span className="size-12 rounded-full border-4 border-accent bg-foreground/80" /><span className="size-12 rounded-full border-4 border-accent bg-background/60" /></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
