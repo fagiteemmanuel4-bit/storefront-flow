@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BarChart3, BookOpen, Boxes, CircleHelp, CreditCard, Globe2, Mail, Printer, Receipt, ScanLine, Settings2, ShieldCheck, ShoppingCart, Smartphone, Store, Users, Wallet, Zap } from "lucide-react";
+import { ArrowRight, BarChart3, BookOpen, Boxes, CircleHelp, CreditCard, Globe2, Mail, Printer, Receipt, ScanLine, Settings2, ShieldCheck, ShoppingCart, Smartphone, Store, Users, Zap } from "lucide-react";
 
 const COLUMNS = [
   { title: "Product", links: [["Features", "#features"], ["How it works", "#how-it-works"], ["Why Kudi", "#about"], ["Inventory", "#inventory"], ["Insights", "#insights"], ["Team access", "#teams"]] },
   { title: "Selling", links: [["Fast checkout", "#checkout"], ["Online store", "#online-store"], ["Barcode & QR scanning", "#hardware"], ["Receipts", "#hardware"], ["Hardware", "#hardware"], ["Customer questions", "#faq"]] },
-  { title: "Operations", links: [["Stock management", "#inventory"], ["Multiple branches", "#branches"], ["Business insights", "#insights"], ["Store security", "#security"], ["Shop teams", "#teams"], ["FAQs", "#faq"] },
+  { title: "Operations", links: [["Stock management", "#inventory"], ["Multiple branches", "#branches"], ["Business insights", "#insights"], ["Store security", "#security"], ["Shop teams", "#teams"], ["FAQs", "#faq"]] },
 ] as const;
 
 const RESOURCES = [["Help Centre", "/support", CircleHelp], ["Guides & documentation", "/support", BookOpen], ["Getting started", "/support", Zap], ["Hardware Center", "/hardware", ScanLine], ["Receipt printing help", "/support", Printer], ["Contact support", "/support", Mail]] as const;
