@@ -4,11 +4,12 @@ import { ClipboardPaste, FileSpreadsheet, ImagePlus, LoaderCircle, Sparkles, Upl
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { errorMessage } from "@/lib/format";
+import { parseSmartText, type SmartImportRow } from "@/lib/smart-import-parser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BottomSheet, BottomSheetContent, BottomSheetDescription, BottomSheetHeader, BottomSheetTitle } from "@/components/ui/bottom-sheet";
 
-type ImportRow = { name: string; sku: string; barcode: string; category: string; price: number; cost: number; quantity: number; lowStockThreshold: number };
+type ImportRow = SmartImportRow;
 type Props = { open: boolean; onOpenChange: (open: boolean) => void; storeId: string; branchId: string; onImported: () => Promise<void> | void };
 
 function clean(value: unknown) { return String(value ?? "").trim(); }
@@ -56,23 +57,6 @@ function mapRows(rows: string[][]): ImportRow[] {
   return output;
 }
 
-function parseSmartText(text: string): ImportRow[] {
-  const rows: ImportRow[] = [];
-  for (const rawLine of text.split(/\r?\n/).map((v) => v.trim()).filter(Boolean)) {
-    const line = rawLine.replace(/\s+/g, " ");
-    const currencyMatch = line.match(/(?:₦|NGN|N)\s*([0-9][0-9,]*(?:\.\d{1,2})?\s*[kKmM]?)/i);
-    const plainMatch = currencyMatch ? null : line.match(/(?:^|\s)([0-9]{1,3}(?:,[0-9]{3})+(?:\.\d{1,2})?|[0-9]{4,}(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?\s*[kKmM])(?:\s*$|\s)/);
-    const match = currencyMatch ?? plainMatch;
-    if (!match) continue;
-    const price = money(match[1]);
-    if (!price || price < 0) continue;
-    const name = line.slice(0, match.index ?? 0).replace(/[–—:-]+\s*$/, "").trim() || line.slice((match.index ?? 0) + match[0].length).replace(/^[–—:-]+\s*/, "").trim();
-    if (!name || name.length < 2) continue;
-    rows.push({ name, sku: "", barcode: "", category: "", price, cost: 0, quantity: 0, lowStockThreshold: 5 });
-  }
-  return rows;
-}
-
 function dedupeRows(rows: ImportRow[]) {
   const map = new Map<string, ImportRow>();
   for (const row of rows) {
@@ -102,13 +86,13 @@ export function ProductImportDialog({ open, onOpenChange, storeId, branchId, onI
       else if (/\.xlsx?$/i.test(file.name)) {
         const workbook = new ExcelJS.Workbook(); await workbook.xlsx.load(await file.arrayBuffer()); const sheet = workbook.worksheets[0]; const values: string[][] = [];
         sheet.eachRow((row) => values.push((row.values as unknown[]).slice(1).map(clean))); setRows(mapRows(values));
-      } else throw new Error("Use a CSV, XLSX or XLS file.");
+      } else throw new Error("Use a CSV or XLSX file. Legacy XLS is not supported in the browser importer.");
     } catch (error) { toast.error(errorMessage(error, "The file could not be read.")); setFileName(""); }
   }
 
   function addSmartText() {
     const parsed = parseSmartText(smartText);
-    if (!parsed.length) { toast.error("We couldn't find product names with prices. Try one product per line, e.g. Smart Glasses - ₦30,000."); return; }
+    if (!parsed.length) { toast.error("Kudi couldn't confidently find a product with a price. Put each product and its price in the same message or use the structured template."); return; }
     setRows((current) => [...current, ...parsed]); setSmartText(""); toast.success(`${parsed.length} product${parsed.length === 1 ? "" : "s"} prepared`);
   }
 
@@ -125,13 +109,12 @@ export function ProductImportDialog({ open, onOpenChange, storeId, branchId, onI
         const text = data.text.trim();
         setOcrText(text);
         const parsed = parseSmartText(text);
-        if (!parsed.length) { toast.error("The image was read, but no confident product name + price pairs were found. You can paste the text below and correct it before importing."); return; }
+        if (!parsed.length) { toast.error("The image was read, but Kudi couldn't confidently find product + price pairs. Review the OCR text and correct it before importing."); return; }
         setRows((current) => [...current, ...parsed]);
         toast.success(`${parsed.length} product${parsed.length === 1 ? "" : "s"} extracted locally — review before importing`);
       } finally { await worker.terminate(); }
-    } catch (error) {
-      toast.error(errorMessage(error, "Local OCR could not read this image."));
-    } finally { setOcrBusy(false); }
+    } catch (error) { toast.error(errorMessage(error, "Local OCR could not read this image.")); }
+    finally { setOcrBusy(false); }
   }
 
   async function handlePaste(event: React.ClipboardEvent<HTMLDivElement>) {
@@ -167,11 +150,11 @@ export function ProductImportDialog({ open, onOpenChange, storeId, branchId, onI
   function reset() { setRows([]); setFileName(""); setSmartText(""); setImageName(""); setOcrText(""); setImagePreview((current) => { if (current) URL.revokeObjectURL(current); return ""; }); }
 
   return <BottomSheet open={open} onOpenChange={(value) => { if (!value && !busy && !ocrBusy) reset(); onOpenChange(value); }}>
-    <BottomSheetContent className="max-h-[92dvh] overflow-y-auto mx-auto w-full max-w-4xl"><BottomSheetHeader><BottomSheetTitle className="flex items-center gap-2"><Sparkles className="size-5" />Smart product import</BottomSheetTitle><BottomSheetDescription>Move a catalogue into Kudi quickly. Upload a spreadsheet, paste a WhatsApp/Telegram list, or drop/paste a screenshot. OCR runs locally in your browser so the image is not sent to an AI provider.</BottomSheetDescription></BottomSheetHeader>
-      <div className="grid gap-4 md:grid-cols-3" onPaste={(event) => void handlePaste(event)}>
-        <label className="cursor-pointer rounded-2xl border border-dashed border-border bg-secondary/30 p-5 hover:bg-secondary"><FileSpreadsheet className="size-6" /><p className="mt-3 font-semibold">CSV / Excel</p><p className="mt-1 text-xs text-muted-foreground">Name, price, stock, SKU, barcode and category.</p><input type="file" accept=".csv,.xlsx,.xls" className="hidden" onChange={(e) => e.target.files?.[0] && void readFile(e.target.files[0])} /></label>
-        <div className="rounded-2xl border border-border p-5"><ClipboardPaste className="size-6" /><p className="mt-3 font-semibold">Paste from chat</p><p className="mt-1 text-xs text-muted-foreground">Paste text copied from WhatsApp, Telegram or another catalogue.</p><Input value={smartText} onChange={(e) => setSmartText(e.target.value)} className="mt-3" placeholder="Smart Glasses - ₦30,000" /><Button className="mt-2 w-full" variant="outline" onClick={addSmartText}>Extract products</Button></div>
-        <label className="cursor-pointer rounded-2xl border border-border p-5 hover:bg-secondary"><ImagePlus className="size-6" /><p className="mt-3 font-semibold">Screenshot / image</p><p className="mt-1 text-xs text-muted-foreground">WhatsApp/Telegram screenshot, flyer or price list. You can also paste an image directly here.</p><input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && void readImage(e.target.files[0])} />{imageName && <p className="mt-3 truncate text-xs font-medium">{imageName}</p>}</label>
+    <BottomSheetContent className="kudi-import-sheet max-h-[94dvh] overflow-y-auto mx-auto w-full max-w-4xl"><BottomSheetHeader><BottomSheetTitle className="flex items-center gap-2"><Sparkles className="size-5" />Smart product import</BottomSheetTitle><BottomSheetDescription>Move a catalogue into Kudi quickly. Upload a spreadsheet, paste a WhatsApp/Telegram list, or drop/paste a screenshot. OCR runs locally in your browser so the image is not sent to an AI provider.</BottomSheetDescription></BottomSheetHeader>
+      <div className="grid gap-3 md:grid-cols-3" onPaste={(event) => void handlePaste(event)}>
+        <label className="kudi-import-option cursor-pointer rounded-2xl border border-dashed border-border bg-secondary/30 p-4 hover:bg-secondary"><FileSpreadsheet className="size-6" /><p className="mt-3 font-semibold">CSV / Excel</p><p className="mt-1 text-xs text-muted-foreground">Name, price, stock, SKU, barcode and category.</p><input type="file" accept=".csv,.xlsx" className="hidden" onChange={(e) => e.target.files?.[0] && void readFile(e.target.files[0])} /></label>
+        <div className="kudi-import-option rounded-2xl border border-border p-4"><ClipboardPaste className="size-6" /><p className="mt-3 font-semibold">Paste from chat</p><p className="mt-1 text-xs text-muted-foreground">Paste text copied from WhatsApp, Telegram or another catalogue.</p><Input value={smartText} onChange={(e) => setSmartText(e.target.value)} className="mt-3" placeholder="Smart Glasses - ₦30,000" /><Button className="mt-2 w-full" variant="outline" onClick={addSmartText}>Extract products</Button></div>
+        <label className="kudi-import-option cursor-pointer rounded-2xl border border-border p-4 hover:bg-secondary"><ImagePlus className="size-6" /><p className="mt-3 font-semibold">Screenshot / image</p><p className="mt-1 text-xs text-muted-foreground">WhatsApp/Telegram screenshot, flyer or price list. You can also paste an image directly here.</p><input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && void readImage(e.target.files[0])} />{imageName && <p className="mt-3 truncate text-xs font-medium">{imageName}</p>}</label>
       </div>
       {imagePreview && <div className="mt-4 grid gap-4 rounded-2xl border border-border p-4 sm:grid-cols-[180px_1fr]"><img src={imagePreview} alt="Catalogue image preview" className="h-32 w-full rounded-xl object-cover sm:h-36" /><div><div className="flex items-center gap-2"><p className="font-semibold">Local OCR result</p>{ocrBusy && <LoaderCircle className="size-4 animate-spin" />}</div><p className="mt-2 max-h-28 overflow-auto whitespace-pre-wrap text-xs text-muted-foreground">{ocrText || "Preparing OCR…"}</p></div></div>}
       <div className="mt-5 rounded-2xl border border-border overflow-hidden"><div className="flex items-center gap-2 border-b border-border px-4 py-3"><Upload className="size-4" /><span className="font-semibold">Ready to import</span><span className="ml-auto text-xs text-muted-foreground">{validRows.length} unique rows{fileName ? ` · ${fileName}` : ""}</span></div>{validRows.length ? <div className="max-h-64 overflow-auto"><table className="w-full text-sm"><thead className="sticky top-0 bg-secondary"><tr><th className="p-3 text-left">Product</th><th className="p-3 text-right">Price</th><th className="p-3 text-right">Stock</th><th className="p-3 text-left">SKU</th></tr></thead><tbody>{validRows.slice(0, 100).map((row, index) => <tr key={`${row.name}-${row.sku || row.barcode}-${index}`} className="border-t border-border"><td className="p-3">{row.name}</td><td className="p-3 text-right">₦{row.price.toLocaleString()}</td><td className="p-3 text-right">{row.quantity}</td><td className="p-3">{row.sku || "—"}</td></tr>)}</tbody></table>{validRows.length > 100 && <p className="p-3 text-xs text-muted-foreground">Showing first 100 rows. All {validRows.length} prepared rows will be imported.</p>}</div> : <div className="p-8 text-center text-sm text-muted-foreground">No products prepared yet.</div>}</div>

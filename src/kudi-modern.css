@@ -1,0 +1,57 @@
+/* Kudi modern application layer. Keep product workflows familiar while improving touch targets,
+   mobile density, hierarchy, feedback and loading affordances. */
+:root {
+  --kudi-app-radius: 1.25rem;
+  --kudi-app-radius-lg: 1.5rem;
+  --kudi-app-shadow: 0 10px 35px -24px oklch(0.2 0 0 / 0.32);
+}
+
+.kudi-route-progress { position: fixed; inset: 0 0 auto; z-index: 100; height: 3px; overflow: hidden; background: color-mix(in oklch, var(--color-accent) 18%, transparent); pointer-events: none; }
+.kudi-route-progress span { display: block; width: 38%; height: 100%; border-radius: 999px; background: var(--color-accent); animation: kudi-loading-sweep 1.05s ease-in-out infinite; }
+@keyframes kudi-loading-sweep { 0% { transform: translateX(-110%); } 50% { transform: translateX(170%); } 100% { transform: translateX(330%); } }
+
+.kudi-import-option { min-height: 176px; transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease; }
+.kudi-import-option:hover { transform: translateY(-2px); box-shadow: var(--kudi-app-shadow); }
+.kudi-import-sheet { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+
+[data-slot="sheet-content"] form { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+[data-slot="sheet-content"] form input,
+[data-slot="sheet-content"] form button,
+[data-slot="sheet-content"] form [role="combobox"] { min-height: 48px; }
+[data-slot="sheet-content"] form label > input:focus,
+[data-slot="sheet-content"] form label > div input:focus { outline: none; }
+
+@media (max-width: 767px) {
+  body { overflow-x: hidden; }
+  header.sticky { padding-top: env(safe-area-inset-top); }
+  header.sticky > div { min-height: 60px; padding-top: 0.55rem; padding-bottom: 0.55rem; }
+  header.sticky nav { display: none !important; }
+  header.sticky .touch-target { min-height: 46px; min-width: 46px; }
+  header.sticky [aria-label="Open menu"] { width: 46px; padding: 0; justify-content: center; }
+  header.sticky .ml-auto { gap: 0.4rem; }
+  main, [role="main"] { min-width: 0; }
+  .max-w-7xl { max-width: 100%; }
+  .pb-24 { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
+  nav.fixed.bottom-0 { padding-bottom: env(safe-area-inset-bottom); }
+  nav.fixed.bottom-0 > div { min-height: 66px; }
+  nav.fixed.bottom-0 a { min-height: 60px; padding-top: 0.45rem; }
+  nav.fixed.bottom-0 a span { height: 34px; width: 54px; }
+  [data-slot="sheet-content"] { max-height: calc(100dvh - env(safe-area-inset-top) - 0.5rem) !important; border-radius: 1.5rem 1.5rem 0 0 !important; }
+  [data-slot="sheet-content"] > div:first-child { margin-top: 0.35rem; }
+  [data-slot="sheet-content"] form { gap: 1rem; }
+  [data-slot="sheet-content"] form .grid { gap: 0.75rem; }
+  .kudi-import-sheet { padding-left: 1rem; padding-right: 1rem; }
+  .kudi-import-sheet .grid.md\:grid-cols-3 { grid-template-columns: 1fr; }
+  .kudi-import-option { min-height: 0; padding: 1rem; }
+  .kudi-import-sheet table { min-width: 520px; }
+  table { font-size: 0.8125rem; }
+  [data-slot="card"], .surface-card, .storefront-card { border-radius: 1.15rem; }
+  .text-display-md { font-size: clamp(1.85rem, 9vw, 2.5rem); }
+  .text-title-lg { font-size: 1.45rem; }
+}
+
+button[disabled] { cursor: wait; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
