@@ -15,6 +15,7 @@ const emailSchema = z.string().trim().email("Enter a valid email address").max(2
 const passwordSchema = z.string().min(8, "Use at least 8 characters").max(72);
 const nameSchema = z.string().trim().min(2, "Enter your full name").max(120);
 function normalizeEmail(value: string) { return value.trim().toLowerCase(); }
+function verificationUrl(email?: string) { return `${window.location.origin}/verify-email${email ? `?email=${encodeURIComponent(email)}` : ""}`; }
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ function AuthPage() {
       setBusy(true); setNotice(null);
       try {
         if (mode === "signup") {
-          const { data, error } = await supabase.auth.signUp({ email: normalizedEmail, password: parsedPassword.data, options: { emailRedirectTo: `${window.location.origin}/verified?kind=email&next=${encodeURIComponent("/auth")}`, data: { full_name: validatedName } } });
+          const { data, error } = await supabase.auth.signUp({ email: normalizedEmail, password: parsedPassword.data, options: { emailRedirectTo: verificationUrl(normalizedEmail), data: { full_name: validatedName } } });
           if (error) throw new Error(error.message);
           if (!data.user) throw new Error("Kudi couldn't create the account. Please try again.");
           sessionStorage.setItem("kudi_otp_email", normalizedEmail);
@@ -70,7 +71,14 @@ function AuthPage() {
           return;
         }
         const { data, error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password: parsedPassword.data });
-        if (error) { if (error.message.toLowerCase().includes("email not confirmed")) { sessionStorage.setItem("kudi_otp_email", normalizedEmail); void navigate({ to: "/verify-email", search: { email: normalizedEmail }, replace: true }); return; } throw new Error(error.message); }
+        if (error) {
+          if (error.message.toLowerCase().includes("email not confirmed")) {
+            sessionStorage.setItem("kudi_otp_email", normalizedEmail);
+            void navigate({ to: "/verify-email", search: { email: normalizedEmail }, replace: true });
+            return;
+          }
+          throw new Error(error.message);
+        }
         if (!data.session || !data.user) throw new Error("Sign in did not complete. Please try again.");
         void navigate({ to: "/pos", replace: true });
       } catch (error) { toast.error(errorMessage(error, "That didn't work. Please check your details and try again.")); } finally { setBusy(false); }
