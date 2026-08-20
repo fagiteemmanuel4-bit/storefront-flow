@@ -17,6 +17,11 @@ import { NotFoundScreen } from "@/components/shell/NotFoundScreen";
 import { StoreFeedbackFloating } from "@/components/site/StoreFeedbackFloating";
 import { Button } from "@/components/ui/button";
 
+const SITE_URL = "https://storefront-flow.vercel.app";
+const SITE_TITLE = "Kudi — Point of Sale, Inventory & Online Store for Small Businesses";
+const SITE_DESCRIPTION =
+  "Kudi helps small businesses manage stock, record sales, run a POS, publish an online catalogue, and operate a simple virtual store from one place.";
+
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
@@ -55,17 +60,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Kudi — Point of sale & inventory for small shops" },
-      {
-        name: "description",
-        content:
-          "Kudi is a free point-of-sale and inventory app for small retail businesses. Track stock, ring up sales, and see how the shop is doing.",
-      },
+      { title: SITE_TITLE },
+      { name: "description", content: SITE_DESCRIPTION },
       { name: "author", content: "Kudi" },
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
+      { name: "googlebot", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
+      { name: "google-site-verification", content: "C8nXbWzuOEhCjnzdPL7QJMSpJ7FEZYl0YO0xaV0v1vs" },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Kudi" },
+      { property: "og:title", content: SITE_TITLE },
+      { property: "og:description", content: SITE_DESCRIPTION },
+      { property: "og:url", content: SITE_URL },
+      { property: "og:locale", content: "en_NG" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: SITE_TITLE },
+      { name: "twitter:description", content: SITE_DESCRIPTION },
     ],
     links: [
+      { rel: "canonical", href: SITE_URL },
       { rel: "stylesheet", href: appCss },
       { rel: "stylesheet", href: landingCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
