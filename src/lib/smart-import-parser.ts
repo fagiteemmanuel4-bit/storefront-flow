@@ -48,28 +48,25 @@ function extractPrice(line: string) {
   const value = clean(line);
   const currency = value.match(/(?:price|selling\s+price|sale\s+price)\s*[:=-]?\s*(?:₦|NGN|N)?\s*([0-9][0-9,]*(?:\.\d{1,2})?\s*[kKmM]?)/i)
     || value.match(/(?:₦|NGN)\s*([0-9][0-9,]*(?:\.\d{1,2})?\s*[kKmM]?)/i);
-  if (currency) return { price: money(currency[1]), index: currency.index ?? 0, end: (currency.index ?? 0) + currency[0].length, labelled: true };
+  if (currency) return { price: money(currency[1]), index: currency.index ?? 0, labelled: true };
 
   // Only accept an unlabelled number when it is clearly a price at the end of a product-like line.
   // This prevents RAM, storage, screen size, battery hours and USB counts from becoming prices.
   const direct = value.match(/(?:^|\s)(?:₦|NGN)?\s*([0-9]{1,3}(?:,[0-9]{3})+(?:\.\d{1,2})?|[0-9]{4,}(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?\s*[kKmM])\s*$/i);
-  if (direct) return { price: money(direct[1]), index: direct.index ?? 0, end: (direct.index ?? 0) + direct[0].length, labelled: false };
+  if (direct) return { price: money(direct[1]), index: direct.index ?? 0, labelled: false };
   return null;
 }
 
-function findProductTitle(lines: string[], priceIndex: number, priceLine: string, priceStart: number) {
-  // First preference: a product title written before an explicit price on the same line.
+function findProductTitle(lines: string[], priceIndex: number, priceLine: string, priceStart: number, usedTitles: Set<number>) {
   if (priceStart > 0) {
     const before = stripBullet(priceLine.slice(0, priceStart).replace(/[|–—:-]+\s*$/, ""));
     if (productCandidate(before)) return before;
   }
 
-  // Otherwise, look backwards for the nearest plausible title. Skip specification rows,
-  // headings and short metadata lines. A title containing a known retail/product noun wins.
   const candidates: Array<{ name: string; score: number; index: number }> = [];
   for (let distance = 1; distance <= 8; distance += 1) {
     const index = priceIndex - distance;
-    if (index < 0) break;
+    if (index < 0 || usedTitles.has(index)) continue;
     const candidate = stripBullet(lines[index]);
     if (!productCandidate(candidate)) continue;
     let score = 0;
@@ -81,7 +78,7 @@ function findProductTitle(lines: string[], priceIndex: number, priceLine: string
     candidates.push({ name: candidate, score, index });
   }
   candidates.sort((a, b) => b.score - a.score || b.index - a.index);
-  return candidates[0]?.name || "";
+  return candidates[0] || null;
 }
 
 export function parseSmartText(text: string): SmartImportRow[] {
@@ -94,18 +91,9 @@ export function parseSmartText(text: string): SmartImportRow[] {
     const extracted = extractPrice(line);
     if (!extracted || extracted.price <= 0) continue;
 
-    const title = findProductTitle(lines, i, line, extracted.index);
-    if (!productCandidate(title)) continue;
-
-    let titleIndex = -1;
-    for (let distance = 1; distance <= 8; distance += 1) {
-      const candidateIndex = i - distance;
-      if (candidateIndex >= 0 && stripBullet(lines[candidateIndex]) === title) {
-        titleIndex = candidateIndex;
-        break;
-      }
-    }
-    if (titleIndex >= 0) usedTitles.add(titleIndex);
+    const title = findProductTitle(lines, i, line, extracted.index, usedTitles);
+    if (!title || !productCandidate(title.name)) continue;
+    usedTitles.add(title.index);
 
     const context = lines.slice(Math.max(0, i - 8), Math.min(lines.length, i + 4)).join(" ");
     const packMatch = context.match(/(\d+)\s*(?:pcs?|pieces?)\s*(?:per|\/)\s*pack/i);
@@ -113,7 +101,7 @@ export function parseSmartText(text: string): SmartImportRow[] {
     const quantity = quantityMatch ? Math.max(0, Number(quantityMatch[1]) * (packMatch ? Number(packMatch[1]) : 1)) : 0;
 
     rows.push({
-      name: title,
+      name: title.name,
       sku: "",
       barcode: "",
       category: categoryFor(context),
