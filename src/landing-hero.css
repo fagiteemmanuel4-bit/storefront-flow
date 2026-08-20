@@ -1,16 +1,57 @@
-/* Focused visual layer for the public Kudi landing page. */
+/* Kudi public landing visual system: cinematic hero + scroll choreography. */
 body:has(.kudi-hero) { background: oklch(0.955 0.012 88); color: oklch(0.18 0.012 82); }
 body:has(.kudi-hero) main { background: linear-gradient(180deg, oklch(0.96 0.01 88), oklch(0.945 0.014 88)); }
 .kudi-hero { min-height: 100svh; isolation: isolate; }
-.kudi-hero > video { filter: saturate(.72) contrast(1.04) brightness(.68); transform: scale(1.015); }
-.kudi-hero-video-fade { z-index: 1; background: linear-gradient(90deg, rgba(5,5,5,.78) 0%, rgba(5,5,5,.62) 38%, rgba(5,5,5,.36) 72%, rgba(5,5,5,.30) 100%), linear-gradient(180deg, rgba(5,5,5,.30) 0%, rgba(5,5,5,.12) 48%, rgba(5,5,5,.62) 100%); }
-.kudi-hero-vignette { z-index: 2; pointer-events: none; background: radial-gradient(ellipse at center, transparent 34%, rgba(0,0,0,.28) 100%); }
+.kudi-hero > video { filter: saturate(.68) contrast(1.04) brightness(.52); transform: scale(1.015); }
+.kudi-hero-video-fade { z-index: 1; background: linear-gradient(90deg, rgba(5,5,5,.84) 0%, rgba(5,5,5,.66) 40%, rgba(5,5,5,.42) 76%, rgba(5,5,5,.34) 100%), linear-gradient(180deg, rgba(5,5,5,.28) 0%, rgba(5,5,5,.08) 42%, rgba(5,5,5,.76) 100%); }
+.kudi-hero-vignette { z-index: 2; pointer-events: none; background: radial-gradient(ellipse at center, transparent 28%, rgba(0,0,0,.34) 100%); }
 .kudi-hero > div:not(.kudi-hero-video-fade):not(.kudi-hero-vignette) { z-index: 3; }
 body:has(.kudi-hero) main > section:not(.kudi-hero) { background-color: oklch(0.955 0.012 88); }
 body:has(.kudi-hero) main > section:nth-of-type(2n) { background-color: oklch(0.965 0.009 88); }
 body:has(.kudi-hero) article { background-color: transparent; }
-@media (max-width: 767px) {
-  .kudi-hero > video { filter: saturate(.65) contrast(1.02) brightness(.58); }
-  .kudi-hero-video-fade { background: linear-gradient(90deg, rgba(5,5,5,.80), rgba(5,5,5,.48)), linear-gradient(180deg, rgba(5,5,5,.25), rgba(5,5,5,.70)); }
+
+/* Hero copy leaves first as the user starts scrolling, clearing the viewport for the page body. */
+@supports (animation-timeline: scroll()) {
+  .kudi-hero > div:nth-of-type(3) > div:first-child {
+    animation: kudi-hero-scroll-out linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 55svh;
+  }
 }
-@media (prefers-reduced-motion: reduce) { .kudi-hero > video { transform: none; } }
+
+/* Sections reveal as they enter the viewport: restrained, stagger-free, and GPU-friendly. */
+.kudi-reveal { opacity: 1; transform: none; }
+@supports (animation-timeline: view()) {
+  .kudi-reveal {
+    animation: kudi-section-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 8% cover 30%;
+  }
+}
+
+.kudi-reveal img { will-change: transform; }
+.kudi-reveal figure:hover img { transform: scale(1.035); }
+
+@keyframes kudi-hero-scroll-out {
+  0% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+  65% { opacity: .35; transform: translate3d(0, -4rem, 0) scale(.985); filter: blur(1px); }
+  100% { opacity: 0; transform: translate3d(0, -7rem, 0) scale(.96); filter: blur(4px); }
+}
+
+@keyframes kudi-section-reveal {
+  0% { opacity: .01; transform: translate3d(0, 2.25rem, 0) scale(.985); }
+  45% { opacity: .72; transform: translate3d(0, .5rem, 0) scale(.997); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@media (max-width: 767px) {
+  .kudi-hero > video { filter: saturate(.58) contrast(1.02) brightness(.44); }
+  .kudi-hero-video-fade { background: linear-gradient(90deg, rgba(5,5,5,.86), rgba(5,5,5,.52)), linear-gradient(180deg, rgba(5,5,5,.25), rgba(5,5,5,.82)); }
+  .kudi-hero-vignette { background: radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,.42) 100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kudi-hero > video { transform: none; }
+  .kudi-reveal { animation: none !important; opacity: 1; transform: none; }
+  .kudi-reveal img { transition: none !important; }
+}
