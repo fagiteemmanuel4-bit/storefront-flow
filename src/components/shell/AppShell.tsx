@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { BarChart3, CloudUpload, FileBarChart, FileSpreadsheet, Globe2, Package, ScanLine, Settings2, Users, Wifi, WifiOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { activeStoreCache } from "@/lib/active-store";
@@ -29,6 +29,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
   const [menuOpen, setMenuOpen] = useState(false);
   const [online, setOnline] = useState(true);
   const [queued, setQueued] = useState(0);
+  const previousOnline = useRef<boolean | null>(null);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const routerStatus = useRouterState({ select: (s) => s.status });
   const routeLoading = routerStatus === "pending";
@@ -76,21 +77,22 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
 
   useEffect(() => {
     if (!store?.id) return;
-    let previous = online;
-    const handle = async () => {
-      if (previous === online) return;
-      previous = online;
-      const event = online ? "general" : "general";
-      const { message } = await getKudiNotification(event, online
-        ? { state: "online", queued }
-        : { state: "offline", queued });
+    if (previousOnline.current === null) {
+      previousOnline.current = online;
+      return;
+    }
+    if (previousOnline.current === online) return;
+    previousOnline.current = online;
+
+    const run = async () => {
+      const { message } = await getKudiNotification("general", online ? { state: "online", queued } : { state: "offline", queued });
       emitKudiNotice({
         title: online ? "You're back online" : "You're offline",
         message: online ? (queued > 0 ? `Kudi is reconnecting and will sync ${queued} queued sale${queued === 1 ? "" : "s"}.` : message) : "You can keep working. Kudi will queue supported sales until your connection returns.",
         tone: online ? "success" : "warning",
       });
     };
-    void handle();
+    void run();
   }, [online, queued, store?.id]);
 
   async function handleSignOut() {
