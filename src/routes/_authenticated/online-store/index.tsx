@@ -1,0 +1,71 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, ExternalLink, Globe2, LayoutTemplate, Package, ShoppingBag, Sparkles } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { onlineSupabase } from "@/integrations/supabase/online-client";
+import { useStoreContext } from "@/components/shell/StoreProvider";
+import { AppShell } from "@/components/shell/AppShell";
+
+export const Route = createFileRoute("/_authenticated/online-store/")({ component: OnlineStoreHome });
+
+function OnlineStoreHome() {
+  const { store, role } = useStoreContext();
+  const canEdit = role === "owner" || role === "manager";
+  const query = useQuery({
+    queryKey: ["online-store-home", store?.id],
+    enabled: Boolean(store?.id),
+    queryFn: async () => {
+      const { data, error } = await onlineSupabase.from("online_stores").select("slug,display_name,is_published,setup_completed,logo_url,description").eq("store_id", store!.id).maybeSingle();
+      if (error) throw new Error(error.message);
+      return data;
+    },
+  });
+
+  const storefront = query.data;
+  const publicUrl = storefront?.slug ? `/store/${storefront.slug}` : null;
+
+  return <AppShell title="Online Store">
+    <div className="space-y-8">
+      <section className="overflow-hidden rounded-[2rem] border border-border bg-surface shadow-lift">
+        <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.15fr_.85fr] lg:p-10">
+          <div>
+            <p className="text-label-caps text-accent-ink">Commerce storefront</p>
+            <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-5xl">Turn your social-store business into a real online store.</h2>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">Control your public storefront, product catalog, customer orders and brand presentation from one place.</p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              {canEdit && <Link to="/online-store/customize" className="inline-flex h-11 items-center gap-2 rounded-xl bg-foreground px-5 text-sm font-semibold text-background transition hover:-translate-y-0.5"><LayoutTemplate className="size-4" />Edit Store<ArrowRight className="size-4" /></Link>}
+              {publicUrl && <a href={publicUrl} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center gap-2 rounded-xl border border-border bg-surface px-5 text-sm font-semibold transition hover:bg-secondary"><ExternalLink className="size-4" />View Store</a>}
+            </div>
+          </div>
+          <div className="rounded-[1.5rem] border border-border bg-secondary/60 p-5 sm:p-6">
+            <div className="flex items-center gap-3">
+              <span className="flex size-11 items-center justify-center rounded-2xl bg-accent"><Globe2 className="size-5" /></span>
+              <div className="min-w-0"><p className="font-semibold">{storefront?.display_name ?? store?.name ?? "Your store"}</p><p className="text-sm text-muted-foreground">{storefront?.is_published ? "Published and shareable" : "Not published yet"}</p></div>
+            </div>
+            <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
+              <Status label="Store setup" value={storefront?.setup_completed ? "Complete" : "Needs setup"} />
+              <Status label="Visibility" value={storefront?.is_published ? "Public" : "Private"} />
+              <Status label="Catalog" value="Manage products" />
+              <Status label="Orders" value="Customer orders" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ActionCard to="/online-store/customize" icon={LayoutTemplate} title="Edit Store" description="Branding, banners and storefront presentation" disabled={!canEdit} />
+        <ActionCard to="/online-store/catalog" icon={Package} title="Catalog" description="Choose which products appear online" />
+        <ActionCard to="/online-store/orders" icon={ShoppingBag} title="Orders" description="Manage orders from your storefront" />
+        <div className="rounded-[1.5rem] border border-border bg-surface p-5"><Sparkles className="size-5 text-accent-ink" /><p className="mt-5 font-semibold">Store Editor upgrade</p><p className="mt-1 text-sm leading-6 text-muted-foreground">Templates, sections, SEO and AI editing are being introduced as structured commerce features.</p></div>
+      </section>
+    </div>
+  </AppShell>;
+}
+
+function Status({ label, value }: { label: string; value: string }) {
+  return <div className="rounded-xl border border-border bg-surface p-3"><p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{label}</p><p className="mt-1 font-semibold">{value}</p></div>;
+}
+
+function ActionCard({ to, icon: Icon, title, description, disabled = false }: { to: "/online-store/customize" | "/online-store/catalog" | "/online-store/orders"; icon: typeof LayoutTemplate; title: string; description: string; disabled?: boolean }) {
+  if (disabled) return <div className="rounded-[1.5rem] border border-border bg-secondary/40 p-5 opacity-60"><Icon className="size-5" /><p className="mt-5 font-semibold">{title}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{description}</p></div>;
+  return <Link to={to} className="group rounded-[1.5rem] border border-border bg-surface p-5 transition hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-lift"><Icon className="size-5 text-accent-ink" /><p className="mt-5 font-semibold">{title}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{description}</p><ArrowRight className="mt-5 size-4 transition group-hover:translate-x-1" /></Link>;
+}
