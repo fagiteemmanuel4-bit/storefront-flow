@@ -21,6 +21,9 @@
 [data-slot="sheet-content"] form label > input:focus,
 [data-slot="sheet-content"] form label > div input:focus { outline: none; }
 
+/* Mobile commerce UX: make sheets feel like task workspaces rather than
+   generic dialogs. Keep the implementation CSS-only so existing mutations,
+   validation and permissions are untouched. */
 @media (max-width: 767px) {
   body { overflow-x: hidden; }
   header.sticky { padding-top: env(safe-area-inset-top); }
@@ -36,14 +39,35 @@
   nav.fixed.bottom-0 > div { min-height: 66px; }
   nav.fixed.bottom-0 a { min-height: 60px; padding-top: 0.45rem; }
   nav.fixed.bottom-0 a span { height: 34px; width: 54px; }
-  [data-slot="sheet-content"] { max-height: calc(100dvh - env(safe-area-inset-top) - 0.5rem) !important; border-radius: 1.5rem 1.5rem 0 0 !important; }
+
+  [data-slot="sheet-content"] {
+    max-height: calc(100dvh - env(safe-area-inset-top) - 0.5rem) !important;
+    border-radius: 1.5rem 1.5rem 0 0 !important;
+    box-shadow: 0 -20px 50px -35px oklch(0 0 0 / 0.45);
+  }
   [data-slot="sheet-content"] > div:first-child { margin-top: 0.35rem; }
   [data-slot="sheet-content"] form { gap: 1rem; }
   [data-slot="sheet-content"] form .grid { gap: 0.75rem; }
+  [data-slot="sheet-content"] form input,
+  [data-slot="sheet-content"] form button,
+  [data-slot="sheet-content"] form [role="combobox"] { min-height: 50px; }
+
+  /* Product creation/editing: preserve the existing form while giving the
+     phone layout clearer grouping and safer thumb-sized controls. */
+  [data-slot="sheet-content"] form > * { min-width: 0; }
+  [data-slot="sheet-content"] form > div.rounded-2xl { padding: 0.9rem; }
+  [data-slot="sheet-content"] form button { font-weight: 650; }
+  [data-slot="sheet-content"] form input::placeholder { opacity: 0.62; }
+
   .kudi-import-sheet { padding-left: 1rem; padding-right: 1rem; }
   .kudi-import-sheet .grid.md\:grid-cols-3 { grid-template-columns: 1fr; }
-  .kudi-import-option { min-height: 0; padding: 1rem; }
+  .kudi-import-option { min-height: 0; padding: 1rem; border-radius: 1.15rem; }
+  .kudi-import-option:active { transform: scale(0.99); }
   .kudi-import-sheet table { min-width: 520px; }
+  .kudi-import-sheet .max-h-64 { max-height: 45dvh; }
+
+  /* Make important loading affordances visible even when a sheet is scrolled. */
+  [data-slot="sheet-content"] button[disabled] { opacity: 0.7; }
   table { font-size: 0.8125rem; }
   [data-slot="card"], .surface-card, .storefront-card { border-radius: 1.15rem; }
   .text-display-md { font-size: clamp(1.85rem, 9vw, 2.5rem); }

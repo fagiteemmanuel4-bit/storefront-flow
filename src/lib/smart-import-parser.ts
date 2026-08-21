@@ -27,13 +27,21 @@ function categoryFor(text: string) {
   return "";
 }
 
+/**
+ * A catalogue message often contains a product followed by many attributes
+ * (brand, RAM, battery, ports, software, etc.). Those attributes must NEVER
+ * become products just because they contain a number. A candidate product
+ * name is therefore intentionally conservative.
+ */
 function productCandidate(line: string) {
   const value = clean(line).replace(/^[•●▪🔸🔹➤→-]+\s*/, "");
   if (!value || value.length < 3 || value.length > 140) return false;
-  if (/^(price|basic details|special features|free software installation|condition|useful for|brand|model|type|storage|ram|supported os|battery|bluetooth|hdmi|webcam|usb|chrome|microsoft office|vlc|with)$/i.test(value)) return false;
+  if (/:/.test(value)) return false;
+  if (/\b(?:yes|no|excellent|good|available|windows|chrome|vlc|microsoft office)\b/i.test(value) && value.split(/\s+/).length <= 5) return false;
+  if (/^(?:price|basic details|special features|free software installation|condition|useful for|brand|model|type|storage|ram|supported os|battery(?: health| backup)?|bluetooth|hdmi|webcam|usb(?: port)?s?|chrome|microsoft office|vlc|with)$/i.test(value)) return false;
+  if (/^(?:for|useful for)\b/i.test(value)) return false;
   if (/^[A-Z][A-Z\s\d&-]{3,}$/.test(value) && !/[a-z]/.test(value)) return false;
-  if ((value.match(/:/g) || []).length >= 2) return false;
-  if (/^(yes|no|excellent|good|available|windows|chrome|vlc|microsoft office)$/i.test(value)) return false;
+  if (/^\d+(?:gb|tb|mb|hours?|hrs?|pcs?|pieces?|port|ports?)?$/i.test(value)) return false;
   return /[a-zA-Z]/.test(value);
 }
 
@@ -47,6 +55,11 @@ function extractPrice(line: string) {
   return null;
 }
 
+function looksLikeDetailLine(line: string) {
+  const value = clean(line).replace(/^[•●▪🔸🔹➤→-]+\s*/, "");
+  return /:/.test(value) || /^(?:brand|model|type|storage|ram|supported os|battery|bluetooth|hdmi|webcam|usb|chrome|microsoft office|vlc|condition|with|useful for)\b/i.test(value);
+}
+
 export function parseSmartText(text: string): SmartImportRow[] {
   const lines = text.split(/\r?\n/).map((line) => line.replace(/\s+/g, " ").trim()).filter(Boolean);
   const rows: SmartImportRow[] = [];
@@ -57,13 +70,15 @@ export function parseSmartText(text: string): SmartImportRow[] {
     const extracted = extractPrice(line);
     if (!extracted || extracted.price <= 0) continue;
 
+    // If the price is on a dedicated "Price: ..." line, use the nearest
+    // genuine title above it. Do not treat specification lines as products.
     let name = line.slice(0, extracted.index).replace(/(?:price\s*[:=-]?|[–—:-])\s*$/i, "").trim();
     if (!productCandidate(name)) {
-      for (let distance = 1; distance <= 4; distance += 1) {
+      for (let distance = 1; distance <= 6; distance += 1) {
         const candidateIndex = i - distance;
         if (candidateIndex < 0 || used.has(candidateIndex)) continue;
         const candidate = lines[candidateIndex];
-        if (!productCandidate(candidate)) continue;
+        if (looksLikeDetailLine(candidate) || !productCandidate(candidate)) continue;
         name = candidate;
         used.add(candidateIndex);
         break;
@@ -71,7 +86,7 @@ export function parseSmartText(text: string): SmartImportRow[] {
     }
     if (!productCandidate(name)) continue;
 
-    const context = lines.slice(Math.max(0, i - 4), Math.min(lines.length, i + 3)).join(" ");
+    const context = lines.slice(Math.max(0, i - 6), Math.min(lines.length, i + 3)).join(" ");
     const packMatch = context.match(/(\d+)\s*(?:pcs?|pieces?)\s*(?:per|\/)\s*pack/i) || context.match(/(\d+)\s*pcs?\s*\/\s*pack/i);
     const quantityMatch = context.match(/(\d+)\s*(?:packs?|pk)\b/i);
     const quantity = quantityMatch ? Math.max(0, Number(quantityMatch[1]) * (packMatch ? Number(packMatch[1]) : 1)) : 0;
@@ -88,5 +103,13 @@ export function parseSmartText(text: string): SmartImportRow[] {
     });
   }
 
-  return rows;
+  // Defensive de-duplication: a single social post should never create the
+  // same product more than once when several price-like lines are present.
+  const seen = new Set<string>();
+  return rows.filter((row) => {
+    const key = `${row.name.toLowerCase()}|${row.price}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
