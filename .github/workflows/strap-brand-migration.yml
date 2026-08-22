@@ -1,0 +1,63 @@
+name: Strap brand migration
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - .github/workflows/strap-brand-migration.yml
+permissions:
+  contents: write
+jobs:
+  rebrand:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace customer-facing legacy brand
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          root = Path('.')
+          skip_dirs = {'.git', '.github', 'node_modules', 'dist', '.vercel'}
+          skip_files = {'bun.lock'}
+          exts = {'.ts','.tsx','.js','.jsx','.css','.html','.md','.mdx','.json','.svg','.txt','.xml','.toml'}
+          replacements = [
+              (r'Kudi Commerce', 'Strap Commerce'),
+              (r'Kudi POS', 'Strap POS'),
+              (r'Kudi Store', 'Strap Store'),
+              (r'Kudi Business', 'Strap Business'),
+              (r'KUDI', 'STRAP'),
+              (r'Kudi', 'Strap'),
+          ]
+          changed=[]
+          for p in root.rglob('*'):
+              if not p.is_file() or p.name in skip_files or p.suffix.lower() not in exts:
+                  continue
+              if any(part in skip_dirs for part in p.parts):
+                  continue
+              try:
+                  text=p.read_text(encoding='utf-8')
+              except UnicodeDecodeError:
+                  continue
+              new=text
+              for pat,repl in replacements:
+                  new=re.sub(pat,repl,new)
+              new=new.replace('© {year} Strap.', '© {year} Strap by Kryonara.')
+              new=new.replace('Strap is a practical retail operating system', 'Strap by Kryonara is a practical retail operating system')
+              if new != text:
+                  p.write_text(new,encoding='utf-8')
+                  changed.append(str(p))
+          print(f'Changed {len(changed)} files')
+          for x in changed: print(x)
+          PY
+      - name: Commit migration
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git diff --quiet; then echo 'No legacy brand text found'; exit 0; fi
+          git add -A
+          git commit -m 'rebrand: Kudi to Strap by Kryonara'
+          git push
