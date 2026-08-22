@@ -1,8 +1,8 @@
-# Kudi Priority 2 Upgrade
+# Strap Priority 2 Upgrade
 
 ## Current scope
 
-Priority 2 is focused on making Kudi a daily operating system rather than a collection of isolated tools.
+Priority 2 is focused on making Strap a daily operating system rather than a collection of isolated tools.
 
 ### Delivered in this phase
 
@@ -27,7 +27,7 @@ Priority 2 is focused on making Kudi a daily operating system rather than a coll
 
 ## Product positioning
 
-Kudi should not claim to be "better than Shopify" as a factual statement until independent production benchmarking supports it. The stronger public message is that Kudi is building a focused retail operating system combining POS, inventory, online selling, staff controls, commerce operations and business intelligence in one workflow.
+Strap should not claim to be "better than Shopify" as a factual statement until independent production benchmarking supports it. The stronger public message is that Strap is building a focused retail operating system combining POS, inventory, online selling, staff controls, commerce operations and business intelligence in one workflow.
 
 ## Quality rule
 

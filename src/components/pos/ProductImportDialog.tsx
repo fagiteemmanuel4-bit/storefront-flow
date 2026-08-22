@@ -92,7 +92,7 @@ export function ProductImportDialog({ open, onOpenChange, storeId, branchId, onI
 
   function addSmartText() {
     const parsed = parseSmartText(smartText);
-    if (!parsed.length) { toast.error("Kudi couldn't confidently find a product with a price. Put each product and its price in the same message or use the structured template."); return; }
+    if (!parsed.length) { toast.error("Strap couldn't confidently find a product with a price. Put each product and its price in the same message or use the structured template."); return; }
     setRows((current) => [...current, ...parsed]); setSmartText(""); toast.success(`${parsed.length} product${parsed.length === 1 ? "" : "s"} prepared`);
   }
 
@@ -109,7 +109,7 @@ export function ProductImportDialog({ open, onOpenChange, storeId, branchId, onI
         const text = data.text.trim();
         setOcrText(text);
         const parsed = parseSmartText(text);
-        if (!parsed.length) { toast.error("The image was read, but Kudi couldn't confidently find product + price pairs. Review the OCR text and correct it before importing."); return; }
+        if (!parsed.length) { toast.error("The image was read, but Strap couldn't confidently find product + price pairs. Review the OCR text and correct it before importing."); return; }
         setRows((current) => [...current, ...parsed]);
         toast.success(`${parsed.length} product${parsed.length === 1 ? "" : "s"} extracted locally — review before importing`);
       } finally { await worker.terminate(); }
@@ -150,7 +150,7 @@ export function ProductImportDialog({ open, onOpenChange, storeId, branchId, onI
   function reset() { setRows([]); setFileName(""); setSmartText(""); setImageName(""); setOcrText(""); setImagePreview((current) => { if (current) URL.revokeObjectURL(current); return ""; }); }
 
   return <BottomSheet open={open} onOpenChange={(value) => { if (!value && !busy && !ocrBusy) reset(); onOpenChange(value); }}>
-    <BottomSheetContent className="kudi-import-sheet max-h-[94dvh] overflow-y-auto mx-auto w-full max-w-4xl"><BottomSheetHeader><BottomSheetTitle className="flex items-center gap-2"><Sparkles className="size-5" />Smart product import</BottomSheetTitle><BottomSheetDescription>Move a catalogue into Kudi quickly. Upload a spreadsheet, paste a WhatsApp/Telegram list, or drop/paste a screenshot. OCR runs locally in your browser so the image is not sent to an AI provider.</BottomSheetDescription></BottomSheetHeader>
+    <BottomSheetContent className="kudi-import-sheet max-h-[94dvh] overflow-y-auto mx-auto w-full max-w-4xl"><BottomSheetHeader><BottomSheetTitle className="flex items-center gap-2"><Sparkles className="size-5" />Smart product import</BottomSheetTitle><BottomSheetDescription>Move a catalogue into Strap quickly. Upload a spreadsheet, paste a WhatsApp/Telegram list, or drop/paste a screenshot. OCR runs locally in your browser so the image is not sent to an AI provider.</BottomSheetDescription></BottomSheetHeader>
       <div className="grid gap-3 md:grid-cols-3" onPaste={(event) => void handlePaste(event)}>
         <label className="kudi-import-option cursor-pointer rounded-2xl border border-dashed border-border bg-secondary/30 p-4 hover:bg-secondary"><FileSpreadsheet className="size-6" /><p className="mt-3 font-semibold">CSV / Excel</p><p className="mt-1 text-xs text-muted-foreground">Name, price, stock, SKU, barcode and category.</p><input type="file" accept=".csv,.xlsx" className="hidden" onChange={(e) => e.target.files?.[0] && void readFile(e.target.files[0])} /></label>
         <div className="kudi-import-option rounded-2xl border border-border p-4"><ClipboardPaste className="size-6" /><p className="mt-3 font-semibold">Paste from chat</p><p className="mt-1 text-xs text-muted-foreground">Paste text copied from WhatsApp, Telegram or another catalogue.</p><Input value={smartText} onChange={(e) => setSmartText(e.target.value)} className="mt-3" placeholder="Smart Glasses - ₦30,000" /><Button className="mt-2 w-full" variant="outline" onClick={addSmartText}>Extract products</Button></div>

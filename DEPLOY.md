@@ -1,4 +1,4 @@
-# Deploying Kudi to Vercel
+# Deploying Strap to Vercel
 
 The app is a TanStack Start (Vite + Nitro) project. Nitro auto-detects Vercel
 during the build and emits the Build Output API bundle at `.vercel/output`, so

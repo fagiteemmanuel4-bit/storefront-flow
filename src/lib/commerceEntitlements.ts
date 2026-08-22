@@ -1,4 +1,4 @@
-export type KudiTier = 'free' | 'business' | 'pro'
+export type StrapTier = 'free' | 'business' | 'pro'
 
 export type EntitlementKey =
   | 'onlineStore'
@@ -13,7 +13,7 @@ export type EntitlementKey =
   | 'merchantPayments'
   | 'aiAssistant'
 
-export const KUDI_TIERS: Record<KudiTier, Record<EntitlementKey, boolean | number>> = {
+export const STRAP_TIERS: Record<StrapTier, Record<EntitlementKey, boolean | number>> = {
   free: {
     onlineStore: true,
     advancedInventory: true,
@@ -56,10 +56,10 @@ export const KUDI_TIERS: Record<KudiTier, Record<EntitlementKey, boolean | numbe
 }
 
 /** -1 means unlimited. Payment and AI remain explicitly staged off until their integrations are ready. */
-export function hasEntitlement(tier: KudiTier, key: EntitlementKey) {
-  return KUDI_TIERS[tier][key] !== false
+export function hasEntitlement(tier: StrapTier, key: EntitlementKey) {
+  return STRAP_TIERS[tier][key] !== false
 }
 
-export function getLimit(tier: KudiTier, key: 'staff' | 'branches') {
-  return KUDI_TIERS[tier][key] as number
+export function getLimit(tier: StrapTier, key: 'staff' | 'branches') {
+  return STRAP_TIERS[tier][key] as number
 }

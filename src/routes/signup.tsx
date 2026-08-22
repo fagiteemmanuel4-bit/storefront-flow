@@ -39,7 +39,7 @@ function SignupPage() {
       if (!data.user) throw new Error("Unable to create your account. Please try again.");
 
       // Supabase email confirmation is disabled. Signup itself does not send a link.
-      // We explicitly send an OTP and require the user to verify it before entering Kudi.
+      // We explicitly send an OTP and require the user to verify it before entering Strap.
       await supabase.auth.signOut();
 
       const { error: otpError } = await supabase.auth.signInWithOtp({
@@ -62,7 +62,7 @@ function SignupPage() {
     <main className="min-h-screen flex items-center justify-center p-6">
       <form onSubmit={handleSignup} className="w-full max-w-md rounded-3xl border p-8 space-y-5">
         <div>
-          <h1 className="text-2xl font-semibold">Create your Kudi account</h1>
+          <h1 className="text-2xl font-semibold">Create your Strap account</h1>
           <p className="text-sm text-muted-foreground mt-1">Set up your account, then verify your email with a code.</p>
         </div>
         {error && <div className="rounded-2xl border p-3 text-sm text-destructive">{error}</div>}

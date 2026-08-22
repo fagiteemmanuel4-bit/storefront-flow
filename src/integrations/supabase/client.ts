@@ -19,7 +19,7 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
     }
 
     if (!isPublishableKey(supabaseKey)) {
-      throw new Error("Kudi is configured with an invalid browser Supabase key. Use the publishable/anon key only.");
+      throw new Error("Strap is configured with an invalid browser Supabase key. Use the publishable/anon key only.");
     }
 
     if (supabaseKey.startsWith("sb_publishable_") && headers.get("Authorization") === `Bearer ${supabaseKey}`) {
@@ -36,7 +36,7 @@ function createSupabaseClient() {
   const key = import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] || process.env["SUPABASE_PUBLISHABLE_KEY"] || SUPABASE_PUBLISHABLE_KEY;
 
   if (typeof window !== "undefined" && !isPublishableKey(key)) {
-    throw new Error("Kudi browser configuration is invalid: a Supabase secret key must never be exposed to the client.");
+    throw new Error("Strap browser configuration is invalid: a Supabase secret key must never be exposed to the client.");
   }
 
   return createClient<Database>(url, key, {

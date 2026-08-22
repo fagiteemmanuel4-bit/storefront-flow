@@ -15,9 +15,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({ meta: [
-    { title: "Set up your shop — Kudi" },
+    { title: "Set up your shop — Strap" },
     { name: "description", content: "Name your shop, pick a currency, and start selling." },
-    { property: "og:title", content: "Set up your shop — Kudi" },
+    { property: "og:title", content: "Set up your shop — Strap" },
     { property: "og:description", content: "Name your shop and pick a currency to start." },
   ] }),
   component: OnboardingPage,
@@ -94,7 +94,7 @@ function OnboardingPage() {
   }
 
   if (error) {
-    return <div className="flex min-h-screen items-center justify-center bg-background px-4"><div className="surface-card w-full max-w-lg p-6 text-center sm:p-8"><h1 className="text-display-sm">We couldn't load your shop</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">Kudi couldn't confirm your store access. Your shop and products have not been deleted. Please retry before creating anything new.</p><p className="mt-3 break-words rounded-xl bg-secondary p-3 text-xs text-muted-foreground">{error.message}</p><div className="mt-5 flex flex-col gap-2 sm:flex-row"><Button className="flex-1" disabled={checking} onClick={() => void retryStoreLookup()}>{checking ? "Checking…" : "Retry store lookup"}</Button><Button variant="outline" className="flex-1" onClick={() => void navigate({ to: "/pos", replace: true })}>Back to register</Button></div></div></div>;
+    return <div className="flex min-h-screen items-center justify-center bg-background px-4"><div className="surface-card w-full max-w-lg p-6 text-center sm:p-8"><h1 className="text-display-sm">We couldn't load your shop</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">Strap couldn't confirm your store access. Your shop and products have not been deleted. Please retry before creating anything new.</p><p className="mt-3 break-words rounded-xl bg-secondary p-3 text-xs text-muted-foreground">{error.message}</p><div className="mt-5 flex flex-col gap-2 sm:flex-row"><Button className="flex-1" disabled={checking} onClick={() => void retryStoreLookup()}>{checking ? "Checking…" : "Retry store lookup"}</Button><Button variant="outline" className="flex-1" onClick={() => void navigate({ to: "/pos", replace: true })}>Back to register</Button></div></div></div>;
   }
 
   return <div className="min-h-screen bg-background px-4 py-10 sm:px-6"><div className="mx-auto max-w-lg"><p className="text-label-caps text-accent-ink">Step 1 of 1</p><h1 className="mt-2 text-display-md">Set up your shop</h1><p className="mt-3 text-base text-muted-foreground">You can add more locations later — they'll share this product catalogue and keep their own stock counts.</p>

@@ -18,12 +18,12 @@ const OPERATIONS = [
 ] as const;
 
 const FAQS = [
-  ["Can I use Kudi on a phone and a computer?", "Yes. Kudi is designed responsively so the important workflows remain usable on phones, tablets and desktop screens."],
+  ["Can I use Strap on a phone and a computer?", "Yes. Strap is designed responsively so the important workflows remain usable on phones, tablets and desktop screens."],
   ["Can I scan products on a PC?", "Yes. A compatible USB or Bluetooth keyboard-wedge barcode/QR scanner can work like a keyboard, while camera scanning is available for supported devices."],
-  ["Can I sell online with Kudi?", "Yes. Kudi includes an online catalog and storefront workflow for publishing products and receiving online orders."],
+  ["Can I sell online with Strap?", "Yes. Strap includes an online catalog and storefront workflow for publishing products and receiving online orders."],
   ["What payment methods can I record?", "The register supports cash and other payment methods configured in the selling flow, with the payment method attached to the completed sale."],
-  ["Can I print receipts?", "Kudi includes receipt previews and a custom receipt designer, with compatible printer connections being developed for supported hardware."],
-  ["Is Kudi only for one kind of shop?", "No. The workflows are designed for everyday retail and can be adapted to different product categories, shop sizes and operating styles."],
+  ["Can I print receipts?", "Strap includes receipt previews and a custom receipt designer, with compatible printer connections being developed for supported hardware."],
+  ["Is Strap only for one kind of shop?", "No. The workflows are designed for everyday retail and can be adapted to different product categories, shop sizes and operating styles."],
 ] as const;
 
 export function LandingDetails() {
@@ -35,7 +35,7 @@ export function LandingDetails() {
             <div className="lg:sticky lg:top-28">
               <p className="text-label-caps text-accent-ink">Built for real retail</p>
               <h2 className="text-display-md mt-4">Your shop is more than today's sales.</h2>
-              <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">Kudi connects the small actions that happen throughout the day — selling, restocking, paying bills, checking reports and taking orders — into one operating picture.</p>
+              <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">Strap connects the small actions that happen throughout the day — selling, restocking, paying bills, checking reports and taking orders — into one operating picture.</p>
               <Link to="/auth" className="mt-7 inline-flex items-center gap-2 font-semibold text-accent-ink hover:underline">Set up your shop <ArrowRight className="size-4" /></Link>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -62,10 +62,10 @@ export function LandingDetails() {
       </section>
 
       <section className="px-4 py-20 sm:px-6 sm:py-28">
-        <div className="mx-auto max-w-5xl"><div className="text-center"><p className="text-label-caps text-accent-ink">Questions, answered</p><h2 className="text-display-md mt-4">Everything you should know before you start.</h2><p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">Need more detail? The Kudi Help Centre has step-by-step guides for setup, selling, stock, online stores, scanners, receipts and more.</p></div><div className="mt-12 grid gap-3">{FAQS.map(([question, answer]) => <details key={question} className="group rounded-2xl border border-border bg-background px-5 py-4 open:shadow-sm"><summary className="flex cursor-pointer list-none items-center gap-4 font-semibold"><HelpCircle className="size-5 shrink-0 text-accent-ink" /><span className="flex-1">{question}</span><span className="text-xl text-muted-foreground transition-transform group-open:rotate-45">+</span></summary><p className="pl-9 pr-6 pt-3 text-sm leading-6 text-muted-foreground">{answer}</p></details>)}</div><div className="mt-8 flex justify-center"><Link to="/support" className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-5 py-3 font-semibold hover:bg-secondary">Open Help Centre <ArrowRight className="size-4" /></Link></div></div>
+        <div className="mx-auto max-w-5xl"><div className="text-center"><p className="text-label-caps text-accent-ink">Questions, answered</p><h2 className="text-display-md mt-4">Everything you should know before you start.</h2><p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">Need more detail? The Strap Help Centre has step-by-step guides for setup, selling, stock, online stores, scanners, receipts and more.</p></div><div className="mt-12 grid gap-3">{FAQS.map(([question, answer]) => <details key={question} className="group rounded-2xl border border-border bg-background px-5 py-4 open:shadow-sm"><summary className="flex cursor-pointer list-none items-center gap-4 font-semibold"><HelpCircle className="size-5 shrink-0 text-accent-ink" /><span className="flex-1">{question}</span><span className="text-xl text-muted-foreground transition-transform group-open:rotate-45">+</span></summary><p className="pl-9 pr-6 pt-3 text-sm leading-6 text-muted-foreground">{answer}</p></details>)}</div><div className="mt-8 flex justify-center"><Link to="/support" className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-5 py-3 font-semibold hover:bg-secondary">Open Help Centre <ArrowRight className="size-4" /></Link></div></div>
       </section>
 
-      <section className="px-4 pb-20 sm:px-6 sm:pb-28"><div className="mx-auto max-w-7xl rounded-[2rem] border border-border bg-secondary p-7 sm:p-10 lg:p-14"><div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center"><div><p className="text-label-caps text-accent-ink">Start with the essentials</p><h2 className="text-display-md mt-4">Turn your daily retail work into one clear system.</h2><p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">Create your workspace, add your products and start learning your shop from the first sale onward.</p></div><Link to="/auth" className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-7 py-4 font-semibold text-accent-foreground shadow-lift transition-transform hover:-translate-y-0.5">Create your Kudi account <ArrowRight className="size-4" /></Link></div></div></section>
+      <section className="px-4 pb-20 sm:px-6 sm:pb-28"><div className="mx-auto max-w-7xl rounded-[2rem] border border-border bg-secondary p-7 sm:p-10 lg:p-14"><div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center"><div><p className="text-label-caps text-accent-ink">Start with the essentials</p><h2 className="text-display-md mt-4">Turn your daily retail work into one clear system.</h2><p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">Create your workspace, add your products and start learning your shop from the first sale onward.</p></div><Link to="/auth" className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-7 py-4 font-semibold text-accent-foreground shadow-lift transition-transform hover:-translate-y-0.5">Create your Strap account <ArrowRight className="size-4" /></Link></div></div></section>
     </>
   );
 }

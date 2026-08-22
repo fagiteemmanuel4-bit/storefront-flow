@@ -77,7 +77,7 @@ export async function downloadStoreWorkbook(store: StoreInfo, range: ExportRange
   }
 
   const wb = new ExcelJS.Workbook();
-  wb.creator = "Kudi";
+  wb.creator = "Strap";
   wb.created = new Date();
 
   /* ---------- Summary ---------- */

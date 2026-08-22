@@ -42,9 +42,9 @@ import {
 export const Route = createFileRoute("/_authenticated/expenses")({
   head: () => ({
     meta: [
-      { title: "Expenses — Kudi" },
+      { title: "Expenses — Strap" },
       { name: "description", content: "Track shop operating costs, rent, utilities, and daily expenses." },
-      { property: "og:title", content: "Expenses — Kudi" },
+      { property: "og:title", content: "Expenses — Strap" },
       { property: "og:description", content: "Track what you spend to manage your shop's cash flow." },
     ],
   }),

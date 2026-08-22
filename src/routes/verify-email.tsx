@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/verify-email")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Verify your email — Kudi" }, { name: "description", content: "Confirm your email address to finish setting up your Kudi account." }] }),
+  head: () => ({ meta: [{ title: "Verify your email — Strap" }, { name: "description", content: "Confirm your email address to finish setting up your Strap account." }] }),
   component: VerifyEmailPage,
 });
 
@@ -164,7 +164,7 @@ function VerifyEmailPage() {
             <div className="mt-5 rounded-2xl border p-4">
               <div className="flex items-start gap-3">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0" />
-                <div><p className="text-sm font-medium">Didn't receive it?</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Check spam or promotions. If the message bounced, use a working email address or contact Kudi support.</p></div>
+                <div><p className="text-sm font-medium">Didn't receive it?</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Check spam or promotions. If the message bounced, use a working email address or contact Strap support.</p></div>
               </div>
               <button type="button" disabled={resending || cooldown > 0} onClick={() => void resend()} className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium disabled:opacity-50">
                 {cooldown > 0 ? <Clock3 className="h-4 w-4" /> : <RefreshCw className="h-4 w-4" />}

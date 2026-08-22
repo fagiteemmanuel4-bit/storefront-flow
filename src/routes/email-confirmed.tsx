@@ -7,8 +7,8 @@ export const Route = createFileRoute("/email-confirmed")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Email confirmed — Kudi" },
-      { name: "description", content: "Your Kudi email address has been confirmed." },
+      { title: "Email confirmed — Strap" },
+      { name: "description", content: "Your Strap email address has been confirmed." },
     ],
   }),
   component: EmailConfirmedPage,
@@ -53,7 +53,7 @@ function EmailConfirmedPage() {
         </div>
         <h1 className="mt-7 text-display-md">Email confirmed</h1>
         <p className="mx-auto mt-3 max-w-sm text-muted-foreground">
-          {checking ? "Confirming your email address…" : confirmed ? "Your email has been successfully confirmed. Your Kudi account is ready to use." : "Your confirmation link was opened, but we couldn't establish your session. Please return to login and try again."}
+          {checking ? "Confirming your email address…" : confirmed ? "Your email has been successfully confirmed. Your Strap account is ready to use." : "Your confirmation link was opened, but we couldn't establish your session. Please return to login and try again."}
         </p>
         <Button asChild className="mt-8 h-12 w-full rounded-xl">
           <Link to="/auth">Go back to login</Link>

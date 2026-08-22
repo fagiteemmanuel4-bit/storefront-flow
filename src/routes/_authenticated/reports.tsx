@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/reports")({
-  head: () => ({ meta: [{ title: "Trading Reports & Insights — Kudi" }, { name: "description", content: "Revenue, expenses, profit and product performance for your store." }] }),
+  head: () => ({ meta: [{ title: "Trading Reports & Insights — Strap" }, { name: "description", content: "Revenue, expenses, profit and product performance for your store." }] }),
   component: ReportsPage,
 });
 

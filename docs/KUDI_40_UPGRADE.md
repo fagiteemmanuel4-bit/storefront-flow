@@ -1,4 +1,4 @@
-# Kudi 40-item upgrade
+# Strap 40-item upgrade
 
 ## Execution policy
 
@@ -8,7 +8,7 @@ The 40-item roadmap is being implemented as production capabilities, not UI plac
 
 - Merchant online payments: **Coming soon**. Live provider integration is intentionally parked until payment-provider account/device access is available.
 - AI assistant and AI storefront generation: **Coming soon**.
-- Advanced analytics, loyalty, discounts, purchasing, transfers and inventory intelligence: **Limited free** while Kudi is being expanded.
+- Advanced analytics, loyalty, discounts, purchasing, transfers and inventory intelligence: **Limited free** while Strap is being expanded.
 
 ### Foundation implemented
 

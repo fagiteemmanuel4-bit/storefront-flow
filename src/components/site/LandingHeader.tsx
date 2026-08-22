@@ -24,7 +24,7 @@ export function LandingHeader() {
       <div className="mx-auto flex items-center justify-between gap-4 px-4 py-3 sm:px-5">
         <Link to="/" className="group flex shrink-0 items-center gap-2" onClick={() => setMobileOpen(false)}>
           <span className="flex size-8 items-center justify-center rounded-full bg-accent shadow-sm transition-transform duration-300 group-hover:scale-110"><span className="size-3 rotate-45 rounded-[3px] bg-foreground" /></span>
-          <span className="font-display text-xl font-bold tracking-tight">KUDI.</span>
+          <span className="font-display text-xl font-bold tracking-tight">STRAP.</span>
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex" aria-label="Primary navigation">
           {NAV_ITEMS.map(([label, href]) => <a key={label} href={href} className="relative py-2 transition-colors hover:text-accent-ink after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-accent after:transition-all hover:after:w-full">{label}</a>)}

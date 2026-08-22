@@ -17,19 +17,19 @@ export const COMMERCE_FEATURES: Record<string, CommerceFeature> = {
     key: 'merchantPayments',
     label: 'Online payments',
     status: 'coming-soon',
-    description: 'Accept card and bank payments from customers through your Kudi store.',
+    description: 'Accept card and bank payments from customers through your Strap store.',
   },
   advancedAnalytics: {
     key: 'advancedAnalytics',
     label: 'Advanced analytics',
     status: 'limited-free',
-    description: 'Get deeper business insights while Kudi expands the analytics suite.',
+    description: 'Get deeper business insights while Strap expands the analytics suite.',
   },
   aiAssistant: {
     key: 'aiAssistant',
-    label: 'Kudi AI assistant',
+    label: 'Strap AI assistant',
     status: 'coming-soon',
-    description: 'Ask Kudi questions about sales, inventory and business performance.',
+    description: 'Ask Strap questions about sales, inventory and business performance.',
   },
   loyalty: {
     key: 'loyalty',
@@ -47,7 +47,7 @@ export const COMMERCE_FEATURES: Record<string, CommerceFeature> = {
     key: 'purchaseOrders',
     label: 'Purchase orders',
     status: 'limited-free',
-    description: 'Track supplier orders and receiving from inside Kudi.',
+    description: 'Track supplier orders and receiving from inside Strap.',
   },
   stockTransfers: {
     key: 'stockTransfers',

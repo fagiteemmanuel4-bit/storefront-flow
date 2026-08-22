@@ -1,5 +1,5 @@
 /**
- * Kudi platform capability registry.
+ * Strap platform capability registry.
  *
  * Keep product availability and plan entitlements in one place. UI code should
  * consume these definitions rather than scattering plan/availability checks.
@@ -7,15 +7,15 @@
  * configured and the provider integration is explicitly enabled.
  */
 
-export type KudiAvailability = 'available' | 'limited-free' | 'coming-soon'
-export type KudiPlan = 'free' | 'business' | 'pro'
+export type StrapAvailability = 'available' | 'limited-free' | 'coming-soon'
+export type StrapPlan = 'free' | 'business' | 'pro'
 
-export type KudiCapability = {
+export type StrapCapability = {
   id: string
   name: string
   description: string
-  availability: KudiAvailability
-  plans: KudiPlan[]
+  availability: StrapAvailability
+  plans: StrapPlan[]
   category:
     | 'pos'
     | 'inventory'
@@ -27,7 +27,7 @@ export type KudiCapability = {
     | 'payments'
 }
 
-export const KUDI_CAPABILITIES: KudiCapability[] = [
+export const STRAP_CAPABILITIES: StrapCapability[] = [
   { id: 'pos', name: 'POS', description: 'Fast in-store sales and receipts.', availability: 'available', plans: ['free', 'business', 'pro'], category: 'pos' },
   { id: 'inventory', name: 'Inventory', description: 'Products, stock and inventory records.', availability: 'available', plans: ['free', 'business', 'pro'], category: 'inventory' },
   { id: 'customers', name: 'Customers', description: 'Customer profiles and purchase history.', availability: 'available', plans: ['free', 'business', 'pro'], category: 'customers' },
@@ -42,15 +42,15 @@ export const KUDI_CAPABILITIES: KudiCapability[] = [
   { id: 'product-variants', name: 'Product variants', description: 'Sell products by size, colour and other variants.', availability: 'available', plans: ['business', 'pro'], category: 'inventory' },
   { id: 'bundles', name: 'Product bundles', description: 'Sell kits while tracking component inventory.', availability: 'limited-free', plans: ['business', 'pro'], category: 'inventory' },
   { id: 'custom-domains', name: 'Custom domains', description: 'Connect a merchant-owned domain to a storefront.', availability: 'coming-soon', plans: ['business', 'pro'], category: 'commerce' },
-  { id: 'webhooks', name: 'Webhooks & integrations', description: 'Connect Kudi events to external systems.', availability: 'coming-soon', plans: ['pro'], category: 'platform' },
-  { id: 'api', name: 'Kudi API', description: 'Build integrations on top of Kudi.', availability: 'coming-soon', plans: ['pro'], category: 'platform' },
+  { id: 'webhooks', name: 'Webhooks & integrations', description: 'Connect Strap events to external systems.', availability: 'coming-soon', plans: ['pro'], category: 'platform' },
+  { id: 'api', name: 'Strap API', description: 'Build integrations on top of Strap.', availability: 'coming-soon', plans: ['pro'], category: 'platform' },
   { id: 'whatsapp-commerce', name: 'WhatsApp commerce', description: 'Turn conversations into tracked commerce workflows.', availability: 'coming-soon', plans: ['business', 'pro'], category: 'commerce' },
-  { id: 'ai-assistant', name: 'Kudi AI assistant', description: 'Ask questions and get actionable business insights.', availability: 'coming-soon', plans: ['pro'], category: 'automation' },
+  { id: 'ai-assistant', name: 'Strap AI assistant', description: 'Ask questions and get actionable business insights.', availability: 'coming-soon', plans: ['pro'], category: 'automation' },
   { id: 'ai-product-content', name: 'AI product content', description: 'Generate product descriptions and SEO content.', availability: 'coming-soon', plans: ['business', 'pro'], category: 'automation' },
   { id: 'merchant-payments', name: 'Online payments', description: 'Accept customer payments through connected providers.', availability: 'coming-soon', plans: ['business', 'pro'], category: 'payments' },
 ]
 
-export const KUDI_PLANS: Record<KudiPlan, {
+export const STRAP_PLANS: Record<StrapPlan, {
   name: string
   description: string
   priceLabel: string
@@ -60,7 +60,7 @@ export const KUDI_PLANS: Record<KudiPlan, {
 }> = {
   free: {
     name: 'Free',
-    description: 'Core tools to start running a business with Kudi.',
+    description: 'Core tools to start running a business with Strap.',
     priceLabel: 'Free',
     productLimit: 100,
     staffLimit: 1,
@@ -85,10 +85,10 @@ export const KUDI_PLANS: Record<KudiPlan, {
 }
 
 export function getCapability(id: string) {
-  return KUDI_CAPABILITIES.find((capability) => capability.id === id)
+  return STRAP_CAPABILITIES.find((capability) => capability.id === id)
 }
 
-export function hasCapability(plan: KudiPlan, id: string) {
+export function hasCapability(plan: StrapPlan, id: string) {
   const capability = getCapability(id)
   return Boolean(capability?.plans.includes(plan))
 }

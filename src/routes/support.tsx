@@ -4,13 +4,13 @@ import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Help centre — Kudi point of sale" },
+      { title: "Help centre — Strap point of sale" },
       {
         name: "description",
         content:
-          "Getting started with Kudi: set up your shop, add stock, and ring up your first sale.",
+          "Getting started with Strap: set up your shop, add stock, and ring up your first sale.",
       },
-      { property: "og:title", content: "Help centre — Kudi point of sale" },
+      { property: "og:title", content: "Help centre — Strap point of sale" },
       { property: "og:description", content: "Set up your shop and ring up your first sale." },
     ],
   }),
