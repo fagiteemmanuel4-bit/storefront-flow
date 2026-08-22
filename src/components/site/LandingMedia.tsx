@@ -1,10 +1,10 @@
 import { ArrowRight, BarChart3, PackageCheck, ShoppingBag, Sparkles, Store } from "lucide-react";
 
 const VIDEOS = [
-  { src: "https://pixabay.com/videos/download/x-1006_medium.mp4", label: "Run the operation", title: "Keep the shop moving while Strap keeps the details straight." },
-  { src: "https://pixabay.com/videos/download/x-21117_medium.mp4", label: "Take it online", title: "Turn your catalogue into a storefront customers can actually use." },
-  { src: "https://cdn.pixabay.com/video/2019/01/24/20910-313490233_tiny.mp4", label: "Built for momentum", title: "Let the visual rhythm of the business move with Strap." },
-  { src: "https://cdn.pixabay.com/video/2015/08/08/151-135737478_tiny.mp4", label: "Everyday commerce", title: "Keep the work simple from the first sale to the last order." },
+  { src: "https://pixabay.com/videos/download/x-1006_medium.mp4", label: "Run the operation", title: "Keep the shop moving while Strap keeps the details straight.", poster: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&q=85" },
+  { src: "https://pixabay.com/videos/download/x-21117_medium.mp4", label: "Take it online", title: "Turn your catalogue into a storefront customers can actually use.", poster: "https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&w=1400&q=85" },
+  { src: "https://cdn.pixabay.com/video/2019/01/24/20910-313490233_tiny.mp4", label: "Built for momentum", title: "Let the visual rhythm of the business move with Strap.", poster: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=85" },
+  { src: "https://cdn.pixabay.com/video/2015/08/08/151-135737478_tiny.mp4", label: "Everyday commerce", title: "Keep the work simple from the first sale to the last order.", poster: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=85" },
 ] as const;
 
 const ILLUSTRATIONS = {
@@ -16,17 +16,22 @@ const ILLUSTRATIONS = {
 } as const;
 
 const PHOTOGRAPHY = [
-  { src: "https://pixabay.com/images/download/x-3147758_1920.jpg", alt: "Retail business visual", caption: "Made for the pace of real commerce" },
-  { src: "https://pixabay.com/images/download/x-4731671_1920.png", alt: "Business technology visual", caption: "Clear tools. Less operational noise." },
-  { src: "https://pixabay.com/images/download/x-10016127_1920.jpg", alt: "Modern retail visual", caption: "A storefront that feels like your business" },
+  { src: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1400&q=85", alt: "Diverse business team collaborating in a modern workspace", caption: "Made for the people building real businesses" },
+  { src: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=85", alt: "Entrepreneurs working together around a laptop", caption: "Clear tools. Less operational noise." },
+  { src: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=85", alt: "Business team working together in an office", caption: "A business system that grows with you" },
 ] as const;
 
 function Illustration({ src, alt, className = "" }: { src: string; alt: string; className?: string }) {
   return <img src={src} alt={alt} loading="lazy" decoding="async" className={`h-auto w-full object-contain ${className}`} width={640} height={520} />;
 }
 
-function SmartVideo({ src, title }: { src: string; title: string }) {
-  return <video className="absolute inset-0 h-full w-full object-cover" src={src} autoPlay muted loop playsInline preload="metadata" aria-label={title} />;
+function SmartVideo({ src, title, poster }: { src: string; title: string; poster: string }) {
+  return (
+    <>
+      <img src={poster} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+      <video className="absolute inset-0 h-full w-full object-cover" src={src} poster={poster} autoPlay muted loop playsInline preload="metadata" aria-label={title} />
+    </>
+  );
 }
 
 export function LandingMedia() {
@@ -39,7 +44,7 @@ export function LandingMedia() {
             <h2 className="text-display-md mt-4">A retail system should make the work feel lighter.</h2>
             <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">Strap connects the counter, stockroom, customers and online store so every action has a useful next step.</p>
             <div className="mt-9 flex flex-wrap gap-3 text-sm font-semibold text-foreground">
-              {['Sales', 'Stock', 'Orders', 'Online'].map((item) => <span key={item} className="inline-flex items-center gap-2"><span className="size-2 rounded-full bg-accent" />{item}</span>)}
+              {["Sales", "Stock", "Orders", "Online"].map((item) => <span key={item} className="inline-flex items-center gap-2"><span className="size-2 rounded-full bg-accent" />{item}</span>)}
             </div>
           </div>
           <Illustration src={ILLUSTRATIONS.product} alt="Illustration of a product and digital retail experience" className="mx-auto max-w-[38rem]" />
@@ -69,16 +74,16 @@ export function LandingMedia() {
         </div>
       </section>
 
-      <section className="kudi-reveal border-y border-border bg-foreground px-4 py-20 text-background sm:px-6 sm:py-28">
+      <section className="kudi-reveal border-y border-white/10 bg-neutral-950 px-4 py-20 text-white sm:px-6 sm:py-28">
         <div className="mx-auto max-w-7xl">
           <div className="grid items-end gap-8 lg:grid-cols-[.8fr_1.2fr]">
             <div>
               <p className="text-label-caps text-accent">Strap in motion</p>
-              <h2 className="mt-4 font-display text-4xl font-bold tracking-tight sm:text-5xl">See the operation, not just the software.</h2>
-              <p className="mt-5 max-w-xl leading-7 text-background/65">Four visual stories. One connected retail system.</p>
+              <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">See the operation, not just the software.</h2>
+              <p className="mt-5 max-w-xl leading-7 text-white/75">Four visual stories. One connected retail system.</p>
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
-              {VIDEOS.map((video) => <article key={video.src} className="group relative min-h-[17rem] overflow-hidden rounded-[2rem] border border-background/10 bg-background/5"><SmartVideo src={video.src} title={video.title} /><div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" /><div className="absolute inset-x-0 bottom-0 p-5"><p className="text-xs font-bold uppercase tracking-[.16em] text-accent">{video.label}</p><h3 className="mt-2 font-display text-xl font-bold">{video.title}</h3></div></article>)}
+              {VIDEOS.map((video) => <article key={video.src} className="group relative min-h-[17rem] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[.06]"><SmartVideo src={video.src} poster={video.poster} title={video.title} /><div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" /><div className="absolute inset-x-0 bottom-0 p-5"><p className="text-xs font-bold uppercase tracking-[.16em] text-accent">{video.label}</p><h3 className="mt-2 font-display text-xl font-bold text-white">{video.title}</h3></div></article>)}
             </div>
           </div>
         </div>
@@ -97,7 +102,7 @@ export function LandingMedia() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 max-w-2xl"><p className="text-label-caps text-accent-ink">Built for the people behind the business</p><h2 className="text-display-md mt-4">A little human energy belongs in the product story.</h2><p className="mt-5 text-lg leading-8 text-muted-foreground">Strap is software, but the reason it exists is simple: make the daily work of running a shop calmer.</p></div>
           <div className="grid gap-5 md:grid-cols-3">
-            {PHOTOGRAPHY.map((photo, index) => <figure key={photo.src} className={`group relative overflow-hidden rounded-[2rem] ${index === 1 ? 'md:translate-y-10' : ''}`}><img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" width={1280} height={800} className="h-[22rem] w-full object-cover transition duration-700 group-hover:scale-[1.035]" /><div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" /><figcaption className="absolute bottom-0 left-0 p-6 font-display text-xl font-bold text-white">{photo.caption}</figcaption></figure>)}
+            {PHOTOGRAPHY.map((photo, index) => <figure key={photo.src} className={`group relative overflow-hidden rounded-[2rem] bg-secondary shadow-sm ${index === 1 ? "md:translate-y-10" : ""}`}><img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" width={1400} height={900} className="h-[22rem] w-full object-cover transition duration-700 group-hover:scale-[1.035]" /><div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" /><figcaption className="absolute bottom-0 left-0 p-6 font-display text-xl font-bold text-white">{photo.caption}</figcaption></figure>)}
           </div>
         </div>
       </section>
