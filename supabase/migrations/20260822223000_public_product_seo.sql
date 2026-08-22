@@ -40,7 +40,7 @@ RETURNS TABLE(
   product_image_url TEXT,
   product_image_urls TEXT[],
   product_featured BOOLEAN,
-  stock_quantity NUMERIC,
+  stock_quantity INTEGER,
   available BOOLEAN
 )
 LANGUAGE sql
@@ -63,10 +63,16 @@ AS $$
     p.sku,
     p.category,
     p.image_url,
-    COALESCE(p.image_urls, ARRAY[]::TEXT[]),
+    COALESCE((SELECT array_agg(pi.image_url ORDER BY pi.sort_order, pi.created_at)
+              FROM public.product_images pi
+              WHERE pi.product_id = p.id AND pi.store_id = p.store_id), ARRAY[]::TEXT[]),
     op.featured,
-    COALESCE(p.stock_quantity, 0),
-    (COALESCE(p.stock_quantity, 0) > 0)
+    COALESCE((SELECT SUM(bs.quantity)::INTEGER
+              FROM public.branch_stock bs
+              WHERE bs.product_id = p.id AND bs.store_id = p.store_id), 0),
+    (COALESCE((SELECT SUM(bs.quantity)::INTEGER
+               FROM public.branch_stock bs
+               WHERE bs.product_id = p.id AND bs.store_id = p.store_id), 0) > 0)
   FROM public.online_stores os
   JOIN public.stores s ON s.id = os.store_id
   JOIN public.online_products op ON op.store_id = os.store_id
