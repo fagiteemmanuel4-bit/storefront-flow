@@ -1,9 +1,16 @@
 User-agent: *
 Allow: /
+
+# Private application areas must never be treated as public content.
 Disallow: /dashboard
-Disallow: /settings
 Disallow: /admin
+Disallow: /staff
 Disallow: /auth
+Disallow: /account
+Disallow: /settings
 Disallow: /track/
+Disallow: /api/
+
+# Storefronts and public product pages remain crawlable.
 
 Sitemap: https://storefront-flow.vercel.app/sitemap.xml
