@@ -1,11 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  createRootRouteWithContext,
-  useRouter,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext, useRouter, HeadContent, Scripts } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
@@ -20,8 +14,8 @@ import { StoreCustomerAccess } from "@/components/site/StoreCustomerAccess";
 import { Button } from "@/components/ui/button";
 
 const SITE_URL = "https://storefront-flow.vercel.app";
-const SITE_TITLE = "Strap — Point of Sale, Inventory & Online Store for Small Businesses";
-const SITE_DESCRIPTION = "Strap helps small businesses manage stock, record sales, run a POS, publish an online catalogue, and operate a simple virtual store from one place.";
+const SITE_TITLE = "Strap — Commerce, POS, Inventory & Online Store";
+const SITE_DESCRIPTION = "Strap by Kryonara helps businesses manage products, inventory, sales, customers, staff, orders and online commerce from one clear workspace.";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
@@ -33,7 +27,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
-      { charSet: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" }, { title: SITE_TITLE }, { name: "description", content: SITE_DESCRIPTION }, { name: "author", content: "Strap" },
+      { charSet: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" }, { title: SITE_TITLE }, { name: "description", content: SITE_DESCRIPTION }, { name: "author", content: "Kryonara" },
+      { name: "application-name", content: "Strap" }, { name: "apple-mobile-web-app-title", content: "Strap" },
       { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" }, { name: "googlebot", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" }, { name: "google-site-verification", content: "C8nXbWzuOEhCjnzdPL7QJMSpJ7FEZYl0YO0xaV0v1vs" },
       { property: "og:type", content: "website" }, { property: "og:site_name", content: "Strap" }, { property: "og:title", content: SITE_TITLE }, { property: "og:description", content: SITE_DESCRIPTION }, { property: "og:url", content: SITE_URL }, { property: "og:locale", content: "en_NG" },
       { name: "twitter:card", content: "summary_large_image" }, { name: "twitter:title", content: SITE_TITLE }, { name: "twitter:description", content: SITE_DESCRIPTION },
