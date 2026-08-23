@@ -11,9 +11,10 @@ Disallow: /settings
 Disallow: /track/
 Disallow: /api/
 
-# Storefronts and public product pages remain crawlable.
-# The sitemap endpoint is a server-side application route, so it is
-# explicitly allowed while other private API endpoints remain disallowed.
+# Public documentation and storefronts remain crawlable.
+Allow: /docs
+Allow: /partners
+Allow: /store/
 Allow: /api/sitemap
 
-Sitemap: https://storefront-flow.vercel.app/api/sitemap
+Sitemap: https://storefront-flow.vercel.app/sitemap.xml
