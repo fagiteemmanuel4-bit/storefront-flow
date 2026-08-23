@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 
-const OTP_LENGTH = 6;
+const OTP_LENGTH = 8;
 const RESEND_SECONDS = 60;
 
 function getPasswordStrength(password: string) {
@@ -78,7 +78,7 @@ export function PasswordOtp() {
 
     setStep("otp");
     setResendIn(RESEND_SECONDS);
-    toast.success("A 6-digit verification code was sent to your email.");
+    toast.success("An 8-digit verification code was sent to your email.");
   }
 
   async function resendOtp() {
@@ -91,12 +91,12 @@ export function PasswordOtp() {
       return;
     }
     setResendIn(RESEND_SECONDS);
-    toast.success("A new verification code was sent.");
+    toast.success("A new 8-digit verification code was sent.");
   }
 
   async function changePassword() {
     if (otp.length !== OTP_LENGTH) {
-      toast.error("Enter the 6-digit verification code from your email.");
+      toast.error("Enter the 8-digit verification code from your email.");
       return;
     }
     if (!validPassword || !matching) {
@@ -133,7 +133,7 @@ export function PasswordOtp() {
         </div>
         <h3 className="mt-5 text-xl font-bold">Password changed</h3>
         <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
-          Your Strap password was updated using a verified email OTP. No sign-in link was used.
+          Your Strap password was updated after verifying the 8-digit code sent to your email. You never need to enter your old password here.
         </p>
         <Button className="mt-6" variant="outline" onClick={() => {
           setPassword("");
@@ -154,9 +154,9 @@ export function PasswordOtp() {
             <KeyRound className="size-5" />
           </div>
           <div>
-            <h3 className="font-semibold">Change password with email OTP</h3>
+            <h3 className="font-semibold">Change password</h3>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Strap sends a 6-digit verification code to your verified email. You enter the code here; there are no magic links or redirect links in this flow.
+              Enter your new password, then verify the 8-digit code sent to your verified email. You do not need to enter your old password, and Strap does not use a magic sign-in link for this flow.
             </p>
           </div>
         </div>
@@ -212,8 +212,8 @@ export function PasswordOtp() {
         ) : (
           <div className="mt-6 space-y-5">
             <div>
-              <h4 className="font-semibold">Enter your verification code</h4>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">Check {email} for the 6-digit code from Supabase Auth.</p>
+              <h4 className="font-semibold">Enter the 8-digit verification code</h4>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">Check {email} for the 8-digit code from Supabase Auth. No old password is required.</p>
             </div>
 
             <Input
@@ -222,14 +222,14 @@ export function PasswordOtp() {
               maxLength={OTP_LENGTH}
               value={otp}
               onChange={(event) => setOtp(event.target.value.replace(/\D/g, "").slice(0, OTP_LENGTH))}
-              placeholder="000000"
+              placeholder="00000000"
               className="text-center text-2xl font-semibold tracking-[0.35em]"
-              aria-label="6-digit verification code"
+              aria-label="8-digit verification code"
             />
 
             <div className="flex flex-wrap items-center gap-3">
               <Button onClick={() => void changePassword()} disabled={saving || otp.length !== OTP_LENGTH}>
-                {saving ? "Verifying…" : "Verify & change password"}
+                {saving ? "Verifying code…" : "Verify code & change password"}
               </Button>
               <Button variant="ghost" onClick={() => void resendOtp()} disabled={sending || resendIn > 0}>
                 <RefreshCw className="mr-2 size-4" />
