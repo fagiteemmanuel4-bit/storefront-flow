@@ -1,152 +1,17 @@
-/* Strap public landing visual system: cinematic hero + high-contrast, resilient sections. */
-body:has(.kudi-hero) {
-  background: oklch(0.97 0.008 88);
-  color: oklch(0.16 0.012 82);
-}
-
-body:has(.kudi-hero) main {
-  background: oklch(0.97 0.008 88);
-}
-
-.kudi-hero {
-  min-height: 100svh;
-  isolation: isolate;
-  background: #10110f;
-}
-
-.kudi-hero > video {
-  filter: saturate(.68) contrast(1.04) brightness(.50);
-  transform: scale(1.015);
-}
-
-.kudi-hero-video-fade {
-  z-index: 1;
-  background:
-    linear-gradient(90deg, rgba(5,5,5,.90) 0%, rgba(5,5,5,.72) 42%, rgba(5,5,5,.46) 76%, rgba(5,5,5,.38) 100%),
-    linear-gradient(180deg, rgba(5,5,5,.30) 0%, rgba(5,5,5,.06) 42%, rgba(5,5,5,.80) 100%);
-}
-
-.kudi-hero-vignette {
-  z-index: 2;
-  pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 24%, rgba(0,0,0,.40) 100%);
-}
-
-.kudi-hero > div:not(.kudi-hero-video-fade):not(.kudi-hero-vignette) {
-  z-index: 3;
-}
-
-/* Keep every public section readable even when theme tokens are changed elsewhere. */
-body:has(.kudi-hero) main > section:not(.kudi-hero) {
-  background-color: oklch(0.97 0.008 88);
-  color: oklch(0.16 0.012 82);
-}
-
-body:has(.kudi-hero) main > section:nth-of-type(2n) {
-  background-color: oklch(0.955 0.012 88);
-}
-
-body:has(.kudi-hero) article {
-  background-color: transparent;
-}
-
-/* Explicit contrast for secondary copy on the public landing page. */
-body:has(.kudi-hero) .text-muted-foreground {
-  color: oklch(0.38 0.012 82);
-}
-
-body:has(.kudi-hero) .text-accent-ink {
-  color: oklch(0.42 0.13 78);
-}
-
-body:has(.kudi-hero) .text-border {
-  color: oklch(0.78 0.012 88);
-}
-
-/* Intentional media frame: failed remote illustrations never leave a stark empty box. */
-body:has(.kudi-hero) main img:not([src*="cdn.pixabay.com"]) {
-  min-height: 10rem;
-  border-radius: 1.5rem;
-  background:
-    radial-gradient(circle at 30% 25%, rgba(255,255,255,.92), transparent 42%),
-    linear-gradient(135deg, rgba(255,255,255,.76), rgba(232,228,216,.52));
-}
-
-/* Hero copy leaves first as the user starts scrolling, clearing the viewport for the page body. */
-@supports (animation-timeline: scroll()) {
-  .kudi-hero > div:nth-of-type(3) > div:first-child {
-    animation: kudi-hero-scroll-out linear both;
-    animation-timeline: scroll(root);
-    animation-range: 0 55svh;
-  }
-}
-
-/* Sections reveal as they enter the viewport: restrained, stagger-free, and GPU-friendly. */
-.kudi-reveal {
-  opacity: 1;
-  transform: none;
-}
-
-@supports (animation-timeline: view()) {
-  .kudi-reveal {
-    animation: kudi-section-reveal linear both;
-    animation-timeline: view();
-    animation-range: entry 8% cover 30%;
-  }
-}
-
-.kudi-reveal img {
-  will-change: transform;
-}
-
-.kudi-reveal figure:hover img {
-  transform: scale(1.035);
-}
-
-@keyframes kudi-hero-scroll-out {
-  0% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
-  65% { opacity: .35; transform: translate3d(0, -4rem, 0) scale(.985); filter: blur(1px); }
-  100% { opacity: 0; transform: translate3d(0, -7rem, 0) scale(.96); filter: blur(4px); }
-}
-
-@keyframes kudi-section-reveal {
-  0% { opacity: .01; transform: translate3d(0, 2.25rem, 0) scale(.985); }
-  45% { opacity: .72; transform: translate3d(0, .5rem, 0) scale(.997); }
-  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
-}
-
-@media (max-width: 767px) {
-  .kudi-hero > video {
-    filter: saturate(.58) contrast(1.02) brightness(.42);
-  }
-
-  .kudi-hero-video-fade {
-    background:
-      linear-gradient(90deg, rgba(5,5,5,.92), rgba(5,5,5,.58)),
-      linear-gradient(180deg, rgba(5,5,5,.25), rgba(5,5,5,.86));
-  }
-
-  .kudi-hero-vignette {
-    background: radial-gradient(ellipse at center, transparent 18%, rgba(0,0,0,.46) 100%);
-  }
-
-  body:has(.kudi-hero) main img:not([src*="cdn.pixabay.com"]) {
-    min-height: 8rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .kudi-hero > video {
-    transform: none;
-  }
-
-  .kudi-reveal {
-    animation: none !important;
-    opacity: 1;
-    transform: none;
-  }
-
-  .kudi-reveal img {
-    transition: none !important;
-  }
-}
+/* Strap public landing visual system: cinematic hero + dynamic editorial motion. */
+body:has(.kudi-hero){background:#f7f6f1;color:#151513}body:has(.kudi-hero) main{background:#f7f6f1}
+.kudi-hero{min-height:100svh;isolation:isolate;background:#0d0e0c;overflow:hidden}.kudi-hero>video{filter:saturate(.82) contrast(1.08) brightness(.46);transform:scale(1.03);animation:strap-hero-drift 18s ease-in-out infinite alternate}
+.kudi-hero-video-fade{z-index:1;background:linear-gradient(100deg,rgba(4,5,4,.92),rgba(4,5,4,.68) 42%,rgba(4,5,4,.32) 78%,rgba(4,5,4,.22)),linear-gradient(180deg,rgba(4,5,4,.18),rgba(4,5,4,.86))}.kudi-hero-vignette{z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 20%,rgba(0,0,0,.48) 100%)}.kudi-hero>div:not(.kudi-hero-video-fade):not(.kudi-hero-vignette){z-index:3}
+/* Explicitly readable public sections. */
+body:has(.kudi-hero) main>section:not(.kudi-hero){background-color:#f7f6f1;color:#151513}body:has(.kudi-hero) main>section:nth-of-type(2n){background-color:#efeee8}body:has(.kudi-hero) .text-muted-foreground{color:#4b4b45}body:has(.kudi-hero) .text-accent-ink{color:#8a5b00}body:has(.kudi-hero) .text-border{color:#c9c6bc}
+/* Dark toolkit sections retain high contrast. */
+body:has(.kudi-hero) main>section.bg-foreground{background:#11120f;color:#fff}.kudi-hero h1{animation:strap-copy-in .9s cubic-bezier(.2,.8,.2,1) both}.kudi-hero p{animation:strap-copy-in 1s .08s cubic-bezier(.2,.8,.2,1) both}
+/* Resilient media frames: no blank-looking image containers. */
+body:has(.kudi-hero) main img:not([src*="cdn.pixabay.com"]){min-height:10rem;border-radius:1.5rem;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.95),transparent 42%),linear-gradient(135deg,#fff,#e4e0d5)}
+/* Reveal sections and images with a directional editorial fly-in. */
+.kudi-reveal{opacity:1;transform:none}.kudi-reveal img{will-change:transform,opacity;transition:transform .7s cubic-bezier(.2,.8,.2,1),filter .7s}.kudi-reveal figure:hover img{transform:scale(1.045) translateY(-5px)}
+@supports (animation-timeline:view()){.kudi-reveal{animation:strap-section-in linear both;animation-timeline:view();animation-range:entry 4% cover 32%}.kudi-reveal img{animation:strap-media-in linear both;animation-timeline:view();animation-range:entry 0% cover 35%}}
+@supports (animation-timeline:scroll()){.kudi-hero>div:nth-of-type(3)>div:first-child{animation:strap-hero-scroll linear both;animation-timeline:scroll(root);animation-range:0 58svh}}
+@keyframes strap-hero-drift{from{transform:scale(1.03) translate3d(-.5%,0,0)}to{transform:scale(1.09) translate3d(.5%,-.5%,0)}}@keyframes strap-copy-in{from{opacity:0;transform:translate3d(0,2rem,0);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}@keyframes strap-section-in{from{opacity:.01;transform:translate3d(0,2.5rem,0) scale(.985)}to{opacity:1;transform:none}}@keyframes strap-media-in{from{opacity:.01;transform:translate3d(2.5rem,1rem,0) scale(.94);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}@keyframes strap-hero-scroll{0%{opacity:1;transform:none}70%{opacity:.35;transform:translate3d(0,-4rem,0) scale(.985);filter:blur(1px)}100%{opacity:0;transform:translate3d(0,-7rem,0) scale(.96);filter:blur(4px)}}
+@media(max-width:767px){.kudi-hero>video{filter:saturate(.7) contrast(1.05) brightness(.4)}.kudi-hero-video-fade{background:linear-gradient(90deg,rgba(4,5,4,.94),rgba(4,5,4,.58)),linear-gradient(180deg,rgba(4,5,4,.25),rgba(4,5,4,.88))}body:has(.kudi-hero) main img:not([src*="cdn.pixabay.com"]){min-height:8rem}}
+@media(prefers-reduced-motion:reduce){.kudi-hero>video{animation:none;transform:none}.kudi-reveal,.kudi-reveal img,.kudi-hero h1,.kudi-hero p{animation:none!important;opacity:1;transform:none;filter:none}.kudi-reveal img{transition:none}}
