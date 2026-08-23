@@ -2,7 +2,7 @@
 
 ## Current architecture
 
-Strap now uses `/settings` as the single Settings entry point. Settings are protected by the existing authenticated route tree and each supported category has its own route and focused page.
+Strap uses `/settings` as the single Settings entry point. Settings are protected by the existing authenticated route tree and each supported category has its own route and focused page.
 
 ### Supported routes
 
@@ -39,22 +39,42 @@ Settings continue to use the existing Supabase model. No second settings databas
 
 The Settings password-change flow does not ask for the old password. It does not use `signInWithOtp`, magic links, confirmation URLs or email redirects.
 
-The current Supabase Auth email configuration sends an **8-digit verification code**, so the Strap UI accepts exactly eight numeric digits.
+Supabase Auth sends the project's configured **8-digit reauthentication code**, so the Strap UI accepts exactly eight numeric digits.
 
-The flow is:
+### Production flow
 
 1. The authenticated user enters a new password and confirmation.
 2. Strap calls `supabase.auth.reauthenticate()`.
 3. Supabase Auth sends an 8-digit reauthentication OTP to the user's verified email address.
 4. The user enters the 8-digit code in Strap.
-5. Strap calls `supabase.auth.updateUser({ password, nonce: otp })`.
-6. The password is changed only after Supabase validates the nonce.
+5. Strap sends the OTP and new password to the authenticated `password-change-otp` Edge Function.
+6. The Edge Function verifies the reauthentication proof against the active Supabase Auth reauthentication token using the same SHA-224 email+OTP derivation used by Supabase Auth.
+7. The Edge Function consumes the verification proof and uses the server-only Supabase Admin API to update the authenticated user's password.
+8. Supabase invalidates sessions as part of the password update, so the user may need to sign in again.
 
-There is no old-password field. The email OTP is the additional verification factor for this operation.
+The browser never receives or stores a service-role key. The password update is performed server-side only.
 
-The OTP is the nonce supplied to `updateUser`; it is not verified through `verifyOtp`, and no magic-link route is involved.
+There is no old-password field. The email OTP is the verification factor for this operation.
+
+The OTP is not passed through `verifyOtp`. The flow uses the dedicated reauthentication endpoint and a protected server-side password update because the project's Auth policy currently rejects client-side password updates unless a current password is supplied. This keeps the requested UX—no old password—without weakening authentication or exposing administrative credentials to the browser.
+
+The database migration `secure_password_otp_change` provides the narrowly scoped `verify_password_change_otp(text)` security-definer function. It accepts execution only from authenticated users, validates the current user's reauthentication proof, enforces a ten-minute proof lifetime, and consumes the proof after successful validation.
+
+The `password-change-otp` Edge Function is JWT-protected and uses `supabase.auth.admin.updateUserById()` only after that verification succeeds.
 
 The UI provides password-strength validation, confirmation validation, eight-digit numeric OTP validation, resend throttling, loading/error states and a success state.
+
+## Reauthentication email branding
+
+A branded Strap reauthentication template is stored at:
+
+`supabase/templates/reauthentication.html`
+
+The template is OTP-only and contains no sign-in link. It uses `{{ .Token }}` for the eight-digit code and is designed around Strap/Kryonara branding.
+
+The hosted Supabase project currently sends mail through Supabase's default SMTP service. The Auth logs show the current sender as `noreply@mail.app.supabase.io`. Changing the sender display name from **Supabase Auth** to **Strap** requires configuring custom SMTP and setting the sender name to `Strap`; the SMTP credential itself must never be committed to GitHub.
+
+A free custom SMTP option such as Resend can be used for this. The current Resend free plan provides up to 3,000 emails/month with a 100-email/day limit. After configuring SMTP in Supabase, the branded template can be applied from Supabase Auth Email Templates. No EmailJS dependency is required.
 
 ## Removed product surfaces
 
