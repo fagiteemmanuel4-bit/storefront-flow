@@ -46,23 +46,51 @@ Supabase Auth sends the project's configured **8-digit reauthentication code**, 
 1. The authenticated user enters a new password and confirmation.
 2. Strap calls `supabase.auth.reauthenticate()`.
 3. Supabase Auth sends an 8-digit reauthentication OTP to the user's verified email address.
-4. The user enters the 8-digit code in Strap.
-5. Strap sends the OTP and new password to the authenticated `password-change-otp` Edge Function.
-6. The Edge Function verifies the reauthentication proof against the active Supabase Auth reauthentication token using the same SHA-224 email+OTP derivation used by Supabase Auth.
-7. The Edge Function consumes the verification proof and uses the server-only Supabase Admin API to update the authenticated user's password.
-8. Supabase invalidates sessions as part of the password update, so the user may need to sign in again.
+4. The user enters the 8-digit code in the protected Strap verification modal.
+5. Strap sends the OTP and new password to the JWT-protected `password-change-otp` Edge Function.
+6. The Edge Function validates the caller's access token with Supabase Auth.
+7. A server-only Supabase RPC verifies the reauthentication proof against the active Auth token hash using the same SHA-224 email+OTP derivation used by Supabase Auth.
+8. The proof is consumed only after successful verification, and a five-attempt-per-user verification window is enforced.
+9. The Edge Function uses the server-only Supabase Admin API to update the authenticated user's password.
+10. Supabase invalidates sessions as part of the password update, so the user may need to sign in again.
 
 The browser never receives or stores a service-role key. The password update is performed server-side only.
 
 There is no old-password field. The email OTP is the verification factor for this operation.
 
-The OTP is not passed through `verifyOtp`. The flow uses the dedicated reauthentication endpoint and a protected server-side password update because the project's Auth policy currently rejects client-side password updates unless a current password is supplied. This keeps the requested UX—no old password—without weakening authentication or exposing administrative credentials to the browser.
+The OTP is not passed through `verifyOtp`. The flow uses the dedicated reauthentication endpoint and a protected server-side password update because the project's Auth policy currently rejects client-side password updates unless a current password is supplied. This keeps the requested UX—no old password—without exposing administrative credentials to the browser.
 
-The database migration `secure_password_otp_change` provides the narrowly scoped `verify_password_change_otp(text)` security-definer function. It accepts execution only from authenticated users, validates the current user's reauthentication proof, enforces a ten-minute proof lifetime, consumes the proof after successful validation, and is protected by a five-attempt-per-user verification window.
+### OTP security hardening
 
-The `password-change-otp` Edge Function is JWT-protected and uses `supabase.auth.admin.updateUserById()` only after that verification succeeds.
+- `password-change-otp` is deployed with JWT verification enabled.
+- Verification is bound to the authenticated user's ID from the access token; the client cannot choose another account.
+- OTP input is exactly eight numeric digits.
+- Codes expire with the active Supabase reauthentication window.
+- A maximum of five verification attempts is enforced per user within a ten-minute window.
+- A successful verification consumes the stored reauthentication proof.
+- `password_otp_attempts` has RLS enabled and no client-facing policies; it is used only by the protected server-side function.
+- The password verification RPC is executable only by the server-side `service_role` and is not exposed to anonymous or authenticated browser clients.
+- The service-role key is never sent to the browser or committed to GitHub.
+- The Edge Function returns generic verification failures rather than exposing internal database/auth details.
 
-The UI provides password-strength validation, confirmation validation, eight-digit numeric OTP validation, resend throttling, loading/error states and a success state.
+The active Edge Function is `password-change-otp` version 3.
+
+## Security confirmation modal
+
+Security-sensitive confirmation and verification experiences use the shared `SecurityModal` component.
+
+It is used for:
+
+- Email OTP verification before password changes.
+- Successful password-change confirmation.
+- Logout confirmation.
+- Destructive store-deletion confirmation.
+
+The modal uses the existing Radix Alert Dialog primitive, prevents accidental outside dismissal for verification flows, uses a strong visual hierarchy, and provides explicit primary/secondary actions.
+
+While a security modal is open, Strap also applies best-effort browser protections against ordinary text selection, copy, cut, context-menu and drag operations. Keyboard clipboard/print/save shortcuts are blocked while the modal is active.
+
+These protections are **not a cryptographic screen-capture barrier**. A normal web browser cannot reliably prevent an operating system screenshot, external camera capture, browser-level screen recording, or hardware/OS casting. Such protection would require a controlled native application/device policy (for example Android's `FLAG_SECURE`). Strap therefore does not claim that browser JavaScript can make screenshots or casting impossible.
 
 ## Reauthentication email branding
 
@@ -72,9 +100,9 @@ A branded Strap reauthentication template is stored at:
 
 The template is OTP-only and contains no sign-in link. It uses `{{ .Token }}` for the eight-digit code and is designed around Strap/Kryonara branding.
 
-The hosted Supabase project currently sends mail through Supabase's default SMTP service. The Auth logs show the current sender as `noreply@mail.app.supabase.io`. Changing the sender display name from **Supabase Auth** to **Strap** requires configuring custom SMTP and setting the sender name to `Strap`; the SMTP credential itself must never be committed to GitHub.
+The hosted Supabase project currently sends mail through Supabase's default SMTP service. Changing the sender display name from **Supabase Auth** to **Strap** requires configuring custom SMTP and setting the sender name to `Strap`; SMTP credentials must never be committed to GitHub.
 
-A free custom SMTP option such as Resend can be used for this. After configuring SMTP in Supabase, the branded template can be applied from Supabase Auth Email Templates. No EmailJS dependency is required.
+A custom SMTP provider such as Resend can be used for production mail delivery. No EmailJS dependency is required.
 
 ## Removed product surfaces
 
@@ -92,6 +120,8 @@ Store appearance remains available from Settings, but it is a settings-only expe
 The application menu was redesigned for desktop-first use with grouped sections, stronger hierarchy, consistent action sizing and one Settings destination under Account.
 
 The menu no longer exposes Settings sub-pages individually.
+
+Logout now opens a secure confirmation modal rather than immediately terminating the session.
 
 ## Staff listing fix
 
@@ -121,4 +151,6 @@ After Settings changes, production verification must confirm:
 6. The product tour is absent.
 7. Staff listing renders the real RPC fields without a missing-column mismatch.
 8. Password change sends and validates the configured 8-digit email OTP without requiring the old password or a magic link.
-9. Vercel reaches `READY` before production is considered complete.
+9. OTP verification occurs only through the protected server-side function.
+10. Security-sensitive confirmations use the shared modal pattern.
+11. Vercel reaches `READY` before production is considered complete.
