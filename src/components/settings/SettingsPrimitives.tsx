@@ -1,0 +1,11 @@
+import { Save } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import type { ReactNode } from "react";
+
+export function CardSection({ title, description, children }: { title: string; description?: string; children: ReactNode }) { return <section className="rounded-2xl border border-border bg-background p-5 sm:p-6"><div className="mb-5"><h2 className="font-semibold">{title}</h2>{description && <p className="mt-1 text-sm leading-5 text-muted-foreground">{description}</p>}</div>{children}</section>; }
+export function Field({ label, value, onChange, type = "text", placeholder, disabled = false }: { label: string; value: string; onChange: (value: string) => void; type?: string; placeholder?: string; disabled?: boolean }) { return <label className="block text-sm font-medium">{label}<Input className="mt-2" type={type} value={value} placeholder={placeholder} disabled={disabled} onChange={(e) => onChange(e.target.value)} /></label>; }
+export function SelectField({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: string[] }) { return <label className="block text-sm font-medium">{label}<select value={value} onChange={(e) => onChange(e.target.value)} className="mt-2 h-10 w-full rounded-md border border-border bg-background px-3 text-sm">{options.map((option) => <option key={option}>{option}</option>)}</select></label>; }
+export function SaveBar({ dirty, saving, discard, save }: { dirty: boolean; saving: boolean; discard: () => void; save: () => void }) { if (!dirty) return null; return <div className="sticky bottom-4 z-20 flex items-center justify-between gap-3 rounded-2xl border border-border bg-background/95 p-3 shadow-xl backdrop-blur"><span className="text-sm font-medium">Unsaved changes</span><div className="flex gap-2"><Button variant="ghost" onClick={discard} disabled={saving}>Discard</Button><Button onClick={save} disabled={saving}><Save className="mr-2 size-4" />{saving ? "Saving…" : "Save changes"}</Button></div></div>; }
+export function Loading() { return <div className={cn("rounded-2xl border border-border p-8 text-sm text-muted-foreground")}>Loading settings…</div>; }
