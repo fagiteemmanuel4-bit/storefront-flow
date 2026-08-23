@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Check, KeyRound, Mail, RefreshCw } from "lucide-react";
+import { Check, KeyRound, Mail, RefreshCw, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SecurityModal } from "@/components/security/SecurityModal";
 import { supabase } from "@/integrations/supabase/client";
 
 const OTP_LENGTH = 8;
@@ -28,6 +29,8 @@ export function PasswordOtp() {
   const [sending, setSending] = useState(false);
   const [saving, setSaving] = useState(false);
   const [resendIn, setResendIn] = useState(0);
+  const [verificationOpen, setVerificationOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -47,9 +50,7 @@ export function PasswordOtp() {
 
   useEffect(() => {
     if (resendIn <= 0) return;
-    const timer = window.setInterval(() => {
-      setResendIn((value) => Math.max(0, value - 1));
-    }, 1000);
+    const timer = window.setInterval(() => setResendIn((value) => Math.max(0, value - 1)), 1000);
     return () => window.clearInterval(timer);
   }, [resendIn]);
 
@@ -76,9 +77,10 @@ export function PasswordOtp() {
       return;
     }
 
+    setOtp("");
     setStep("otp");
+    setVerificationOpen(true);
     setResendIn(RESEND_SECONDS);
-    toast.success("An 8-digit verification code was sent to your email.");
   }
 
   async function resendOtp() {
@@ -90,147 +92,147 @@ export function PasswordOtp() {
       toast.error(error.message || "We could not resend the verification code.");
       return;
     }
+    setOtp("");
     setResendIn(RESEND_SECONDS);
     toast.success("A new 8-digit verification code was sent.");
   }
 
   async function changePassword() {
-    if (otp.length !== OTP_LENGTH) {
-      toast.error("Enter the 8-digit verification code from your email.");
-      return;
-    }
+    if (otp.length !== OTP_LENGTH || saving) return;
     if (!validPassword || !matching) {
-      toast.error("Check your new password before continuing.");
+      toast.error("Your new password is no longer valid. Close this verification and choose a new password.");
       return;
     }
 
     setSaving(true);
-    const { data, error } = await supabase.functions.invoke("password-change-otp", {
-      body: { otp, password },
-    });
+    const { data, error } = await supabase.functions.invoke("password-change-otp", { body: { otp, password } });
     setSaving(false);
 
     if (error || data?.error) {
       toast.error(data?.error || error?.message || "The verification code was rejected. Request a new code and try again.");
+      setOtp("");
       return;
     }
 
     setOtp("");
+    setVerificationOpen(false);
     setStep("success");
-    toast.success("Your password has been changed successfully.");
+    setSuccessOpen(true);
+    setPassword("");
+    setConfirmPassword("");
+  }
+
+  function cancelVerification() {
+    if (saving) return;
+    setVerificationOpen(false);
+    setOtp("");
+    setStep("password");
+    setResendIn(0);
   }
 
   if (loading) {
     return <div className="rounded-2xl border border-border bg-background p-8 text-sm text-muted-foreground">Loading your verified email…</div>;
   }
 
-  if (step === "success") {
-    return (
-      <div className="rounded-2xl border border-border bg-background p-8 text-center shadow-sm">
-        <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-accent-soft text-accent-ink">
-          <Check className="size-6" />
-        </div>
-        <h3 className="mt-5 text-xl font-bold">Password changed</h3>
-        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
-          Your Strap password was updated after verifying the 8-digit code sent to your verified email. You never need to enter your old password here. For security, Supabase may sign your active sessions out and require you to sign in again.
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-4">
-      <section className="rounded-2xl border border-border bg-background p-5 sm:p-6">
-        <div className="flex items-start gap-3">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-ink">
-            <KeyRound className="size-5" />
+    <>
+      <div className="space-y-4">
+        <section className="rounded-2xl border border-border bg-background p-5 sm:p-6">
+          <div className="flex items-start gap-3">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-ink">
+              <KeyRound className="size-5" />
+            </div>
+            <div>
+              <h3 className="font-semibold">Change password</h3>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                Choose a new password and verify the 8-digit code sent to your verified email. Your old password is never requested.
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-semibold">Change password</h3>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Choose a new password and verify the 8-digit code sent to your verified email. Your old password is never requested.
-            </p>
-          </div>
-        </div>
 
-        <div className="mt-6 rounded-xl border border-border bg-secondary/30 p-4">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <Mail className="size-4" />
-            Verification email
+          <div className="mt-6 rounded-xl border border-border bg-secondary/30 p-4">
+            <div className="flex items-center gap-2 text-sm font-medium"><Mail className="size-4" />Verification email</div>
+            <p className="mt-1 text-sm text-muted-foreground">{email || "Verified email unavailable"}</p>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">{email || "Verified email unavailable"}</p>
-        </div>
 
-        {step === "password" ? (
           <div className="mt-6 space-y-5">
             <label className="block text-sm font-medium">
               New password
-              <Input
-                className="mt-2"
-                type="password"
-                autoComplete="new-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Enter a strong password"
-              />
+              <Input className="mt-2" type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter a strong password" disabled={step === "otp"} />
             </label>
 
             <div className="space-y-2">
-              <div className="flex gap-1">
-                {Array.from({ length: 5 }, (_, index) => (
-                  <div key={index} className={`h-1.5 flex-1 rounded-full ${index < strength ? "bg-accent" : "bg-secondary"}`} />
-                ))}
-              </div>
+              <div className="flex gap-1">{Array.from({ length: 5 }, (_, index) => <div key={index} className={`h-1.5 flex-1 rounded-full ${index < strength ? "bg-accent" : "bg-secondary"}`} />)}</div>
               <p className="text-xs text-muted-foreground">Use 8+ characters with uppercase, lowercase, a number and a symbol.</p>
             </div>
 
             <label className="block text-sm font-medium">
               Confirm new password
-              <Input
-                className="mt-2"
-                type="password"
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
-                placeholder="Repeat your new password"
-              />
+              <Input className="mt-2" type="password" autoComplete="new-password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Repeat your new password" disabled={step === "otp"} />
             </label>
 
-            <Button onClick={() => void sendOtp()} disabled={sending || !email}>
+            <Button onClick={() => void sendOtp()} disabled={sending || step === "otp" || !email}>
               <Mail className="mr-2 size-4" />
-              {sending ? "Sending code…" : "Send verification code"}
+              {sending ? "Sending code…" : step === "otp" ? "Verification pending…" : "Send verification code"}
             </Button>
           </div>
-        ) : (
-          <div className="mt-6 space-y-5">
-            <div>
-              <h4 className="font-semibold">Enter the 8-digit verification code</h4>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">Check {email} for your Strap verification code. The code expires and can only be used once.</p>
-            </div>
+        </section>
+      </div>
 
-            <Input
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              maxLength={OTP_LENGTH}
-              value={otp}
-              onChange={(event) => setOtp(event.target.value.replace(/\D/g, "").slice(0, OTP_LENGTH))}
-              placeholder="00000000"
-              className="text-center text-2xl font-semibold tracking-[0.35em]"
-              aria-label="8-digit verification code"
-            />
-
-            <div className="flex flex-wrap items-center gap-3">
-              <Button onClick={() => void changePassword()} disabled={saving || otp.length !== OTP_LENGTH}>
-                {saving ? "Verifying & changing password…" : "Verify code & change password"}
-              </Button>
-              <Button variant="ghost" onClick={() => void resendOtp()} disabled={sending || resendIn > 0}>
-                <RefreshCw className="mr-2 size-4" />
-                {resendIn > 0 ? `Resend in ${resendIn}s` : "Resend code"}
-              </Button>
-            </div>
+      <SecurityModal
+        open={verificationOpen}
+        onOpenChange={setVerificationOpen}
+        dismissible={false}
+        title="Verify your identity"
+        description={`Enter the 8-digit code sent to ${email}. This code is required before Strap can change your password.`}
+        tone="secure"
+        footer={
+          <>
+            <Button variant="outline" onClick={cancelVerification} disabled={saving}>Cancel</Button>
+            <Button onClick={() => void changePassword()} disabled={saving || otp.length !== OTP_LENGTH}>
+              {saving ? "Verifying & changing…" : "Verify & change password"}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-accent/20 bg-accent-soft/60 p-4">
+            <div className="flex items-center gap-2 text-sm font-semibold"><ShieldCheck className="size-4" />Email verification required</div>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">Your old password is not requested. The code expires and is single-use.</p>
           </div>
-        )}
-      </section>
-    </div>
+          <Input
+            autoFocus
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={OTP_LENGTH}
+            value={otp}
+            onChange={(event) => setOtp(event.target.value.replace(/\D/g, "").slice(0, OTP_LENGTH))}
+            placeholder="00000000"
+            className="h-14 text-center text-2xl font-semibold tracking-[0.38em] select-none"
+            aria-label="8-digit verification code"
+          />
+          <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
+            <span>{resendIn > 0 ? `You can request another code in ${resendIn}s.` : "You can request a fresh code."}</span>
+            <Button variant="ghost" size="sm" onClick={() => void resendOtp()} disabled={sending || resendIn > 0}>
+              <RefreshCw className="mr-1.5 size-3.5" />{sending ? "Sending…" : "Resend"}
+            </Button>
+          </div>
+        </div>
+      </SecurityModal>
+
+      <SecurityModal
+        open={successOpen}
+        onOpenChange={setSuccessOpen}
+        title="Password changed"
+        description="Your Strap password has been updated successfully. Your verification code was accepted and the old password was not required."
+        tone="success"
+        footer={<Button onClick={() => setSuccessOpen(false)}>Done</Button>}
+      >
+        <div className="rounded-2xl border border-accent/20 bg-accent-soft/60 p-4 text-sm leading-6 text-muted-foreground">
+          <div className="flex items-center gap-2 font-semibold text-foreground"><Check className="size-4" />Security update complete</div>
+          <p className="mt-1">For your protection, Supabase may invalidate other active sessions. You may need to sign in again on another device.</p>
+        </div>
+      </SecurityModal>
+    </>
   );
 }
