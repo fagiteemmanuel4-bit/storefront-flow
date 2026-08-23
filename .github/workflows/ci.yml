@@ -2,7 +2,7 @@ name: Strap CI
 
 on:
   push:
-    branches: [main, security-audit-hardening-20260823]
+    branches: [main, comprehensive-audit-20260823]
   pull_request:
 
 permissions:
@@ -15,16 +15,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 24
-          cache: npm
-      - name: Install
-        run: npm ci
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
       - name: Lint
-        run: npm run lint
+        run: bun run lint
+      - name: Type check
+        run: bunx tsc --noEmit
       - name: Production build
-        run: npm run build
-      - name: High-severity dependency audit
-        run: npm audit --audit-level=high
+        run: bun run build
+      - name: Dependency audit
+        run: bun audit
