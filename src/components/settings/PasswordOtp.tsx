@@ -105,19 +105,18 @@ export function PasswordOtp() {
     }
 
     setSaving(true);
-    const { error } = await supabase.auth.updateUser({
-      password,
-      nonce: otp,
+    const { data, error } = await supabase.functions.invoke("password-change-otp", {
+      body: { otp, password },
     });
     setSaving(false);
 
-    if (error) {
-      toast.error(error.message || "The verification code was rejected. Request a new code and try again.");
+    if (error || data?.error) {
+      toast.error(data?.error || error?.message || "The verification code was rejected. Request a new code and try again.");
       return;
     }
 
-    setStep("success");
     setOtp("");
+    setStep("success");
     toast.success("Your password has been changed successfully.");
   }
 
@@ -133,15 +132,8 @@ export function PasswordOtp() {
         </div>
         <h3 className="mt-5 text-xl font-bold">Password changed</h3>
         <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
-          Your Strap password was updated after verifying the 8-digit code sent to your email. You never need to enter your old password here.
+          Your Strap password was updated after verifying the 8-digit code sent to your verified email. You never need to enter your old password here. For security, Supabase may sign your active sessions out and require you to sign in again.
         </p>
-        <Button className="mt-6" variant="outline" onClick={() => {
-          setPassword("");
-          setConfirmPassword("");
-          setStep("password");
-        }}>
-          Change it again
-        </Button>
       </div>
     );
   }
@@ -156,7 +148,7 @@ export function PasswordOtp() {
           <div>
             <h3 className="font-semibold">Change password</h3>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Enter your new password, then verify the 8-digit code sent to your verified email. You do not need to enter your old password, and Strap does not use a magic sign-in link for this flow.
+              Choose a new password and verify the 8-digit code sent to your verified email. Your old password is never requested.
             </p>
           </div>
         </div>
@@ -213,7 +205,7 @@ export function PasswordOtp() {
           <div className="mt-6 space-y-5">
             <div>
               <h4 className="font-semibold">Enter the 8-digit verification code</h4>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">Check {email} for the 8-digit code from Supabase Auth. No old password is required.</p>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">Check {email} for your Strap verification code. The code expires and can only be used once.</p>
             </div>
 
             <Input
@@ -229,7 +221,7 @@ export function PasswordOtp() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button onClick={() => void changePassword()} disabled={saving || otp.length !== OTP_LENGTH}>
-                {saving ? "Verifying code…" : "Verify code & change password"}
+                {saving ? "Verifying & changing password…" : "Verify code & change password"}
               </Button>
               <Button variant="ghost" onClick={() => void resendOtp()} disabled={sending || resendIn > 0}>
                 <RefreshCw className="mr-2 size-4" />
