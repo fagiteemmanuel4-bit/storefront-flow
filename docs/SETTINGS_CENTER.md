@@ -58,7 +58,7 @@ There is no old-password field. The email OTP is the verification factor for thi
 
 The OTP is not passed through `verifyOtp`. The flow uses the dedicated reauthentication endpoint and a protected server-side password update because the project's Auth policy currently rejects client-side password updates unless a current password is supplied. This keeps the requested UX—no old password—without weakening authentication or exposing administrative credentials to the browser.
 
-The database migration `secure_password_otp_change` provides the narrowly scoped `verify_password_change_otp(text)` security-definer function. It accepts execution only from authenticated users, validates the current user's reauthentication proof, enforces a ten-minute proof lifetime, and consumes the proof after successful validation.
+The database migration `secure_password_otp_change` provides the narrowly scoped `verify_password_change_otp(text)` security-definer function. It accepts execution only from authenticated users, validates the current user's reauthentication proof, enforces a ten-minute proof lifetime, consumes the proof after successful validation, and is protected by a five-attempt-per-user verification window.
 
 The `password-change-otp` Edge Function is JWT-protected and uses `supabase.auth.admin.updateUserById()` only after that verification succeeds.
 
@@ -74,7 +74,7 @@ The template is OTP-only and contains no sign-in link. It uses `{{ .Token }}` fo
 
 The hosted Supabase project currently sends mail through Supabase's default SMTP service. The Auth logs show the current sender as `noreply@mail.app.supabase.io`. Changing the sender display name from **Supabase Auth** to **Strap** requires configuring custom SMTP and setting the sender name to `Strap`; the SMTP credential itself must never be committed to GitHub.
 
-A free custom SMTP option such as Resend can be used for this. The current Resend free plan provides up to 3,000 emails/month with a 100-email/day limit. After configuring SMTP in Supabase, the branded template can be applied from Supabase Auth Email Templates. No EmailJS dependency is required.
+A free custom SMTP option such as Resend can be used for this. After configuring SMTP in Supabase, the branded template can be applied from Supabase Auth Email Templates. No EmailJS dependency is required.
 
 ## Removed product surfaces
 
