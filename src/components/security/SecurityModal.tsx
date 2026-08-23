@@ -1,34 +1,9 @@
 import { useEffect, type ReactNode } from "react";
 import { AlertTriangle, CheckCircle2, ShieldCheck } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
-export function SecurityModal({
-  open,
-  onOpenChange,
-  title,
-  description,
-  children,
-  footer,
-  tone = "secure",
-  dismissible = true,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  title: string;
-  description?: string;
-  children?: ReactNode;
-  footer?: ReactNode;
-  tone?: "secure" | "danger" | "success";
-  dismissible?: boolean;
-}) {
+export function SecurityModal({ open, onOpenChange, title, description, children, footer, tone = "secure", dismissible = true }: { open: boolean; onOpenChange: (open: boolean) => void; title: string; description?: string; children?: ReactNode; footer?: ReactNode; tone?: "secure" | "danger" | "success"; dismissible?: boolean }) {
   useEffect(() => {
     if (!open) return;
     const preventClipboard = (event: ClipboardEvent) => event.preventDefault();
@@ -36,12 +11,11 @@ export function SecurityModal({
     const preventSelection = (event: Event) => event.preventDefault();
     const preventDrag = (event: DragEvent) => event.preventDefault();
     const onKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && ["a", "c", "x", "s", "p"].includes(event.key.toLowerCase())) {
-        event.preventDefault();
-      }
+      if ((event.ctrlKey || event.metaKey) && ["a", "c", "x", "v", "s", "p"].includes(event.key.toLowerCase())) event.preventDefault();
     };
     document.addEventListener("copy", preventClipboard);
     document.addEventListener("cut", preventClipboard);
+    document.addEventListener("paste", preventClipboard);
     document.addEventListener("contextmenu", preventContext);
     document.addEventListener("selectstart", preventSelection);
     document.addEventListener("dragstart", preventDrag);
@@ -50,6 +24,7 @@ export function SecurityModal({
     return () => {
       document.removeEventListener("copy", preventClipboard);
       document.removeEventListener("cut", preventClipboard);
+      document.removeEventListener("paste", preventClipboard);
       document.removeEventListener("contextmenu", preventContext);
       document.removeEventListener("selectstart", preventSelection);
       document.removeEventListener("dragstart", preventDrag);
@@ -59,27 +34,14 @@ export function SecurityModal({
   }, [open]);
 
   const Icon = tone === "danger" ? AlertTriangle : tone === "success" ? CheckCircle2 : ShieldCheck;
-  const iconClass = tone === "danger" ? "bg-destructive/10 text-destructive" : tone === "success" ? "bg-accent-soft text-accent-ink" : "bg-accent-soft text-accent-ink";
+  const iconClass = tone === "danger" ? "bg-destructive/10 text-destructive" : "bg-accent-soft text-accent-ink";
 
   return (
     <AlertDialog open={open} onOpenChange={dismissible ? onOpenChange : undefined}>
-      <AlertDialogContent
-        onEscapeKeyDown={(event) => {
-          if (!dismissible) event.preventDefault();
-        }}
-        onPointerDownOutside={(event) => {
-          if (!dismissible) event.preventDefault();
-        }}
-        onInteractOutside={(event) => {
-          if (!dismissible) event.preventDefault();
-        }}
-        className="security-modal w-[min(92vw,520px)] overflow-hidden rounded-3xl border-border/80 bg-surface p-0 shadow-2xl"
-      >
-        <div className="p-6 sm:p-7 select-none" onContextMenu={(event) => event.preventDefault()}>
+      <AlertDialogContent onEscapeKeyDown={(event) => { if (!dismissible) event.preventDefault(); }} onPointerDownOutside={(event) => { if (!dismissible) event.preventDefault(); }} onInteractOutside={(event) => { if (!dismissible) event.preventDefault(); }} className="security-modal w-[min(92vw,520px)] overflow-hidden rounded-3xl border-border/80 bg-surface p-0 shadow-2xl">
+        <div className="select-none p-6 sm:p-7" onContextMenu={(event) => event.preventDefault()}>
           <AlertDialogHeader className="text-left">
-            <div className={cn("mb-4 flex size-11 items-center justify-center rounded-2xl", iconClass)} aria-hidden>
-              <Icon className="size-5" />
-            </div>
+            <div className={cn("mb-4 flex size-11 items-center justify-center rounded-2xl", iconClass)} aria-hidden><Icon className="size-5" /></div>
             <AlertDialogTitle className="text-xl tracking-tight">{title}</AlertDialogTitle>
             {description ? <AlertDialogDescription className="mt-1.5 leading-6">{description}</AlertDialogDescription> : null}
           </AlertDialogHeader>
