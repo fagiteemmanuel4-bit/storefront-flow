@@ -73,7 +73,7 @@ The OTP is not passed through `verifyOtp`. The flow uses the dedicated reauthent
 - The service-role key is never sent to the browser or committed to GitHub.
 - The Edge Function returns generic verification failures rather than exposing internal database/auth details.
 
-The active Edge Function is `password-change-otp` version 3.
+The active Edge Function is `password-change-otp` version 3 and its source is version-controlled under `supabase/functions/password-change-otp/`.
 
 ## Security confirmation modal
 
@@ -88,7 +88,7 @@ It is used for:
 
 The modal uses the existing Radix Alert Dialog primitive, prevents accidental outside dismissal for verification flows, uses a strong visual hierarchy, and provides explicit primary/secondary actions.
 
-While a security modal is open, Strap also applies best-effort browser protections against ordinary text selection, copy, cut, context-menu and drag operations. Keyboard clipboard/print/save shortcuts are blocked while the modal is active.
+While a security modal is open, Strap applies best-effort browser protections against ordinary text selection, copy, cut, paste, context-menu and drag operations. Common keyboard clipboard/print/save shortcuts are blocked while the modal is active.
 
 These protections are **not a cryptographic screen-capture barrier**. A normal web browser cannot reliably prevent an operating system screenshot, external camera capture, browser-level screen recording, or hardware/OS casting. Such protection would require a controlled native application/device policy (for example Android's `FLAG_SECURE`). Strap therefore does not claim that browser JavaScript can make screenshots or casting impossible.
 
