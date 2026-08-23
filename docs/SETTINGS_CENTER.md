@@ -35,24 +35,26 @@ Settings continue to use the existing Supabase model. No second settings databas
 - Staff management uses the existing `staff_accounts` table and staff RPCs.
 - Sessions use the existing `account-security` Edge Function.
 
-## Password authentication: OTP only
+## Password authentication: email OTP only
 
-The Settings password-change flow no longer uses `signInWithOtp`, magic links, confirmation URLs or email redirects.
+The Settings password-change flow does not ask for the old password. It does not use `signInWithOtp`, magic links, confirmation URLs or email redirects.
+
+The current Supabase Auth email configuration sends an **8-digit verification code**, so the Strap UI accepts exactly eight numeric digits.
 
 The flow is:
 
 1. The authenticated user enters a new password and confirmation.
 2. Strap calls `supabase.auth.reauthenticate()`.
-3. Supabase Auth sends a six-digit reauthentication OTP to the user's verified email address.
-4. The user enters the six-digit code in Strap.
+3. Supabase Auth sends an 8-digit reauthentication OTP to the user's verified email address.
+4. The user enters the 8-digit code in Strap.
 5. Strap calls `supabase.auth.updateUser({ password, nonce: otp })`.
 6. The password is changed only after Supabase validates the nonce.
 
-This is the native Supabase reauthentication flow. The OTP is the nonce supplied to `updateUser`; it is not verified through `verifyOtp`, and no magic-link route is involved.
+There is no old-password field. The email OTP is the additional verification factor for this operation.
 
-The UI also provides password-strength validation, confirmation validation, resend throttling, loading/error states and a success state.
+The OTP is the nonce supplied to `updateUser`; it is not verified through `verifyOtp`, and no magic-link route is involved.
 
-Supabase documents `reauthenticate()` as the API for sending the password reauthentication OTP and `updateUser({ password, nonce })` as the password-change operation that validates the nonce.
+The UI provides password-strength validation, confirmation validation, eight-digit numeric OTP validation, resend throttling, loading/error states and a success state.
 
 ## Removed product surfaces
 
@@ -98,5 +100,5 @@ After Settings changes, production verification must confirm:
 5. The visual editor route is absent.
 6. The product tour is absent.
 7. Staff listing renders the real RPC fields without a missing-column mismatch.
-8. Password change sends and validates an email OTP without a magic link.
+8. Password change sends and validates the configured 8-digit email OTP without requiring the old password or a magic link.
 9. Vercel reaches `READY` before production is considered complete.
