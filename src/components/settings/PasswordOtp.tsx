@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { SecurityModal } from "@/components/security/SecurityModal";
 import { supabase } from "@/integrations/supabase/client";
 
-const OTP_LENGTH = 8;
+const OTP_LENGTH = 6;
 const RESEND_SECONDS = 60;
 
 function getPasswordStrength(password: string) {
@@ -94,7 +94,7 @@ export function PasswordOtp() {
     }
     setOtp("");
     setResendIn(RESEND_SECONDS);
-    toast.success("A new 8-digit verification code was sent.");
+    toast.success("A new 6-digit verification code was sent.");
   }
 
   async function changePassword() {
@@ -105,11 +105,14 @@ export function PasswordOtp() {
     }
 
     setSaving(true);
-    const { data, error } = await supabase.functions.invoke("password-change-otp", { body: { otp, password } });
+    const { error } = await supabase.auth.updateUser({
+      password,
+      nonce: otp,
+    });
     setSaving(false);
 
-    if (error || data?.error) {
-      toast.error(data?.error || error?.message || "The verification code was rejected. Request a new code and try again.");
+    if (error) {
+      toast.error(error.message || "The verification code was rejected. Request a new code and try again.");
       setOtp("");
       return;
     }
@@ -145,7 +148,7 @@ export function PasswordOtp() {
             <div>
               <h3 className="font-semibold">Change password</h3>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                Choose a new password and verify the 8-digit code sent to your verified email. Your old password is never requested.
+                Choose a new password and verify the 6-digit code sent to your verified email. Your old password is never requested.
               </p>
             </div>
           </div>
@@ -184,7 +187,7 @@ export function PasswordOtp() {
         onOpenChange={setVerificationOpen}
         dismissible={false}
         title="Verify your identity"
-        description={`Enter the 8-digit code sent to ${email}. This code is required before Strap can change your password.`}
+        description={`Enter the 6-digit code sent to ${email}. This code is required before Strap can change your password.`}
         tone="secure"
         footer={
           <>
@@ -207,9 +210,9 @@ export function PasswordOtp() {
             maxLength={OTP_LENGTH}
             value={otp}
             onChange={(event) => setOtp(event.target.value.replace(/\D/g, "").slice(0, OTP_LENGTH))}
-            placeholder="00000000"
+            placeholder="000000"
             className="h-14 text-center text-2xl font-semibold tracking-[0.38em] select-none"
-            aria-label="8-digit verification code"
+            aria-label="6-digit verification code"
           />
           <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
             <span>{resendIn > 0 ? `You can request another code in ${resendIn}s.` : "You can request a fresh code."}</span>
