@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, Eye, EyeOff, LockKeyhole, ShieldCheck } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, LockKeyhole, ShieldCheck, Play, Pause } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,6 +51,7 @@ function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -208,7 +209,7 @@ function AuthPage() {
 
   return (
     <main className="min-h-screen bg-[#f7f6f2] text-[#171715] selection:bg-[#f5c23e]/30">
-      <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-5 py-5 sm:px-8 lg:px-10">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1480px] flex-col px-5 py-5 sm:px-8 lg:px-10">
         <header className="flex h-12 items-center justify-between">
           <Link to="/" className="group flex items-center gap-3" aria-label="Strap home">
             <span className="flex size-9 items-center justify-center rounded-xl bg-[#171715] transition-transform duration-300 group-hover:-rotate-3">
@@ -219,24 +220,68 @@ function AuthPage() {
           <span className="hidden text-xs font-medium text-black/40 sm:block">Simple commerce, thoughtfully made.</span>
         </header>
 
-        <div className="grid flex-1 items-center gap-12 py-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(420px,.72fr)] lg:gap-20 lg:py-14">
-          <section className="relative hidden min-h-[620px] overflow-hidden rounded-[34px] lg:block">
-            <img
-              src="https://images.squarespace-cdn.com/content/v1/61e08c560f8d2e16d5341172/8152158f-f749-408e-af0e-a553c1d9a4cb/EDITIED%2BRENDERS-15.jpg"
-              alt="Minimal, light-filled retail storefront"
-              className="absolute inset-0 size-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-9 xl:p-12">
-              <div className="mb-5 flex size-11 items-center justify-center rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md">
-                <span className="size-3.5 rotate-45 rounded-[2px] bg-[#f5c23e]" />
+        <div className="grid flex-1 items-center gap-12 py-10 lg:grid-cols-[minmax(0,1.12fr)_minmax(420px,.68fr)] lg:gap-20 lg:py-12">
+          <section className="relative hidden min-h-[650px] lg:block" aria-label="About Strap">
+            <div className="relative h-[500px] overflow-hidden rounded-[36px] bg-[#171715] shadow-[0_35px_90px_-45px_rgba(0,0,0,.5)]">
+              <img
+                src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&q=88"
+                alt="Beautifully arranged modern retail store"
+                className="absolute inset-0 size-full object-cover transition-transform duration-700 hover:scale-[1.025]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-black/10" />
+              <div className="absolute left-7 top-7 rounded-full border border-white/20 bg-black/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[.18em] text-white/75 backdrop-blur-md">
+                About Strap
               </div>
-              <p className="max-w-xl font-display text-[clamp(2.8rem,4.5vw,5rem)] font-semibold leading-[.92] tracking-[-.065em] text-white">
-                Make your business feel effortless.
-              </p>
-              <p className="mt-5 max-w-lg text-sm leading-6 text-white/65">
-                Sales, inventory and daily operations in one focused workspace.
-              </p>
+              <div className="absolute inset-x-0 bottom-0 p-8 xl:p-10">
+                <p className="max-w-2xl font-display text-[clamp(2.7rem,4.4vw,5.1rem)] font-semibold leading-[.9] tracking-[-.065em] text-white">
+                  Your store, in rhythm.
+                </p>
+                <p className="mt-5 max-w-lg text-sm leading-6 text-white/65">
+                  Strap brings sales, inventory and everyday shop operations into one beautifully focused workspace.
+                </p>
+              </div>
+            </div>
+
+            <div className="absolute -bottom-1 left-7 w-[290px] overflow-hidden rounded-[26px] border border-white/60 bg-white shadow-[0_25px_60px_-30px_rgba(0,0,0,.5)] xl:left-10">
+              <div className="relative h-[155px] overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=700&q=88"
+                  alt="Premium product display in a shop"
+                  className="size-full object-cover transition-transform duration-700 hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
+                <div className="absolute bottom-3 left-4 text-[10px] font-semibold uppercase tracking-[.16em] text-white/80">Made for real shops</div>
+              </div>
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-black/35">The Strap rhythm</p>
+                    <p className="mt-1 text-sm font-semibold tracking-[-.02em]">Sell. Track. Grow.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPlaying((value) => !value)}
+                    className="flex size-9 items-center justify-center rounded-full bg-[#171715] text-white transition-transform hover:scale-105"
+                    aria-label={playing ? "Pause visual rhythm" : "Play visual rhythm"}
+                  >
+                    {playing ? <Pause className="size-3.5" /> : <Play className="ml-0.5 size-3.5" />}
+                  </button>
+                </div>
+                <div className="mt-4 flex h-5 items-center gap-1 overflow-hidden">
+                  {[12, 20, 8, 17, 25, 11, 21, 15, 27, 9, 18, 13, 23, 10, 19, 14, 24, 8, 17, 12].map((height, index) => (
+                    <span
+                      key={index}
+                      className={`w-1 rounded-full bg-[#f5c23e] transition-all duration-300 ${playing ? "animate-pulse" : ""}`}
+                      style={{ height: `${height}px`, animationDelay: `${index * 45}ms` }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute right-5 top-5 hidden rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-xl backdrop-blur-md xl:block">
+              <p className="text-[9px] font-bold uppercase tracking-[.18em] text-black/35">Built for momentum</p>
+              <p className="mt-1 font-display text-xl font-semibold tracking-[-.04em]">Less admin. More selling.</p>
             </div>
           </section>
 
