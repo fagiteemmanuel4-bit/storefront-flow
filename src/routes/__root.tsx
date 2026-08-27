@@ -17,6 +17,14 @@ const SITE_URL = "https://storefront-flow.vercel.app";
 const SITE_TITLE = "Strap — Retail Commerce, POS, Inventory & Online Store";
 const SITE_DESCRIPTION = "Strap is a retail commerce platform for managing products, inventory, point of sale, customers, staff, branches, expenses, orders, reports, and online storefronts in one workspace.";
 const KEYWORDS = "Strap, retail management software, retail POS, point of sale, inventory management, stock management, online store builder, ecommerce platform, ecommerce software, shop management, small business software, retail business management, Shopify alternative, Wix alternative, ecommerce Nigeria";
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "Kryonara", url: SITE_URL, brand: { "@type": "Brand", name: "Strap" } },
+    { "@type": "WebSite", "@id": `${SITE_URL}/#website`, name: "Strap", url: SITE_URL, description: SITE_DESCRIPTION, publisher: { "@id": `${SITE_URL}/#organization` }, inLanguage: "en-NG" },
+    { "@type": "SoftwareApplication", "@id": `${SITE_URL}/#software`, name: "Strap", applicationCategory: "BusinessApplication", operatingSystem: "Web", url: SITE_URL, description: SITE_DESCRIPTION, publisher: { "@id": `${SITE_URL}/#organization` }, featureList: ["Retail point of sale", "Inventory management", "Product catalogue", "Customer management", "Staff and roles", "Branch management", "Expenses and reports", "Online storefront", "Online orders", "Store builder"] },
+  ],
+};
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
@@ -56,6 +64,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "canonical", href: SITE_URL },
       { rel: "sitemap", type: "application/xml", href: `${SITE_URL}/sitemap.xml` },
+      { rel: "alternate", type: "text/plain", href: `${SITE_URL}/llms.txt`, title: "AI-readable site summary" },
       { rel: "stylesheet", href: appCss },
       { rel: "stylesheet", href: landingCss },
       { rel: "stylesheet", href: modernAppCss },
@@ -72,7 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: ReactNode }) { return <html lang="en"><head><HeadContent /></head><body>{children}<Scripts /></body></html>; }
+function RootShell({ children }: { children: ReactNode }) { return <html lang="en"><head><HeadContent /></head><body>{children}<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }} /> <Scripts /></body></html>; }
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
