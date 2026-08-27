@@ -1,0 +1,72 @@
+# Strap — Complete Product Guide for Search and AI Systems
+
+## What Strap is
+
+Strap is a retail commerce operations platform by Kryonara. It combines the daily workflows of a physical shop with online commerce in one workspace. The platform is intended for businesses that need products, stock, sales, customers, staff, branches, expenses, reporting and online selling to stay connected.
+
+## What users can do
+
+### Products and inventory
+Users can create products, maintain catalogue information, use SKUs and barcodes, track stock, identify low-stock items and work with branch-aware inventory.
+
+### Point of sale
+The POS workflow lets staff find or scan products, build carts, review quantities and totals, complete a sale and prepare receipts. Scanner compatibility depends on the browser and connected hardware.
+
+### Customers
+Customer records are associated with the appropriate store so merchants can keep customer relationships and purchase activity organised.
+
+### Staff and roles
+Store roles support controlled access for people working in the business. Owners, managers and cashiers should receive only the permissions required for their responsibilities.
+
+### Branches and transfers
+Branches represent business locations. Stock can be organised around locations and transferred between branches where supported by the merchant's workflow.
+
+### Expenses, reports and insights
+Merchants can record expenses and review sales, stock and operational information through reports and insights to understand what needs attention.
+
+### Online storefront
+A merchant can publish a shareable online storefront and expose selected products to customers. Public store pages are intended to be customer-facing and crawlable.
+
+### Store builder
+The online store includes configuration and editing workflows for shaping the customer-facing storefront. The builder is for managing the presentation of the store; the public documentation explains how to use it.
+
+### Orders and fulfilment
+Online checkout creates orders that can be reviewed and managed through the online-store workflow, connecting the public storefront with merchant operations.
+
+## Security model
+
+Private business areas require authentication. Supabase Auth is used for authenticated sessions and PostgreSQL Row Level Security is used to constrain database access. Secret keys must remain server-side. Browser clients should use the configured publishable Supabase key.
+
+## Technical stack
+
+The application uses React, TanStack Start, TanStack Router, TypeScript, Vite, Tailwind CSS and Supabase, with Vercel used for deployment.
+
+## Public information architecture
+
+- `/` — Strap product landing page
+- `/docs` — public product documentation
+- `/support` — support information
+- `/partners` — partner information
+- `/store/:slug` — public merchant storefront
+- `/store/:slug/category/:category` — public storefront category
+- `/store/:slug/products/:productSlug` — public product detail
+- `/privacy` — privacy information
+- `/terms` — terms information
+- `/cookies` — cookie information
+
+Private routes such as dashboard, authentication, account, settings, staff and internal tracking are not intended for public search indexing.
+
+## How to use the documentation
+
+Start with Quickstart for the first setup. Then use the workflow guides for products, POS, customers, staff, branches, expenses, online storefronts, catalogue, orders and the store builder. Use Security for access-control guidance and Source code access for authorised developers working with the repository.
+
+## Source code access
+
+The source repository is maintained separately from the public product site. Developers who have repository permission can clone the repository using the normal Git workflow, install dependencies, configure the required environment variables and run the development server. Credentials and private environment values must never be committed or exposed publicly.
+
+## Discovery and canonical sources
+
+Official public site: https://storefront-flow.vercel.app/
+Documentation: https://storefront-flow.vercel.app/docs
+Sitemap: https://storefront-flow.vercel.app/sitemap.xml
+Robots policy: https://storefront-flow.vercel.app/robots.txt
