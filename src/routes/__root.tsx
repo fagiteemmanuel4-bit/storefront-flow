@@ -14,8 +14,9 @@ import { StoreCustomerAccess } from "@/components/site/StoreCustomerAccess";
 import { Button } from "@/components/ui/button";
 
 const SITE_URL = "https://storefront-flow.vercel.app";
-const SITE_TITLE = "Strap — Commerce, POS, Inventory & Online Store";
-const SITE_DESCRIPTION = "Strap by Kryonara helps businesses manage products, inventory, sales, customers, staff, orders and online commerce from one clear workspace.";
+const SITE_TITLE = "Strap — Retail Commerce, POS, Inventory & Online Store";
+const SITE_DESCRIPTION = "Strap is a retail commerce platform for managing products, inventory, point of sale, customers, staff, branches, expenses, orders, reports, and online storefronts in one workspace.";
+const KEYWORDS = "Strap, retail management software, retail POS, point of sale, inventory management, stock management, online store builder, ecommerce platform, ecommerce software, shop management, small business software, retail business management, Shopify alternative, Wix alternative, ecommerce Nigeria";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
@@ -27,16 +28,42 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
-      { charSet: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" }, { title: SITE_TITLE }, { name: "description", content: SITE_DESCRIPTION }, { name: "author", content: "Kryonara" },
-      { name: "application-name", content: "Strap" }, { name: "apple-mobile-web-app-title", content: "Strap" },
-      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" }, { name: "googlebot", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" }, { name: "google-site-verification", content: "C8nXbWzuOEhCjnzdPL7QJMSpJ7FEZYl0YO0xaV0v1vs" },
-      { property: "og:type", content: "website" }, { property: "og:site_name", content: "Strap" }, { property: "og:title", content: SITE_TITLE }, { property: "og:description", content: SITE_DESCRIPTION }, { property: "og:url", content: SITE_URL }, { property: "og:locale", content: "en_NG" },
-      { name: "twitter:card", content: "summary_large_image" }, { name: "twitter:title", content: SITE_TITLE }, { name: "twitter:description", content: SITE_DESCRIPTION },
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { title: SITE_TITLE },
+      { name: "description", content: SITE_DESCRIPTION },
+      { name: "keywords", content: KEYWORDS },
+      { name: "author", content: "Kryonara" },
+      { name: "application-name", content: "Strap" },
+      { name: "apple-mobile-web-app-title", content: "Strap" },
+      { name: "theme-color", content: "#111111" },
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
+      { name: "googlebot", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
+      { name: "bingbot", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
+      { name: "google-site-verification", content: "C8nXbWzuOEhCjnzdPL7QJMSpJ7FEZYl0YO0xaV0v1vs" },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Strap" },
+      { property: "og:title", content: SITE_TITLE },
+      { property: "og:description", content: SITE_DESCRIPTION },
+      { property: "og:url", content: SITE_URL },
+      { property: "og:locale", content: "en_NG" },
+      { property: "og:image", content: `${SITE_URL}/favicon.svg` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: SITE_TITLE },
+      { name: "twitter:description", content: SITE_DESCRIPTION },
+      { name: "twitter:image", content: `${SITE_URL}/favicon.svg` },
     ],
     links: [
-      { rel: "canonical", href: SITE_URL }, { rel: "stylesheet", href: appCss }, { rel: "stylesheet", href: landingCss }, { rel: "stylesheet", href: modernAppCss }, { rel: "preconnect", href: "https://fonts.googleapis.com" }, { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "canonical", href: SITE_URL },
+      { rel: "sitemap", type: "application/xml", href: `${SITE_URL}/sitemap.xml` },
+      { rel: "stylesheet", href: appCss },
+      { rel: "stylesheet", href: landingCss },
+      { rel: "stylesheet", href: modernAppCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" },
-      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }, { rel: "apple-touch-icon", href: "/favicon.svg" },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", href: "/favicon.svg" },
     ],
   }),
   shellComponent: RootShell,
