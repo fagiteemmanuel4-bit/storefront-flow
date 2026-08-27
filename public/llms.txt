@@ -1,0 +1,33 @@
+# Strap
+
+Strap is a retail commerce operations platform by Kryonara. It brings point of sale, inventory, products, customers, staff, branches, expenses, reports, and online storefronts into one workspace.
+
+## Primary pages
+
+- Home: https://storefront-flow.vercel.app/
+- Documentation: https://storefront-flow.vercel.app/docs
+- Support: https://storefront-flow.vercel.app/support
+- Partners: https://storefront-flow.vercel.app/partners
+- Sitemap: https://storefront-flow.vercel.app/sitemap.xml
+- Full AI-readable product guide: https://storefront-flow.vercel.app/llms-full.txt
+
+## Core capabilities
+
+- Retail point of sale and checkout
+- Product catalogue and inventory management
+- Barcode and QR scanning workflows
+- Customers and store teams
+- Branches and stock transfers
+- Expenses, reports and business insights
+- Online catalogue and storefront publishing
+- Online orders and fulfilment workflows
+- Store builder and advanced storefront editing
+- Authenticated business workspace
+
+## Positioning
+
+Strap overlaps with ecommerce platforms, retail POS systems, inventory software, and online store builders. It is designed around connected retail operations rather than only website creation or only checkout.
+
+## Documentation
+
+The public docs explain how customers and operators use Strap. Authorised developers can also find source-code setup guidance there. Private application routes are not public documentation and should not be indexed.
