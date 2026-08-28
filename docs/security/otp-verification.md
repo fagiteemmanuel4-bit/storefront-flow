@@ -1,6 +1,6 @@
 # Strap OTP Authentication Security
 
-Strap by Kryonara uses a layered email verification flow for account access.
+Strap by Kryonara uses Supabase Auth for email verification and sensitive-account reauthentication.
 
 ## How authentication works
 
@@ -8,34 +8,44 @@ Strap by Kryonara uses a layered email verification flow for account access.
 
 1. The user submits their name, email and password.
 2. Supabase Auth creates the account.
-3. Strap immediately clears the temporary authentication session.
+3. Strap clears the temporary authentication session.
 4. Strap requests a one-time email verification code.
-5. The user enters the six-digit code on the verification screen.
+5. The user enters the six-digit email OTP on the verification screen.
 6. Supabase verifies the code and confirms the email.
-7. The user can continue into Strap after successful verification.
+7. Strap shows a clear verification-success state and the user can continue securely.
 
 ### Signing in
 
 1. The user enters their email and password.
-2. Supabase first validates the credentials.
+2. Supabase validates the credentials.
 3. Strap does not leave that preliminary session active as the final sign-in.
 4. Strap requests a fresh one-time email code.
-5. The user enters the six-digit code.
+5. The user enters the six-digit email OTP.
 6. Supabase verifies the OTP and establishes the authenticated session.
 7. Strap opens the protected workspace.
 
-This means a valid password alone is not the final authentication step for normal sign-in.
+### Changing a password
+
+1. An authenticated user chooses a new password.
+2. Strap calls Supabase Auth `reauthenticate()`.
+3. Supabase sends an eight-digit reauthentication nonce to the user's verified email.
+4. Strap accepts all eight digits and automatically submits the completed code.
+5. Strap sends the nonce with `updateUser({ password, nonce })`.
+6. Supabase validates the nonce before changing the password.
+7. Strap shows a dedicated success state only after Supabase confirms the password update.
 
 ## OTP protections
 
-- Codes are single-use through Supabase Auth.
-- Codes are delivered to the account email address.
-- The verification UI accepts exactly six numeric characters.
-- Resending a code is rate-limited in the interface with a 60-second cooldown.
-- Users are warned never to share their verification code.
+- Email signup/sign-in OTPs are six digits and are single-use through Supabase Auth.
+- Password reauthentication nonces are eight digits and are validated by Supabase Auth before a sensitive password change.
+- Codes are delivered to the account's verified email address.
+- The verification UI accepts only numeric characters and the exact expected length for the flow.
+- Email OTP resend is rate-limited in the interface with a 60-second cooldown.
+- Password reauthentication resend is rate-limited in the interface with a 60-second cooldown.
+- Users are warned never to share verification codes.
 - Verification state is cleared from session storage after completion.
 - Strap does not store OTP values in the application database.
-- Authentication is handled by Supabase Auth rather than a custom password or OTP implementation.
+- Authentication and nonce validation are handled by Supabase Auth rather than a custom password or OTP implementation.
 
 ## Password recovery
 
