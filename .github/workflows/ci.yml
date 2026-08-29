@@ -2,7 +2,7 @@ name: Strap CI
 
 on:
   push:
-    branches: [main, comprehensive-audit-20260823]
+    branches: [main, feat/strap-ui-overhaul, comprehensive-audit-20260823]
   pull_request:
 
 permissions:
@@ -20,7 +20,7 @@ jobs:
         with:
           bun-version: latest
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install --no-save
       - name: Lint
         run: bun run lint
       - name: Type check
