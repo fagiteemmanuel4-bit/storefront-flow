@@ -8,9 +8,9 @@ export type CommerceFeature = {
 }
 
 /**
- * Single source of truth for features that are intentionally staged.
- * Payment collection is deliberately not enabled yet; the product can
- * advertise the capability without exposing an unfinished checkout flow.
+ * Single source of truth for staged commerce capabilities.
+ * Premium capabilities are intentionally not activated yet; they remain
+ * visible as coming soon without exposing unfinished payment or upgrade flows.
  */
 export const COMMERCE_FEATURES: Record<string, CommerceFeature> = {
   merchantPayments: {
@@ -22,7 +22,7 @@ export const COMMERCE_FEATURES: Record<string, CommerceFeature> = {
   advancedAnalytics: {
     key: 'advancedAnalytics',
     label: 'Advanced analytics',
-    status: 'limited-free',
+    status: 'coming-soon',
     description: 'Get deeper business insights while Strap expands the analytics suite.',
   },
   aiAssistant: {
@@ -34,25 +34,25 @@ export const COMMERCE_FEATURES: Record<string, CommerceFeature> = {
   loyalty: {
     key: 'loyalty',
     label: 'Customer loyalty',
-    status: 'limited-free',
+    status: 'coming-soon',
     description: 'Reward customers with points and build repeat purchases.',
   },
   discounts: {
     key: 'discounts',
     label: 'Discount codes',
-    status: 'limited-free',
+    status: 'coming-soon',
     description: 'Create simple promotions and discount codes for your customers.',
   },
   purchaseOrders: {
     key: 'purchaseOrders',
     label: 'Purchase orders',
-    status: 'limited-free',
+    status: 'coming-soon',
     description: 'Track supplier orders and receiving from inside Strap.',
   },
   stockTransfers: {
     key: 'stockTransfers',
     label: 'Branch stock transfers',
-    status: 'limited-free',
+    status: 'coming-soon',
     description: 'Move inventory between branches with an auditable transfer workflow.',
   },
 }
