@@ -1,7 +1,7 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { BarChart3, Bell, CloudUpload, FileSpreadsheet, HelpCircle, HardDrive, Menu, Package, ScanLine, Settings, ShoppingBag, Store, Users, Wifi, WifiOff, LogOut, ReceiptText } from "lucide-react";
+import { BarChart3, CloudUpload, Globe2, HelpCircle, HardDrive, Menu, Package, ScanLine, Settings, Store, Users, Wifi, WifiOff, LogOut, ReceiptText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { activeStoreCache } from "@/lib/active-store";
 import { getOfflineSales, removeOfflineSale } from "@/lib/offline-sales";
