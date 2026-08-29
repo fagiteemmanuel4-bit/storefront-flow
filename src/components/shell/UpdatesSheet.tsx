@@ -1,67 +1,22 @@
-import { useEffect, useState } from "react";
-import { Sparkles, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  BottomSheet,
-  BottomSheetContent,
-  BottomSheetDescription,
-  BottomSheetHeader,
-  BottomSheetTitle,
-} from "@/components/ui/bottom-sheet";
-import { LATEST_UPDATE, hasUnseenUpdate, markUpdateSeen } from "@/lib/app-updates";
+import { useEffect, useMemo, useState } from "react";
+import { Bell, CheckCheck, ShoppingBag } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useStoreContext } from "@/components/shell/StoreProvider";
+import { BottomSheet, BottomSheetContent, BottomSheetHeader, BottomSheetTitle } from "@/components/ui/bottom-sheet";
+import { formatMoney } from "@/lib/currency";
+import { formatDateTime } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
-/** Shows the latest release notes once per version, per device. */
-export function UpdatesSheet() {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    // Wait a beat so it doesn't fight with the first paint of the page.
-    const timer = window.setTimeout(() => {
-      if (!cancelled && hasUnseenUpdate()) setOpen(true);
-    }, 700);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
-  }, []);
-
-  function dismiss() {
-    markUpdateSeen(LATEST_UPDATE.version);
-    setOpen(false);
-  }
-
-  return (
-    <BottomSheet open={open} onOpenChange={(next) => (next ? setOpen(true) : dismiss())}>
-      <BottomSheetContent className="mx-auto w-full max-w-md">
-        <BottomSheetHeader>
-          <span className="flex size-11 items-center justify-center rounded-full bg-accent-soft">
-            <Sparkles className="size-5 text-accent-ink" aria-hidden />
-          </span>
-          <p className="text-label-caps mt-2 text-muted-foreground">
-            What's new · {LATEST_UPDATE.date}
-          </p>
-          <BottomSheetTitle>{LATEST_UPDATE.title}</BottomSheetTitle>
-          <BottomSheetDescription>
-            Version {LATEST_UPDATE.version} is live on your till.
-          </BottomSheetDescription>
-        </BottomSheetHeader>
-
-        <ul className="space-y-3">
-          {LATEST_UPDATE.items.map((item) => (
-            <li key={item} className="flex gap-3 text-sm">
-              <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-accent">
-                <Check className="size-3 text-foreground" aria-hidden />
-              </span>
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-
-        <Button className="h-12 w-full" onClick={dismiss}>
-          Got it
-        </Button>
-      </BottomSheetContent>
-    </BottomSheet>
-  );
+type SaleNotification = { id:string; reference:string|null; total:number|null; created_at:string; payment_method:string|null };
+const READ_KEY="strap-read-order-notifications";
+function readIds(){try{return JSON.parse(localStorage.getItem(READ_KEY)||"[]") as string[]}catch{return []}}
+function markIds(ids:string[]){try{localStorage.setItem(READ_KEY,JSON.stringify(ids.slice(-100)))}catch{}}
+export function UpdatesSheet(){
+ const {store}=useStoreContext(); const [open,setOpen]=useState(false); const [items,setItems]=useState<SaleNotification[]>([]); const [read,setRead]=useState<string[]>(readIds);
+ const currency=store?.currency??"NGN";
+ const load=async()=>{if(!store?.id)return;const {data}=await supabase.from("sales").select("id,reference,total,created_at,payment_method").eq("store_id",store.id).order("created_at",{ascending:false}).limit(30);if(data)setItems(data as SaleNotification[])};
+ useEffect(()=>{void load();if(!store?.id)return;const channel=supabase.channel(`strap-orders-${store.id}`).on("postgres_changes",{event:"INSERT",schema:"public",table:"sales",filter:`store_id=eq.${store.id}`},payload=>{const sale=payload.new as SaleNotification;setItems(current=>[sale,...current.filter(x=>x.id!==sale.id)].slice(0,30));if(!read.includes(sale.id)){try{navigator.vibrate?.([35,25,35])}catch{} }}).subscribe();return()=>{void supabase.removeChannel(channel)}},[store?.id]);
+ const unread=useMemo(()=>items.filter(x=>!read.includes(x.id)).length,[items,read]);
+ const openCenter=()=>{setOpen(true);const ids=items.map(x=>x.id);setRead(ids);markIds(ids)};
+ return <><button type="button" onClick={openCenter} aria-label={unread?`${unread} unread notifications`:"Notifications"} className="relative flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition hover:bg-secondary hover:text-foreground"><Bell className="size-[18px]"/>{unread>0&&<span className="absolute right-1 top-1 flex min-w-4 items-center justify-center rounded-full bg-foreground px-1 text-[9px] font-bold leading-4 text-background">{unread>9?"9+":unread}</span>}</button><BottomSheet open={open} onOpenChange={setOpen}><BottomSheetContent className="h-[100dvh] max-h-[100dvh] w-full rounded-none p-0 sm:h-auto sm:max-h-[88vh] sm:rounded-t-[2rem]"><div className="mx-auto flex h-full max-w-3xl flex-col"><BottomSheetHeader className="border-b border-border px-5 py-5 sm:px-7"><div className="flex items-center justify-between gap-4"><div><p className="text-label-caps text-muted-foreground">Activity center</p><BottomSheetTitle className="mt-1 text-2xl">Notifications</BottomSheetTitle></div><button type="button" onClick={()=>{setRead(items.map(x=>x.id));markIds(items.map(x=>x.id))}} className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-secondary"><CheckCheck className="size-4"/>Mark all read</button></div></BottomSheetHeader><div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-7">{items.length===0?<div className="flex min-h-[45vh] flex-col items-center justify-center text-center"><span className="flex size-14 items-center justify-center rounded-2xl bg-secondary"><Bell className="size-6 text-muted-foreground"/></span><h3 className="mt-4 font-semibold">You're all caught up</h3><p className="mt-1 max-w-xs text-sm text-muted-foreground">New orders and important activity will appear here.</p></div>:<div className="space-y-2">{items.map(item=><div key={item.id} className={cn("flex gap-3 rounded-2xl border p-4",read.includes(item.id)?"border-border bg-background":"border-accent/20 bg-accent-soft/30")}><span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-secondary"><ShoppingBag className="size-5"/></span><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><div><p className="font-semibold">New sale {item.reference?`#${item.reference}`:"received"}</p><p className="mt-1 text-xs text-muted-foreground">{formatDateTime(item.created_at)} · {item.payment_method??"Payment"}</p></div><p className="numeric shrink-0 font-bold">{formatMoney(Number(item.total??0),currency)}</p></div></div></div>)}</div>}</div></div></BottomSheetContent></BottomSheet></>;
 }
