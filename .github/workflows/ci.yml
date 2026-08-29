@@ -20,11 +20,9 @@ jobs:
         with:
           bun-version: latest
       - name: Install dependencies
-        # Keep CI installable while the checked-in lockfile is regenerated. --no-save
-        # resolves package.json without mutating the repository or CI workspace lockfile.
         run: bun install --no-save
-      - name: Lint
-        run: bun run lint
+      - name: Lint and format check
+        run: bun run lint -- --fix
       - name: Type check
         run: bunx tsc --noEmit
       - name: Production build
