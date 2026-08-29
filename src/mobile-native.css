@@ -1,0 +1,46 @@
+@media (max-width: 767px) {
+  :root { --mobile-gutter: 14px; --mobile-radius: 18px; --mobile-nav-height: 68px; }
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; overscroll-behavior-x: none; }
+  body { -webkit-text-size-adjust: 100%; }
+  button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+  button, a[role="button"] { touch-action: manipulation; }
+  .kudi-app-shell { min-height: 100dvh !important; padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom)) !important; }
+  .kudi-app-shell > header { position: sticky; top: 0; box-shadow: 0 1px 0 color-mix(in oklch, var(--color-border) 75%, transparent), 0 8px 24px -24px rgba(0,0,0,.35); }
+  .kudi-app-shell > header > div { min-height: 58px !important; padding: 9px var(--mobile-gutter) !important; }
+  .kudi-app-shell > header .ml-auto { gap: 6px; }
+  .kudi-app-shell > header button { min-height: 42px; border-radius: 14px; padding-inline: 10px; }
+  .kudi-app-shell > main { width: 100% !important; max-width: none !important; padding: 17px var(--mobile-gutter) 22px !important; }
+  .kudi-app-shell > main > div:first-child { margin-bottom: 15px !important; }
+  .kudi-app-shell > main h1 { max-width: 100%; font-size: 28px; line-height: 1.02; letter-spacing: -.045em; }
+  .kudi-app-shell main > div { min-width: 0; }
+  .kudi-app-shell main [class*="lg:grid-cols"] { grid-template-columns: minmax(0,1fr) !important; }
+  .kudi-app-shell main .grid-cols-2:not(.keep-mobile-grid), .kudi-app-shell main .grid-cols-3:not(.keep-mobile-grid), .kudi-app-shell main .grid-cols-4:not(.keep-mobile-grid), .kudi-app-shell main .grid-cols-5:not(.keep-mobile-grid), .kudi-app-shell main .grid-cols-6:not(.keep-mobile-grid) { grid-template-columns: minmax(0,1fr) !important; }
+  .kudi-app-shell main [class*="grid-cols-2"][class*="sm:grid-cols"], .kudi-app-shell main [class*="grid-cols-3"][class*="sm:grid-cols"], .kudi-app-shell main [class*="grid-cols-4"][class*="sm:grid-cols"] { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+  .kudi-app-shell .surface-card { min-width: 0; border-radius: var(--mobile-radius); box-shadow: 0 8px 26px -22px rgba(0,0,0,.45); }
+  .kudi-app-shell .surface-card.p-6 { padding: 17px !important; }
+  .kudi-app-shell .surface-card.p-5 { padding: 15px !important; }
+  .kudi-app-shell .surface-card.p-4 { padding: 14px !important; }
+  .kudi-app-shell main .overflow-x-auto { max-width: 100%; border-radius: 16px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .kudi-app-shell main .overflow-x-auto::-webkit-scrollbar { display: none; }
+  .kudi-app-shell main table { min-width: 600px; font-size: 12px; }
+  .kudi-app-shell main th, .kudi-app-shell main td { padding: 10px 11px !important; white-space: nowrap; }
+  .kudi-app-shell input, .kudi-app-shell textarea, .kudi-app-shell [role="combobox"], .kudi-app-shell select { min-height: 46px; border-radius: 13px; font-size: 16px; }
+  .kudi-app-shell button:not([data-radix-collection-item]), .kudi-app-shell a.rounded-xl, .kudi-app-shell a.rounded-2xl { min-height: 44px; }
+  .kudi-app-shell .flex-wrap { row-gap: 8px; }
+  .kudi-app-shell > nav[aria-label="Primary"] { height: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom)); min-height: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom)); background: color-mix(in oklch, var(--color-surface) 94%, transparent) !important; border-top: 1px solid color-mix(in oklch, var(--color-border) 85%, transparent); box-shadow: 0 -12px 30px -28px rgba(0,0,0,.5); }
+  .kudi-app-shell > nav[aria-label="Primary"] > div { height: var(--mobile-nav-height); max-width: none; }
+  .kudi-app-shell > nav[aria-label="Primary"] a { min-height: 60px; padding: 5px 2px 3px; gap: 1px; }
+  .kudi-app-shell > nav[aria-label="Primary"] a span:first-child { width: 48px; height: 31px; border-radius: 999px; }
+  .kudi-app-shell > nav[aria-label="Primary"] a span:last-child { font-size: 9px; line-height: 12px; font-weight: 700; }
+  [data-slot="sheet-content"] { max-width: 100vw !important; width: 100% !important; max-height: min(92dvh,760px) !important; border-radius: 24px 24px 0 0 !important; padding: 18px var(--mobile-gutter) calc(18px + env(safe-area-inset-bottom)) !important; box-shadow: 0 -18px 60px -35px rgba(0,0,0,.45) !important; }
+  [data-slot="sheet-content"] [data-slot="sheet-header"] { padding: 0 2px 12px !important; }
+  [data-slot="sheet-content"] [data-slot="sheet-title"] { font-size: 22px !important; line-height: 1.05; }
+  [data-slot="sheet-content"] [data-slot="sheet-description"] { font-size: 13px !important; line-height: 19px; }
+  [data-slot="dialog-content"] { width: calc(100vw - 24px) !important; max-width: calc(100vw - 24px) !important; max-height: calc(100dvh - 24px) !important; border-radius: 22px !important; padding: 18px !important; overflow-y: auto; }
+  .kudi-mobile-menu a, .kudi-mobile-menu button { min-height: 50px; border-radius: 14px; }
+  .kudi-app-shell main .sticky.bottom-0 { bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom)) !important; }
+  main:has(form) { min-height: 100dvh; }
+  main:has(form) form input { min-height: 50px; }
+  main:has(form) form button[type="submit"] { min-height: 50px; border-radius: 14px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+}
