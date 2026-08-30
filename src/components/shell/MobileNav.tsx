@@ -18,9 +18,6 @@ export function MobileNav() {
   const [storeId, setStoreId] = useState<string | null>(null);
   const [branchId, setBranchId] = useState<string | null>(null);
 
-  // MobileNav is rendered by the root route, outside StoreProvider. Keep the
-  // global navigation independent of the merchant provider so SSR can render
-  // it safely on public routes and auth pages.
   useEffect(() => {
     setStoreId(activeStoreCache.getStoreId());
     setBranchId(activeStoreCache.getBranchId());
@@ -68,23 +65,47 @@ export function MobileNav() {
     "/online-store/orders": unreadOrders,
   };
 
-  return <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 px-2 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_30px_rgba(0,0,0,.06)] backdrop-blur-xl lg:hidden" aria-label="Mobile navigation">
-    <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
-      {ITEMS.map(({ to, label, icon: Icon }) => {
-        const active = pathname === to || pathname.startsWith(`${to}/`);
-        const badge = badges[to] ?? 0;
-        return <Link key={to} to={to} className={cn("group relative flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-2 text-[10px] font-semibold transition-[transform,background-color,color] duration-200 active:scale-[.94]", active ? "bg-accent-soft text-accent-ink" : "text-muted-foreground hover:bg-secondary hover:text-foreground")} aria-current={active ? "page" : undefined}>
-          <span className={cn("relative flex size-8 items-center justify-center rounded-xl transition-[transform,background-color,box-shadow] duration-300", active && "bg-background shadow-sm group-hover:scale-105 motion-safe:animate-[mobile-nav-pop_320ms_ease-out]")}>
-            <Icon className={cn("size-[19px] transition-transform duration-200", active && "scale-110 stroke-[2.2]")} />
-            {badge > 0 && <span aria-label={`${badge} updates`} className="absolute -right-1 -top-1 flex min-w-[15px] items-center justify-center rounded-full border-2 border-background bg-destructive px-1 text-[8px] font-bold leading-[13px] text-destructive-foreground shadow-sm">{badge > 9 ? "9+" : badge}</span>}
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 px-2 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_30px_rgba(0,0,0,.06)] backdrop-blur-xl lg:hidden" aria-label="Mobile navigation">
+      <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
+        {ITEMS.map(({ to, icon: Icon, label }) => {
+          const active = pathname === to || pathname.startsWith(`${to}/`);
+          const badge = badges[to] ?? 0;
+          return (
+            <Link
+              key={to}
+              to={to}
+              aria-label={label}
+              aria-current={active ? "page" : undefined}
+              className={cn(
+                "group relative flex min-h-14 items-center justify-center rounded-xl px-2 text-muted-foreground transition-[transform,background-color,color] duration-200 active:scale-[.94]",
+                active && "bg-accent-soft text-accent-ink",
+                !active && "hover:bg-secondary hover:text-foreground",
+              )}
+            >
+              <span className={cn("relative flex size-10 items-center justify-center rounded-xl transition-[transform,background-color,box-shadow] duration-300", active && "bg-background shadow-sm group-hover:scale-105 motion-safe:animate-[mobile-nav-pop_320ms_ease-out]")}>
+                <Icon className={cn("size-[21px] transition-transform duration-200", active && "scale-110 stroke-[2.2]")} />
+                {badge > 0 && (
+                  <span
+                    aria-label={`${badge} updates`}
+                    className="absolute right-[-1px] top-[-1px] size-2 rounded-full border border-background bg-destructive shadow-sm"
+                  />
+                )}
+              </span>
+            </Link>
+          );
+        })}
+        <button
+          type="button"
+          aria-label="Open menu"
+          className="group flex min-h-14 items-center justify-center rounded-xl px-2 text-muted-foreground transition-[transform,background-color,color] duration-200 hover:bg-secondary hover:text-foreground active:scale-[.94]"
+          onClick={() => document.querySelector<HTMLButtonElement>('[aria-label="Open Strap menu"]')?.click()}
+        >
+          <span className="flex size-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-105 group-active:rotate-[-3deg]">
+            <Menu className="size-[21px] transition-transform duration-300 group-hover:rotate-90" />
           </span>
-          <span className={cn("transition-transform duration-200", active && "translate-y-[-1px]")}>{label}</span>
-        </Link>;
-      })}
-      <button type="button" aria-label="Open menu" className="group flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-2 text-[10px] font-semibold text-muted-foreground transition-[transform,background-color,color] duration-200 hover:bg-secondary hover:text-foreground active:scale-[.94]" onClick={() => document.querySelector<HTMLButtonElement>('[aria-label="Open Strap menu"]')?.click()}>
-        <span className="flex size-8 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-105 group-active:rotate-[-3deg]"><Menu className="size-[19px] transition-transform duration-300 group-hover:rotate-90" /></span>
-        <span>Menu</span>
-      </button>
-    </div>
-  </nav>;
+        </button>
+      </div>
+    </nav>
+  );
 }
