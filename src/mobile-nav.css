@@ -1,0 +1,13 @@
+@media (max-width: 1023px) {
+  .kudi-app-shell {
+    padding-bottom: 5.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kudi-app-shell * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
