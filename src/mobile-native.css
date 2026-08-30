@@ -41,6 +41,7 @@
   main:has(form) form input { min-height: 48px; }
   main:has(form) form button[type="submit"] { min-height: 48px; border-radius: 13px; }
 
+  main:has([data-tour="sell"]) > div:first-child { display: none !important; }
   .pos-sell-page { min-width: 0; }
   .pos-mobile-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -2px 0 10px; }
   .pos-mobile-brand { display: flex; align-items: center; gap: 8px; font-family: "Space Grotesk", sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -.03em; }
@@ -51,13 +52,12 @@
   .pos-toolbar-button:active { transform: scale(.95); }
   .pos-toolbar-button:hover { background: var(--color-secondary); color: var(--color-foreground); }
   .pos-cart-count { position: absolute; right: -2px; top: -2px; display: flex; width: 16px; height: 16px; align-items: center; justify-content: center; border: 2px solid var(--color-background); border-radius: 999px; background: var(--color-foreground); color: var(--color-background); font-size: 8px; font-weight: 800; line-height: 1; }
-  .pos-domain-banner { display: flex; align-items: center; justify-content: center; margin: 0 0 12px; padding: 8px 12px; border: 1px solid color-mix(in oklch, var(--color-accent) 25%, var(--color-border)); border-radius: 12px; background: color-mix(in oklch, var(--color-accent-soft) 75%, var(--color-background)); color: var(--color-muted-foreground); font-size: 10px; font-weight: 600; text-align: center; }
+  .pos-domain-banner { display: none !important; }
   .pos-sell-page .surface-card.pos-product-card { border: 1px solid color-mix(in oklch, var(--color-border) 92%, transparent); background: var(--color-surface); box-shadow: 0 8px 24px -22px rgba(0,0,0,.55); }
   .pos-sell-page .pos-product-card:active { transform: scale(.985); }
   .pos-sell-page .pos-product-out { background: color-mix(in oklch, var(--color-secondary) 68%, var(--color-background)); border-color: color-mix(in oklch, #dc2626 14%, var(--color-border)); }
   .pos-sell-page .pos-product-out .text-accent-ink { color: var(--color-muted-foreground); }
   .pos-sell-page .field { padding-inline: 12px; }
-  .pos-sell-page .pos-mobile-header + .pos-domain-banner + div .rounded-full { white-space: nowrap; }
   @media (max-width: 380px) { :root { --mobile-gutter: 12px; } .kudi-app-shell > main h1 { font-size: 23px; } }
 }
 
