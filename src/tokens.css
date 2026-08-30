@@ -9,25 +9,20 @@
   --surface-sunken: #eef3fa;
   --border-default: #e1e8f2;
   --border-strong: #c7d4e8;
-
   --brand-600: #1d5fe0;
   --brand-700: #1749b3;
   --brand-100: #e7effd;
-
   --ink-900: #0b1220;
   --ink-600: #46526b;
   --ink-400: #8492a8;
-
   --success-600: #3f7d5b;
   --success-100: #eaf4ee;
   --warning-600: #a36b21;
   --warning-100: #fbf1df;
   --danger-600: #b44a4a;
   --danger-100: #faeaea;
-
   --pos-accent-600: #b87920;
   --pos-accent-100: #fbf1df;
-
   --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --type-12: 0.75rem;
@@ -37,7 +32,6 @@
   --type-24: 1.5rem;
   --type-32: 2rem;
   --type-40: 2.5rem;
-
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -47,7 +41,6 @@
   --space-8: 2rem;
   --space-10: 2.5rem;
   --space-12: 3rem;
-
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -55,8 +48,6 @@
   --shadow-popover: 0 12px 32px rgba(11, 18, 32, 0.12);
   --motion-fast: 150ms;
   --motion-page: 180ms;
-
-  /* shadcn/Radix semantic aliases — one source of truth for existing components */
   --background: var(--surface-subtle);
   --foreground: var(--ink-900);
   --surface: var(--surface-base);
@@ -116,6 +107,15 @@
   --pos-accent-100: #3a2c18;
 }
 
+@keyframes strap-shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+
+@layer base {
+  body { font-variant-numeric: proportional-nums; }
+  input, button, select, textarea { font-family: var(--font-sans); }
+  .numeric, [data-numeric="true"] { font-variant-numeric: tabular-nums; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root { --motion-fast: 1ms; --motion-page: 1ms; }
+  *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
 }
