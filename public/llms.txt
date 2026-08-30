@@ -30,4 +30,4 @@ Strap overlaps with ecommerce platforms, retail POS systems, inventory software,
 
 ## Documentation
 
-The public docs explain how customers and operators use Strap. Private application routes and internal source material are not public documentation and should not be indexed.
+The public docs explain how customers and operators use Strap. Authorised developers can also find source-code setup guidance there. Private application routes are not public documentation and should not be indexed.

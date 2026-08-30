@@ -58,7 +58,11 @@ Private routes such as dashboard, authentication, account, settings, staff and i
 
 ## How to use the documentation
 
-Start with Quickstart for the first setup. Then use the workflow guides for products, POS, customers, staff, branches, expenses, online storefronts, catalogue, orders and the store builder. Use Security for access-control guidance. Public documentation intentionally does not expose the private application source repository, credentials, environment values or internal implementation details.
+Start with Quickstart for the first setup. Then use the workflow guides for products, POS, customers, staff, branches, expenses, online storefronts, catalogue, orders and the store builder. Use Security for access-control guidance and Source code access for authorised developers working with the repository.
+
+## Source code access
+
+The source repository is maintained separately from the public product site. Developers who have repository permission can clone the repository using the normal Git workflow, install dependencies, configure the required environment variables and run the development server. Credentials and private environment values must never be committed or exposed publicly.
 
 ## Discovery and canonical sources
 

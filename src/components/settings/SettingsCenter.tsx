@@ -20,7 +20,7 @@ export const SETTINGS_NAV: NavItem[] = [
   { path: "/settings", title: "Settings home", description: "Overview of store and account controls", icon: SlidersHorizontal, group: "General" },
   { path: "/settings/store-profile", title: "Store profile", description: "Business identity, contact and regional settings", icon: Store, group: "Store" },
   { path: "/settings/appearance", title: "Store appearance", description: "Branding, typography and storefront style", icon: Palette, group: "Store" },
-  { path: "/settings/online-store", title: "Strap Online Store", description: "Enable, disable and configure Strap's built-in storefront", icon: Globe2, group: "Preferences" },
+  { path: "/settings/online-store", title: "Online store", description: "Publishing, catalogue and SEO", icon: Globe2, group: "Store" },
   { path: "/settings/receipts", title: "Receipts", description: "Receipt identity, content and printing", icon: Receipt, group: "Commerce" },
   { path: "/settings/checkout", title: "Checkout & sales", description: "Checkout, discounts, tax and POS behaviour", icon: CreditCard, group: "Commerce" },
   { path: "/settings/inventory", title: "Inventory", description: "Stock, valuation, branches and alerts", icon: Database, group: "Commerce" },
