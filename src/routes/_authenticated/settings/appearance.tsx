@@ -1,4 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SettingsSectionPage } from "@/components/settings/SettingsCenter";
+import { AppearanceSettingsPage } from "@/components/settings/AppearanceSettingsPage";
 
-export const Route = createFileRoute("/_authenticated/settings/appearance")({ component: () => <SettingsSectionPage section="appearance" /> });
+export const Route = createFileRoute("/_authenticated/settings/appearance")({ component: AppearanceSettingsPage });
