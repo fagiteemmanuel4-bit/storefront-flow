@@ -12,20 +12,28 @@ export type EntitlementKey =
   | 'stockTransfers'
   | 'merchantPayments'
   | 'aiAssistant'
+  | 'storeExport'
+  | 'stockSense'
+  | 'storefrontLayouts'
+  | 'featuredProducts'
 
 export const STRAP_TIERS: Record<StrapTier, Record<EntitlementKey, boolean | number>> = {
   free: {
-    onlineStore: true,
-    advancedInventory: true,
+    onlineStore: false,
+    advancedInventory: false,
     staff: 1,
     branches: 1,
     advancedAnalytics: false,
-    loyalty: true,
-    discounts: true,
-    purchaseOrders: true,
+    loyalty: false,
+    discounts: false,
+    purchaseOrders: false,
     stockTransfers: false,
     merchantPayments: false,
     aiAssistant: false,
+    storeExport: false,
+    stockSense: false,
+    storefrontLayouts: false,
+    featuredProducts: false,
   },
   business: {
     onlineStore: true,
@@ -39,6 +47,10 @@ export const STRAP_TIERS: Record<StrapTier, Record<EntitlementKey, boolean | num
     stockTransfers: true,
     merchantPayments: false,
     aiAssistant: false,
+    storeExport: true,
+    stockSense: true,
+    storefrontLayouts: true,
+    featuredProducts: true,
   },
   pro: {
     onlineStore: true,
@@ -52,10 +64,14 @@ export const STRAP_TIERS: Record<StrapTier, Record<EntitlementKey, boolean | num
     stockTransfers: true,
     merchantPayments: false,
     aiAssistant: false,
+    storeExport: true,
+    stockSense: true,
+    storefrontLayouts: true,
+    featuredProducts: true,
   },
 }
 
-/** -1 means unlimited. Payment and AI remain explicitly staged off until their integrations are ready. */
+/** -1 means unlimited. Payments and AI remain explicitly staged off until their integrations are ready. */
 export function hasEntitlement(tier: StrapTier, key: EntitlementKey) {
   return STRAP_TIERS[tier][key] !== false
 }
