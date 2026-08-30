@@ -28,15 +28,15 @@ export function MobileNav() {
 
   return <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 px-2 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_30px_rgba(0,0,0,.06)] backdrop-blur-xl lg:hidden" aria-label="Mobile navigation">
     <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
-      {ITEMS.map(({ to, icon: Icon, label }) => { const active = pathname === to || pathname.startsWith(`${to}/`); const badge = badges[to] ?? 0; return <Link key={to} to={to} aria-label={label} aria-current={active ? "page" : undefined} className={cn("group relative flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-xl px-2 text-muted-foreground transition-[transform,background-color,color] duration-200 active:scale-[.94]", active && "bg-accent-soft text-accent-ink", !active && "hover:bg-secondary hover:text-foreground")}>
+      {ITEMS.map(({ to, icon: Icon, label }) => { const active = pathname === to || pathname.startsWith(`${to}/`); const badge = badges[to] ?? 0; return <Link key={to} to={to} aria-label={label} aria-current={active ? "page" : undefined} className={cn("group relative flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-2xl px-2 text-muted-foreground transition-[transform,background-color,color] duration-200 active:scale-[.94]", active && "bg-accent-soft text-accent-ink", !active && "hover:bg-secondary hover:text-foreground")}>
         <span className={cn("relative flex size-8 items-center justify-center rounded-xl transition-[transform,background-color,box-shadow] duration-300", active && "bg-background shadow-sm motion-safe:animate-[mobile-nav-pop_320ms_ease-out]")}>
-          <Icon className={cn("size-[20px] transition-transform duration-200", active && "scale-110 stroke-[2.2]")} />
-          {badge > 0 && <span aria-label={`${badge} updates`} className="absolute right-0.5 top-0.5 size-1.5 rounded-full border border-background bg-destructive shadow-sm" />}
+          <Icon className={cn("size-[19px] transition-transform duration-200", active && "scale-110 stroke-[2.2]")} />
+          {badge > 0 && <span aria-label={`${badge} updates`} className="absolute -right-0.5 -top-0.5 flex min-size-2.5 size-2.5 items-center justify-center rounded-full border-2 border-background bg-destructive text-[7px] font-bold leading-none text-destructive-foreground">{badge > 9 ? "9+" : badge}</span>}
         </span>
         <span className="text-[10px] font-semibold leading-none tracking-tight">{label}</span>
       </Link>; })}
-      <Link to="/profile" aria-label="Profile" aria-current={pathname.startsWith("/profile") ? "page" : undefined} className={cn("group flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-xl px-2 text-muted-foreground transition-[transform,background-color,color] duration-200 active:scale-[.94]", pathname.startsWith("/profile") && "bg-accent-soft text-accent-ink", !pathname.startsWith("/profile") && "hover:bg-secondary hover:text-foreground")}>
-        <span className="flex size-8 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-105"><UserRound className="size-[20px]" /></span>
+      <Link to="/profile" aria-label="Profile" aria-current={pathname.startsWith("/profile") ? "page" : undefined} className={cn("group flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-2xl px-2 text-muted-foreground transition-[transform,background-color,color] duration-200 active:scale-[.94]", pathname.startsWith("/profile") && "bg-accent-soft text-accent-ink", !pathname.startsWith("/profile") && "hover:bg-secondary hover:text-foreground")}>
+        <span className={cn("relative flex size-8 items-center justify-center rounded-xl", pathname.startsWith("/profile") && "bg-background shadow-sm motion-safe:animate-[mobile-nav-pop_320ms_ease-out]")}><UserRound className="size-[19px]" /></span>
         <span className="text-[10px] font-semibold leading-none tracking-tight">Profile</span>
       </Link>
     </div>
