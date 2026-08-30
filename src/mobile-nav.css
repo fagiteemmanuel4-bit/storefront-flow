@@ -11,3 +11,14 @@
     animation-duration: 0.01ms !important;
   }
 }
+
+/* Strap intentionally avoids AI-style sparkle/star visual markers. */
+.lucide-sparkles,
+.lucide-sparkle {
+  display: none !important;
+}
+
+.kudi-hero span:has(> .lucide-sparkles),
+.kudi-hero span:has(> .lucide-sparkle) {
+  display: none !important;
+}
