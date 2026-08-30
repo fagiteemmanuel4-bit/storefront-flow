@@ -1,8 +1,9 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BarChart3, Menu, Package, ReceiptText, ScanLine, ShoppingBag } from "lucide-react";
+import { BarChart3, Menu, Package, ReceiptText, ShoppingBag } from "lucide-react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useStoreContext } from "@/components/shell/StoreProvider";
+import { activeStoreCache } from "@/lib/active-store";
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
@@ -14,10 +15,16 @@ const ITEMS = [
 
 export function MobileNav() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const { store, branch } = useStoreContext();
-  const storeId = store?.id ?? null;
-  const branchId = branch?.id ?? null;
-  const visible = pathname.startsWith("/dashboard") || pathname.startsWith("/pos") || pathname.startsWith("/products") || pathname.startsWith("/online-store") || pathname.startsWith("/customers") || pathname.startsWith("/insights") || pathname.startsWith("/reports") || pathname.startsWith("/expenses") || pathname.startsWith("/branches") || pathname.startsWith("/staff") || pathname.startsWith("/hardware") || pathname.startsWith("/settings") || pathname.startsWith("/stock-sense");
+  const [storeId, setStoreId] = useState<string | null>(null);
+  const [branchId, setBranchId] = useState<string | null>(null);
+
+  // MobileNav is rendered by the root route, outside StoreProvider. Keep the
+  // global navigation independent of the merchant provider so SSR can render
+  // it safely on public routes and auth pages.
+  useEffect(() => {
+    setStoreId(activeStoreCache.getStoreId());
+    setBranchId(activeStoreCache.getBranchId());
+  }, [pathname]);
 
   const { data: unreadOrders = 0 } = useQuery({
     queryKey: ["mobile-nav", "unread-orders", storeId],
@@ -53,6 +60,7 @@ export function MobileNav() {
     },
   });
 
+  const visible = pathname.startsWith("/dashboard") || pathname.startsWith("/pos") || pathname.startsWith("/products") || pathname.startsWith("/online-store") || pathname.startsWith("/customers") || pathname.startsWith("/insights") || pathname.startsWith("/reports") || pathname.startsWith("/expenses") || pathname.startsWith("/branches") || pathname.startsWith("/staff") || pathname.startsWith("/hardware") || pathname.startsWith("/settings") || pathname.startsWith("/stock-sense");
   if (!visible) return null;
 
   const badges: Record<string, number> = {
