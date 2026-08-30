@@ -1,0 +1,57 @@
+name: Repair signup verification flow
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/routes/auth.tsx'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Repair signup flow
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/routes/auth.tsx')
+          s = p.read_text()
+          target = 'await requestLoginOtp(normalizedEmail);'
+          count = s.count(target)
+          if count != 1:
+              raise SystemExit(f'Expected exactly one signup OTP call, found {count}')
+          s = s.replace(target, '// Signup already sends the verification email; never request a second OTP here.')
+          p.write_text(s)
+          print('Removed duplicate signup OTP request.')
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck / lint / build
+        run: |
+          npm run lint --if-present
+          npm run typecheck --if-present
+          npm run build
+
+      - name: Commit repaired source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/routes/auth.tsx
+          git diff --cached --quiet || git commit -m 'fix(auth): stop duplicate signup verification request'
+          git push
