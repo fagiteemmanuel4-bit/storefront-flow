@@ -1,4 +1,4 @@
-export type CommerceFeatureStatus = 'available' | 'limited-free' | 'coming-soon'
+export type CommerceFeatureStatus = 'available' | 'limited-free' | 'premium' | 'coming-soon'
 
 export type CommerceFeature = {
   key: string
@@ -7,11 +7,7 @@ export type CommerceFeature = {
   description: string
 }
 
-/**
- * Single source of truth for staged commerce capabilities.
- * Premium capabilities are intentionally not activated yet; they remain
- * visible as coming soon without exposing unfinished payment or upgrade flows.
- */
+/** Single source of truth for staged commerce capabilities. */
 export const COMMERCE_FEATURES: Record<string, CommerceFeature> = {
   merchantPayments: {
     key: 'merchantPayments',
@@ -22,7 +18,7 @@ export const COMMERCE_FEATURES: Record<string, CommerceFeature> = {
   advancedAnalytics: {
     key: 'advancedAnalytics',
     label: 'Advanced analytics',
-    status: 'coming-soon',
+    status: 'premium',
     description: 'Get deeper business insights while Strap expands the analytics suite.',
   },
   aiAssistant: {
@@ -34,33 +30,28 @@ export const COMMERCE_FEATURES: Record<string, CommerceFeature> = {
   loyalty: {
     key: 'loyalty',
     label: 'Customer loyalty',
-    status: 'coming-soon',
+    status: 'premium',
     description: 'Reward customers with points and build repeat purchases.',
   },
   discounts: {
     key: 'discounts',
     label: 'Discount codes',
-    status: 'coming-soon',
+    status: 'premium',
     description: 'Create simple promotions and discount codes for your customers.',
   },
   purchaseOrders: {
     key: 'purchaseOrders',
     label: 'Purchase orders',
-    status: 'coming-soon',
+    status: 'premium',
     description: 'Track supplier orders and receiving from inside Strap.',
   },
   stockTransfers: {
     key: 'stockTransfers',
     label: 'Branch stock transfers',
-    status: 'coming-soon',
+    status: 'premium',
     description: 'Move inventory between branches with an auditable transfer workflow.',
   },
 }
 
-export function getCommerceFeature(key: string) {
-  return COMMERCE_FEATURES[key]
-}
-
-export function isCommerceFeatureEnabled(key: string) {
-  return COMMERCE_FEATURES[key]?.status !== 'coming-soon'
-}
+export function getCommerceFeature(key: string) { return COMMERCE_FEATURES[key] }
+export function isCommerceFeatureEnabled(key: string) { return COMMERCE_FEATURES[key]?.status !== 'coming-soon' }
