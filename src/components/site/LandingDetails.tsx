@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BarChart3, Boxes, Check, CreditCard, Globe2, HelpCircle, Laptop, PackageCheck, Printer, Receipt, ScanLine, ShieldCheck, Smartphone, Store, Users, Wallet, Zap } from "lucide-react";
+import { ArrowRight, BarChart3, Boxes, Check, Globe2, HelpCircle, Laptop, PackageCheck, Printer, Receipt, ScanLine, Store, Users, Wallet, Zap } from "lucide-react";
+import { PricingSection } from "./PricingSection";
 
 const SHOP_TYPES = [
   [Store, "Mini marts & groceries", "Keep fast-moving products, prices and stock under control while the counter stays busy."],
@@ -20,7 +21,7 @@ const OPERATIONS = [
 const FAQS = [
   ["Can I use Strap on a phone and a computer?", "Yes. Strap is designed responsively so the important workflows remain usable on phones, tablets and desktop screens."],
   ["Can I scan products on a PC?", "Yes. A compatible USB or Bluetooth keyboard-wedge barcode/QR scanner can work like a keyboard, while camera scanning is available for supported devices."],
-  ["Can I sell online with Strap?", "Yes. Strap includes an online catalog and storefront workflow for publishing products and receiving online orders."],
+  ["Can I sell online with Strap?", "Yes. A public online storefront is available on paid Business and Pro plans, starting at ₦3,000/month."],
   ["What payment methods can I record?", "The register supports cash and other payment methods configured in the selling flow, with the payment method attached to the completed sale."],
   ["Can I print receipts?", "Strap includes receipt previews and a custom receipt designer, with compatible printer connections being developed for supported hardware."],
   ["Is Strap only for one kind of shop?", "No. The workflows are designed for everyday retail and can be adapted to different product categories, shop sizes and operating styles."],
@@ -44,6 +45,8 @@ export function LandingDetails() {
           </div>
         </div>
       </section>
+
+      <PricingSection />
 
       <section className="px-4 py-20 sm:px-6 sm:py-28">
         <div className="mx-auto max-w-7xl">
