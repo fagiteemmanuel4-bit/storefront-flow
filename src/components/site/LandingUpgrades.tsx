@@ -1,10 +1,16 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BarChart3, Boxes, Building2, Check, CreditCard, Globe2, Laptop, LockKeyhole, PackageSearch, Printer, ScanLine, ShieldCheck, Sparkles, Users, Wallet, Zap } from "lucide-react";
+import { ArrowRight, BarChart3, Boxes, Building2, Check, CreditCard, Globe2, Laptop, LockKeyhole, PackageSearch, Printer, ScanLine, ShieldCheck, Users, Wallet, Zap } from "lucide-react";
 
 const cards = [
   { icon: PackageSearch, title: "Find stock before it becomes a problem", body: "See low-stock products, stock value and product activity in one place so restocking decisions are based on what is actually happening." },
   { icon: BarChart3, title: "Turn activity into useful signals", body: "Sales, expenses and inventory information work together so you can understand performance instead of checking disconnected records." },
   { icon: Users, title: "Give every teammate the right workspace", body: "Keep owners, managers and cashiers focused on the work they need while sensitive management actions stay protected." },
+];
+
+const plans = [
+  { name: "Free", price: "₦0", description: "Run your counter and manage the essentials.", cta: "Start free", featured: false, features: ["POS & offline sales", "Products & inventory", "Customers & expenses", "Basic orders & reports"] },
+  { name: "Business", price: "₦3,000", description: "Open your shop online and unlock the tools that help it grow.", cta: "Choose Business", featured: true, features: ["Everything in Free", "Online Store", "Storefront categories", "List, compact & large layouts", "Featured products", "Store data export"] },
+  { name: "Pro", price: "₦5,000", description: "Advanced control for growing retail operations.", cta: "Choose Pro", featured: false, features: ["Everything in Business", "Advanced inventory tools", "Stock calculation tools", "Advanced reports", "Priority Pro features"] },
 ];
 
 export function LandingUpgrades() {
@@ -20,6 +26,29 @@ export function LandingUpgrades() {
         </div>
       </section>
 
+      <section id="pricing" className="border-y border-border bg-background px-4 py-20 sm:px-6 sm:py-28">
+        <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-label-caps text-accent-ink">Simple pricing</p>
+            <h2 className="text-display-md mt-4">Start free. Pay when your shop is ready to sell online.</h2>
+            <p className="mt-5 text-lg leading-8 text-muted-foreground">Your counter stays useful on Free. The Online Store starts at ₦3,000/month, with no premium feature quietly hidden behind the free plan.</p>
+          </div>
+          <div className="mt-12 grid gap-5 lg:grid-cols-3">
+            {plans.map((plan) => (
+              <article key={plan.name} className={`relative rounded-[1.75rem] border p-6 sm:p-7 ${plan.featured ? "border-accent bg-accent-soft/35 shadow-lg" : "border-border bg-background"}`}>
+                {plan.featured && <span className="absolute right-5 top-5 rounded-full bg-accent px-3 py-1 text-[11px] font-bold text-accent-foreground">Most popular</span>}
+                <h3 className="font-display text-2xl font-bold">{plan.name}</h3>
+                <p className="mt-3 min-h-12 text-sm leading-6 text-muted-foreground">{plan.description}</p>
+                <div className="mt-6 flex items-end gap-1"><span className="font-display text-4xl font-bold tracking-tight">{plan.price}</span>{plan.name !== "Free" && <span className="pb-1 text-sm text-muted-foreground">/ month</span>}</div>
+                <Link to="/auth" className={`mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold transition ${plan.featured ? "bg-accent text-accent-foreground hover:-translate-y-0.5" : "border border-border bg-background hover:bg-secondary"}`}>{plan.cta}<ArrowRight className="size-4" /></Link>
+                <ul className="mt-7 space-y-3">{plan.features.map((feature) => <li key={feature} className="flex items-start gap-3 text-sm"><Check className="mt-0.5 size-4 shrink-0 text-accent-ink" /><span>{feature}</span></li>)}</ul>
+                {plan.name === "Free" && <p className="mt-6 border-t border-border pt-4 text-xs text-muted-foreground">Online Store is not included in Free.</p>}
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="inventory" className="px-4 py-20 sm:px-6 sm:py-28">
         <div className="mx-auto max-w-7xl"><div className="grid gap-12 lg:grid-cols-2 lg:items-center"><div><p className="text-label-caps text-accent-ink">Inventory intelligence</p><h2 className="text-display-md mt-4">Know what you have before customers ask.</h2><p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">Search by name, SKU or barcode, filter by category or shelf, and spot products that need attention. Bulk stock actions keep routine updates fast.</p><div className="mt-7 grid gap-3 sm:grid-cols-2">{["Low-stock alerts", "Out-of-stock filters", "Stock-value tracking", "Bulk quantity updates"].map((item) => <div key={item} className="flex items-center gap-3 rounded-xl border border-border bg-background p-4 text-sm font-semibold"><Check className="size-4 text-accent-ink" />{item}</div>)}</div></div><div className="rounded-[2rem] border border-white/10 bg-neutral-950 p-6 text-white shadow-lift sm:p-8"><div className="flex items-center gap-3"><Boxes className="size-5 text-accent" /><p className="text-sm font-semibold text-white">Stock control</p></div><div className="mt-7 space-y-3">{[["Available", "124 products"], ["Low stock", "12 products"], ["Out of stock", "3 products"], ["Inventory value", "₦1,842,500"]].map(([label, value]) => <div key={label} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[.06] p-4"><span className="text-sm text-white/70">{label}</span><span className="font-semibold text-white">{value}</span></div>)}</div></div></div></div>
       </section>
@@ -29,11 +58,11 @@ export function LandingUpgrades() {
       </section>
 
       <section id="online-store" className="px-4 py-20 sm:px-6 sm:py-28">
-        <div className="mx-auto max-w-7xl"><div className="grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center"><div><p className="text-label-caps text-accent-ink">Online storefront</p><h2 className="text-display-md mt-4">Give your shop a front door on the internet.</h2><p className="mt-5 text-lg leading-8 text-muted-foreground">Publish selected products, feature the ones you want customers to notice and manage online orders from the same business workspace.</p><div className="mt-7 flex flex-wrap gap-2">{["Shareable catalog", "Featured products", "Bulk publish", "Online orders"].map((item) => <span key={item} className="rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold">{item}</span>)}</div></div><div className="rounded-[2rem] border border-border bg-secondary p-6 sm:p-8"><div className="flex items-center justify-between"><div><p className="text-xs uppercase tracking-[.16em] text-muted-foreground">Your online store</p><h3 className="mt-2 font-display text-2xl font-bold">Open 24/7</h3></div><Globe2 className="size-7 text-accent-ink" /></div><div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">{[["42", "Published"], ["8", "Featured"], ["6", "Orders"], ["1", "Storefront"]].map(([value, label]) => <div key={label} className="rounded-xl border border-border bg-background p-4"><p className="text-xl font-bold">{value}</p><p className="mt-1 text-[11px] text-muted-foreground">{label}</p></div>)}</div></div></div></div>
+        <div className="mx-auto max-w-7xl"><div className="grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center"><div><p className="text-label-caps text-accent-ink">Online storefront</p><h2 className="text-display-md mt-4">Give your shop a front door on the internet.</h2><p className="mt-5 text-lg leading-8 text-muted-foreground">Publish selected products, feature the ones you want customers to notice and manage online orders from the same business workspace.</p><div className="mt-7 flex flex-wrap gap-2">["Shareable catalog", "Featured products", "Bulk publish", "Online orders"].map((item) => <span key={item} className="rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold">{item}</span>)}</div></div><div className="rounded-[2rem] border border-border bg-secondary p-6 sm:p-8"><div className="flex items-center justify-between"><div><p className="text-xs uppercase tracking-[.16em] text-muted-foreground">Your online store</p><h3 className="mt-2 font-display text-2xl font-bold">Open 24/7</h3></div><Globe2 className="size-7 text-accent-ink" /></div><div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">{[["42", "Published"], ["8", "Featured"], ["6", "Orders"], ["1", "Storefront"]].map(([value, label]) => <div key={label} className="rounded-xl border border-border bg-background p-4"><p className="text-xl font-bold">{value}</p><p className="mt-1 text-[11px] text-muted-foreground">{label}</p></div>)}</div></div></div></div>
       </section>
 
       <section id="insights" className="border-y border-border bg-secondary/35 px-4 py-20 sm:px-6 sm:py-28">
-        <div className="mx-auto max-w-7xl"><div className="max-w-2xl"><p className="text-label-caps text-accent-ink">Insights</p><h2 className="text-display-md mt-4">Stop guessing where the money went.</h2><p className="mt-5 text-lg leading-8 text-muted-foreground">Use sales, expenses, payment records and stock information together to understand the health of the shop.</p></div><div className="mt-10 grid gap-4 md:grid-cols-3">{[[Wallet, "Money movement", "Keep sales, expenses and payment methods attached to the same business records."], [BarChart3, "Performance", "See useful totals and trends without rebuilding reports manually."], [Sparkles, "Better decisions", "Use what happened today to make tomorrow's stocking and selling decisions clearer."]].map(([Icon, title, body]) => <article key={title as string} className="rounded-2xl border border-border bg-background p-6"><Icon className="size-5 text-accent-ink" /><h3 className="mt-4 font-display text-lg font-bold">{title as string}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{body as string}</p></article>)}</div></div>
+        <div className="mx-auto max-w-7xl"><div className="max-w-2xl"><p className="text-label-caps text-accent-ink">Insights</p><h2 className="text-display-md mt-4">Stop guessing where the money went.</h2><p className="mt-5 text-lg leading-8 text-muted-foreground">Use sales, expenses, payment records and stock information together to understand the health of the shop.</p></div><div className="mt-10 grid gap-4 md:grid-cols-3">{[[Wallet, "Money movement", "Keep sales, expenses and payment methods attached to the same business records."], [BarChart3, "Performance", "See useful totals and trends without rebuilding reports manually."], [Zap, "Better decisions", "Use what happened today to make tomorrow's stocking and selling decisions clearer."]].map(([Icon, title, body]) => <article key={title as string} className="rounded-2xl border border-border bg-background p-6"><Icon className="size-5 text-accent-ink" /><h3 className="mt-4 font-display text-lg font-bold">{title as string}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{body as string}</p></article>)}</div></div>
       </section>
 
       <section id="teams" className="px-4 py-20 sm:px-6 sm:py-28">
