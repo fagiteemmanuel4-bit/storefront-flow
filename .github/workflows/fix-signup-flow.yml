@@ -27,16 +27,16 @@ jobs:
           from pathlib import Path
           p = Path('src/routes/auth.tsx')
           s = p.read_text()
-          target = 'await requestLoginOtp(normalizedEmail);'
+          target = '''sessionStorage.setItem("strap_otp_email", normalizedEmail);\n      sessionStorage.setItem("strap_otp_flow", "signup");\n      await requestLoginOtp(normalizedEmail);'''
+          replacement = '''sessionStorage.setItem("strap_otp_email", normalizedEmail);\n      sessionStorage.setItem("strap_otp_flow", "signup");'''
           count = s.count(target)
           if count == 1:
-              s = s.replace(target, '// Signup already sends the verification email; never request a second OTP here.')
-              p.write_text(s)
-              print('Removed duplicate signup OTP request.')
+              p.write_text(s.replace(target, replacement))
+              print('Removed duplicate OTP request from signup only.')
           elif count == 0:
-              print('Signup flow already repaired.')
+              print('Signup flow already repaired or target context changed.')
           else:
-              raise SystemExit(f'Expected at most one signup OTP call, found {count}')
+              raise SystemExit(f'Expected exactly one signup target, found {count}')
           PY
 
       - name: Install dependencies
