@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { KeyRound, LogIn, Plus, ShieldCheck, UserRound, UserRoundCog, Users, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Building2, Check, Copy, KeyRound, Link2, Plus, Settings2, ShieldCheck, UserRound, UserRoundCog, Users, X } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/shell/AppShell";
 import { Button } from "@/components/ui/button";
@@ -15,104 +15,29 @@ import { useStoreContext } from "@/components/shell/StoreProvider";
 import { STAFF_ROLE_META, clearStaffSession, getStaffSession, setStaffSession, type StaffRole } from "@/lib/staff-session";
 
 export const Route = createFileRoute("/_authenticated/staff")({ component: StaffPage });
-
-type StaffRow = { id: string; name: string; role: StaffRole; is_active: boolean; last_login_at: string | null; locked_until: string | null };
-type CreatedStaff = { id: string; name: string; role: StaffRole; is_active: boolean };
-
-async function fetchStaff(storeId: string): Promise<StaffRow[]> {
-  const { data, error } = await (supabase as any).rpc("list_staff_accounts", { _store_id: storeId });
-  if (error) throw new Error(error.message);
-  return (data ?? []) as StaffRow[];
-}
-
-function StaffPage() {
-  const { store, role } = useStoreContext();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [showCreate, setShowCreate] = useState(false);
-  const [selected, setSelected] = useState<StaffRow | null>(null);
-  const [name, setName] = useState("");
-  const [staffRole, setStaffRole] = useState<StaffRole>("cashier");
-  const [pin, setPin] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [activeSession, setActiveSession] = useState(() => getStaffSession(store?.id));
-  const canManage = role === "owner" || role === "manager";
-
-  const staffQuery = useQuery({ queryKey: ["staff-accounts", store?.id], enabled: Boolean(store?.id), queryFn: () => fetchStaff(store!.id), staleTime: 10_000 });
-  const staff = staffQuery.data ?? [];
-  const activeStaff = useMemo(() => staff.filter((item) => item.is_active), [staff]);
-
-  function closeCreate() {
-    if (busy) return;
-    setShowCreate(false);
-    setName("");
-    setPin("");
-    setStaffRole("cashier");
-  }
-
-  async function createStaff() {
-    if (!store?.id) { toast.error("No active store is selected."); return; }
-    const trimmedName = name.trim();
-    if (!trimmedName || !/^\d{4,6}$/.test(pin)) { toast.error("Enter a staff name and a 4–6 digit PIN."); return; }
-    if (!canManage) { toast.error("You do not have permission to create staff accounts."); return; }
-    setBusy(true);
-    try {
-      const { data, error } = await (supabase as any).rpc("create_staff_account", { _store_id: store.id, _name: trimmedName, _pin: pin, _role: staffRole });
-      if (error) throw new Error(error.message);
-      const created = (Array.isArray(data) ? data[0] : data) as CreatedStaff | undefined;
-      if (!created?.id) throw new Error("Staff account creation did not return a confirmed account.");
-      closeCreate();
-      await queryClient.invalidateQueries({ queryKey: ["staff-accounts", store.id] });
-      toast.success(`${created.name} can now sign in with their PIN.`);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Couldn't create staff account.");
-    } finally { setBusy(false); }
-  }
-
-  async function login(staffMember: StaffRow) {
-    if (!store?.id || !/^\d{4,6}$/.test(pin)) { toast.error("Enter the 4–6 digit staff PIN."); return; }
-    setBusy(true);
-    try {
-      const { data, error } = await (supabase as any).rpc("verify_staff_pin", { _store_id: store.id, _staff_id: staffMember.id, _pin: pin });
-      if (error) throw error;
-      if (!data?.ok) throw new Error(data?.message ?? "Incorrect PIN");
-      const session = { id: data.staff_id, storeId: store.id, name: data.name, role: data.role as StaffRole, signedInAt: new Date().toISOString() };
-      setStaffSession(session); setActiveSession(session); setPin(""); setSelected(null);
-      toast.success(`Welcome, ${session.name}.`);
-      void navigate({ to: STAFF_ROLE_META[session.role].defaultRoute as any });
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "PIN sign-in failed.");
-      setPin("");
-      await queryClient.invalidateQueries({ queryKey: ["staff-accounts", store.id] });
-    } finally { setBusy(false); }
-  }
-
-  async function toggleStaff(member: StaffRow) {
-    if (!canManage || !store?.id) return;
-    const { error } = await (supabase as any).from("staff_accounts").update({ is_active: !member.is_active, updated_at: new Date().toISOString() }).eq("id", member.id).eq("store_id", store.id);
-    if (error) toast.error(error.message); else { toast.success(member.is_active ? "Staff account disabled." : "Staff account enabled."); await queryClient.invalidateQueries({ queryKey: ["staff-accounts", store.id] }); }
-  }
-
-  function signOutStaff() { clearStaffSession(); setActiveSession(null); toast.success("Staff session ended."); }
-
-  return <AppShell title="Staff accounts">
-    <div className="space-y-6">
-      {activeSession && <Card className="border-accent/30 bg-accent-soft/50"><CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center"><span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-accent"><ShieldCheck className="size-5" /></span><div className="min-w-0 flex-1"><p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active staff session</p><p className="truncate text-lg font-bold">{activeSession.name} · {STAFF_ROLE_META[activeSession.role].label}</p><p className="text-sm text-muted-foreground">{STAFF_ROLE_META[activeSession.role].description}</p></div><Button variant="outline" onClick={signOutStaff}><X className="mr-2 size-4" />End session</Button></CardContent></Card>}
-
-      <div className="grid gap-5 lg:grid-cols-[1.25fr_.75fr]">
-        <Card><CardHeader><div className="flex items-start justify-between gap-4"><div><CardTitle className="flex items-center gap-2"><Users className="size-5" />Team PINs</CardTitle><CardDescription>Give each team member their own role and PIN. Never share the owner's account.</CardDescription></div>{canManage && <Button onClick={() => setShowCreate(true)}><Plus className="mr-2 size-4" />Add staff</Button>}</div></CardHeader><CardContent className="space-y-3">
-          {staffQuery.isLoading ? <div className="rounded-xl bg-secondary p-6 text-sm text-muted-foreground">Loading staff accounts…</div> : staffQuery.isError ? <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6"><p className="font-semibold">Staff accounts could not be loaded.</p><p className="mt-1 text-sm text-muted-foreground">{staffQuery.error instanceof Error ? staffQuery.error.message : "Please try again."}</p><Button className="mt-4" variant="outline" onClick={() => void staffQuery.refetch()}>Retry</Button></div> : activeStaff.length === 0 ? <div className="rounded-xl border border-dashed border-border p-8 text-center"><UserRoundCog className="mx-auto size-8 text-muted-foreground" /><p className="mt-3 font-semibold">No staff accounts yet</p><p className="mt-1 text-sm text-muted-foreground">Create the first PIN account for your cashier, inventory person or manager.</p></div> : activeStaff.map((member) => <button key={member.id} type="button" onClick={() => { setSelected(member); setPin(""); }} className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4 text-left transition hover:-translate-y-0.5 hover:border-accent/50"><span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary"><UserRound className="size-4" /></span><span className="min-w-0 flex-1"><span className="block truncate font-semibold">{member.name}</span><span className="block text-xs text-muted-foreground">{STAFF_ROLE_META[member.role].label} · {STAFF_ROLE_META[member.role].description}</span></span><Badge variant="secondary">{member.last_login_at ? "Active before" : "New"}</Badge></button>)}
-          {staff.some((member) => !member.is_active) && canManage && <p className="pt-2 text-xs text-muted-foreground">Disabled accounts remain listed in your database and can be re-enabled by a manager.</p>}
-        </CardContent></Card>
-
-        <Card><CardHeader><CardTitle className="flex items-center gap-2"><KeyRound className="size-5" />Sign in a team member</CardTitle><CardDescription>{selected ? `Enter ${selected.name}'s PIN.` : "Choose a staff account to continue."}</CardDescription></CardHeader><CardContent className="space-y-4">
-          {selected ? <><div className="rounded-2xl bg-secondary p-4"><p className="font-semibold">{selected.name}</p><p className="text-sm text-muted-foreground">{STAFF_ROLE_META[selected.role].description}</p></div><Label htmlFor="staff-pin">PIN</Label><Input id="staff-pin" inputMode="numeric" type="password" maxLength={6} autoFocus value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") void login(selected); }} placeholder="••••" className="h-14 text-center text-2xl tracking-[0.5em]" /><Button className="h-12 w-full" disabled={busy} onClick={() => void login(selected)}><LogIn className="mr-2 size-4" />{busy ? "Checking PIN…" : "Sign in"}</Button><Button variant="ghost" className="w-full" onClick={() => setSelected(null)}>Choose someone else</Button></> : <div className="py-8 text-center text-sm text-muted-foreground">Select a staff account from the list.</div>}
-        </CardContent></Card>
-      </div>
-
-      {showCreate && canManage && <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="create-staff-title" onMouseDown={(event) => { if (event.currentTarget === event.target) closeCreate(); }}><div className="absolute inset-0 bg-black/50 backdrop-blur-sm" /><Card className="relative z-10 w-full max-w-2xl overflow-hidden border-border/70 bg-background shadow-2xl"><CardHeader className="border-b border-border/60"><div className="flex items-start justify-between gap-4"><div><CardTitle id="create-staff-title" className="flex items-center gap-2"><UserRoundCog className="size-5" />Create staff account</CardTitle><CardDescription>Set up a secure role and PIN. The account is created only after Strap confirms the server transaction.</CardDescription></div><Button type="button" variant="ghost" size="icon" aria-label="Close" disabled={busy} onClick={closeCreate}><X className="size-4" /></Button></div></CardHeader><CardContent className="space-y-5 p-5 sm:p-6"><div className="grid gap-4 sm:grid-cols-2"><div><Label htmlFor="staff-name">Name</Label><Input id="staff-name" autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Amaka" /></div><div><Label>Role</Label><Select value={staffRole} onValueChange={(value) => setStaffRole(value as StaffRole)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{(Object.keys(STAFF_ROLE_META) as StaffRole[]).map((item) => <SelectItem key={item} value={item}>{STAFF_ROLE_META[item].label}</SelectItem>)}</SelectContent></Select></div></div><div><Label htmlFor="staff-new-pin">PIN</Label><Input id="staff-new-pin" inputMode="numeric" type="password" maxLength={6} value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))} onKeyDown={(e) => { if (e.key === "Enter") void createStaff(); }} placeholder="4–6 digits" className="h-12 text-lg tracking-[0.35em]" /><p className="mt-2 text-xs text-muted-foreground">Use a unique 4–6 digit PIN. Avoid simple sequences or repeating numbers.</p></div><div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"><Button type="button" variant="ghost" disabled={busy} onClick={closeCreate}>Cancel</Button><Button type="button" disabled={busy} onClick={() => void createStaff()}><Plus className="mr-2 size-4" />{busy ? "Creating…" : "Create PIN account"}</Button></div></CardContent></Card></div>}
-
-      {canManage && <Card><CardHeader><CardTitle>Roles and screens</CardTitle><CardDescription>Keep each team member focused on the screens they actually need.</CardDescription></CardHeader><CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{(Object.keys(STAFF_ROLE_META) as StaffRole[]).map((item) => <div key={item} className="rounded-2xl border border-border p-4"><p className="font-semibold">{STAFF_ROLE_META[item].label}</p><p className="mt-1 text-sm text-muted-foreground">{STAFF_ROLE_META[item].description}</p></div>)}</CardContent></Card>}
-    </div>
-  </AppShell>;
-}
+type StaffRow={id:string;name:string;role:StaffRole;is_active:boolean;last_login_at:string|null;locked_until:string|null;login_slug?:string|null;primary_branch_id?:string|null};
+type Branch={id:string;name:string;address:string;is_default:boolean};
+const PERMISSIONS=["dashboard","pos","products","customers","reports","expenses","import","online-store","help"] as const;
+const LABELS:Record<string,string>={dashboard:"Dashboard",pos:"Point of sale",products:"Products",customers:"Customers",reports:"Reports",expenses:"Expenses",import:"Imports","online-store":"Online store",help:"Help"};
+async function staffList(id:string){const {data,error}=await(supabase as any).rpc("list_staff_accounts",{_store_id:id});if(error)throw error;return(data??[]) as StaffRow[]}
+async function branchList(id:string){const {data,error}=await supabase.from("branches").select("id,name,address,is_default").eq("store_id",id).order("is_default",{ascending:false}).order("created_at");if(error)throw error;return(data??[]) as Branch[]}
+function StaffPage(){const {store,role}=useStoreContext();const nav=useNavigate();const qc=useQueryClient();const canManage=role==="owner"||role==="manager";const [selected,setSelected]=useState<StaffRow|null>(null);const [create,setCreate]=useState(false);const [name,setName]=useState("");const [staffRole,setStaffRole]=useState<StaffRole>("cashier");const [pin,setPin]=useState("");const [busy,setBusy]=useState(false);const [session,setSession]=useState(()=>getStaffSession(store?.id));const [primary,setPrimary]=useState("");const [landing,setLanding]=useState("/pos");const [compact,setCompact]=useState(false);const [prices,setPrices]=useState(true);const [stock,setStock]=useState(true);const [shortcuts,setShortcuts]=useState(true);const [autoPrint,setAutoPrint]=useState(false);const [sound,setSound]=useState(true);const [permissions,setPermissions]=useState<Record<string,boolean>>({});
+ const sq=useQuery({queryKey:["staff-accounts",store?.id],enabled:!!store?.id,queryFn:()=>staffList(store!.id)});const bq=useQuery({queryKey:["branches",store?.id],enabled:!!store?.id,queryFn:()=>branchList(store!.id)});const staff=sq.data??[];const branches=bq.data??[];const origin=typeof window!=="undefined"?window.location.origin:"";const link=(m:StaffRow)=>`${origin}/staff-login/${m.login_slug||m.id}`;
+ function choose(m:StaffRow){setSelected(m);setPin("");setPrimary(m.primary_branch_id||branches.find(b=>b.is_default)?.id||"");setPermissions({});}
+ async function createStaff(){if(!store?.id||!canManage)return;if(!name.trim()||!/^\d{4,6}$/.test(pin))return toast.error("Enter a name and a 4–6 digit PIN.");setBusy(true);try{const {error}=await(supabase as any).rpc("create_staff_account",{_store_id:store.id,_name:name.trim(),_pin:pin,_role:staffRole});if(error)throw error;setCreate(false);setName("");setPin("");await qc.invalidateQueries({queryKey:["staff-accounts",store.id]});toast.success("Staff profile created. A dedicated login link was generated automatically.");}catch(e){toast.error(e instanceof Error?e.message:"Could not create staff account.");}finally{setBusy(false);}}
+ async function login(m:StaffRow){if(!store?.id||!/^\d{4,6}$/.test(pin))return toast.error("Enter the 4–6 digit PIN.");setBusy(true);try{const {data,error}=await(supabase as any).rpc("verify_staff_pin",{_store_id:store.id,_staff_id:m.id,_pin:pin});if(error)throw error;if(!data?.ok)throw new Error(data?.message||"Incorrect PIN");const s={id:data.staff_id,storeId:store.id,name:data.name,role:data.role as StaffRole,signedInAt:new Date().toISOString()};setStaffSession(s);setSession(s);setPin("");toast.success(`Welcome, ${s.name}.`);void nav({to:STAFF_ROLE_META[s.role].defaultRoute as any});}catch(e){toast.error(e instanceof Error?e.message:"PIN sign-in failed.");}finally{setBusy(false);}}
+ async function save(){if(!selected)return;setBusy(true);try{const {error}=await(supabase as any).rpc("configure_staff",{_staff_id:selected.id,_primary_branch_id:primary||null,_landing_route:landing,_compact_mode:compact,_show_prices:prices,_show_stock:stock,_allow_keyboard_shortcuts:shortcuts,_receipt_auto_print:autoPrint,_sound_feedback:sound,_permissions:permissions});if(error)throw error;toast.success("Staff workspace saved.");await qc.invalidateQueries({queryKey:["staff-accounts",store?.id]});}catch(e){toast.error(e instanceof Error?e.message:"Could not save staff settings.");}finally{setBusy(false);}}
+ async function assignBranch(id:string){if(!selected)return;try{const {error}=await(supabase as any).rpc("staff_assign_branch",{_staff_id:selected.id,_branch_id:id});if(error)throw error;setPrimary(id);toast.success("Branch assigned.");}catch(e){toast.error(e instanceof Error?e.message:"Could not assign branch.");}}
+ async function removeBranch(id:string){if(!selected)return;try{const {error}=await(supabase as any).rpc("staff_remove_branch",{_staff_id:selected.id,_branch_id:id});if(error)throw error;toast.success("Branch access removed.");}catch(e){toast.error(e instanceof Error?e.message:"Could not remove branch.");}}
+ function copy(m:StaffRow){void navigator.clipboard?.writeText(link(m));toast.success("Login link copied.");}
+ return <AppShell title="Staff accounts"><div className="space-y-6"><section className="rounded-[2rem] border border-border bg-surface p-5 shadow-sm sm:p-7"><div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between"><div><p className="text-label-caps text-accent-ink">Team & access</p><h1 className="mt-2 font-display text-3xl font-bold tracking-tight">One team. The right access for everyone.</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Create profiles, assign branches, control screens and give every person a dedicated sign-in link.</p></div>{canManage&&<Button onClick={()=>setCreate(true)}><Plus className="mr-2 size-4"/>Add staff</Button>}</div></section>{session&&<Card className="border-accent/30 bg-accent-soft/50"><CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center"><ShieldCheck className="size-5"/><div className="min-w-0 flex-1"><p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active staff session</p><p className="truncate font-bold">{session.name} · {STAFF_ROLE_META[session.role].label}</p></div><Button variant="outline" onClick={()=>{clearStaffSession();setSession(null)}}>End session</Button></CardContent></Card>}
+ <div className="grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(430px,.95fr)]"><Card><CardHeader><CardTitle className="flex items-center gap-2"><Users className="size-5"/>Team members</CardTitle><CardDescription>Every staff member can have a different branch, permission set and working environment.</CardDescription></CardHeader><CardContent className="space-y-3">{sq.isLoading?<p className="p-5 text-sm text-muted-foreground">Loading team…</p>:staff.length===0?<div className="rounded-2xl border border-dashed p-8 text-center"><UserRoundCog className="mx-auto size-8 text-muted-foreground"/><p className="mt-3 font-semibold">No staff yet</p><p className="mt-1 text-sm text-muted-foreground">Add your first cashier, inventory operator, salesperson or manager.</p></div>:staff.map(m=><button key={m.id} type="button" onClick={()=>choose(m)} className={`w-full rounded-2xl border p-4 text-left ${selected?.id===m.id?"border-accent bg-accent-soft/40":"border-border bg-surface"}`}><div className="flex items-center gap-3"><span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary"><UserRound className="size-4"/></span><span className="min-w-0 flex-1"><span className="flex flex-wrap items-center gap-2"><span className="font-semibold">{m.name}</span><Badge variant={m.is_active?"secondary":"outline"}>{m.is_active?STAFF_ROLE_META[m.role].label:"Disabled"}</Badge></span><span className="mt-1 block truncate text-xs text-muted-foreground">{m.login_slug?`/staff-login/${m.login_slug}`:"Generating link…"}</span></span><Link2 className="size-4 text-muted-foreground"/></div></button>)}</CardContent></Card>
+ <Card><CardHeader><CardTitle className="flex items-center gap-2"><Settings2 className="size-5"/>Staff workspace</CardTitle><CardDescription>{selected?`Configure ${selected.name}'s access and experience.`:"Select a staff member to configure them."}</CardDescription></CardHeader><CardContent>{selected?<div className="space-y-5"><div className="rounded-2xl border border-border bg-secondary/50 p-4"><div className="flex items-center gap-3"><Link2 className="size-4 shrink-0"/><div className="min-w-0 flex-1"><p className="text-xs font-semibold">Dedicated login link</p><p className="mt-1 break-all text-xs text-muted-foreground">{link(selected)}</p></div><Button variant="outline" size="icon" onClick={()=>copy(selected)}><Copy className="size-4"/></Button></div></div>
+ <div><Label>Primary branch</Label><Select value={primary} onValueChange={v=>void assignBranch(v)}><SelectTrigger className="mt-2"><SelectValue placeholder="Choose branch"/></SelectTrigger><SelectContent>{branches.map(b=><SelectItem key={b.id} value={b.id}>{b.name}{b.is_default?" · Default":""}</SelectItem>)}</SelectContent></Select><div className="mt-3 flex flex-wrap gap-2">{branches.map(b=><span key={b.id} className="inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs"><Building2 className="size-3"/>{b.name}<button type="button" onClick={()=>void removeBranch(b.id)} className="ml-1 text-muted-foreground hover:text-destructive"><X className="size-3"/></button></span>)}</div></div>
+ <div><Label>Landing screen</Label><select value={landing} onChange={e=>setLanding(e.target.value)} className="field mt-2 h-11"><option value="/pos">Point of sale</option><option value="/dashboard">Dashboard</option><option value="/products">Products</option><option value="/customers">Customers</option><option value="/reports">Reports</option></select></div>
+ <div><p className="text-sm font-semibold">Screen permissions</p><div className="mt-3 grid grid-cols-2 gap-2">{PERMISSIONS.map(p=><label key={p} className="flex items-center gap-2 rounded-xl border p-3 text-xs font-medium"><input type="checkbox" checked={permissions[p]??false} onChange={e=>setPermissions(s=>({...s,[p]:e.target.checked}))}/>{LABELS[p]}</label>)}</div></div>
+ <div><p className="text-sm font-semibold">Workspace preferences</p><div className="mt-3 grid gap-2 sm:grid-cols-2">{[["Compact mode",compact,setCompact],["Show prices",prices,setPrices],["Show stock",stock,setStock],["Keyboard shortcuts",shortcuts,setShortcuts],["Auto-print receipts",autoPrint,setAutoPrint],["Sound feedback",sound,setSound]].map(([l,v,s])=><label key={String(l)} className="flex items-center justify-between rounded-xl border p-3 text-xs font-medium"><span>{String(l)}</span><input type="checkbox" checked={Boolean(v)} onChange={e=>(s as (x:boolean)=>void)(e.target.checked)}/></label>)}</div></div>
+ <div className="flex flex-wrap gap-2"><Button disabled={busy} onClick={()=>void save()}><Check className="mr-2 size-4"/>{busy?"Saving…":"Save workspace"}</Button><Button variant="outline" onClick={()=>copy(selected)}><Copy className="mr-2 size-4"/>Copy link</Button><Button variant="outline" onClick={()=>{setPin("");toast.info("Create a new PIN from the staff profile flow to rotate credentials.")}}><KeyRound className="mr-2 size-4"/>PIN</Button></div><p className="text-xs leading-5 text-muted-foreground">The link is an identifier, not the secret. The PIN remains private, is never displayed here, and failed attempts are audited.</p></div>:<div className="flex min-h-80 flex-col items-center justify-center text-center"><Settings2 className="size-8 text-muted-foreground"/><p className="mt-3 font-semibold">Choose a team member</p><p className="mt-1 max-w-xs text-sm leading-6 text-muted-foreground">Their login link, branches, permissions and workspace preferences will appear here.</p></div>}</CardContent></Card></div>
+ <Card><CardHeader><CardTitle>Role presets</CardTitle><CardDescription>Use these as the baseline, then tailor access per person.</CardDescription></CardHeader><CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">{(Object.keys(STAFF_ROLE_META) as StaffRole[]).map(r=><div key={r} className="rounded-2xl border p-4"><p className="font-semibold">{STAFF_ROLE_META[r].label}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{STAFF_ROLE_META[r].description}</p></div>)}</CardContent></Card>
+ {create&&<div className="fixed inset-0 z-50 flex items-center justify-center p-4"><div className="absolute inset-0 bg-black/50" onClick={()=>setCreate(false)}/><Card className="relative z-10 w-full max-w-xl"><CardHeader><CardTitle>Create staff profile</CardTitle><CardDescription>A unique dedicated login slug is generated automatically.</CardDescription></CardHeader><CardContent className="space-y-4"><div><Label>Name</Label><Input autoFocus value={name} onChange={e=>setName(e.target.value)} placeholder="e.g. Amaka" className="mt-2"/></div><div><Label>Role</Label><Select value={staffRole} onValueChange={v=>setStaffRole(v as StaffRole)}><SelectTrigger className="mt-2"><SelectValue/></SelectTrigger><SelectContent>{(Object.keys(STAFF_ROLE_META) as StaffRole[]).map(r=><SelectItem key={r} value={r}>{STAFF_ROLE_META[r].label}</SelectItem>)}</SelectContent></Select></div><div><Label>PIN</Label><Input inputMode="numeric" type="password" maxLength={6} value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,""))} placeholder="4–6 digits" className="mt-2 h-12 text-lg tracking-[.3em]"/></div><div className="flex justify-end gap-2"><Button variant="ghost" onClick={()=>setCreate(false)}>Cancel</Button><Button disabled={busy} onClick={()=>void createStaff()}><Plus className="mr-2 size-4"/>{busy?"Creating…":"Create profile"}</Button></div></CardContent></Card></div>}
+ </div></AppShell>}
