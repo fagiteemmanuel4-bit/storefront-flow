@@ -1,0 +1,43 @@
+name: Strap landing contrast fix
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  contrast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Improve landing page text contrast
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/landing-hero.css')
+          s = p.read_text()
+          s = s.replace('body:has(.kudi-hero) .text-muted-foreground{color:#4b4b45}', 'body:has(.kudi-hero) .text-muted-foreground{color:#292923}')
+          s = s.replace('body:has(.kudi-hero) .text-border{color:#b5b1a5}', 'body:has(.kudi-hero) .text-border{color:#9d998d}')
+          marker = '/* Keep secondary copy readable on the light public surfaces. */'
+          rule = 'body:has(.kudi-hero) main>section:not(.kudi-hero):not(.bg-foreground):not(.bg-neutral-950) .text-background{color:#151513}.kudi-hero .text-background{color:#fff}\n'
+          if marker not in s:
+              s = s.replace('/* Public link readability. */', marker + '\n' + rule + '/* Public link readability. */')
+          p.write_text(s)
+          PY
+      - name: Validate
+        run: |
+          npm install
+          npm run lint
+          npm run build
+      - name: Commit fix and remove one-time workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm -f .github/workflows/strap-contrast-fix.yml
+          git add src/landing-hero.css .github/workflows/strap-contrast-fix.yml
+          git commit -m 'fix: improve landing page text contrast [strap-auto]'
+          git push
