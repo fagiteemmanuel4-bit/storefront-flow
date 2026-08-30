@@ -1,3 +1,9 @@
+@keyframes mobile-nav-pop {
+  0% { transform: scale(.86); }
+  65% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
 @media (max-width: 1023px) {
   .kudi-app-shell {
     padding-bottom: 5.25rem;
