@@ -1,0 +1,46 @@
+name: Strap finish and validate
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  finish:
+    if: ${{ !contains(github.event.head_commit.message, '[strap-auto]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - name: Patch auth and public docs
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          # Login must not auto-send an OTP. Password login should fail normally for unknown users;
+          # verification is initiated only by the signup flow / explicit verification flow.
+          p=Path('src/routes/auth.tsx'); s=p.read_text()
+          s=s.replace('await requestLoginOtp(normalizedEmail);', 'throw new Error("Email not confirmed. Use the verification flow from account creation to verify this address.");')
+          p.write_text(s)
+          # Remove private source-code setup guidance from public docs while keeping product usage docs.
+          p=Path('src/routes/docs.tsx'); s=p.read_text()
+          s=s.replace('''          <DocSection id="source" icon={Code2} title="Source code access" eyebrow="For authorised developers"><p>The public documentation is primarily for learning how to use Strap. The application source repository is maintained separately. If you are an authorised contributor or have repository access, use the repository's normal Git workflow.</p><CodeBlock>{`git clone <repository-url>\\ncd storefront-flow\\nnpm install\\nnpm run dev`}</CodeBlock><p className="text-sm text-muted-foreground">Do not publish credentials or private environment values from a local setup. Browser configuration should use the publishable Supabase key; secret keys belong on trusted server-side infrastructure.</p></DocSection>''', '''          <DocSection id="source" icon={ShieldCheck} title="Product internals" eyebrow="Private implementation"><p>Strap's internal source code, deployment configuration, private environment values and service credentials are not part of the public product documentation. This guide focuses on how customers and operators use Strap.</p></DocSection>''')
+          s=s.replace('''          <DocSection id="architecture" icon={Boxes} title="Technical architecture" eyebrow="How Strap fits together"><p>Strap is built with React, TanStack Start, TypeScript, Vite and Supabase, and is deployed through Vercel. The browser uses Supabase client integration for authenticated application workflows while database access is constrained by RLS. Public store routes expose customer-facing catalogue content.</p>''', '''          <DocSection id="architecture" icon={Boxes} title="Product architecture" eyebrow="How the experience is organised"><p>Strap separates the public customer experience from authenticated business operations. Storefront pages are customer-facing, while the dashboard, settings and operational workflows require an authenticated workspace.</p>''')
+          p.write_text(s)
+          # Keep imports conventional.
+          p=Path('src/components/shell/ThemeProvider.tsx'); s=p.read_text().replace('import { useEffect, useState, type ReactNode } from "react";','import { createContext, useContext, useEffect, useState, type ReactNode } from "react";').replace('\nimport { createContext, useContext } from "react";','')
+          p.write_text(s)
+          PY
+      - name: Install
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Commit validated changes and remove workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/routes/auth.tsx src/routes/docs.tsx src/components/shell/ThemeProvider.tsx .github/workflows/strap-finish.yml
+          git commit -m 'chore: finalize strap upgrade [strap-auto]' || true
+          git push
