@@ -3,8 +3,6 @@ name: Repair signup verification flow
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'src/routes/auth.tsx'
 
 permissions:
   contents: write
@@ -32,11 +30,14 @@ jobs:
           s = p.read_text()
           target = 'await requestLoginOtp(normalizedEmail);'
           count = s.count(target)
-          if count != 1:
-              raise SystemExit(f'Expected exactly one signup OTP call, found {count}')
-          s = s.replace(target, '// Signup already sends the verification email; never request a second OTP here.')
-          p.write_text(s)
-          print('Removed duplicate signup OTP request.')
+          if count == 1:
+              s = s.replace(target, '// Signup already sends the verification email; never request a second OTP here.')
+              p.write_text(s)
+              print('Removed duplicate signup OTP request.')
+          elif count == 0:
+              print('Signup flow already repaired.')
+          else:
+              raise SystemExit(f'Expected at most one signup OTP call, found {count}')
           PY
 
       - name: Install dependencies
