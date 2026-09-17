@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, Package, Search, ShoppingBag } from "lucide-react";
 import { useState } from "react";
+import { QuickFind } from "@/components/shell/QuickFind";
 import { cn } from "@/lib/utils";
 
 const PRIMARY = [
@@ -30,18 +31,7 @@ export function MobileNav() {
           <button type="button" aria-label="Open Strap menu" onClick={() => window.dispatchEvent(new CustomEvent("strap-open-menu"))} className="flex h-10 min-h-10 items-center justify-center rounded-lg border border-border bg-background p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground active:scale-[.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"><Menu className="size-[16px]" strokeWidth={1.9} aria-hidden="true" /></button>
         </div>
       </nav>
-      <SearchDialogBridge open={searchOpen} onOpenChange={setSearchOpen} />
+      <QuickFind open={searchOpen} onOpenChange={setSearchOpen} />
     </>
   );
-}
-
-function SearchDialogBridge({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
-  const { QuickFind } = requireQuickFind();
-  return <QuickFind open={open} onOpenChange={onOpenChange} />;
-}
-
-function requireQuickFind() {
-  // Kept isolated so the navigation remains a small shell primitive.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  return require("@/components/shell/QuickFind") as typeof import("@/components/shell/QuickFind");
 }
