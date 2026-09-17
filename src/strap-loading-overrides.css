@@ -1,0 +1,18 @@
+/* Legacy compatibility: every old spinner now resolves to Strap's minimal local indicator. */
+[class*="animate-spin"] {
+  width: 16px !important;
+  height: 16px !important;
+  border-width: 1.5px !important;
+  border-color: color-mix(in srgb, currentColor 18%, transparent) !important;
+  border-top-color: currentColor !important;
+  border-radius: 999px !important;
+}
+
+/* Do not let an old loading label compete with the actual progress affordance. */
+[aria-busy="true"] [class*="animate-spin"] { flex: 0 0 auto; }
+
+/* Keep route-level loaders from creating a second visual language. */
+[data-slot="skeleton"] {
+  background: color-mix(in srgb, var(--strap-line) 75%, transparent) !important;
+  animation: none !important;
+}
