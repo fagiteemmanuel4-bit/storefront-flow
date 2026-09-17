@@ -1,18 +1,15 @@
 /* Legacy compatibility: every old spinner now resolves to Strap's minimal local indicator. */
-[class*="animate-spin"] {
-  width: 16px !important;
-  height: 16px !important;
-  border-width: 1.5px !important;
-  border-color: color-mix(in srgb, currentColor 18%, transparent) !important;
-  border-top-color: currentColor !important;
-  border-radius: 999px !important;
-}
-
-/* Do not let an old loading label compete with the actual progress affordance. */
+[class*="animate-spin"] { width: 16px !important; height: 16px !important; border-width: 1.5px !important; border-color: color-mix(in srgb, currentColor 18%, transparent) !important; border-top-color: currentColor !important; border-radius: 999px !important; }
 [aria-busy="true"] [class*="animate-spin"] { flex: 0 0 auto; }
+[data-slot="skeleton"] { background: color-mix(in srgb, var(--strap-line) 75%, transparent) !important; animation: none !important; }
 
-/* Keep route-level loaders from creating a second visual language. */
-[data-slot="skeleton"] {
-  background: color-mix(in srgb, var(--strap-line) 75%, transparent) !important;
-  animation: none !important;
-}
+/* Phase 2: motion is short, positional and feedback-oriented rather than decorative. */
+.strap-entrance { animation: strap-enter 360ms cubic-bezier(.2,.8,.2,1) both; }
+.strap-entrance:nth-child(2) { animation-delay: 35ms; }
+.strap-entrance:nth-child(3) { animation-delay: 70ms; }
+.strap-entrance:nth-child(4) { animation-delay: 105ms; }
+@keyframes strap-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
+.touch-target { min-height: 44px; }
+@media (max-width: 639px) { .strap-entrance { animation-duration: 280ms; } .surface-card { border-radius: 16px; } }
+@media (prefers-reduced-motion: reduce) { .strap-entrance { animation: none !important; } }
