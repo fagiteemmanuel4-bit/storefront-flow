@@ -16,14 +16,14 @@ button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 639px) {
   .strap-entrance { animation-duration: 280ms; }
   .surface-card { border-radius: 14px; }
-  .kudi-app-shell > .lg\\:pl-60 > main { padding: 14px 12px 76px !important; }
-  .kudi-app-shell > .lg\\:pl-60 > header { min-height: 52px !important; }
-  .kudi-app-shell > .lg\\:pl-60 > header > div { min-height: 52px !important; padding-left: 12px !important; padding-right: 12px !important; gap: 6px !important; }
-  .kudi-app-shell > .lg\\:pl-60 > header a[aria-label="Strap home"] span:first-child { width: 28px !important; height: 28px !important; }
-  .kudi-app-shell > .lg\\:pl-60 > header a[aria-label="Strap home"] span:first-child span { width: 10px !important; height: 10px !important; }
-  .kudi-app-shell > .lg\\:pl-60 > header a[aria-label="Strap home"] > span:last-child { font-size: 14px !important; }
-  .kudi-app-shell > .lg\\:pl-60 > header button[aria-label="Open Strap menu"],
-  .kudi-app-shell > .lg\\:pl-60 > header button[aria-label="Search"] { display: none !important; }
+  .kudi-app-shell > .lg\:pl-60 > main { padding: 14px 12px 76px !important; }
+  .kudi-app-shell > .lg\:pl-60 > header { min-height: 52px !important; }
+  .kudi-app-shell > .lg\:pl-60 > header > div { min-height: 52px !important; padding-left: 12px !important; padding-right: 12px !important; gap: 6px !important; }
+  .kudi-app-shell > .lg\:pl-60 > header a[aria-label="Strap home"] span:first-child { width: 28px !important; height: 28px !important; }
+  .kudi-app-shell > .lg\:pl-60 > header a[aria-label="Strap home"] span:first-child span { width: 10px !important; height: 10px !important; }
+  .kudi-app-shell > .lg\:pl-60 > header a[aria-label="Strap home"] > span:last-child { font-size: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > header button[aria-label="Open Strap menu"],
+  .kudi-app-shell > .lg\:pl-60 > header button[aria-label="Search"] { display: none !important; }
   [data-tour="page-title"] { font-size: 1.65rem !important; line-height: 1.08 !important; letter-spacing: -.035em !important; }
   [data-tour="main-content"] > .mb-5 { margin-bottom: 14px !important; }
   [data-tour="main-content"] > .mb-5 p { font-size: 9px !important; gap: 5px !important; }
@@ -58,13 +58,13 @@ button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
 }
 
 @media (max-width: 379px) {
-  .kudi-app-shell > .lg\\:pl-60 > main { padding-left: 10px !important; padding-right: 10px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main { padding-left: 10px !important; padding-right: 10px !important; }
   [data-tour="page-title"] { font-size: 1.5rem !important; }
-  .kudi-app-shell > .lg\\:pl-60 > header a[aria-label="Strap home"] { gap: 5px !important; }
+  .kudi-app-shell > .lg\:pl-60 > header a[aria-label="Strap home"] { gap: 5px !important; }
 }
 
 @media (min-width: 640px) and (max-width: 1023px) {
-  .kudi-app-shell > .lg\\:pl-60 > main { padding: 20px 20px 88px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main { padding: 20px 20px 88px !important; }
 }
 
 @media (prefers-reduced-motion: reduce) { .strap-entrance { animation: none !important; } }
