@@ -1,32 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Command } from "cmdk";
-import {
-  ArrowRight,
-  BarChart3,
-  FileText,
-  Package,
-  Plus,
-  ReceiptText,
-  Search,
-  Settings,
-  ShoppingBag,
-  Store,
-  Users,
-} from "lucide-react";
+import { ArrowRight, BarChart3, FileText, Package, Plus, Puzzle, ReceiptText, Search, Settings, ShoppingBag, Sparkles, Store, Users } from "lucide-react";
 
 type QuickFindProps = { open: boolean; onOpenChange: (open: boolean) => void };
-type QuickAction = {
-  label: string;
-  hint: string;
-  to: string;
-  icon: typeof Search;
-  keywords: string;
-};
-
+type QuickAction = { label: string; hint: string; to: string; icon: typeof Search; keywords: string };
 const RECENT_KEY = "strap:quick-find:recent";
 const MAX_RECENT = 5;
-
 const ACTIONS: QuickAction[] = [
   { label: "New sale", hint: "Open the fastest checkout workspace", to: "/pos", icon: Plus, keywords: "sell checkout sale pos charge" },
   { label: "Products", hint: "Find products, stock and catalogue", to: "/products", icon: Package, keywords: "product inventory stock catalogue" },
@@ -35,145 +15,20 @@ const ACTIONS: QuickAction[] = [
   { label: "Analytics", hint: "See business performance and reports", to: "/reports", icon: BarChart3, keywords: "analytics reports revenue insights" },
   { label: "Add expense", hint: "Record money leaving the business", to: "/expenses", icon: ReceiptText, keywords: "expense spending costs" },
   { label: "Online store", hint: "Manage your public storefront", to: "/online-store", icon: Store, keywords: "storefront website ecommerce online" },
+  { label: "Extensions", hint: "Install optional tools for your workflow", to: "/extensions", icon: Puzzle, keywords: "extensions tools calculator plugins addons" },
+  { label: "Feature tour", hint: "Discover Strap's workspace features", to: "/feature-discovery", icon: Sparkles, keywords: "tour discover onboarding learn features" },
   { label: "Settings", hint: "Store, account and security settings", to: "/settings", icon: Settings, keywords: "settings preferences account security" },
   { label: "Help", hint: "Open guides and support", to: "/help", icon: FileText, keywords: "help docs support guide" },
 ];
-
-function readRecent() {
-  try {
-    const value = JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]");
-    return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
-  } catch {
-    return [];
-  }
-}
-
+function readRecent() { try { const value = JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]"); return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : []; } catch { return []; } }
 export function QuickFind({ open, onOpenChange }: QuickFindProps) {
-  const navigate = useNavigate();
-  const [query, setQuery] = useState("");
-  const [recent, setRecent] = useState<string[]>([]);
-
-  useEffect(() => {
-    const onGlobalKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        onOpenChange(true);
-      }
-    };
-    const onSearchClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target?.closest('[aria-label="Search"]')) {
-        event.preventDefault();
-        onOpenChange(true);
-      }
-    };
-    window.addEventListener("keydown", onGlobalKeyDown);
-    document.addEventListener("click", onSearchClick, true);
-    return () => {
-      window.removeEventListener("keydown", onGlobalKeyDown);
-      document.removeEventListener("click", onSearchClick, true);
-    };
-  }, [onOpenChange]);
-
-  useEffect(() => {
-    if (!open) return;
-    setQuery("");
-    setRecent(readRecent());
-  }, [open]);
-
-  const recentActions = useMemo(
-    () => recent.map((to) => ACTIONS.find((action) => action.to === to)).filter((action): action is QuickAction => Boolean(action)),
-    [recent],
-  );
-
-  const remember = (to: string) => {
-    const next = [to, ...recent.filter((item) => item !== to)].slice(0, MAX_RECENT);
-    setRecent(next);
-    try {
-      localStorage.setItem(RECENT_KEY, JSON.stringify(next));
-    } catch {
-      // Storage can be unavailable in private/restricted browser contexts.
-    }
-  };
-
-  const go = (to: string) => {
-    remember(to);
-    onOpenChange(false);
-    void navigate({ to: to as never });
-  };
-
-  return (
-    <Command.Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-      label="Find in Strap"
-      shouldFilter
-      loop
-      overlayClassName="fixed inset-0 z-[120] bg-foreground/35 backdrop-blur-[2px]"
-      contentClassName="fixed left-1/2 top-[10vh] z-[121] w-[calc(100%-24px)] max-w-xl -translate-x-1/2 overflow-hidden rounded-2xl border border-border bg-background shadow-2xl"
-    >
-      <div className="flex items-center gap-3 border-b border-border px-4">
-        <Search className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-        <Command.Input
-          value={query}
-          onValueChange={setQuery}
-          placeholder="Search Strap or jump to a workspace…"
-          className="h-14 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-          autoFocus
-        />
-        <kbd className="hidden rounded-md border border-border bg-secondary px-2 py-1 text-[10px] font-medium text-muted-foreground sm:block">Esc</kbd>
-      </div>
-
-      <Command.List className="max-h-[55vh] overflow-y-auto p-2 outline-none">
-        <Command.Empty className="px-3 py-10 text-center">
-          <p className="text-sm font-semibold">No matching Strap destination</p>
-          <p className="mt-1 text-xs text-muted-foreground">Try a product, order, customer, report, or action.</p>
-        </Command.Empty>
-
-        {!query.trim() && recentActions.length > 0 ? (
-          <Command.Group heading="Recent" className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-bold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.16em] [&_[cmdk-group-heading]]:text-muted-foreground">
-            {recentActions.map((action) => (
-              <ActionItem key={`recent-${action.to}`} action={action} onSelect={go} />
-            ))}
-          </Command.Group>
-        ) : null}
-
-        <Command.Group heading={recentActions.length && !query.trim() ? "All workspaces" : "Jump to"} className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-bold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.16em] [&_[cmdk-group-heading]]:text-muted-foreground">
-          {ACTIONS.map((action) => (
-            <ActionItem key={action.to} action={action} onSelect={go} />
-          ))}
-        </Command.Group>
-      </Command.List>
-
-      <div className="flex items-center justify-between border-t border-border bg-secondary/30 px-4 py-2.5 text-[11px] text-muted-foreground">
-        <span>Quick find</span>
-        <span className="hidden sm:inline">↑↓ Navigate · Enter Open · Esc Close</span>
-      </div>
-    </Command.Dialog>
-  );
+  const navigate = useNavigate(); const [query, setQuery] = useState(""); const [recent, setRecent] = useState<string[]>([]);
+  useEffect(() => { const onGlobalKeyDown = (event: KeyboardEvent) => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { event.preventDefault(); onOpenChange(true); } }; const onSearchClick = (event: MouseEvent) => { const target = event.target as HTMLElement | null; if (target?.closest('[aria-label="Search"]')) { event.preventDefault(); onOpenChange(true); } }; window.addEventListener("keydown", onGlobalKeyDown); document.addEventListener("click", onSearchClick, true); return () => { window.removeEventListener("keydown", onGlobalKeyDown); document.removeEventListener("click", onSearchClick, true); }; }, [onOpenChange]);
+  useEffect(() => { if (!open) return; setQuery(""); setRecent(readRecent()); }, [open]);
+  const recentActions = useMemo(() => recent.map((to) => ACTIONS.find((action) => action.to === to)).filter((action): action is QuickAction => Boolean(action)), [recent]);
+  const remember = (to: string) => { const next = [to, ...recent.filter((item) => item !== to)].slice(0, MAX_RECENT); setRecent(next); try { localStorage.setItem(RECENT_KEY, JSON.stringify(next)); } catch {} };
+  const go = (to: string) => { remember(to); onOpenChange(false); void navigate({ to: to as never }); };
+  return <Command.Dialog open={open} onOpenChange={onOpenChange} label="Find in Strap" shouldFilter loop overlayClassName="fixed inset-0 z-[120] bg-foreground/35 backdrop-blur-[2px]" contentClassName="fixed left-1/2 top-[10vh] z-[121] w-[calc(100%-24px)] max-w-xl -translate-x-1/2 overflow-hidden rounded-2xl border border-border bg-background shadow-2xl"><div className="flex items-center gap-3 border-b border-border px-4"><Search className="size-5 shrink-0 text-muted-foreground" aria-hidden="true"/><Command.Input value={query} onValueChange={setQuery} placeholder="Search Strap or jump to a workspace…" className="h-14 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground" autoFocus/><kbd className="hidden rounded-md border border-border bg-secondary px-2 py-1 text-[10px] font-medium text-muted-foreground sm:block">Esc</kbd></div><Command.List className="max-h-[55vh] overflow-y-auto p-2 outline-none"><Command.Empty className="px-3 py-10 text-center"><p className="text-sm font-semibold">No matching Strap destination</p><p className="mt-1 text-xs text-muted-foreground">Try a product, order, customer, report, extension, or action.</p></Command.Empty>{!query.trim()&&recentActions.length>0?<Command.Group heading="Recent" className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-bold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.16em] [&_[cmdk-group-heading]]:text-muted-foreground">{recentActions.map(action=><ActionItem key={`recent-${action.to}`} action={action} onSelect={go}/>)}</Command.Group>:null}<Command.Group heading={recentActions.length&&!query.trim()?"All workspaces":"Jump to"} className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-bold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.16em] [&_[cmdk-group-heading]]:text-muted-foreground">{ACTIONS.map(action=><ActionItem key={action.to} action={action} onSelect={go}/>)}</Command.Group></Command.List><div className="flex items-center justify-between border-t border-border bg-secondary/30 px-4 py-2.5 text-[11px] text-muted-foreground"><span>Quick find</span><span className="hidden sm:inline">↑↓ Navigate · Enter Open · Esc Close</span></div></Command.Dialog>;
 }
-
-function ActionItem({ action, onSelect }: { action: QuickAction; onSelect: (to: string) => void }) {
-  const Icon = action.icon;
-  return (
-    <Command.Item
-      value={`${action.label} ${action.hint} ${action.keywords}`}
-      onSelect={() => onSelect(action.to)}
-      className="group flex cursor-default items-center gap-3 rounded-xl px-3 py-3 text-left outline-none data-[selected=true]:bg-secondary"
-    >
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary group-data-[selected=true]:bg-background">
-        <Icon className="size-4" aria-hidden="true" />
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block text-sm font-semibold">{action.label}</span>
-        <span className="block truncate text-xs text-muted-foreground">{action.hint}</span>
-      </span>
-      <ArrowRight className="size-4 text-muted-foreground" aria-hidden="true" />
-    </Command.Item>
-  );
-}
-
-export function QuickFindHost() {
-  const [open, setOpen] = useState(false);
-  return <QuickFind open={open} onOpenChange={setOpen} />;
-}
+function ActionItem({ action, onSelect }: { action: QuickAction; onSelect: (to: string) => void }) { const Icon = action.icon; return <Command.Item value={`${action.label} ${action.hint} ${action.keywords}`} onSelect={() => onSelect(action.to)} className="group flex cursor-default items-center gap-3 rounded-xl px-3 py-3 text-left outline-none data-[selected=true]:bg-secondary"><span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary group-data-[selected=true]:bg-background"><Icon className="size-4" aria-hidden="true"/></span><span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{action.label}</span><span className="block truncate text-xs text-muted-foreground">{action.hint}</span></span><ArrowRight className="size-4 text-muted-foreground" aria-hidden="true"/></Command.Item>; }
+export function QuickFindHost() { const [open, setOpen] = useState(false); return <QuickFind open={open} onOpenChange={setOpen}/>; }
