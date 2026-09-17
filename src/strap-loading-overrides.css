@@ -3,7 +3,7 @@
 [aria-busy="true"] [class*="animate-spin"] { flex: 0 0 auto; }
 [data-slot="skeleton"] { background: color-mix(in srgb, var(--strap-line) 75%, transparent) !important; animation: none !important; }
 
-/* Phase 2: motion is short, positional and feedback-oriented rather than decorative. */
+/* Motion is short, positional and feedback-oriented rather than decorative. */
 .strap-entrance { animation: strap-enter 360ms cubic-bezier(.2,.8,.2,1) both; }
 .strap-entrance:nth-child(2) { animation-delay: 35ms; }
 .strap-entrance:nth-child(3) { animation-delay: 70ms; }
@@ -11,5 +11,60 @@
 @keyframes strap-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .touch-target { min-height: 44px; }
-@media (max-width: 639px) { .strap-entrance { animation-duration: 280ms; } .surface-card { border-radius: 16px; } }
+
+/* Compact density: operational screens should feel calm, not oversized. */
+@media (max-width: 639px) {
+  .strap-entrance { animation-duration: 280ms; }
+  .surface-card { border-radius: 14px; }
+  .kudi-app-shell > .lg\\:pl-60 > main { padding: 14px 12px 76px !important; }
+  .kudi-app-shell > .lg\\:pl-60 > header { min-height: 52px !important; }
+  .kudi-app-shell > .lg\\:pl-60 > header > div { min-height: 52px !important; padding-left: 12px !important; padding-right: 12px !important; gap: 6px !important; }
+  .kudi-app-shell > .lg\\:pl-60 > header a[aria-label="Strap home"] span:first-child { width: 28px !important; height: 28px !important; }
+  .kudi-app-shell > .lg\\:pl-60 > header a[aria-label="Strap home"] span:first-child span { width: 10px !important; height: 10px !important; }
+  .kudi-app-shell > .lg\\:pl-60 > header a[aria-label="Strap home"] > span:last-child { font-size: 14px !important; }
+  .kudi-app-shell > .lg\\:pl-60 > header button[aria-label="Open Strap menu"],
+  .kudi-app-shell > .lg\\:pl-60 > header button[aria-label="Search"] { display: none !important; }
+  [data-tour="page-title"] { font-size: 1.65rem !important; line-height: 1.08 !important; letter-spacing: -.035em !important; }
+  [data-tour="main-content"] > .mb-5 { margin-bottom: 14px !important; }
+  [data-tour="main-content"] > .mb-5 p { font-size: 9px !important; gap: 5px !important; }
+  [data-tour="main-content"] > .mb-5 p svg { width: 11px !important; height: 11px !important; }
+  .surface-card { box-shadow: 0 1px 2px rgb(16 24 40 / .035) !important; }
+  input:not([type="checkbox"]):not([type="radio"]), select, .field { min-height: 40px !important; height: 40px !important; padding-top: 7px !important; padding-bottom: 7px !important; font-size: 13px !important; }
+  button { font-size: 13px; }
+  .kudi-mobile-menu [data-slot="sheet-header"] { padding-left: 16px !important; padding-right: 16px !important; }
+  .kudi-mobile-menu { border-radius: 22px 0 0 22px !important; }
+  .kudi-mobile-menu [class*="size-12"] { width: 40px !important; height: 40px !important; border-radius: 12px !important; }
+  .kudi-mobile-menu [class*="size-10"] { width: 34px !important; height: 34px !important; border-radius: 10px !important; }
+  .kudi-mobile-menu a { min-height: 48px !important; padding: 9px 10px !important; border-radius: 14px !important; }
+  .kudi-mobile-menu .text-sm { font-size: 12px !important; }
+  .kudi-mobile-menu .text-xs { font-size: 10px !important; }
+  .kudi-mobile-menu .my-5 { margin-top: 14px !important; margin-bottom: 14px !important; }
+
+  /* The POS's old full-width product search is replaced by Quick Find from the compact nav. */
+  input[placeholder*="Search products"] { display: none !important; }
+  div:has(> input[placeholder*="Search products"]) { min-height: 0 !important; }
+  div:has(> input[placeholder*="Search products"]) > svg { display: none !important; }
+
+  /* Tighten common spacing utilities without changing component behavior. */
+  .gap-4 { gap: 12px !important; }
+  .gap-5 { gap: 14px !important; }
+  .gap-6 { gap: 16px !important; }
+  .space-y-7 > :not([hidden]) ~ :not([hidden]) { margin-top: 20px !important; }
+  .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 16px !important; }
+  .p-6 { padding: 16px !important; }
+  .p-5 { padding: 14px !important; }
+  .px-6 { padding-left: 16px !important; padding-right: 16px !important; }
+  .py-8 { padding-top: 20px !important; padding-bottom: 20px !important; }
+}
+
+@media (max-width: 379px) {
+  .kudi-app-shell > .lg\\:pl-60 > main { padding-left: 10px !important; padding-right: 10px !important; }
+  [data-tour="page-title"] { font-size: 1.5rem !important; }
+  .kudi-app-shell > .lg\\:pl-60 > header a[aria-label="Strap home"] { gap: 5px !important; }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .kudi-app-shell > .lg\\:pl-60 > main { padding: 20px 20px 88px !important; }
+}
+
 @media (prefers-reduced-motion: reduce) { .strap-entrance { animation: none !important; } }
