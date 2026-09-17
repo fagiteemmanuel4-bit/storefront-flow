@@ -1,27 +1,40 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { BarChart3, Package, ReceiptText, ShoppingBag, UserRound } from "lucide-react";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { activeStoreCache } from "@/lib/active-store";
+import { BarChart3, Bell, Calculator, CircleHelp, Extension, Menu, Package, ReceiptText, Settings, ShoppingBag, Store, UserRound, Users } from "lucide-react";
+import { useState } from "react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-const ITEMS = [
+const PRIMARY = [
   { to: "/pos", label: "Sell", icon: ShoppingBag },
   { to: "/products", label: "Products", icon: Package },
+] as const;
+const MORE = [
   { to: "/online-store/orders", label: "Orders", icon: ReceiptText },
   { to: "/insights", label: "Insights", icon: BarChart3 },
+  { to: "/customers", label: "Customers", icon: Users },
+  { to: "/online-store", label: "Online Store", icon: Store },
+  { to: "/extensions", label: "Extensions", icon: Extension },
+  { to: "/notifications", label: "Notifications", icon: Bell },
+  { to: "/settings", label: "Settings", icon: Settings },
+  { to: "/help", label: "Help", icon: CircleHelp },
+  { to: "/profile", label: "Profile", icon: UserRound },
 ] as const;
 
 export function MobileNav() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const [storeId, setStoreId] = useState<string | null>(null);
-  const [branchId, setBranchId] = useState<string | null>(null);
-  useEffect(() => { setStoreId(activeStoreCache.getStoreId()); setBranchId(activeStoreCache.getBranchId()); }, [pathname]);
-  const { data: unreadOrders = 0 } = useQuery({ queryKey: ["mobile-nav", "unread-orders", storeId], enabled: Boolean(storeId), staleTime: 30_000, queryFn: async () => { const { count, error } = await supabase.from("store_notifications").select("id", { count: "exact", head: true }).eq("store_id", storeId!).is("read_at", null); if (error) throw error; return count ?? 0; } });
-  const { data: lowStock = 0 } = useQuery({ queryKey: ["mobile-nav", "low-stock", storeId, branchId], enabled: Boolean(storeId && branchId), staleTime: 30_000, queryFn: async () => { const { data, error } = await supabase.from("branch_stock").select("quantity, products!inner(id, low_stock_threshold)").eq("store_id", storeId!).eq("branch_id", branchId!); if (error) throw error; return (data ?? []).filter((row) => Number(row.quantity ?? 0) <= Number(row.products?.low_stock_threshold ?? 0)).length; } });
-  const visible = ["/dashboard", "/pos", "/products", "/online-store", "/customers", "/insights", "/reports", "/expenses", "/branches", "/staff", "/hardware", "/settings", "/stock-sense", "/profile"].some((route) => pathname.startsWith(route));
+  const [open, setOpen] = useState(false);
+  const visible = ["/dashboard", "/pos", "/products", "/online-store", "/customers", "/insights", "/reports", "/expenses", "/branches", "/staff", "/hardware", "/settings", "/stock-sense", "/profile", "/extensions", "/notifications", "/help"].some((route) => pathname.startsWith(route));
   if (!visible || pathname.startsWith("/settings")) return null;
-  const badges: Record<string, number> = { "/products": lowStock, "/online-store/orders": unreadOrders };
-  return <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 px-2 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_30px_rgba(0,0,0,.06)] backdrop-blur-xl lg:hidden" aria-label="Mobile navigation"><div className="mx-auto grid max-w-lg grid-cols-5 gap-1">{ITEMS.map(({ to, icon: Icon, label }) => { const active = pathname === to || pathname.startsWith(`${to}/`); const badge = badges[to] ?? 0; return <Link key={to} to={to} aria-label={label} aria-current={active ? "page" : undefined} className={cn("group relative flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-2xl px-2 text-muted-foreground transition-[transform,background-color,color] duration-200 active:scale-[.94]", active && "bg-accent-soft text-accent-ink", !active && "hover:bg-secondary hover:text-foreground")}><span className={cn("relative flex size-8 items-center justify-center rounded-xl transition-[transform,background-color,box-shadow] duration-300", active && "bg-background shadow-sm motion-safe:animate-[mobile-nav-pop_320ms_ease-out]")}><Icon className={cn("size-[19px] transition-transform duration-200", active && "scale-110 stroke-[2.2]")} />{badge > 0 && <span aria-label={`${badge} updates`} className="absolute -right-0.5 -top-0.5 flex min-size-2.5 size-2.5 items-center justify-center rounded-full border-2 border-background bg-destructive text-[7px] font-bold leading-none text-destructive-foreground">{badge > 9 ? "9+" : badge}</span>}</span><span className="text-[10px] font-semibold leading-none tracking-tight">{label}</span></Link>; })}<Link to="/profile" aria-label="Profile" aria-current={pathname.startsWith("/profile") ? "page" : undefined} className={cn("group flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-2xl px-2 text-muted-foreground transition-[transform,background-color,color] duration-200 active:scale-[.94]", pathname.startsWith("/profile") && "bg-accent-soft text-accent-ink", !pathname.startsWith("/profile") && "hover:bg-secondary hover:text-foreground")}><span className={cn("relative flex size-8 items-center justify-center rounded-xl", pathname.startsWith("/profile") && "bg-background shadow-sm motion-safe:animate-[mobile-nav-pop_320ms_ease-out]")}><UserRound className="size-[19px]" /></span><span className="text-[10px] font-semibold leading-none tracking-tight">Profile</span></Link></div></nav>;
+  return <>
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 px-3 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-8px_30px_rgba(0,0,0,.06)] backdrop-blur-xl lg:hidden" aria-label="Primary mobile navigation">
+      <div className="mx-auto grid max-w-lg grid-cols-3 gap-2">
+        {PRIMARY.map(({ to, icon: Icon, label }) => { const active = pathname === to || pathname.startsWith(`${to}/`); return <Link key={to} to={to} aria-current={active ? "page" : undefined} className={cn("flex min-h-12 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition active:scale-[.97]", active ? "bg-accent text-accent-foreground shadow-sm" : "bg-secondary/55 text-muted-foreground hover:bg-secondary hover:text-foreground")}><Icon className="size-[18px]"/><span>{label}</span></Link>; })}
+        <button type="button" onClick={() => setOpen(true)} aria-expanded={open} className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 text-sm font-semibold text-muted-foreground transition hover:bg-secondary hover:text-foreground active:scale-[.97]"><Menu className="size-[18px]"/><span>More</span></button>
+      </div>
+    </nav>
+    <Sheet open={open} onOpenChange={setOpen}><SheetContent side="bottom" className="max-h-[82dvh] rounded-t-[28px] px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <SheetHeader className="pb-4 text-left"><SheetTitle className="font-display text-xl">Everything else</SheetTitle><p className="text-xs text-muted-foreground">Sell and Products stay one tap away. Less-used destinations live here so the primary bar stays calm.</p></SheetHeader>
+      <div className="grid grid-cols-2 gap-2 overflow-y-auto pb-2">{MORE.map(({ to, icon: Icon, label }) => { const active = pathname === to || pathname.startsWith(`${to}/`); return <Link key={to} to={to} onClick={() => setOpen(false)} className={cn("flex min-h-16 items-center gap-3 rounded-2xl border p-3 transition active:scale-[.98]", active ? "border-accent/30 bg-accent-soft text-accent-ink" : "border-border bg-background hover:bg-secondary")}><span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary"><Icon className="size-[17px]"/></span><span className="text-sm font-semibold">{label}</span></Link>; })}</div>
+    </SheetContent></Sheet>
+  </>;
 }
