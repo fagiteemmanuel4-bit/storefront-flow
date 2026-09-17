@@ -1,113 +1,210 @@
-/* Strap Design System — premium commerce UI foundation */
+/* Strap Design System v2
+ * Premium commerce UI foundation. Keep product behavior in components;
+ * keep visual decisions here so the application reads as one product.
+ */
 
 :root {
-  --strap-blue-50: #f4f8ff;
-  --strap-blue-100: #e8f0ff;
-  --strap-blue-200: #cfe0ff;
-  --strap-blue-500: #3b6ff5;
-  --strap-blue-600: #2457d6;
-  --strap-blue-700: #1945b5;
-  --strap-ink: #111827;
-  --strap-ink-soft: #374151;
+  --strap-blue-50: #f5f8ff;
+  --strap-blue-100: #eaf0ff;
+  --strap-blue-200: #d5e1ff;
+  --strap-blue-300: #b8ccff;
+  --strap-blue-500: #3767e8;
+  --strap-blue-600: #2856d7;
+  --strap-blue-700: #2047b7;
+  --strap-blue-800: #19388f;
+  --strap-ink: #101828;
+  --strap-ink-soft: #344054;
   --strap-muted: #667085;
-  --strap-line: #e5e7eb;
+  --strap-line: #e4e7ec;
   --strap-canvas: #f8fafc;
   --strap-panel: #ffffff;
+  --strap-success: #16805a;
+  --strap-warning: #b54708;
+  --strap-danger: #c4320a;
   --strap-radius-sm: 8px;
-  --strap-radius-md: 12px;
-  --strap-radius-lg: 16px;
-  --strap-radius-xl: 20px;
+  --strap-radius-md: 10px;
+  --strap-radius-lg: 14px;
+  --strap-radius-xl: 18px;
   --strap-radius-2xl: 24px;
-  --strap-shadow-sm: 0 1px 2px rgb(15 23 42 / 0.04);
-  --strap-shadow-md: 0 10px 30px rgb(15 23 42 / 0.07);
-  --strap-shadow-lg: 0 24px 70px rgb(15 23 42 / 0.10);
+  --strap-shadow-sm: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.03);
+  --strap-shadow-md: 0 8px 24px rgb(16 24 40 / 0.07);
+  --strap-shadow-lg: 0 24px 64px rgb(16 24 40 / 0.12);
   --strap-ease: cubic-bezier(.2,.7,.2,1);
+  --strap-duration: 160ms;
 }
 
 .dark {
-  --strap-blue-50: #0e1a31;
-  --strap-blue-100: #13254a;
-  --strap-blue-200: #24427c;
-  --strap-blue-500: #6f96ff;
-  --strap-blue-600: #82a4ff;
-  --strap-blue-700: #a6beff;
-  --strap-ink: #f8fafc;
-  --strap-ink-soft: #d7deea;
-  --strap-muted: #9aa7ba;
-  --strap-line: rgb(255 255 255 / 0.10);
-  --strap-canvas: #0b1018;
-  --strap-panel: #111823;
+  --strap-blue-50: #101a32;
+  --strap-blue-100: #142346;
+  --strap-blue-200: #20386d;
+  --strap-blue-300: #34539a;
+  --strap-blue-500: #82a4ff;
+  --strap-blue-600: #9ab6ff;
+  --strap-blue-700: #b5c8ff;
+  --strap-blue-800: #d3ddff;
+  --strap-ink: #f2f4f7;
+  --strap-ink-soft: #d0d5dd;
+  --strap-muted: #98a2b3;
+  --strap-line: #293241;
+  --strap-canvas: #0b111b;
+  --strap-panel: #111927;
+  --strap-success: #6ce0b0;
+  --strap-warning: #fdb022;
+  --strap-danger: #f97066;
+  --strap-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.25);
+  --strap-shadow-md: 0 12px 30px rgb(0 0 0 / 0.25);
+  --strap-shadow-lg: 0 28px 80px rgb(0 0 0 / 0.4);
 }
 
-/* A quieter, cooler application canvas. Existing semantic utilities continue to work. */
+/* -------------------------------------------------------------------------- */
+/* Foundations                                                                 */
+/* -------------------------------------------------------------------------- */
+
+html { color-scheme: light; }
+html.dark { color-scheme: dark; }
+
 body {
-  background: var(--strap-canvas);
-  color: var(--strap-ink);
+  background: var(--strap-canvas) !important;
+  color: var(--strap-ink) !important;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
-.dark body { background: var(--strap-canvas); }
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+h1, h2, h3, h4, h5, h6,
+.font-display {
+  font-family: "Manrope", "Inter", ui-sans-serif, system-ui, sans-serif !important;
   font-weight: 650;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.032em;
 }
 
 button, input, textarea, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 
-/* Reduce the visual weight of the ubiquitous shadcn card pattern. */
-.rounded-\[28px\], .rounded-3xl, .rounded-2xl {
-  box-shadow: none;
+/* Type scale: compact enough for operational screens, expressive enough for marketing. */
+.text-display-lg { font-size: clamp(2.75rem, 7vw, 5rem) !important; line-height: .98 !important; letter-spacing: -.055em !important; }
+.text-display-md { font-size: clamp(2rem, 4.5vw, 3.15rem) !important; line-height: 1.02 !important; letter-spacing: -.045em !important; }
+.text-title-lg { font-size: clamp(1.45rem, 2.4vw, 1.9rem) !important; line-height: 1.12 !important; letter-spacing: -.035em !important; }
+
+/* Token bridge: the existing Tailwind/shadcn semantic classes now use Strap blue. */
+:root {
+  --background: #f8fafc !important;
+  --foreground: #101828 !important;
+  --surface: #ffffff !important;
+  --card: #ffffff !important;
+  --card-foreground: #101828 !important;
+  --popover: #ffffff !important;
+  --popover-foreground: #101828 !important;
+  --primary: #2856d7 !important;
+  --primary-foreground: #ffffff !important;
+  --secondary: #f2f4f7 !important;
+  --secondary-foreground: #344054 !important;
+  --muted: #f2f4f7 !important;
+  --muted-foreground: #667085 !important;
+  --accent: #3767e8 !important;
+  --accent-foreground: #ffffff !important;
+  --accent-ink: #2047b7 !important;
+  --accent-soft: #eaf0ff !important;
+  --border: #e4e7ec !important;
+  --input: #e4e7ec !important;
+  --ring: #3767e8 !important;
+  --sidebar: #ffffff !important;
+  --sidebar-foreground: #101828 !important;
+  --sidebar-primary: #2856d7 !important;
+  --sidebar-primary-foreground: #ffffff !important;
+  --sidebar-accent: #f5f8ff !important;
+  --sidebar-accent-foreground: #2047b7 !important;
+  --sidebar-border: #e4e7ec !important;
+  --sidebar-ring: #3767e8 !important;
 }
 
-/* Premium panel primitives. */
+.dark {
+  --background: #0b111b !important;
+  --foreground: #f2f4f7 !important;
+  --surface: #111927 !important;
+  --card: #111927 !important;
+  --card-foreground: #f2f4f7 !important;
+  --popover: #111927 !important;
+  --popover-foreground: #f2f4f7 !important;
+  --primary: #9ab6ff !important;
+  --primary-foreground: #0b111b !important;
+  --secondary: #182231 !important;
+  --secondary-foreground: #f2f4f7 !important;
+  --muted: #182231 !important;
+  --muted-foreground: #98a2b3 !important;
+  --accent: #82a4ff !important;
+  --accent-foreground: #0b111b !important;
+  --accent-ink: #b5c8ff !important;
+  --accent-soft: #142346 !important;
+  --border: #293241 !important;
+  --input: #344054 !important;
+  --ring: #82a4ff !important;
+  --sidebar: #111927 !important;
+  --sidebar-foreground: #f2f4f7 !important;
+  --sidebar-primary: #9ab6ff !important;
+  --sidebar-primary-foreground: #0b111b !important;
+  --sidebar-accent: #142346 !important;
+  --sidebar-accent-foreground: #d3ddff !important;
+  --sidebar-border: #293241 !important;
+  --sidebar-ring: #82a4ff !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Surfaces, fields, buttons                                                   */
+/* -------------------------------------------------------------------------- */
+
 .surface-card,
 .storefront-card {
-  background: var(--strap-panel);
-  border: 1px solid var(--strap-line);
-  border-radius: var(--strap-radius-xl);
+  background: var(--strap-panel) !important;
+  border: 1px solid var(--strap-line) !important;
+  border-radius: var(--strap-radius-xl) !important;
   box-shadow: var(--strap-shadow-sm);
 }
 
 .surface-card:hover {
-  border-color: color-mix(in srgb, var(--strap-blue-500) 18%, var(--strap-line));
+  border-color: color-mix(in srgb, var(--strap-blue-500) 22%, var(--strap-line));
 }
 
-/* Inputs should feel like instruments, not cards. */
 input:not([type="checkbox"]):not([type="radio"]),
 textarea,
 select,
 .field {
-  border-radius: var(--strap-radius-md);
-  border-color: var(--strap-line);
-  background: var(--strap-panel);
-  box-shadow: inset 0 1px 1px rgb(15 23 42 / 0.02);
-  transition: border-color 160ms var(--strap-ease), box-shadow 160ms var(--strap-ease), background 160ms var(--strap-ease);
+  border-radius: var(--strap-radius-md) !important;
+  border-color: var(--strap-line) !important;
+  background: var(--strap-panel) !important;
+  color: var(--strap-ink) !important;
+  box-shadow: inset 0 1px 1px rgb(16 24 40 / .025);
+  transition: border-color var(--strap-duration) var(--strap-ease), box-shadow var(--strap-duration) var(--strap-ease), background var(--strap-duration) var(--strap-ease);
 }
 
 input:not([type="checkbox"]):not([type="radio"]):focus,
 textarea:focus,
 select:focus,
 .field:focus {
-  border-color: var(--strap-blue-500);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--strap-blue-500) 14%, transparent);
+  border-color: var(--strap-blue-500) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--strap-blue-500) 15%, transparent) !important;
   outline: none;
 }
 
-/* Buttons: restrained, high-contrast, no ornamental gradients. */
 button[class*="bg-primary"],
 a[class*="bg-primary"] {
   border-radius: var(--strap-radius-md);
-  box-shadow: 0 1px 1px rgb(15 23 42 / 0.08);
-  transition: transform 160ms var(--strap-ease), box-shadow 160ms var(--strap-ease), background 160ms var(--strap-ease);
+  box-shadow: 0 1px 1px rgb(16 24 40 / .08);
+  transition: transform var(--strap-duration) var(--strap-ease), box-shadow var(--strap-duration) var(--strap-ease), background var(--strap-duration) var(--strap-ease);
 }
 
 button[class*="bg-primary"]:hover,
-a[class*="bg-primary"]:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgb(36 87 214 / 0.16); }
+a[class*="bg-primary"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgb(40 86 215 / .16);
+}
 
-/* App navigation: crisp, quiet, information-first. */
+/* Quiet, dense operational controls. */
+button:not([aria-hidden="true"]) { transition: background var(--strap-duration) var(--strap-ease), border-color var(--strap-duration) var(--strap-ease), color var(--strap-duration) var(--strap-ease), transform var(--strap-duration) var(--strap-ease); }
+
+/* -------------------------------------------------------------------------- */
+/* Application shell                                                           */
+/* -------------------------------------------------------------------------- */
+
 [data-sidebar="sidebar"] {
   background: var(--strap-panel) !important;
   border-color: var(--strap-line) !important;
@@ -115,20 +212,42 @@ a[class*="bg-primary"]:hover { transform: translateY(-1px); box-shadow: 0 5px 16
 
 [data-sidebar="menu-button"] {
   min-height: 38px;
-  border-radius: 10px;
-  transition: background 140ms var(--strap-ease), color 140ms var(--strap-ease), transform 140ms var(--strap-ease);
+  border-radius: 9px;
+  color: var(--strap-muted);
 }
 
-[data-sidebar="menu-button"]:hover { background: var(--strap-blue-50) !important; }
+[data-sidebar="menu-button"]:hover {
+  background: var(--strap-blue-50) !important;
+  color: var(--strap-ink) !important;
+}
+
 [data-sidebar="menu-button"][data-active="true"] {
   background: var(--strap-blue-50) !important;
   color: var(--strap-blue-700) !important;
-  font-weight: 600;
+  font-weight: 650;
 }
 
-.dark [data-sidebar="menu-button"][data-active="true"] { color: var(--strap-blue-700) !important; }
+.kudi-app-shell > .lg\:pl-60 > header {
+  background: color-mix(in srgb, var(--strap-panel) 92%, transparent) !important;
+  border-color: var(--strap-line) !important;
+  box-shadow: 0 1px 0 rgb(16 24 40 / .02);
+}
 
-/* Top loading line — the single global navigation loading pattern. */
+.kudi-app-shell > .lg\:pl-60 > main {
+  max-width: 1440px;
+}
+
+/* Turn the old diamond/orange mark into a restrained blue product mark. */
+.kudi-app-shell .bg-accent,
+.kudi-app-shell .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
+.kudi-app-shell .text-accent,
+.kudi-app-shell .text-accent-ink { color: var(--strap-blue-700) !important; }
+.kudi-app-shell .bg-accent-soft { background: var(--strap-blue-50) !important; }
+
+/* -------------------------------------------------------------------------- */
+/* Loading: one language, two primitives                                      */
+/* -------------------------------------------------------------------------- */
+
 .strap-route-progress {
   position: fixed;
   inset: 0 0 auto;
@@ -142,24 +261,23 @@ a[class*="bg-primary"]:hover { transform: translateY(-1px); box-shadow: 0 5px 16
 .strap-route-progress::after {
   content: "";
   display: block;
-  width: 38%;
+  width: 34%;
   height: 100%;
   background: var(--strap-blue-500);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--strap-blue-500) 50%, transparent);
-  animation: strap-progress 1.15s var(--strap-ease) infinite;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--strap-blue-500) 45%, transparent);
+  animation: strap-progress 1.05s var(--strap-ease) infinite;
 }
 
 @keyframes strap-progress {
-  0% { transform: translateX(-110%); }
-  45% { transform: translateX(150%); }
-  100% { transform: translateX(290%); }
+  0% { transform: translateX(-115%); }
+  45% { transform: translateX(170%); }
+  100% { transform: translateX(315%); }
 }
 
-/* Minimal circular loading indicator for local actions. */
 .strap-spinner {
   width: 16px;
   height: 16px;
-  border: 1.5px solid color-mix(in srgb, currentColor 20%, transparent);
+  border: 1.5px solid color-mix(in srgb, currentColor 18%, transparent);
   border-top-color: currentColor;
   border-radius: 999px;
   animation: strap-spin 700ms linear infinite;
@@ -167,10 +285,27 @@ a[class*="bg-primary"]:hover { transform: translateY(-1px); box-shadow: 0 5px 16
 
 @keyframes strap-spin { to { transform: rotate(360deg); } }
 
-/* Replace decorative skeleton-heavy first impressions with restrained motion. */
-[data-slot="skeleton"] { animation-duration: 1.8s; opacity: .55; }
+/* The previous full-screen loading card is deliberately flattened. */
+.strap-loading-overlay,
+[data-strap-loading-overlay] {
+  position: fixed !important;
+  inset: 0 !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  pointer-events: none !important;
+}
 
-/* Dialogs and sheets: more editorial proportions, less floating plastic. */
+.strap-loading-overlay > *,
+[data-strap-loading-overlay] > * { display: none !important; }
+
+/* -------------------------------------------------------------------------- */
+/* Tables, dialogs, notifications                                             */
+/* -------------------------------------------------------------------------- */
+
+table thead tr { border-bottom-color: var(--strap-line) !important; }
+table tbody tr { border-bottom-color: color-mix(in srgb, var(--strap-line) 75%, transparent) !important; }
+table tbody tr:hover { background: var(--strap-blue-50) !important; }
+
 [data-slot="dialog-content"],
 [data-slot="sheet-content"] {
   border-color: var(--strap-line) !important;
@@ -178,39 +313,69 @@ a[class*="bg-primary"]:hover { transform: translateY(-1px); box-shadow: 0 5px 16
   box-shadow: var(--strap-shadow-lg) !important;
 }
 
-/* Toasts / notification surfaces. */
 [data-sonner-toaster] [data-sonner-toast] {
   border: 1px solid var(--strap-line) !important;
-  border-radius: 14px !important;
+  border-radius: 12px !important;
   box-shadow: var(--strap-shadow-md) !important;
   background: var(--strap-panel) !important;
+  color: var(--strap-ink) !important;
 }
 
-/* Data tables: hierarchy comes from spacing and rules, not boxes. */
-table thead tr { border-bottom-color: var(--strap-line); }
-table tbody tr { border-bottom-color: color-mix(in srgb, var(--strap-line) 70%, transparent); transition: background 120ms ease; }
-table tbody tr:hover { background: var(--strap-blue-50); }
+/* -------------------------------------------------------------------------- */
+/* Marketing + auth: replace the previous warm/black visual language          */
+/* -------------------------------------------------------------------------- */
 
-/* Public storefront surfaces. */
-.storefront-shell {
-  background: var(--strap-canvas);
+body:has(main input#email) {
+  --strap-auth-bg: #f8fafc;
+  background: var(--strap-auth-bg) !important;
 }
 
-/* Utility for first-run empty states and quiet illustrations. */
-.strap-empty-mark {
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--strap-line);
-  border-radius: 14px;
-  color: var(--strap-blue-600);
-  background: var(--strap-blue-50);
+body:has(main input#email) main {
+  background: var(--strap-auth-bg) !important;
+  color: var(--strap-ink) !important;
+}
+
+body:has(main input#email) main .bg-\[\#171715\] { background: #0f172a !important; }
+body:has(main input#email) main .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
+body:has(main input#email) main .text-\[\#171715\],
+body:has(main input#email) main .text-black { color: var(--strap-ink) !important; }
+body:has(main input#email) main [class*="border-black"] { border-color: var(--strap-line) !important; }
+body:has(main input#email) main [class*="bg-[#fbfaf7]"] { background: #ffffff !important; }
+body:has(main input#email) main [class*="focus:border-[#c79508]"]:focus { border-color: var(--strap-blue-500) !important; }
+body:has(main input#email) main [class*="focus:ring-[#f5c23e]"]:focus { box-shadow: 0 0 0 3px rgb(55 103 232 / .14) !important; }
+
+/* Public marketing pages: light, editorial, no ornamental orange atmosphere. */
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) {
+  --background: #f8fafc !important;
+  --foreground: #101828 !important;
+  --surface: #ffffff !important;
+  --card: #ffffff !important;
+  --primary: #2856d7 !important;
+  --primary-foreground: #ffffff !important;
+  --accent: #3767e8 !important;
+  --accent-foreground: #ffffff !important;
+  --accent-soft: #eaf0ff !important;
+  --accent-ink: #2047b7 !important;
+}
+
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#171715\],
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-[#171715]"],
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-black"] { color: var(--strap-ink) !important; }
+
+/* Remove excessive rounded-card language without destroying intentional controls. */
+.rounded-\[28px\], .rounded-3xl { box-shadow: none; }
+
+/* Focus visibility and reduced motion are non-negotiable. */
+:focus-visible {
+  outline: 2px solid var(--strap-blue-500) !important;
+  outline-offset: 2px;
 }
 
 @media (max-width: 767px) {
-  .surface-card, .storefront-card { border-radius: 16px; }
+  .surface-card, .storefront-card { border-radius: 16px !important; }
   [data-sidebar="sidebar"] { border-right: 0 !important; }
+  .kudi-app-shell > .lg\:pl-60 > main { padding-left: 16px; padding-right: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
