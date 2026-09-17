@@ -1,9 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, Package, Search, ShoppingBag } from "lucide-react";
 import { useState } from "react";
-import { AppMenuSheet } from "@/components/shell/AppMenuSheet";
-import { QuickFind } from "@/components/shell/QuickFind";
-import { useStoreContext } from "@/components/shell/StoreProvider";
 import { cn } from "@/lib/utils";
 
 const PRIMARY = [
@@ -13,8 +10,6 @@ const PRIMARY = [
 
 export function MobileNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { store, branch, role } = useStoreContext();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const visible = [
     "/dashboard", "/pos", "/products", "/online-store", "/customers", "/insights", "/reports",
@@ -32,11 +27,21 @@ export function MobileNav() {
             return <Link key={to} to={to} aria-label={label} aria-current={active ? "page" : undefined} className={cn("flex h-10 min-h-10 items-center justify-center rounded-lg p-2 transition active:scale-[.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40", active ? "bg-accent text-accent-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}><Icon className="size-[16px]" strokeWidth={1.9} aria-hidden="true" /></Link>;
           })}
           <button type="button" aria-label="Search Strap" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)} className="flex h-10 min-h-10 items-center justify-center rounded-lg p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground active:scale-[.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"><Search className="size-[16px]" strokeWidth={1.9} aria-hidden="true" /></button>
-          <button type="button" aria-label="Open Strap menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)} className="flex h-10 min-h-10 items-center justify-center rounded-lg border border-border bg-background p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground active:scale-[.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"><Menu className="size-[16px]" strokeWidth={1.9} aria-hidden="true" /></button>
+          <button type="button" aria-label="Open Strap menu" onClick={() => window.dispatchEvent(new CustomEvent("strap-open-menu"))} className="flex h-10 min-h-10 items-center justify-center rounded-lg border border-border bg-background p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground active:scale-[.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"><Menu className="size-[16px]" strokeWidth={1.9} aria-hidden="true" /></button>
         </div>
       </nav>
-      <QuickFind open={searchOpen} onOpenChange={setSearchOpen} />
-      <AppMenuSheet open={menuOpen} onOpenChange={setMenuOpen} store={store} branchName={branch?.name ?? null} role={role} onSignOut={() => setMenuOpen(false)} />
+      <SearchDialogBridge open={searchOpen} onOpenChange={setSearchOpen} />
     </>
   );
+}
+
+function SearchDialogBridge({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const { QuickFind } = requireQuickFind();
+  return <QuickFind open={open} onOpenChange={onOpenChange} />;
+}
+
+function requireQuickFind() {
+  // Kept isolated so the navigation remains a small shell primitive.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  return require("@/components/shell/QuickFind") as typeof import("@/components/shell/QuickFind");
 }
