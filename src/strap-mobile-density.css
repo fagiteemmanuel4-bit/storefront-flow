@@ -1,0 +1,177 @@
+/* Strap mobile density pass
+ * Keep mobile operational screens compact: smaller type, tighter spacing,
+ * clearer hierarchy, and touch targets that remain accessible.
+ */
+
+@media (max-width: 767px) {
+  :root {
+    --strap-mobile-control-h: 42px;
+    --strap-mobile-radius: 12px;
+  }
+
+  .kudi-app-shell {
+    padding-bottom: 4.25rem !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > header {
+    min-height: 56px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > header > div {
+    min-height: 56px !important;
+    gap: 8px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > header .bg-accent.flex.size-8,
+  .kudi-app-shell > .lg\:pl-60 > header .flex.size-8.items-center.justify-center.rounded-full {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > header .bg-accent.flex.size-8 > span,
+  .kudi-app-shell > .lg\:pl-60 > header .flex.size-8.items-center.justify-center.rounded-full > span {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > header .font-display.text-base {
+    font-size: 15px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > header .ml-auto {
+    gap: 5px !important;
+  }
+
+  /* The calculator/view controls should read as one compact tool, not a large pill. */
+  .kudi-app-shell > .lg\:pl-60 > header [aria-label="Sell tools"] {
+    padding: 3px !important;
+    border-radius: 10px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > header [aria-label="Sell tools"] button {
+    width: 30px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    border-radius: 8px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > header [aria-label="Sell tools"] button svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > header button[aria-label="Open Strap menu"] {
+    width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 !important;
+    border-radius: 11px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > header button[aria-label="Open Strap menu"] svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > main {
+    padding: 14px 12px 24px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > main > .mb-5,
+  .kudi-app-shell > .lg\:pl-60 > main > .lg\:mb-7 {
+    margin-bottom: 14px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > main h1,
+  .kudi-app-shell > .lg\:pl-60 > main .text-title-lg {
+    font-size: 26px !important;
+    line-height: 1.08 !important;
+    letter-spacing: -0.035em !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > main > .mb-5 p,
+  .kudi-app-shell > .lg\:pl-60 > main > .lg\:mb-7 p {
+    font-size: 10px !important;
+    line-height: 1.35 !important;
+    letter-spacing: .1em !important;
+  }
+
+  /* Compact the common Tailwind spacing used by operational cards on narrow screens. */
+  .kudi-app-shell > .lg\:pl-60 > main .p-6 { padding: 16px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .p-5 { padding: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .p-4 { padding: 12px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .px-6 { padding-left: 16px !important; padding-right: 16px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .px-5 { padding-left: 14px !important; padding-right: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .py-6 { padding-top: 16px !important; padding-bottom: 16px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .py-5 { padding-top: 14px !important; padding-bottom: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .gap-6 { gap: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .gap-5 { gap: 12px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .gap-4 { gap: 10px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: 12px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 10px !important; }
+
+  .kudi-app-shell > .lg\:pl-60 > main .rounded-3xl { border-radius: 16px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .rounded-2xl { border-radius: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .rounded-xl { border-radius: 11px !important; }
+
+  /* Keep controls compact while preserving the 40–44px touch target rule. */
+  .kudi-app-shell > .lg\:pl-60 > main input:not([type="checkbox"]):not([type="radio"]),
+  .kudi-app-shell > .lg\:pl-60 > main select,
+  .kudi-app-shell > .lg\:pl-60 > main .field {
+    min-height: var(--strap-mobile-control-h) !important;
+    height: var(--strap-mobile-control-h) !important;
+    font-size: 14px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > main textarea { font-size: 14px !important; }
+
+  .kudi-app-shell > .lg\:pl-60 > main button:not([aria-hidden="true"]) {
+    min-height: 40px;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > main .text-3xl { font-size: 24px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .text-2xl { font-size: 21px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .text-xl { font-size: 18px !important; }
+
+  /* POS search/actions: one clean row, with enough room for real product names. */
+  .kudi-app-shell > .lg\:pl-60 > main [data-tour="sell"] input {
+    font-size: 15px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > main [data-tour="sell"] {
+    min-width: 0;
+  }
+
+  /* Bottom navigation is an icon dock, not three large labeled cards. */
+  .kudi-app-shell > nav[aria-label="Primary mobile navigation"] {
+    padding-top: 5px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .kudi-app-shell > nav[aria-label="Primary mobile navigation"] > div {
+    max-width: 360px !important;
+    gap: 4px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .kudi-app-shell > .lg\:pl-60 > header > div {
+    padding-left: 9px !important;
+    padding-right: 9px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > header [aria-label="Sell tools"] button {
+    width: 28px !important;
+    height: 28px !important;
+    min-height: 28px !important;
+  }
+
+  .kudi-app-shell > .lg\:pl-60 > main {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+}
