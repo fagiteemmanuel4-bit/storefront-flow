@@ -100,18 +100,18 @@ h1,h2,h3,h4,h5,h6,.font-display {
   color: var(--strap-brand-strong) !important;
 }
 
-.kudi-app-shell > .lg\\:pl-60 {
+.kudi-app-shell > .lg\:pl-60 {
   padding-left: 248px !important;
 }
 
-.kudi-app-shell > .lg\\:pl-60 > header {
+.kudi-app-shell > .lg\:pl-60 > header {
   min-height: 64px;
   background: color-mix(in srgb, var(--strap-surface) 94%, transparent) !important;
   border-bottom: 1px solid var(--strap-line) !important;
   box-shadow: 0 1px 0 rgb(16 24 40 / .02);
 }
 
-.kudi-app-shell > .lg\\:pl-60 > main {
+.kudi-app-shell > .lg\:pl-60 > main {
   max-width: 1480px !important;
   padding-top: 28px !important;
   padding-bottom: 44px !important;
@@ -282,23 +282,23 @@ body:has(main input#email) {
 }
 
 @media (max-width: 1279px) {
-  .kudi-app-shell > .lg\\:pl-60 { padding-left: 0 !important; }
+  .kudi-app-shell > .lg\:pl-60 { padding-left: 0 !important; }
   .kudi-app-shell > aside { display: none !important; }
 }
 
 @media (max-width: 1023px) {
-  .kudi-app-shell > .lg\\:pl-60 > main {
+  .kudi-app-shell > .lg\:pl-60 > main {
     padding-top: 18px !important;
     padding-bottom: 82px !important;
   }
 }
 
 @media (max-width: 640px) {
-  .kudi-app-shell > .lg\\:pl-60 > header {
+  .kudi-app-shell > .lg\:pl-60 > header {
     min-height: 58px;
   }
 
-  .kudi-app-shell > .lg\\:pl-60 > main {
+  .kudi-app-shell > .lg\:pl-60 > main {
     padding-inline: 14px !important;
   }
 
@@ -329,7 +329,7 @@ body:has(main input#email) {
 }
 
 @media (min-width: 1536px) {
-  .kudi-app-shell > .lg\\:pl-60 > main {
+  .kudi-app-shell > .lg\:pl-60 > main {
     padding-inline: 40px !important;
   }
 }
