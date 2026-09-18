@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BarChart3, Menu, Package, Search, ShoppingBag, ReceiptText } from "lucide-react";
+import { BarChart3, Menu, Package, Search, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PRIMARY = [
