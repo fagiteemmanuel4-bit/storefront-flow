@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Command } from "cmdk";
-import { ArrowRight, BarChart3, FileText, Package, Plus, Puzzle, ReceiptText, Search, Settings, ShoppingBag, Sparkles, Store, Users } from "lucide-react";
+import { ArrowRight, BarChart3, FileText, Package, Plus, Puzzle, ReceiptText, Search, Settings, ShoppingBag, Compass, Store, Users } from "lucide-react";
 
 type QuickFindProps = { open: boolean; onOpenChange: (open: boolean) => void };
 type QuickAction = { label: string; hint: string; to: string; icon: typeof Search; keywords: string };
@@ -16,7 +16,7 @@ const ACTIONS: QuickAction[] = [
   { label: "Add expense", hint: "Record money leaving the business", to: "/expenses", icon: ReceiptText, keywords: "expense spending costs" },
   { label: "Online store", hint: "Manage your public storefront", to: "/online-store", icon: Store, keywords: "storefront website ecommerce online" },
   { label: "Extensions", hint: "Install optional tools for your workflow", to: "/extensions", icon: Puzzle, keywords: "extensions tools calculator plugins addons" },
-  { label: "Feature tour", hint: "Discover Strap's workspace features", to: "/feature-discovery", icon: Sparkles, keywords: "tour discover onboarding learn features" },
+  { label: "Feature tour", hint: "Discover Strap's workspace features", to: "/feature-discovery", icon: Compass, keywords: "tour discover onboarding learn features" },
   { label: "Settings", hint: "Store, account and security settings", to: "/settings", icon: Settings, keywords: "settings preferences account security" },
   { label: "Help", hint: "Open guides and support", to: "/help", icon: FileText, keywords: "help docs support guide" },
 ];
