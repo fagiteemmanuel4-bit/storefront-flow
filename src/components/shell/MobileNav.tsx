@@ -1,10 +1,12 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, Package, Search, ShoppingBag } from "lucide-react";
+import { BarChart3, Menu, Package, Search, ShoppingBag, ReceiptText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PRIMARY = [
+  { to: "/dashboard", label: "Home", icon: BarChart3 },
   { to: "/pos", label: "Sell", icon: ShoppingBag },
   { to: "/products", label: "Products", icon: Package },
+  { to: "/online-store/orders", label: "Orders", icon: ReceiptText },
 ] as const;
 
 export function MobileNav() {
@@ -27,7 +29,7 @@ export function MobileNav() {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/96 px-2 pb-[max(.35rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_30px_rgba(0,0,0,.06)] backdrop-blur-xl lg:hidden" aria-label="Primary mobile navigation">
-      <div className="mx-auto grid max-w-md grid-cols-4 gap-1">
+      <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
         {PRIMARY.map(({ to, icon: Icon, label }) => {
           const active = pathname === to || pathname.startsWith(`${to}/`);
           return <Link key={to} to={to} aria-label={label} aria-current={active ? "page" : undefined} className={cn("flex h-10 min-h-10 items-center justify-center rounded-lg p-2 transition active:scale-[.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40", active ? "bg-accent text-accent-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}><Icon className="size-[16px]" strokeWidth={1.9} aria-hidden="true" /></Link>;
