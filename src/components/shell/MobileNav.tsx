@@ -6,7 +6,6 @@ const PRIMARY = [
   { to: "/dashboard", label: "Home", icon: BarChart3 },
   { to: "/pos", label: "Sell", icon: ShoppingBag },
   { to: "/products", label: "Products", icon: Package },
-  { to: "/online-store/orders", label: "Orders", icon: ReceiptText },
 ] as const;
 
 export function MobileNav() {
