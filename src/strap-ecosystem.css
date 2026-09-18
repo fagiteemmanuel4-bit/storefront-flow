@@ -1,0 +1,343 @@
+/* Strap Ecosystem UI v1
+ * Shared visual language for authenticated, commerce, storefront and entry flows.
+ * Keep behavior in React; keep product-wide visual rules here.
+ */
+
+:root {
+  --strap-canvas: #f6f8fb;
+  --strap-surface: #ffffff;
+  --strap-surface-subtle: #f8fafc;
+  --strap-ink: #111827;
+  --strap-ink-2: #344054;
+  --strap-muted: #667085;
+  --strap-line: #e4e7ec;
+  --strap-line-strong: #d0d5dd;
+  --strap-brand: #2563eb;
+  --strap-brand-strong: #1d4ed8;
+  --strap-brand-soft: #eff6ff;
+  --strap-success: #087443;
+  --strap-success-soft: #ecfdf3;
+  --strap-warning: #b54708;
+  --strap-warning-soft: #fffaeb;
+  --strap-danger: #b42318;
+  --strap-danger-soft: #fef3f2;
+  --strap-radius-sm: 8px;
+  --strap-radius-md: 10px;
+  --strap-radius-lg: 14px;
+  --strap-radius-xl: 18px;
+  --strap-shadow-1: 0 1px 2px rgb(16 24 40 / .04);
+  --strap-shadow-2: 0 8px 24px rgb(16 24 40 / .06);
+  --strap-shadow-3: 0 18px 48px rgb(16 24 40 / .10);
+}
+
+.dark {
+  --strap-canvas: #0b1118;
+  --strap-surface: #101923;
+  --strap-surface-subtle: #141f2b;
+  --strap-ink: #f2f4f7;
+  --strap-ink-2: #d0d5dd;
+  --strap-muted: #98a2b3;
+  --strap-line: #263241;
+  --strap-line-strong: #344054;
+  --strap-brand: #7aa2ff;
+  --strap-brand-strong: #9ab7ff;
+  --strap-brand-soft: #142342;
+  --strap-success: #6ce0b0;
+  --strap-success-soft: #123328;
+  --strap-warning: #fdb022;
+  --strap-warning-soft: #3b2813;
+  --strap-danger: #f97066;
+  --strap-danger-soft: #3b1715;
+}
+
+html { background: var(--strap-canvas); }
+body {
+  background: var(--strap-canvas) !important;
+  color: var(--strap-ink) !important;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+h1,h2,h3,h4,h5,h6,.font-display {
+  letter-spacing: -.028em !important;
+}
+
+.numeric {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.015em;
+}
+
+.kudi-app-shell {
+  background: var(--strap-canvas) !important;
+}
+
+/* App shell: quiet chrome, strong content hierarchy. */
+.kudi-app-shell > aside {
+  width: 248px !important;
+  background: var(--strap-surface) !important;
+  border-right: 1px solid var(--strap-line) !important;
+}
+
+.kudi-app-shell > aside > div:first-child {
+  height: 68px !important;
+  border-bottom: 1px solid var(--strap-line) !important;
+  padding-inline: 22px !important;
+}
+
+.kudi-app-shell > aside nav a {
+  min-height: 38px;
+  border-radius: 9px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.kudi-app-shell > aside nav a:hover {
+  background: var(--strap-surface-subtle) !important;
+}
+
+.kudi-app-shell > aside nav a[aria-current="page"],
+.kudi-app-shell > aside nav a.bg-accent-soft {
+  background: var(--strap-brand-soft) !important;
+  color: var(--strap-brand-strong) !important;
+}
+
+.kudi-app-shell > .lg\\:pl-60 {
+  padding-left: 248px !important;
+}
+
+.kudi-app-shell > .lg\\:pl-60 > header {
+  min-height: 64px;
+  background: color-mix(in srgb, var(--strap-surface) 94%, transparent) !important;
+  border-bottom: 1px solid var(--strap-line) !important;
+  box-shadow: 0 1px 0 rgb(16 24 40 / .02);
+}
+
+.kudi-app-shell > .lg\\:pl-60 > main {
+  max-width: 1480px !important;
+  padding-top: 28px !important;
+  padding-bottom: 44px !important;
+}
+
+.kudi-app-shell [data-tour="page-title"] {
+  font-size: clamp(1.55rem, 2.2vw, 2rem) !important;
+  line-height: 1.15 !important;
+  font-weight: 700 !important;
+}
+
+.kudi-app-shell .text-label-caps {
+  font-size: 10px !important;
+  letter-spacing: .13em !important;
+}
+
+/* Surfaces: fewer, flatter, more intentional. */
+.surface-card,
+.storefront-card {
+  background: var(--strap-surface) !important;
+  border: 1px solid var(--strap-line) !important;
+  border-radius: var(--strap-radius-xl) !important;
+  box-shadow: var(--strap-shadow-1) !important;
+}
+
+.surface-card:hover {
+  border-color: var(--strap-line-strong) !important;
+}
+
+.kudi-app-shell .rounded-\[2rem\],
+.kudi-app-shell .rounded-3xl,
+.kudi-app-shell .rounded-\[28px\] {
+  border-radius: var(--strap-radius-xl) !important;
+}
+
+/* Inputs and controls share one physical language. */
+.kudi-app-shell input:not([type="checkbox"]):not([type="radio"]),
+.kudi-app-shell textarea,
+.kudi-app-shell select,
+.kudi-app-shell [role="combobox"] {
+  min-height: 40px;
+  border-radius: var(--strap-radius-md) !important;
+  border-color: var(--strap-line) !important;
+  background: var(--strap-surface) !important;
+}
+
+.kudi-app-shell input:focus,
+.kudi-app-shell textarea:focus,
+.kudi-app-shell select:focus,
+.kudi-app-shell [role="combobox"]:focus-visible {
+  border-color: var(--strap-brand) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--strap-brand) 14%, transparent) !important;
+  outline: none !important;
+}
+
+.kudi-app-shell button,
+.kudi-app-shell a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kudi-app-shell button:not(.unstyled),
+.kudi-app-shell a[class*="rounded-xl"] {
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+}
+
+.kudi-app-shell button:active,
+.kudi-app-shell a:active {
+  transform: translateY(0) scale(.985);
+}
+
+/* Tables and data grids should read like records, not cards. */
+.kudi-app-shell table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.kudi-app-shell table thead {
+  background: var(--strap-surface-subtle);
+}
+
+.kudi-app-shell table th {
+  height: 42px;
+  color: var(--strap-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.kudi-app-shell table td {
+  height: 52px;
+  font-size: 13px;
+}
+
+.kudi-app-shell table tbody tr:hover {
+  background: var(--strap-brand-soft) !important;
+}
+
+/* Status language. */
+.kudi-app-shell .bg-success\\/10 { background: var(--strap-success-soft) !important; }
+.kudi-app-shell .text-success { color: var(--strap-success) !important; }
+.kudi-app-shell .bg-warning-soft { background: var(--strap-warning-soft) !important; }
+.kudi-app-shell .bg-accent-soft { background: var(--strap-brand-soft) !important; }
+.kudi-app-shell .text-accent-ink { color: var(--strap-brand-strong) !important; }
+
+/* POS: give the transaction surface priority over decorative framing. */
+.kudi-app-shell [data-pos],
+.kudi-app-shell .pos-layout {
+  min-height: min(720px, calc(100dvh - 132px));
+}
+
+.kudi-app-shell .pos-cart,
+.kudi-app-shell [data-cart] {
+  border-left: 1px solid var(--strap-line);
+  background: var(--strap-surface);
+}
+
+.kudi-app-shell .pos-product-grid {
+  align-content: start;
+}
+
+/* Dialogs/sheets: predictable geometry across the product. */
+[data-slot="dialog-content"],
+[data-slot="sheet-content"] {
+  border-color: var(--strap-line) !important;
+  border-radius: var(--strap-radius-xl) !important;
+  box-shadow: var(--strap-shadow-3) !important;
+}
+
+[data-slot="sheet-content"] {
+  background: var(--strap-surface) !important;
+}
+
+/* Empty/loading states: one visual grammar. */
+.strap-empty-state {
+  max-width: 420px;
+  margin-inline: auto;
+  padding: 48px 20px;
+  text-align: center;
+}
+
+.strap-empty-state-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  margin-inline: auto;
+  border: 1px solid var(--strap-line);
+  border-radius: 12px;
+  background: var(--strap-surface-subtle);
+  color: var(--strap-muted);
+}
+
+.skeleton,
+[data-slot="skeleton"] {
+  background: linear-gradient(90deg, var(--strap-surface-subtle), color-mix(in srgb, var(--strap-line) 45%, var(--strap-surface)), var(--strap-surface-subtle)) !important;
+  background-size: 200% 100%;
+}
+
+/* Keep the public/authenticated product language connected. */
+body:has(main input#email) {
+  background: var(--strap-canvas) !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--strap-brand) !important;
+  outline-offset: 2px;
+}
+
+@media (max-width: 1279px) {
+  .kudi-app-shell > .lg\\:pl-60 { padding-left: 0 !important; }
+  .kudi-app-shell > aside { display: none !important; }
+}
+
+@media (max-width: 1023px) {
+  .kudi-app-shell > .lg\\:pl-60 > main {
+    padding-top: 18px !important;
+    padding-bottom: 82px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .kudi-app-shell > .lg\\:pl-60 > header {
+    min-height: 58px;
+  }
+
+  .kudi-app-shell > .lg\\:pl-60 > main {
+    padding-inline: 14px !important;
+  }
+
+  .kudi-app-shell [data-tour="page-title"] {
+    font-size: 1.45rem !important;
+  }
+
+  .surface-card,
+  .storefront-card {
+    border-radius: 14px !important;
+  }
+
+  .kudi-app-shell .grid {
+    min-width: 0;
+  }
+
+  .kudi-app-shell table {
+    font-size: 12px;
+  }
+
+  .kudi-app-shell table th {
+    height: 38px;
+  }
+
+  .kudi-app-shell table td {
+    height: 48px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .kudi-app-shell > .lg\\:pl-60 > main {
+    padding-inline: 40px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
