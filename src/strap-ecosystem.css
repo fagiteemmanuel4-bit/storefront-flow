@@ -211,7 +211,7 @@ h1,h2,h3,h4,h5,h6,.font-display {
 }
 
 /* Status language. */
-.kudi-app-shell .bg-success\\/10 { background: var(--strap-success-soft) !important; }
+.kudi-app-shell .bg-success\/10 { background: var(--strap-success-soft) !important; }
 .kudi-app-shell .text-success { color: var(--strap-success) !important; }
 .kudi-app-shell .bg-warning-soft { background: var(--strap-warning-soft) !important; }
 .kudi-app-shell .bg-accent-soft { background: var(--strap-brand-soft) !important; }
