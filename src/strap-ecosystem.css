@@ -716,3 +716,181 @@ body:has(main input[type="password"]) main {
 @media (prefers-reduced-motion: reduce) {
   .kudi-app-shell > .lg\:pl-60 > main > * { animation: none !important; }
 }
+
+
+/* Strap Pulse polish pass — sharpen hierarchy without changing component behavior. */
+:root {
+  color-scheme: light;
+  --strap-motion-fast: 140ms;
+  --strap-motion-base: 200ms;
+  --strap-ease: cubic-bezier(.2, .7, .2, 1);
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+.kudi-app-shell > aside {
+  background: #151811 !important;
+  color: #f4f6ef;
+  border-right-color: #292e23 !important;
+}
+
+.kudi-app-shell > aside > div:first-child {
+  border-bottom-color: #292e23 !important;
+}
+
+.kudi-app-shell > aside nav a {
+  color: #aeb5a3;
+  transition: color var(--strap-motion-base) var(--strap-ease),
+    background var(--strap-motion-base) var(--strap-ease),
+    transform var(--strap-motion-fast) var(--strap-ease);
+}
+
+.kudi-app-shell > aside nav a:hover {
+  color: #f4f6ef;
+  background: rgb(255 255 255 / .055) !important;
+}
+
+.kudi-app-shell > aside nav a[aria-current="page"],
+.kudi-app-shell > aside nav a.bg-accent-soft {
+  color: #171a14 !important;
+  background: #b8f34a !important;
+  box-shadow: 0 4px 14px rgb(184 243 74 / .12);
+}
+
+.kudi-app-shell > .lg\\:pl-60 > header {
+  backdrop-filter: saturate(150%) blur(16px);
+  -webkit-backdrop-filter: saturate(150%) blur(16px);
+}
+
+.kudi-app-shell > .lg\\:pl-60 > main {
+  animation: strap-content-enter 240ms var(--strap-ease) both;
+}
+
+@keyframes strap-content-enter {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.kudi-app-shell .surface-card,
+.kudi-app-shell .storefront-card,
+.kudi-app-shell [data-slot="card"] {
+  transition: border-color var(--strap-motion-base) var(--strap-ease),
+    box-shadow var(--strap-motion-base) var(--strap-ease),
+    transform var(--strap-motion-base) var(--strap-ease);
+}
+
+.kudi-app-shell .surface-card:hover,
+.kudi-app-shell .storefront-card:hover {
+  box-shadow: var(--strap-shadow-2) !important;
+}
+
+.kudi-app-shell button:focus-visible,
+.kudi-app-shell a:focus-visible,
+.kudi-app-shell [role="button"]:focus-visible {
+  outline: 2px solid #82b52c !important;
+  outline-offset: 3px;
+}
+
+.kudi-app-shell button:disabled,
+.kudi-app-shell [aria-disabled="true"] {
+  cursor: not-allowed;
+  filter: saturate(.45);
+}
+
+.kudi-app-shell table tbody tr {
+  transition: background-color var(--strap-motion-fast) ease;
+}
+
+.kudi-app-shell table td,
+.kudi-app-shell table th {
+  padding-inline: 14px;
+}
+
+.kudi-app-shell [role="dialog"],
+.kudi-app-shell [data-slot="dialog-content"],
+.kudi-app-shell [data-slot="sheet-content"] {
+  animation: strap-dialog-enter 180ms var(--strap-ease) both;
+}
+
+@keyframes strap-dialog-enter {
+  from { opacity: 0; transform: translateY(7px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Charts and data-heavy views need a quieter frame than the data itself. */
+.kudi-app-shell .recharts-cartesian-grid line {
+  stroke: var(--strap-line) !important;
+  stroke-dasharray: 3 5;
+}
+
+.kudi-app-shell .recharts-text,
+.kudi-app-shell .recharts-legend-item-text {
+  fill: var(--strap-muted) !important;
+  color: var(--strap-muted) !important;
+  font-size: 11px;
+}
+
+.kudi-app-shell .recharts-tooltip-wrapper {
+  filter: drop-shadow(0 8px 20px rgb(20 28 12 / .12));
+}
+
+.kudi-app-shell .recharts-default-tooltip {
+  border: 1px solid var(--strap-line) !important;
+  border-radius: 12px !important;
+  background: var(--strap-surface) !important;
+}
+
+/* Prevent long names, totals, and table cells from pushing mobile layouts wide. */
+.kudi-app-shell main,
+.kudi-app-shell main > *,
+.kudi-app-shell [data-slot="card"],
+.kudi-app-shell .surface-card {
+  min-width: 0;
+}
+
+.kudi-app-shell table td {
+  overflow-wrap: anywhere;
+}
+
+.kudi-app-shell input::placeholder,
+.kudi-app-shell textarea::placeholder {
+  color: var(--strap-muted);
+  opacity: .78;
+}
+
+.kudi-app-shell ::selection {
+  color: #171a14;
+  background: rgb(184 243 74 / .55);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kudi-app-shell button:not(:disabled):hover {
+    transition-duration: var(--strap-motion-fast);
+  }
+}
+
+@media (max-width: 640px) {
+  .kudi-app-shell > .lg\\:pl-60 > main {
+    overflow-x: clip;
+  }
+
+  .kudi-app-shell table th,
+  .kudi-app-shell table td {
+    padding-inline: 10px;
+  }
+
+  .kudi-app-shell .recharts-responsive-container {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kudi-app-shell > .lg\\:pl-60 > main,
+  .kudi-app-shell [role="dialog"],
+  .kudi-app-shell [data-slot="dialog-content"],
+  .kudi-app-shell [data-slot="sheet-content"] {
+    animation: none !important;
+  }
+}
