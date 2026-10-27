@@ -12,9 +12,9 @@
   --strap-muted: #667085;
   --strap-line: #e4e7ec;
   --strap-line-strong: #d0d5dd;
-  --strap-brand: #2563eb;
-  --strap-brand-strong: #1d4ed8;
-  --strap-brand-soft: #eff6ff;
+  --strap-brand: #f59e0b;
+  --strap-brand-strong: #c56a12;
+  --strap-brand-soft: #fff1dc;
   --strap-success: #087443;
   --strap-success-soft: #ecfdf3;
   --strap-warning: #b54708;
@@ -39,9 +39,9 @@
   --strap-muted: #98a2b3;
   --strap-line: #263241;
   --strap-line-strong: #344054;
-  --strap-brand: #7aa2ff;
-  --strap-brand-strong: #9ab7ff;
-  --strap-brand-soft: #142342;
+  --strap-brand: #ffbd59;
+  --strap-brand-strong: #ffd08a;
+  --strap-brand-soft: #392515;
   --strap-success: #6ce0b0;
   --strap-success-soft: #123328;
   --strap-warning: #fdb022;
@@ -345,7 +345,7 @@ body:has(main input#email) {
 
 /* -------------------------------------------------------------------------- */
 /* Strap Pulse — product-wide visual renovation                               */
-/* A restrained monochrome workspace with an electric-lime action colour.     */
+/* A restrained monochrome workspace with an warm orange action colour.     */
 /* Behaviour and data flow remain in the existing React components.            */
 /* -------------------------------------------------------------------------- */
 
@@ -358,9 +358,9 @@ body:has(main input#email) {
   --strap-muted: #72786d;
   --strap-line: #e3e6dc;
   --strap-line-strong: #cbd1c2;
-  --strap-brand: #b8f34a;
-  --strap-brand-strong: #82b52c;
-  --strap-brand-soft: #eff9dd;
+  --strap-brand: #f5a623;
+  --strap-brand-strong: #c56a12;
+  --strap-brand-soft: #fff1dc;
   --strap-success: #177245;
   --strap-success-soft: #e6f7ed;
   --strap-warning: #9a5b00;
@@ -388,7 +388,7 @@ body:has(main input#email) {
   --secondary-foreground: #25291f !important;
   --muted: #eff1e9 !important;
   --muted-foreground: #72786d !important;
-  --accent: #b8f34a !important;
+  --accent: #f5a623 !important;
   --accent-foreground: #171a14 !important;
   --accent-ink: #4d7218 !important;
   --accent-soft: #eff9dd !important;
@@ -397,12 +397,12 @@ body:has(main input#email) {
   --ring: #8fc638 !important;
   --sidebar: #11140f !important;
   --sidebar-foreground: #f7f8f4 !important;
-  --sidebar-primary: #b8f34a !important;
+  --sidebar-primary: #f5a623 !important;
   --sidebar-primary-foreground: #171a14 !important;
   --sidebar-accent: #24291f !important;
   --sidebar-accent-foreground: #f7f8f4 !important;
   --sidebar-border: #2b3025 !important;
-  --sidebar-ring: #b8f34a !important;
+  --sidebar-ring: #f5a623 !important;
 }
 
 .dark {
@@ -414,9 +414,9 @@ body:has(main input#email) {
   --strap-muted: #9ba391;
   --strap-line: #2a3024;
   --strap-line-strong: #3a4430;
-  --strap-brand: #b8f34a;
-  --strap-brand-strong: #c8fa70;
-  --strap-brand-soft: #202b15;
+  --strap-brand: #f5a623;
+  --strap-brand-strong: #ffbd59;
+  --strap-brand-soft: #392515;
   --strap-success: #76dda3;
   --strap-success-soft: #173323;
   --strap-warning: #ffca70;
@@ -431,43 +431,43 @@ body:has(main input#email) {
   --card-foreground: #f4f6ef !important;
   --popover: #171c13 !important;
   --popover-foreground: #f4f6ef !important;
-  --primary: #b8f34a !important;
+  --primary: #f5a623 !important;
   --primary-foreground: #171a14 !important;
   --secondary: #1d2318 !important;
   --secondary-foreground: #e7ebdf !important;
   --muted: #1d2318 !important;
   --muted-foreground: #9ba391 !important;
-  --accent: #b8f34a !important;
+  --accent: #f5a623 !important;
   --accent-foreground: #171a14 !important;
-  --accent-ink: #c8fa70 !important;
+  --accent-ink: #ffbd59 !important;
   --accent-soft: #202b15 !important;
   --border: #2a3024 !important;
   --input: #343c2c !important;
-  --ring: #b8f34a !important;
+  --ring: #f5a623 !important;
   --sidebar: #080a07 !important;
   --sidebar-foreground: #f4f6ef !important;
-  --sidebar-primary: #b8f34a !important;
+  --sidebar-primary: #f5a623 !important;
   --sidebar-primary-foreground: #171a14 !important;
   --sidebar-accent: #1c2315 !important;
   --sidebar-accent-foreground: #f4f6ef !important;
   --sidebar-border: #242b1d !important;
-  --sidebar-ring: #b8f34a !important;
+  --sidebar-ring: #f5a623 !important;
 }
 
 html { background: var(--strap-canvas); }
 body {
   background:
-    radial-gradient(ellipse at 82% -12%, rgb(184 243 74 / .085), transparent 34rem),
+    radial-gradient(ellipse at 82% -12%, rgb(245 166 35 / .085), transparent 34rem),
     var(--strap-canvas) !important;
   color: var(--strap-ink) !important;
   -webkit-font-smoothing: antialiased;
 }
 .dark body {
   background:
-    radial-gradient(ellipse at 82% -12%, rgb(184 243 74 / .07), transparent 36rem),
+    radial-gradient(ellipse at 82% -12%, rgb(245 166 35 / .07), transparent 36rem),
     var(--strap-canvas) !important;
 }
-::selection { background: rgb(184 243 74 / .42); color: #171a14; }
+::selection { background: rgb(245 166 35 / .42); color: #171a14; }
 
 .kudi-app-shell {
   background: transparent !important;
@@ -491,7 +491,7 @@ body {
 .kudi-app-shell > aside > div:first-child a > span:first-child,
 .kudi-app-shell > .lg\:pl-60 > header a > span:first-child {
   background: var(--strap-brand) !important;
-  box-shadow: 0 0 0 5px rgb(184 243 74 / .09);
+  box-shadow: 0 0 0 5px rgb(245 166 35 / .09);
 }
 .kudi-app-shell > aside > div:first-child a > span:first-child > span,
 .kudi-app-shell > .lg\:pl-60 > header a > span:first-child > span {
@@ -522,7 +522,7 @@ body {
 .kudi-app-shell > aside nav a.bg-accent-soft {
   background: var(--strap-brand) !important;
   color: #171a14 !important;
-  box-shadow: 0 5px 18px rgb(184 243 74 / .13);
+  box-shadow: 0 5px 18px rgb(245 166 35 / .13);
 }
 .kudi-app-shell > aside nav a[aria-current="page"] svg,
 .kudi-app-shell > aside nav a.bg-accent-soft svg { color: #171a14 !important; }
@@ -603,7 +603,7 @@ body {
 .kudi-app-shell select:focus,
 .kudi-app-shell [role="combobox"]:focus-visible {
   border-color: var(--strap-brand-strong) !important;
-  box-shadow: 0 0 0 3px rgb(184 243 74 / .22) !important;
+  box-shadow: 0 0 0 3px rgb(245 166 35 / .22) !important;
   outline: none !important;
 }
 .kudi-app-shell input::placeholder,
@@ -631,7 +631,7 @@ button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
 }
 .dark .kudi-app-shell button.bg-primary,
 .dark .kudi-app-shell a.bg-primary {
-  box-shadow: 0 4px 18px rgb(184 243 74 / .12);
+  box-shadow: 0 4px 18px rgb(245 166 35 / .12);
 }
 .kudi-app-shell button.bg-accent,
 .kudi-app-shell a.bg-accent {
@@ -639,7 +639,7 @@ button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
 }
 .kudi-app-shell button.bg-accent:hover,
 .kudi-app-shell a.bg-accent:hover {
-  background: #c8fa70 !important;
+  background: #ffbd59 !important;
 }
 
 /* Operational tables feel like a clean ledger, with clear scan lines. */
@@ -665,7 +665,7 @@ button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
 body:has(main input#email),
 body:has(main input[type="password"]) {
   background:
-    radial-gradient(ellipse at 95% 0%, rgb(184 243 74 / .1), transparent 32rem),
+    radial-gradient(ellipse at 95% 0%, rgb(245 166 35 / .1), transparent 32rem),
     var(--strap-canvas) !important;
 }
 body:has(main input#email) main,
@@ -694,7 +694,7 @@ body:has(main input[type="password"]) main {
 .kudi-app-shell > .lg\:pl-60 > main > *:nth-child(3) { animation-delay: .07s; }
 .kudi-app-shell > .lg\:pl-60 > main > *:nth-child(4) { animation-delay: .105s; }
 .strap-route-progress > div,
-[role="progressbar"] > div { box-shadow: 0 0 16px rgb(184 243 74 / .5); }
+[role="progressbar"] > div { box-shadow: 0 0 16px rgb(245 166 35 / .5); }
 
 @media (max-width: 1279px) {
   .kudi-app-shell > .lg\:pl-60 { padding-left: 0 !important; }
@@ -718,7 +718,7 @@ body:has(main input[type="password"]) main {
 }
 
 
-/* Strap Pulse polish pass — sharpen hierarchy without changing component behavior. */
+/* Strap orange-and-white palette restoration — sharpen hierarchy without changing component behavior. */
 :root {
   color-scheme: light;
   --strap-motion-fast: 140ms;
@@ -755,8 +755,8 @@ body:has(main input[type="password"]) main {
 .kudi-app-shell > aside nav a[aria-current="page"],
 .kudi-app-shell > aside nav a.bg-accent-soft {
   color: #171a14 !important;
-  background: #b8f34a !important;
-  box-shadow: 0 4px 14px rgb(184 243 74 / .12);
+  background: #f5a623 !important;
+  box-shadow: 0 4px 14px rgb(245 166 35 / .12);
 }
 
 .kudi-app-shell > .lg\\:pl-60 > header {
@@ -789,7 +789,7 @@ body:has(main input[type="password"]) main {
 .kudi-app-shell button:focus-visible,
 .kudi-app-shell a:focus-visible,
 .kudi-app-shell [role="button"]:focus-visible {
-  outline: 2px solid #82b52c !important;
+  outline: 2px solid #c56a12 !important;
   outline-offset: 3px;
 }
 
@@ -862,7 +862,7 @@ body:has(main input[type="password"]) main {
 
 .kudi-app-shell ::selection {
   color: #171a14;
-  background: rgb(184 243 74 / .55);
+  background: rgb(245 166 35 / .55);
 }
 
 @media (hover: hover) and (pointer: fine) {
