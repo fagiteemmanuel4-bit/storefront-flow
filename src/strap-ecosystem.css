@@ -341,3 +341,378 @@ body:has(main input#email) {
     animation-duration: .01ms !important;
   }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Strap Pulse — product-wide visual renovation                               */
+/* A restrained monochrome workspace with an electric-lime action colour.     */
+/* Behaviour and data flow remain in the existing React components.            */
+/* -------------------------------------------------------------------------- */
+
+:root {
+  --strap-canvas: #f6f7f3;
+  --strap-surface: #ffffff;
+  --strap-surface-subtle: #f0f2ec;
+  --strap-ink: #171a14;
+  --strap-ink-2: #41463c;
+  --strap-muted: #72786d;
+  --strap-line: #e3e6dc;
+  --strap-line-strong: #cbd1c2;
+  --strap-brand: #b8f34a;
+  --strap-brand-strong: #82b52c;
+  --strap-brand-soft: #eff9dd;
+  --strap-success: #177245;
+  --strap-success-soft: #e6f7ed;
+  --strap-warning: #9a5b00;
+  --strap-warning-soft: #fff3d8;
+  --strap-danger: #b42318;
+  --strap-danger-soft: #fef0ee;
+  --strap-radius-sm: 9px;
+  --strap-radius-md: 12px;
+  --strap-radius-lg: 16px;
+  --strap-radius-xl: 20px;
+  --strap-shadow-1: 0 1px 2px rgb(20 28 12 / .035), 0 2px 8px rgb(20 28 12 / .025);
+  --strap-shadow-2: 0 10px 30px rgb(20 28 12 / .065);
+  --strap-shadow-3: 0 28px 72px rgb(20 28 12 / .15);
+
+  --background: #f6f7f3 !important;
+  --foreground: #171a14 !important;
+  --surface: #ffffff !important;
+  --card: #ffffff !important;
+  --card-foreground: #171a14 !important;
+  --popover: #ffffff !important;
+  --popover-foreground: #171a14 !important;
+  --primary: #171a14 !important;
+  --primary-foreground: #f8faf5 !important;
+  --secondary: #eff1e9 !important;
+  --secondary-foreground: #25291f !important;
+  --muted: #eff1e9 !important;
+  --muted-foreground: #72786d !important;
+  --accent: #b8f34a !important;
+  --accent-foreground: #171a14 !important;
+  --accent-ink: #4d7218 !important;
+  --accent-soft: #eff9dd !important;
+  --border: #e3e6dc !important;
+  --input: #dce1d5 !important;
+  --ring: #8fc638 !important;
+  --sidebar: #11140f !important;
+  --sidebar-foreground: #f7f8f4 !important;
+  --sidebar-primary: #b8f34a !important;
+  --sidebar-primary-foreground: #171a14 !important;
+  --sidebar-accent: #24291f !important;
+  --sidebar-accent-foreground: #f7f8f4 !important;
+  --sidebar-border: #2b3025 !important;
+  --sidebar-ring: #b8f34a !important;
+}
+
+.dark {
+  --strap-canvas: #0c0f0a;
+  --strap-surface: #141811;
+  --strap-surface-subtle: #1b2017;
+  --strap-ink: #f4f6ef;
+  --strap-ink-2: #d4dacb;
+  --strap-muted: #9ba391;
+  --strap-line: #2a3024;
+  --strap-line-strong: #3a4430;
+  --strap-brand: #b8f34a;
+  --strap-brand-strong: #c8fa70;
+  --strap-brand-soft: #202b15;
+  --strap-success: #76dda3;
+  --strap-success-soft: #173323;
+  --strap-warning: #ffca70;
+  --strap-warning-soft: #352a16;
+  --strap-danger: #ff8c82;
+  --strap-danger-soft: #351b19;
+
+  --background: #0c0f0a !important;
+  --foreground: #f4f6ef !important;
+  --surface: #141811 !important;
+  --card: #141811 !important;
+  --card-foreground: #f4f6ef !important;
+  --popover: #171c13 !important;
+  --popover-foreground: #f4f6ef !important;
+  --primary: #b8f34a !important;
+  --primary-foreground: #171a14 !important;
+  --secondary: #1d2318 !important;
+  --secondary-foreground: #e7ebdf !important;
+  --muted: #1d2318 !important;
+  --muted-foreground: #9ba391 !important;
+  --accent: #b8f34a !important;
+  --accent-foreground: #171a14 !important;
+  --accent-ink: #c8fa70 !important;
+  --accent-soft: #202b15 !important;
+  --border: #2a3024 !important;
+  --input: #343c2c !important;
+  --ring: #b8f34a !important;
+  --sidebar: #080a07 !important;
+  --sidebar-foreground: #f4f6ef !important;
+  --sidebar-primary: #b8f34a !important;
+  --sidebar-primary-foreground: #171a14 !important;
+  --sidebar-accent: #1c2315 !important;
+  --sidebar-accent-foreground: #f4f6ef !important;
+  --sidebar-border: #242b1d !important;
+  --sidebar-ring: #b8f34a !important;
+}
+
+html { background: var(--strap-canvas); }
+body {
+  background:
+    radial-gradient(ellipse at 82% -12%, rgb(184 243 74 / .085), transparent 34rem),
+    var(--strap-canvas) !important;
+  color: var(--strap-ink) !important;
+  -webkit-font-smoothing: antialiased;
+}
+.dark body {
+  background:
+    radial-gradient(ellipse at 82% -12%, rgb(184 243 74 / .07), transparent 36rem),
+    var(--strap-canvas) !important;
+}
+::selection { background: rgb(184 243 74 / .42); color: #171a14; }
+
+.kudi-app-shell {
+  background: transparent !important;
+  color: var(--strap-ink) !important;
+}
+.kudi-app-shell > aside {
+  width: 252px !important;
+  background: linear-gradient(180deg, #151912 0%, #10130e 70%, #0d100b 100%) !important;
+  color: #f4f6ef !important;
+  border-right: 1px solid rgb(255 255 255 / .075) !important;
+  box-shadow: 12px 0 40px rgb(15 20 9 / .035);
+}
+.dark .kudi-app-shell > aside {
+  background: linear-gradient(180deg, #10130d 0%, #090b08 100%) !important;
+}
+.kudi-app-shell > aside > div:first-child {
+  height: 76px !important;
+  padding-inline: 24px !important;
+  border-bottom-color: rgb(255 255 255 / .085) !important;
+}
+.kudi-app-shell > aside > div:first-child a > span:first-child,
+.kudi-app-shell > .lg\:pl-60 > header a > span:first-child {
+  background: var(--strap-brand) !important;
+  box-shadow: 0 0 0 5px rgb(184 243 74 / .09);
+}
+.kudi-app-shell > aside > div:first-child a > span:first-child > span,
+.kudi-app-shell > .lg\:pl-60 > header a > span:first-child > span {
+  background: #171a14 !important;
+}
+.kudi-app-shell > aside .text-muted-foreground {
+  color: #a4ab9b !important;
+}
+.kudi-app-shell > aside p.text-\[10px\] {
+  color: #8c9581 !important;
+  letter-spacing: .15em !important;
+}
+.kudi-app-shell > aside nav a {
+  min-height: 42px !important;
+  padding-inline: 12px !important;
+  border-radius: 12px !important;
+  color: #c7cdbf !important;
+  font-size: 13px !important;
+  font-weight: 560 !important;
+  transition: background .18s ease, color .18s ease, transform .18s ease !important;
+}
+.kudi-app-shell > aside nav a:hover {
+  background: rgb(255 255 255 / .065) !important;
+  color: #ffffff !important;
+  transform: translateX(2px);
+}
+.kudi-app-shell > aside nav a[aria-current="page"],
+.kudi-app-shell > aside nav a.bg-accent-soft {
+  background: var(--strap-brand) !important;
+  color: #171a14 !important;
+  box-shadow: 0 5px 18px rgb(184 243 74 / .13);
+}
+.kudi-app-shell > aside nav a[aria-current="page"] svg,
+.kudi-app-shell > aside nav a.bg-accent-soft svg { color: #171a14 !important; }
+.kudi-app-shell > aside .border-border { border-color: rgb(255 255 255 / .09) !important; }
+.kudi-app-shell > aside .bg-secondary\/50 {
+  background: rgb(255 255 255 / .055) !important;
+  border-color: rgb(255 255 255 / .1) !important;
+}
+.kudi-app-shell > aside .bg-foreground.text-background {
+  background: var(--strap-brand) !important;
+  color: #171a14 !important;
+}
+
+.kudi-app-shell > .lg\:pl-60 { padding-left: 252px !important; }
+.kudi-app-shell > .lg\:pl-60 > header {
+  min-height: 72px !important;
+  background: color-mix(in srgb, var(--strap-surface) 88%, transparent) !important;
+  border-bottom: 1px solid var(--strap-line) !important;
+  backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: 0 1px 0 rgb(25 30 18 / .025);
+}
+.kudi-app-shell > .lg\:pl-60 > header > div {
+  min-height: 72px !important;
+  max-width: 1600px !important;
+}
+.kudi-app-shell > .lg\:pl-60 > header p.text-xs { color: var(--strap-muted) !important; }
+.kudi-app-shell > .lg\:pl-60 > header p.text-sm { font-weight: 650 !important; letter-spacing: -.015em; }
+.kudi-app-shell > .lg\:pl-60 > main {
+  max-width: 1600px !important;
+  padding-top: 30px !important;
+  padding-bottom: 48px !important;
+}
+.kudi-app-shell [data-tour="page-title"] {
+  font-size: clamp(1.8rem, 2.6vw, 2.35rem) !important;
+  line-height: 1.08 !important;
+  font-weight: 760 !important;
+  letter-spacing: -.055em !important;
+}
+.kudi-app-shell .text-label-caps {
+  font-size: 10px !important;
+  letter-spacing: .14em !important;
+  font-weight: 750 !important;
+}
+.kudi-app-shell .text-muted-foreground { color: var(--strap-muted) !important; }
+
+/* Surfaces gain definition through quiet borders and a restrained hover lift. */
+.surface-card,
+.storefront-card,
+.kudi-app-shell [data-slot="card"] {
+  background: var(--strap-surface) !important;
+  border: 1px solid var(--strap-line) !important;
+  border-radius: var(--strap-radius-xl) !important;
+  box-shadow: var(--strap-shadow-1) !important;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease !important;
+}
+.kudi-app-shell .surface-card:hover,
+.kudi-app-shell .storefront-card:hover {
+  border-color: var(--strap-line-strong) !important;
+  box-shadow: var(--strap-shadow-2) !important;
+}
+.kudi-app-shell .rounded-\[2rem\],
+.kudi-app-shell .rounded-3xl,
+.kudi-app-shell .rounded-\[28px\] { border-radius: var(--strap-radius-xl) !important; }
+
+/* A consistent, accessible control language. */
+.kudi-app-shell input:not([type="checkbox"]):not([type="radio"]),
+.kudi-app-shell textarea,
+.kudi-app-shell select,
+.kudi-app-shell [role="combobox"] {
+  border-radius: 12px !important;
+  border-color: var(--strap-line-strong) !important;
+  background: var(--strap-surface) !important;
+  color: var(--strap-ink) !important;
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease !important;
+}
+.kudi-app-shell input:focus,
+.kudi-app-shell textarea:focus,
+.kudi-app-shell select:focus,
+.kudi-app-shell [role="combobox"]:focus-visible {
+  border-color: var(--strap-brand-strong) !important;
+  box-shadow: 0 0 0 3px rgb(184 243 74 / .22) !important;
+  outline: none !important;
+}
+.kudi-app-shell input::placeholder,
+.kudi-app-shell textarea::placeholder { color: var(--strap-muted) !important; opacity: .8; }
+button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
+.kudi-app-shell button,
+.kudi-app-shell a,
+[data-slot="dialog-content"],
+[data-slot="sheet-content"] {
+  transition-timing-function: cubic-bezier(.2,.8,.2,1);
+}
+.kudi-app-shell button:active,
+.kudi-app-shell a:active,
+.kudi-app-shell [role="button"]:active {
+  transform: scale(.985);
+}
+.kudi-app-shell button:focus-visible,
+.kudi-app-shell a:focus-visible,
+:focus-visible {
+  outline-color: var(--strap-brand-strong) !important;
+}
+.kudi-app-shell button.bg-primary,
+.kudi-app-shell a.bg-primary {
+  box-shadow: 0 4px 14px rgb(23 26 20 / .13);
+}
+.dark .kudi-app-shell button.bg-primary,
+.dark .kudi-app-shell a.bg-primary {
+  box-shadow: 0 4px 18px rgb(184 243 74 / .12);
+}
+.kudi-app-shell button.bg-accent,
+.kudi-app-shell a.bg-accent {
+  color: #171a14 !important;
+}
+.kudi-app-shell button.bg-accent:hover,
+.kudi-app-shell a.bg-accent:hover {
+  background: #c8fa70 !important;
+}
+
+/* Operational tables feel like a clean ledger, with clear scan lines. */
+.kudi-app-shell table { border-collapse: separate; border-spacing: 0; }
+.kudi-app-shell table thead { background: var(--strap-surface-subtle) !important; }
+.kudi-app-shell table th {
+  height: 44px;
+  color: var(--strap-muted) !important;
+  font-size: 10px !important;
+  font-weight: 750 !important;
+  letter-spacing: .1em !important;
+  text-transform: uppercase;
+}
+.kudi-app-shell table td {
+  height: 54px;
+  font-size: 13px;
+  border-bottom-color: var(--strap-line) !important;
+}
+.kudi-app-shell table tbody tr { transition: background .15s ease; }
+.kudi-app-shell table tbody tr:hover { background: color-mix(in srgb, var(--strap-brand) 10%, var(--strap-surface)) !important; }
+
+/* Public pages, auth and customer-facing surfaces share the same identity. */
+body:has(main input#email),
+body:has(main input[type="password"]) {
+  background:
+    radial-gradient(ellipse at 95% 0%, rgb(184 243 74 / .1), transparent 32rem),
+    var(--strap-canvas) !important;
+}
+body:has(main input#email) main,
+body:has(main input[type="password"]) main {
+  color: var(--strap-ink);
+}
+[data-slot="dialog-content"],
+[data-slot="sheet-content"],
+[data-slot="popover-content"],
+[data-radix-popper-content-wrapper] > div {
+  border-color: var(--strap-line) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--strap-shadow-3) !important;
+}
+[data-slot="sheet-content"] { background: var(--strap-surface) !important; }
+
+/* Motion is functional: reveal and focus, never distract from the work. */
+@keyframes strap-soft-enter {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.kudi-app-shell > .lg\:pl-60 > main > * {
+  animation: strap-soft-enter .38s cubic-bezier(.2,.8,.2,1) both;
+}
+.kudi-app-shell > .lg\:pl-60 > main > *:nth-child(2) { animation-delay: .035s; }
+.kudi-app-shell > .lg\:pl-60 > main > *:nth-child(3) { animation-delay: .07s; }
+.kudi-app-shell > .lg\:pl-60 > main > *:nth-child(4) { animation-delay: .105s; }
+.strap-route-progress > div,
+[role="progressbar"] > div { box-shadow: 0 0 16px rgb(184 243 74 / .5); }
+
+@media (max-width: 1279px) {
+  .kudi-app-shell > .lg\:pl-60 { padding-left: 0 !important; }
+  .kudi-app-shell > aside { display: none !important; }
+}
+@media (max-width: 1023px) {
+  .kudi-app-shell > .lg\:pl-60 > main {
+    padding-top: 20px !important;
+    padding-bottom: 84px !important;
+  }
+}
+@media (max-width: 640px) {
+  .kudi-app-shell > .lg\:pl-60 > header,
+  .kudi-app-shell > .lg\:pl-60 > header > div { min-height: 58px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main { padding-inline: 14px !important; }
+  .kudi-app-shell [data-tour="page-title"] { font-size: 1.65rem !important; }
+  .surface-card, .storefront-card { border-radius: 16px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kudi-app-shell > .lg\:pl-60 > main > * { animation: none !important; }
+}
