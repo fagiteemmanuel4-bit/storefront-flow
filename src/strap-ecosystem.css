@@ -1008,16 +1008,16 @@ body {
   border-bottom: 1px solid #f0e4d5 !important;
 }
 .kudi-app-shell > aside > div:first-child a > span:first-child,
-.kudi-app-shell > .lg\\:pl-60 > header a > span:first-child {
+.kudi-app-shell > .lg\:pl-60 > header a > span:first-child {
   background: #f59e0b !important;
   box-shadow: 0 0 0 5px rgb(245 158 11 / .12) !important;
 }
 .kudi-app-shell > aside > div:first-child a > span:first-child > span,
-.kudi-app-shell > .lg\\:pl-60 > header a > span:first-child > span {
+.kudi-app-shell > .lg\:pl-60 > header a > span:first-child > span {
   background: #ffffff !important;
 }
 .kudi-app-shell > aside .text-muted-foreground,
-.kudi-app-shell > aside p.text-\\[10px\\] { color: #81766a !important; }
+.kudi-app-shell > aside p.text-\[10px\] { color: #81766a !important; }
 .kudi-app-shell > aside nav a {
   color: #65594c !important;
   border-radius: 10px !important;
@@ -1036,9 +1036,9 @@ body {
 .kudi-app-shell > aside nav a[aria-current="page"] svg,
 .kudi-app-shell > aside nav a.bg-accent-soft svg { color: #c56a12 !important; }
 .kudi-app-shell > aside .border-border { border-color: #f0e4d5 !important; }
-.kudi-app-shell > aside .bg-secondary\\/50 { background: #fff5e8 !important; border-color: #f0e4d5 !important; }
+.kudi-app-shell > aside .bg-secondary\/50 { background: #fff5e8 !important; border-color: #f0e4d5 !important; }
 
-.kudi-app-shell > .lg\\:pl-60 > header {
+.kudi-app-shell > .lg\:pl-60 > header {
   background: rgb(255 255 255 / .94) !important;
   border-bottom: 1px solid #f0e4d5 !important;
   box-shadow: 0 3px 18px rgb(111 70 25 / .025) !important;
@@ -1051,7 +1051,7 @@ body {
   color: #ffffff !important;
 }
 .kudi-app-shell .bg-accent,
-.kudi-app-shell .bg-\\[\\#f5c23e\\] { background-color: #f59e0b !important; }
+.kudi-app-shell .bg-\[\#f5c23e\] { background-color: #f59e0b !important; }
 .kudi-app-shell .text-accent,
 .kudi-app-shell .text-accent-ink,
 .kudi-app-shell [data-sidebar="menu-button"][data-active="true"] {
