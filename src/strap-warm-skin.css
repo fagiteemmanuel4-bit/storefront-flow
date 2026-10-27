@@ -1,0 +1,92 @@
+/* Strap warm-orange product skin — visual-only overrides.
+   Components, routes, authentication, queries and mutations remain unchanged. */
+:root {
+  --background: #faf9f7 !important;
+  --foreground: #24221f !important;
+  --surface: #ffffff !important;
+  --card: #ffffff !important;
+  --card-foreground: #24221f !important;
+  --popover: #ffffff !important;
+  --popover-foreground: #24221f !important;
+  --primary: #f26b38 !important;
+  --primary-foreground: #ffffff !important;
+  --secondary: #f5f2ee !important;
+  --secondary-foreground: #37332e !important;
+  --muted: #f5f2ee !important;
+  --muted-foreground: #827b73 !important;
+  --accent: #f26b38 !important;
+  --accent-foreground: #ffffff !important;
+  --accent-ink: #c84d22 !important;
+  --accent-soft: #fff0e9 !important;
+  --border: #eee9e3 !important;
+  --input: #e9e3dc !important;
+  --ring: #f6a17f !important;
+  --sidebar: #ffffff !important;
+  --sidebar-foreground: #24221f !important;
+  --sidebar-primary: #f26b38 !important;
+  --sidebar-primary-foreground: #ffffff !important;
+  --sidebar-accent: #fff0e9 !important;
+  --sidebar-accent-foreground: #c84d22 !important;
+  --sidebar-border: #eee9e3 !important;
+  --radius: .9rem;
+}
+html, body { background: #faf9f7; }
+body { color: #24221f; -webkit-font-smoothing: antialiased; }
+::selection { background: #ffd9c8; color: #702b12; }
+.kudi-app-shell { background: #faf9f7 !important; }
+.kudi-app-shell aside { background: #fff !important; border-color: #eee9e3 !important; }
+.kudi-app-shell header { background: rgb(255 255 255 / .94) !important; border-color: #eee9e3 !important; box-shadow: 0 3px 18px rgb(45 32 20 / .025); }
+.kudi-app-shell aside a[class*="bg-accent-soft"],
+.kudi-app-shell aside a[class*="text-accent-ink"] { background: #fff0e9 !important; color: #c84d22 !important; }
+.kudi-app-shell aside a:hover { background: #fff7f3; }
+.kudi-app-shell aside a > svg { transition: transform .18s ease; }
+.kudi-app-shell aside a:hover > svg { transform: translateX(1px); }
+.kudi-app-shell aside .rounded-xl.border { border-color: #eee9e3 !important; }
+.kudi-app-shell main { color: #24221f; }
+.kudi-app-shell main [class*="rounded-2xl"][class*="border"],
+.kudi-app-shell main [class*="rounded-3xl"][class*="border"],
+.kudi-app-shell main [class*="rounded-xl"][class*="border"] { border-color: #eee9e3; }
+.kudi-app-shell main [class*="shadow"] { --tw-shadow-color: rgb(58 39 22 / .045); }
+.kudi-app-shell button[class*="bg-primary"],
+.kudi-app-shell a[class*="bg-primary"] { box-shadow: 0 5px 14px rgb(242 107 56 / .17); }
+.kudi-app-shell input:focus-visible,
+.kudi-app-shell textarea:focus-visible,
+.kudi-app-shell select:focus-visible { outline-color: #f6a17f; }
+.kudi-app-shell .font-display { font-family: "Manrope", "DM Sans", Inter, sans-serif !important; letter-spacing: -.035em; }
+@media (max-width: 640px) {
+  .kudi-app-shell main { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+  .kudi-app-shell header { backdrop-filter: blur(18px); }
+}
+.dark {
+  --background: #191714 !important;
+  --foreground: #f8f5f1 !important;
+  --surface: #211e1a !important;
+  --card: #211e1a !important;
+  --card-foreground: #f8f5f1 !important;
+  --popover: #211e1a !important;
+  --popover-foreground: #f8f5f1 !important;
+  --primary: #ff8b5e !important;
+  --primary-foreground: #24160f !important;
+  --secondary: #2c2823 !important;
+  --secondary-foreground: #f8f5f1 !important;
+  --muted: #2c2823 !important;
+  --muted-foreground: #b4aaa0 !important;
+  --accent: #ff8b5e !important;
+  --accent-foreground: #24160f !important;
+  --accent-ink: #ffb392 !important;
+  --accent-soft: #38251c !important;
+  --border: #39332c !important;
+  --input: #39332c !important;
+  --ring: #ff8b5e !important;
+  --sidebar: #211e1a !important;
+  --sidebar-foreground: #f8f5f1 !important;
+  --sidebar-primary: #ff8b5e !important;
+  --sidebar-primary-foreground: #24160f !important;
+  --sidebar-accent: #38251c !important;
+  --sidebar-accent-foreground: #ffb392 !important;
+  --sidebar-border: #39332c !important;
+}
+.dark body, .dark .kudi-app-shell { background: #191714 !important; }
+.dark .kudi-app-shell aside, .dark .kudi-app-shell header { background: #211e1a !important; border-color: #39332c !important; }
+.dark .kudi-app-shell aside a[class*="bg-accent-soft"],
+.dark .kudi-app-shell aside a[class*="text-accent-ink"] { background: #38251c !important; color: #ffb392 !important; }
