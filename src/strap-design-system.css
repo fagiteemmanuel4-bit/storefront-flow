@@ -4,14 +4,14 @@
  */
 
 :root {
-  --strap-blue-50: #f5f8ff;
-  --strap-blue-100: #eaf0ff;
-  --strap-blue-200: #d5e1ff;
-  --strap-blue-300: #b8ccff;
-  --strap-blue-500: #3767e8;
-  --strap-blue-600: #2856d7;
-  --strap-blue-700: #2047b7;
-  --strap-blue-800: #19388f;
+  --strap-blue-50: #fff8ed;
+  --strap-blue-100: #ffefd6;
+  --strap-blue-200: #ffddb0;
+  --strap-blue-300: #ffc66e;
+  --strap-blue-500: #f59e0b;
+  --strap-blue-600: #c56a12;
+  --strap-blue-700: #a9510b;
+  --strap-blue-800: #7c3b0b;
   --strap-ink: #101828;
   --strap-ink-soft: #344054;
   --strap-muted: #667085;
@@ -34,14 +34,14 @@
 }
 
 .dark {
-  --strap-blue-50: #101a32;
-  --strap-blue-100: #142346;
-  --strap-blue-200: #20386d;
-  --strap-blue-300: #34539a;
-  --strap-blue-500: #82a4ff;
-  --strap-blue-600: #9ab6ff;
-  --strap-blue-700: #b5c8ff;
-  --strap-blue-800: #d3ddff;
+  --strap-blue-50: #2c1c0b;
+  --strap-blue-100: #392515;
+  --strap-blue-200: #63390e;
+  --strap-blue-300: #8a4a0b;
+  --strap-blue-500: #ffbd59;
+  --strap-blue-600: #ffd08a;
+  --strap-blue-700: #ffe0ad;
+  --strap-blue-800: #fff0d4;
   --strap-ink: #f2f4f7;
   --strap-ink-soft: #d0d5dd;
   --strap-muted: #98a2b3;
@@ -94,27 +94,27 @@ button, a { -webkit-tap-highlight-color: transparent; }
   --card-foreground: #101828 !important;
   --popover: #ffffff !important;
   --popover-foreground: #101828 !important;
-  --primary: #2856d7 !important;
+  --primary: #c56a12 !important;
   --primary-foreground: #ffffff !important;
   --secondary: #f2f4f7 !important;
   --secondary-foreground: #344054 !important;
   --muted: #f2f4f7 !important;
   --muted-foreground: #667085 !important;
-  --accent: #3767e8 !important;
+  --accent: #f59e0b !important;
   --accent-foreground: #ffffff !important;
-  --accent-ink: #2047b7 !important;
-  --accent-soft: #eaf0ff !important;
+  --accent-ink: #a9510b !important;
+  --accent-soft: #ffefd6 !important;
   --border: #e4e7ec !important;
   --input: #e4e7ec !important;
-  --ring: #3767e8 !important;
+  --ring: #f59e0b !important;
   --sidebar: #ffffff !important;
   --sidebar-foreground: #101828 !important;
-  --sidebar-primary: #2856d7 !important;
+  --sidebar-primary: #c56a12 !important;
   --sidebar-primary-foreground: #ffffff !important;
-  --sidebar-accent: #f5f8ff !important;
-  --sidebar-accent-foreground: #2047b7 !important;
+  --sidebar-accent: #fff8ed !important;
+  --sidebar-accent-foreground: #a9510b !important;
   --sidebar-border: #e4e7ec !important;
-  --sidebar-ring: #3767e8 !important;
+  --sidebar-ring: #f59e0b !important;
 }
 
 .dark {
@@ -125,27 +125,27 @@ button, a { -webkit-tap-highlight-color: transparent; }
   --card-foreground: #f2f4f7 !important;
   --popover: #111927 !important;
   --popover-foreground: #f2f4f7 !important;
-  --primary: #9ab6ff !important;
+  --primary: #ffd08a !important;
   --primary-foreground: #0b111b !important;
   --secondary: #182231 !important;
   --secondary-foreground: #f2f4f7 !important;
   --muted: #182231 !important;
   --muted-foreground: #98a2b3 !important;
-  --accent: #82a4ff !important;
+  --accent: #ffbd59 !important;
   --accent-foreground: #0b111b !important;
-  --accent-ink: #b5c8ff !important;
-  --accent-soft: #142346 !important;
+  --accent-ink: #ffe0ad !important;
+  --accent-soft: #392515 !important;
   --border: #293241 !important;
   --input: #344054 !important;
-  --ring: #82a4ff !important;
+  --ring: #ffbd59 !important;
   --sidebar: #111927 !important;
   --sidebar-foreground: #f2f4f7 !important;
-  --sidebar-primary: #9ab6ff !important;
+  --sidebar-primary: #ffd08a !important;
   --sidebar-primary-foreground: #0b111b !important;
-  --sidebar-accent: #142346 !important;
-  --sidebar-accent-foreground: #d3ddff !important;
+  --sidebar-accent: #392515 !important;
+  --sidebar-accent-foreground: #fff0d4 !important;
   --sidebar-border: #293241 !important;
-  --sidebar-ring: #82a4ff !important;
+  --sidebar-ring: #ffbd59 !important;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -342,7 +342,7 @@ body:has(main input#email) main .text-black { color: var(--strap-ink) !important
 body:has(main input#email) main [class*="border-black"] { border-color: var(--strap-line) !important; }
 body:has(main input#email) main [class*="bg-[#fbfaf7]"] { background: #ffffff !important; }
 body:has(main input#email) main [class*="focus:border-[#c79508]"]:focus { border-color: var(--strap-blue-500) !important; }
-body:has(main input#email) main [class*="focus:ring-[#f5c23e]"]:focus { box-shadow: 0 0 0 3px rgb(55 103 232 / .14) !important; }
+body:has(main input#email) main [class*="focus:ring-[#f5c23e]"]:focus { box-shadow: 0 0 0 3px rgb(245 158 11 / .14) !important; }
 
 /* Public marketing pages: light, editorial, no ornamental orange atmosphere. */
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) {
@@ -350,12 +350,12 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) {
   --foreground: #101828 !important;
   --surface: #ffffff !important;
   --card: #ffffff !important;
-  --primary: #2856d7 !important;
+  --primary: #c56a12 !important;
   --primary-foreground: #ffffff !important;
-  --accent: #3767e8 !important;
+  --accent: #f59e0b !important;
   --accent-foreground: #ffffff !important;
-  --accent-soft: #eaf0ff !important;
-  --accent-ink: #2047b7 !important;
+  --accent-soft: #ffefd6 !important;
+  --accent-ink: #a9510b !important;
 }
 
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#171715\],
