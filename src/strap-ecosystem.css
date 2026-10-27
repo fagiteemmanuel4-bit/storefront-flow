@@ -489,18 +489,18 @@ body {
   border-bottom-color: rgb(255 255 255 / .085) !important;
 }
 .kudi-app-shell > aside > div:first-child a > span:first-child,
-.kudi-app-shell > .lg\\:pl-60 > header a > span:first-child {
+.kudi-app-shell > .lg\:pl-60 > header a > span:first-child {
   background: var(--strap-brand) !important;
   box-shadow: 0 0 0 5px rgb(184 243 74 / .09);
 }
 .kudi-app-shell > aside > div:first-child a > span:first-child > span,
-.kudi-app-shell > .lg\\:pl-60 > header a > span:first-child > span {
+.kudi-app-shell > .lg\:pl-60 > header a > span:first-child > span {
   background: #171a14 !important;
 }
 .kudi-app-shell > aside .text-muted-foreground {
   color: #a4ab9b !important;
 }
-.kudi-app-shell > aside p.text-\\[10px\\] {
+.kudi-app-shell > aside p.text-\[10px\] {
   color: #8c9581 !important;
   letter-spacing: .15em !important;
 }
@@ -527,7 +527,7 @@ body {
 .kudi-app-shell > aside nav a[aria-current="page"] svg,
 .kudi-app-shell > aside nav a.bg-accent-soft svg { color: #171a14 !important; }
 .kudi-app-shell > aside .border-border { border-color: rgb(255 255 255 / .09) !important; }
-.kudi-app-shell > aside .bg-secondary\\/50 {
+.kudi-app-shell > aside .bg-secondary\/50 {
   background: rgb(255 255 255 / .055) !important;
   border-color: rgb(255 255 255 / .1) !important;
 }
@@ -536,21 +536,21 @@ body {
   color: #171a14 !important;
 }
 
-.kudi-app-shell > .lg\\:pl-60 { padding-left: 252px !important; }
-.kudi-app-shell > .lg\\:pl-60 > header {
+.kudi-app-shell > .lg\:pl-60 { padding-left: 252px !important; }
+.kudi-app-shell > .lg\:pl-60 > header {
   min-height: 72px !important;
   background: color-mix(in srgb, var(--strap-surface) 88%, transparent) !important;
   border-bottom: 1px solid var(--strap-line) !important;
   backdrop-filter: blur(18px) saturate(150%);
   box-shadow: 0 1px 0 rgb(25 30 18 / .025);
 }
-.kudi-app-shell > .lg\\:pl-60 > header > div {
+.kudi-app-shell > .lg\:pl-60 > header > div {
   min-height: 72px !important;
   max-width: 1600px !important;
 }
-.kudi-app-shell > .lg\\:pl-60 > header p.text-xs { color: var(--strap-muted) !important; }
-.kudi-app-shell > .lg\\:pl-60 > header p.text-sm { font-weight: 650 !important; letter-spacing: -.015em; }
-.kudi-app-shell > .lg\\:pl-60 > main {
+.kudi-app-shell > .lg\:pl-60 > header p.text-xs { color: var(--strap-muted) !important; }
+.kudi-app-shell > .lg\:pl-60 > header p.text-sm { font-weight: 650 !important; letter-spacing: -.015em; }
+.kudi-app-shell > .lg\:pl-60 > main {
   max-width: 1600px !important;
   padding-top: 30px !important;
   padding-bottom: 48px !important;
@@ -583,9 +583,9 @@ body {
   border-color: var(--strap-line-strong) !important;
   box-shadow: var(--strap-shadow-2) !important;
 }
-.kudi-app-shell .rounded-\\[2rem\\],
+.kudi-app-shell .rounded-\[2rem\],
 .kudi-app-shell .rounded-3xl,
-.kudi-app-shell .rounded-\\[28px\\] { border-radius: var(--strap-radius-xl) !important; }
+.kudi-app-shell .rounded-\[28px\] { border-radius: var(--strap-radius-xl) !important; }
 
 /* A consistent, accessible control language. */
 .kudi-app-shell input:not([type="checkbox"]):not([type="radio"]),
@@ -687,32 +687,32 @@ body:has(main input[type="password"]) main {
   from { opacity: 0; transform: translateY(7px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.kudi-app-shell > .lg\\:pl-60 > main > * {
+.kudi-app-shell > .lg\:pl-60 > main > * {
   animation: strap-soft-enter .38s cubic-bezier(.2,.8,.2,1) both;
 }
-.kudi-app-shell > .lg\\:pl-60 > main > *:nth-child(2) { animation-delay: .035s; }
-.kudi-app-shell > .lg\\:pl-60 > main > *:nth-child(3) { animation-delay: .07s; }
-.kudi-app-shell > .lg\\:pl-60 > main > *:nth-child(4) { animation-delay: .105s; }
+.kudi-app-shell > .lg\:pl-60 > main > *:nth-child(2) { animation-delay: .035s; }
+.kudi-app-shell > .lg\:pl-60 > main > *:nth-child(3) { animation-delay: .07s; }
+.kudi-app-shell > .lg\:pl-60 > main > *:nth-child(4) { animation-delay: .105s; }
 .strap-route-progress > div,
 [role="progressbar"] > div { box-shadow: 0 0 16px rgb(184 243 74 / .5); }
 
 @media (max-width: 1279px) {
-  .kudi-app-shell > .lg\\:pl-60 { padding-left: 0 !important; }
+  .kudi-app-shell > .lg\:pl-60 { padding-left: 0 !important; }
   .kudi-app-shell > aside { display: none !important; }
 }
 @media (max-width: 1023px) {
-  .kudi-app-shell > .lg\\:pl-60 > main {
+  .kudi-app-shell > .lg\:pl-60 > main {
     padding-top: 20px !important;
     padding-bottom: 84px !important;
   }
 }
 @media (max-width: 640px) {
-  .kudi-app-shell > .lg\\:pl-60 > header,
-  .kudi-app-shell > .lg\\:pl-60 > header > div { min-height: 58px !important; }
-  .kudi-app-shell > .lg\\:pl-60 > main { padding-inline: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > header,
+  .kudi-app-shell > .lg\:pl-60 > header > div { min-height: 58px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main { padding-inline: 14px !important; }
   .kudi-app-shell [data-tour="page-title"] { font-size: 1.65rem !important; }
   .surface-card, .storefront-card { border-radius: 16px !important; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .kudi-app-shell > .lg\\:pl-60 > main > * { animation: none !important; }
+  .kudi-app-shell > .lg\:pl-60 > main > * { animation: none !important; }
 }
