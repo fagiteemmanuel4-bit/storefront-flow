@@ -10,7 +10,7 @@ import strapDesignSystemCss from "../strap-design-system.css?url";
 import strapLoadingOverridesCss from "../strap-loading-overrides.css?url";
 import strapMobileDensityCss from "../strap-mobile-density.css?url";
 import strapEcosystemCss from "../strap-ecosystem.css?url";
-import strapWarmSkinCss from "..//strap-warm-skin.css?url";
+import strapWarmSkinCss from "../strap-warm-skin.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
