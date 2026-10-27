@@ -894,3 +894,197 @@ body:has(main input[type="password"]) main {
     animation: none !important;
   }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Strap classic orange + white: final semantic override                       */
+/* This block intentionally comes last so older Pulse/blue/lime tokens cannot */
+/* override the restored brand. Visual-only: no routes, data, or behavior.     */
+/* -------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+  --strap-canvas: #fffaf3 !important;
+  --strap-surface: #ffffff !important;
+  --strap-surface-subtle: #fff5e8 !important;
+  --strap-ink: #24201b !important;
+  --strap-ink-2: #51483e !important;
+  --strap-muted: #81766a !important;
+  --strap-line: #f0e4d5 !important;
+  --strap-line-strong: #e4cdb2 !important;
+  --strap-brand: #f59e0b !important;
+  --strap-brand-strong: #c56a12 !important;
+  --strap-brand-soft: #fff0d9 !important;
+  --background: #fffaf3 !important;
+  --foreground: #24201b !important;
+  --surface: #ffffff !important;
+  --card: #ffffff !important;
+  --card-foreground: #24201b !important;
+  --popover: #ffffff !important;
+  --popover-foreground: #24201b !important;
+  --primary: #c56a12 !important;
+  --primary-foreground: #ffffff !important;
+  --secondary: #fff0d9 !important;
+  --secondary-foreground: #70400f !important;
+  --muted: #fff5e8 !important;
+  --muted-foreground: #81766a !important;
+  --accent: #f59e0b !important;
+  --accent-foreground: #24201b !important;
+  --accent-ink: #a9510b !important;
+  --accent-soft: #fff0d9 !important;
+  --border: #f0e4d5 !important;
+  --input: #e4cdb2 !important;
+  --ring: #f59e0b !important;
+  --sidebar: #ffffff !important;
+  --sidebar-foreground: #24201b !important;
+  --sidebar-primary: #c56a12 !important;
+  --sidebar-primary-foreground: #ffffff !important;
+  --sidebar-accent: #fff0d9 !important;
+  --sidebar-accent-foreground: #a9510b !important;
+  --sidebar-border: #f0e4d5 !important;
+  --sidebar-ring: #f59e0b !important;
+}
+
+.dark {
+  color-scheme: dark;
+  --strap-canvas: #17130f !important;
+  --strap-surface: #211a14 !important;
+  --strap-surface-subtle: #2b2118 !important;
+  --strap-ink: #fff7ed !important;
+  --strap-ink-2: #f1dfca !important;
+  --strap-muted: #c0a991 !important;
+  --strap-line: #493728 !important;
+  --strap-line-strong: #654a32 !important;
+  --strap-brand: #ffbd59 !important;
+  --strap-brand-strong: #ffd08a !important;
+  --strap-brand-soft: #392515 !important;
+  --background: #17130f !important;
+  --foreground: #fff7ed !important;
+  --surface: #211a14 !important;
+  --card: #211a14 !important;
+  --card-foreground: #fff7ed !important;
+  --popover: #211a14 !important;
+  --popover-foreground: #fff7ed !important;
+  --primary: #ffbd59 !important;
+  --primary-foreground: #24180b !important;
+  --secondary: #332519 !important;
+  --secondary-foreground: #f1dfca !important;
+  --muted: #2b2118 !important;
+  --muted-foreground: #c0a991 !important;
+  --accent: #ffbd59 !important;
+  --accent-foreground: #24180b !important;
+  --accent-ink: #ffd08a !important;
+  --accent-soft: #392515 !important;
+  --border: #493728 !important;
+  --input: #654a32 !important;
+  --ring: #ffbd59 !important;
+  --sidebar: #211a14 !important;
+  --sidebar-foreground: #fff7ed !important;
+  --sidebar-primary: #ffbd59 !important;
+  --sidebar-primary-foreground: #24180b !important;
+  --sidebar-accent: #392515 !important;
+  --sidebar-accent-foreground: #ffd08a !important;
+  --sidebar-border: #493728 !important;
+  --sidebar-ring: #ffbd59 !important;
+}
+
+html, body { background: var(--strap-canvas) !important; }
+body {
+  background: linear-gradient(180deg, #fffaf3 0%, #ffffff 360px) !important;
+  color: var(--strap-ink) !important;
+}
+.dark body {
+  background: linear-gradient(180deg, #17130f 0%, #211a14 420px) !important;
+}
+::selection { background: #ffe0ad !important; color: #492708 !important; }
+
+.kudi-app-shell { background: transparent !important; color: var(--strap-ink) !important; }
+.kudi-app-shell > aside {
+  background: #ffffff !important;
+  color: #24201b !important;
+  border-right: 1px solid #f0e4d5 !important;
+  box-shadow: 8px 0 28px rgb(111 70 25 / .035) !important;
+}
+.kudi-app-shell > aside > div:first-child {
+  border-bottom: 1px solid #f0e4d5 !important;
+}
+.kudi-app-shell > aside > div:first-child a > span:first-child,
+.kudi-app-shell > .lg\\:pl-60 > header a > span:first-child {
+  background: #f59e0b !important;
+  box-shadow: 0 0 0 5px rgb(245 158 11 / .12) !important;
+}
+.kudi-app-shell > aside > div:first-child a > span:first-child > span,
+.kudi-app-shell > .lg\\:pl-60 > header a > span:first-child > span {
+  background: #ffffff !important;
+}
+.kudi-app-shell > aside .text-muted-foreground,
+.kudi-app-shell > aside p.text-\\[10px\\] { color: #81766a !important; }
+.kudi-app-shell > aside nav a {
+  color: #65594c !important;
+  border-radius: 10px !important;
+}
+.kudi-app-shell > aside nav a:hover {
+  color: #a9510b !important;
+  background: #fff5e8 !important;
+  transform: translateX(1px);
+}
+.kudi-app-shell > aside nav a[aria-current="page"],
+.kudi-app-shell > aside nav a.bg-accent-soft {
+  background: #fff0d9 !important;
+  color: #a9510b !important;
+  box-shadow: inset 3px 0 0 #f59e0b !important;
+}
+.kudi-app-shell > aside nav a[aria-current="page"] svg,
+.kudi-app-shell > aside nav a.bg-accent-soft svg { color: #c56a12 !important; }
+.kudi-app-shell > aside .border-border { border-color: #f0e4d5 !important; }
+.kudi-app-shell > aside .bg-secondary\\/50 { background: #fff5e8 !important; border-color: #f0e4d5 !important; }
+
+.kudi-app-shell > .lg\\:pl-60 > header {
+  background: rgb(255 255 255 / .94) !important;
+  border-bottom: 1px solid #f0e4d5 !important;
+  box-shadow: 0 3px 18px rgb(111 70 25 / .025) !important;
+}
+.kudi-app-shell .bg-primary,
+.kudi-app-shell button[class*="bg-primary"],
+.kudi-app-shell a[class*="bg-primary"] {
+  background-color: #c56a12 !important;
+  border-color: #c56a12 !important;
+  color: #ffffff !important;
+}
+.kudi-app-shell .bg-accent,
+.kudi-app-shell .bg-\\[\\#f5c23e\\] { background-color: #f59e0b !important; }
+.kudi-app-shell .text-accent,
+.kudi-app-shell .text-accent-ink,
+.kudi-app-shell [data-sidebar="menu-button"][data-active="true"] {
+  color: #a9510b !important;
+}
+.kudi-app-shell .bg-accent-soft,
+.kudi-app-shell [data-sidebar="menu-button"][data-active="true"] {
+  background: #fff0d9 !important;
+}
+.kudi-app-shell .surface-card,
+.kudi-app-shell .storefront-card,
+.kudi-app-shell [data-slot="card"] {
+  background: #ffffff !important;
+  border-color: #f0e4d5 !important;
+  box-shadow: 0 2px 10px rgb(111 70 25 / .035) !important;
+}
+.kudi-app-shell .surface-card:hover,
+.kudi-app-shell .storefront-card:hover {
+  border-color: #e4cdb2 !important;
+  box-shadow: 0 8px 24px rgb(111 70 25 / .07) !important;
+}
+.kudi-app-shell input:focus,
+.kudi-app-shell textarea:focus,
+.kudi-app-shell select:focus,
+.kudi-app-shell [role="combobox"]:focus-visible {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 3px rgb(245 158 11 / .16) !important;
+}
+.kudi-app-shell table thead { background: #fff5e8 !important; }
+.kudi-app-shell table tbody tr:hover { background: #fff8ed !important; }
+.kudi-app-shell button:focus-visible,
+.kudi-app-shell a:focus-visible,
+:focus-visible { outline-color: #c56a12 !important; }
+.kudi-app-shell .recharts-cartesian-grid line { stroke: #f0e4d5 !important; }
+.kudi-app-shell .recharts-text,
+.kudi-app-shell .recharts-legend-item-text { fill: #81766a !important; color: #81766a !important; }
