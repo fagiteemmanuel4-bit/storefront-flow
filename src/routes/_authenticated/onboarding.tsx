@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,6 +33,12 @@ const PLANS: Record<Plan, { name: string; monthly: number; yearly: number; descr
 function Choice({ selected, title, description, onClick, children }: { selected: boolean; title: string; description: string; onClick: () => void; children?: React.ReactNode }) {
   return <button type="button" onClick={onClick} className={cn("w-full rounded-2xl border p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:shadow-md", selected ? "border-foreground bg-foreground text-background shadow-lg" : "border-border bg-surface hover:border-foreground/20")}><div className="flex items-start gap-3"><span className={cn("mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl", selected ? "bg-accent text-accent-foreground" : "bg-secondary text-muted-foreground")}>{children}</span><span className="min-w-0 flex-1"><span className="block font-semibold">{title}</span><span className={cn("mt-1 block text-sm leading-5", selected ? "text-background/60" : "text-muted-foreground")}>{description}</span></span><span className={cn("mt-1 flex size-5 shrink-0 items-center justify-center rounded-full border", selected ? "border-accent bg-accent text-accent-foreground" : "border-border")}>{selected && <Check className="size-3.5" />}</span></div></button>;
 }
+
+const steps = [
+  { title: "Your shop", description: "Give your business a name", icon: Store },
+  { title: "Your location", description: "Tell us where you sell", icon: MapPin },
+  { title: "Your pricing", description: "Choose your currency & tax", icon: Percent },
+];
 
 function OnboardingPage() {
   const navigate = useNavigate();
