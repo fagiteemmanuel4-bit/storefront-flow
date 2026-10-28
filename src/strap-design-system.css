@@ -4,14 +4,14 @@
  */
 
 :root {
-  --strap-blue-50: #f5f8ff;
-  --strap-blue-100: #eaf0ff;
-  --strap-blue-200: #d5e1ff;
-  --strap-blue-300: #b8ccff;
-  --strap-blue-500: #3767e8;
-  --strap-blue-600: #2856d7;
-  --strap-blue-700: #2047b7;
-  --strap-blue-800: #19388f;
+  --strap-blue-50: #fff7ed;
+  --strap-blue-100: #ffedd5;
+  --strap-blue-200: #fed7aa;
+  --strap-blue-300: #fdba74;
+  --strap-blue-500: #f97316;
+  --strap-blue-600: #ea580c;
+  --strap-blue-700: #c2410c;
+  --strap-blue-800: #9a3412;
   --strap-ink: #101828;
   --strap-ink-soft: #344054;
   --strap-muted: #667085;
@@ -34,14 +34,14 @@
 }
 
 .dark {
-  --strap-blue-50: #101a32;
-  --strap-blue-100: #142346;
-  --strap-blue-200: #20386d;
-  --strap-blue-300: #34539a;
-  --strap-blue-500: #82a4ff;
-  --strap-blue-600: #9ab6ff;
-  --strap-blue-700: #b5c8ff;
-  --strap-blue-800: #d3ddff;
+  --strap-blue-50: #2a160b;
+  --strap-blue-100: #431f0b;
+  --strap-blue-200: #7c2d12;
+  --strap-blue-300: #9a3412;
+  --strap-blue-500: #fb923c;
+  --strap-blue-600: #fdba74;
+  --strap-blue-700: #fed7aa;
+  --strap-blue-800: #ffedd5;
   --strap-ink: #f2f4f7;
   --strap-ink-soft: #d0d5dd;
   --strap-muted: #98a2b3;
@@ -85,67 +85,67 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .text-display-md { font-size: clamp(2rem, 4.5vw, 3.15rem) !important; line-height: 1.02 !important; letter-spacing: -.045em !important; }
 .text-title-lg { font-size: clamp(1.45rem, 2.4vw, 1.9rem) !important; line-height: 1.12 !important; letter-spacing: -.035em !important; }
 
-/* Token bridge: the existing Tailwind/shadcn semantic classes now use Strap blue. */
+/* Token bridge: restore Strap's orange, black and warm-white palette. */
 :root {
-  --background: #f8fafc !important;
-  --foreground: #101828 !important;
+  --background: #faf8f5 !important;
+  --foreground: #171717 !important;
   --surface: #ffffff !important;
   --card: #ffffff !important;
-  --card-foreground: #101828 !important;
+  --card-foreground: #171717 !important;
   --popover: #ffffff !important;
-  --popover-foreground: #101828 !important;
-  --primary: #2856d7 !important;
-  --primary-foreground: #ffffff !important;
-  --secondary: #f2f4f7 !important;
-  --secondary-foreground: #344054 !important;
-  --muted: #f2f4f7 !important;
-  --muted-foreground: #667085 !important;
-  --accent: #3767e8 !important;
-  --accent-foreground: #ffffff !important;
-  --accent-ink: #2047b7 !important;
-  --accent-soft: #eaf0ff !important;
-  --border: #e4e7ec !important;
-  --input: #e4e7ec !important;
-  --ring: #3767e8 !important;
+  --popover-foreground: #171717 !important;
+  --primary: #f97316 !important;
+  --primary-foreground: #111111 !important;
+  --secondary: #f3f0eb !important;
+  --secondary-foreground: #292524 !important;
+  --muted: #f3f0eb !important;
+  --muted-foreground: #78716c !important;
+  --accent: #f97316 !important;
+  --accent-foreground: #111111 !important;
+  --accent-ink: #9a3412 !important;
+  --accent-soft: #fff0e5 !important;
+  --border: #e7e1da !important;
+  --input: #e7e1da !important;
+  --ring: #f97316 !important;
   --sidebar: #ffffff !important;
-  --sidebar-foreground: #101828 !important;
-  --sidebar-primary: #2856d7 !important;
-  --sidebar-primary-foreground: #ffffff !important;
-  --sidebar-accent: #f5f8ff !important;
-  --sidebar-accent-foreground: #2047b7 !important;
-  --sidebar-border: #e4e7ec !important;
-  --sidebar-ring: #3767e8 !important;
+  --sidebar-foreground: #171717 !important;
+  --sidebar-primary: #f97316 !important;
+  --sidebar-primary-foreground: #111111 !important;
+  --sidebar-accent: #fff7ed !important;
+  --sidebar-accent-foreground: #9a3412 !important;
+  --sidebar-border: #e7e1da !important;
+  --sidebar-ring: #f97316 !important;
 }
 
 .dark {
-  --background: #0b111b !important;
-  --foreground: #f2f4f7 !important;
-  --surface: #111927 !important;
-  --card: #111927 !important;
-  --card-foreground: #f2f4f7 !important;
-  --popover: #111927 !important;
-  --popover-foreground: #f2f4f7 !important;
-  --primary: #9ab6ff !important;
-  --primary-foreground: #0b111b !important;
-  --secondary: #182231 !important;
-  --secondary-foreground: #f2f4f7 !important;
-  --muted: #182231 !important;
-  --muted-foreground: #98a2b3 !important;
-  --accent: #82a4ff !important;
-  --accent-foreground: #0b111b !important;
-  --accent-ink: #b5c8ff !important;
-  --accent-soft: #142346 !important;
-  --border: #293241 !important;
-  --input: #344054 !important;
-  --ring: #82a4ff !important;
-  --sidebar: #111927 !important;
-  --sidebar-foreground: #f2f4f7 !important;
-  --sidebar-primary: #9ab6ff !important;
-  --sidebar-primary-foreground: #0b111b !important;
-  --sidebar-accent: #142346 !important;
-  --sidebar-accent-foreground: #d3ddff !important;
-  --sidebar-border: #293241 !important;
-  --sidebar-ring: #82a4ff !important;
+  --background: #111111 !important;
+  --foreground: #faf8f5 !important;
+  --surface: #1b1b1b !important;
+  --card: #1b1b1b !important;
+  --card-foreground: #faf8f5 !important;
+  --popover: #1b1b1b !important;
+  --popover-foreground: #faf8f5 !important;
+  --primary: #fb923c !important;
+  --primary-foreground: #111111 !important;
+  --secondary: #292524 !important;
+  --secondary-foreground: #faf8f5 !important;
+  --muted: #292524 !important;
+  --muted-foreground: #d6d3d1 !important;
+  --accent: #fb923c !important;
+  --accent-foreground: #111111 !important;
+  --accent-ink: #fdba74 !important;
+  --accent-soft: #431f0b !important;
+  --border: #3f3a35 !important;
+  --input: #51443a !important;
+  --ring: #fb923c !important;
+  --sidebar: #1b1b1b !important;
+  --sidebar-foreground: #faf8f5 !important;
+  --sidebar-primary: #fb923c !important;
+  --sidebar-primary-foreground: #111111 !important;
+  --sidebar-accent: #431f0b !important;
+  --sidebar-accent-foreground: #ffedd5 !important;
+  --sidebar-border: #3f3a35 !important;
+  --sidebar-ring: #fb923c !important;
 }
 
 /* -------------------------------------------------------------------------- */
