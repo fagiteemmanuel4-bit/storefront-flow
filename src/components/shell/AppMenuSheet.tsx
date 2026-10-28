@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Bell, ChevronRight, Download, ExternalLink, FileBarChart, Globe2, HardDrive, HelpCircle, LogOut, Package, Plus, ReceiptText, ScanLine, Settings, ShoppingBag, Store, Trash2, Users, Cpu } from "lucide-react";
+import { Bell, ChevronRight, Download, ExternalLink, FileBarChart, Globe2, HardDrive, HelpCircle, LogOut, Package, Plus, ReceiptText, ScanLine, Settings, ShoppingBag, Store, Trash2, Users, Cpu, Wrench } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
