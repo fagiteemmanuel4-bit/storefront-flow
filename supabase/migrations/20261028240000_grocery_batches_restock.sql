@@ -97,7 +97,7 @@ begin
  if v_user_id is null then raise exception 'Not authenticated'; end if;
  if not public.has_store_role(_store_id,v_user_id,array['owner','manager','cashier']::public.store_role[]) then raise exception 'Not authorized for this store'; end if;
  update public.inventory_batches set status='expired',updated_at=now()
- where store_id=_store_id and branch_id=_branch_id and status='active' and expiry_date is not null and expiry_date<current_date;
+ where store_id=_store_id and branch_id=_branch_id and status in ('active','hold') and expiry_date is not null and expiry_date<current_date;
  get diagnostics v_count=row_count;
  return v_count;
 end; $$;
