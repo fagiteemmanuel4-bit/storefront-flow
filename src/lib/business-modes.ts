@@ -17,7 +17,7 @@ export type BusinessWorkflow = {
 export type BusinessQuickAction = {
   label: string;
   description: string;
-  to: "/pos" | "/products" | "/customers" | "/reports" | "/expenses" | "/settings/inventory" | "/online-store" | "/online-store/orders" | "/fashion-returns" | "/electronics-workspace" | "/food-service";
+  to: "/pos" | "/products" | "/customers" | "/reports" | "/expenses" | "/settings/inventory" | "/online-store" | "/online-store/orders" | "/fashion-returns" | "/electronics-workspace" | "/food-service" | "/grocery-inventory";
 };
 
 export type BusinessMode = {
@@ -60,13 +60,14 @@ export const BUSINESS_MODES: BusinessMode[] = [
       { title: "Fast checkout and barcode scanning", detail: "Find products quickly and scan supported barcodes at the counter.", status: "available" },
       { title: "Pack and piece selling", detail: "Use the existing pack/piece product workflow where it is configured.", status: "available" },
       { title: "Low-stock review", detail: "Spot items that need replenishing.", status: "available" },
-      { title: "Expiry-date and batch tracking", detail: "Track dated stock lots and prioritise items approaching expiry.", status: "planned" },
-      { title: "Supplier reorder suggestions", detail: "Prepare a restock list from sales velocity and available stock.", status: "planned" },
+      { title: "Expiry-date and batch tracking", detail: "Track lots by expiry and allocate eligible stock using first-expiry-first-out.", status: "available" },
+      { title: "Supplier reorder suggestions", detail: "Suggest replenishment quantities from current stock, low-stock thresholds and recent sales velocity.", status: "available" },
+      { title: "Waste and expired stock", detail: "Record batch waste and remove expired or held quantities from sellable stock.", status: "available" },
     ],
     quickActions: [
       { label: "Sell items", description: "Fast checkout", to: "/pos" },
-      { label: "Check low stock", description: "Review inventory", to: "/products" },
-      { label: "Sales report", description: "See what moves", to: "/reports" },
+      { label: "Batch & expiry", description: "Track lots and expiry dates", to: "/grocery-inventory" },
+      { label: "Restock suggestions", description: "Review replenishment needs", to: "/grocery-inventory" },
     ],
   },
   {
