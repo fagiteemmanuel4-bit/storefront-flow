@@ -41,12 +41,19 @@ This roadmap starts with **business-specific workspaces** and then progresses th
 ## 7. Business-specific workflow backlog
 - [ ] Groceries/provision: expiry and batch tracking, reorder suggestions and supplier price comparisons.
 - [x] Fashion: photo-first product entry, size/colour/material notes, WhatsApp product sharing, fashion-first dashboard/navigation and barcode-free product entry.
-- [ ] Fashion: per-size/per-colour stock quantities, exchanges/returns and collection-level reporting.
-- [ ] Electronics: serial/IMEI records, warranty tracking and repair intake.
+- [ ] Fashion completion gate: per-size/per-colour quantities, variant selection at checkout, variant-aware stock decrement and sales records, storefront variant display, exchanges/returns with stock adjustments, and collection-level reporting. Do not start the next business mode until this gate is tested end-to-end.
+- [ ] Next after fashion completion: Electronics & phones — serial/IMEI records linked to device stock and sales, warranty tracking, and repair intake.
 - [ ] Food service: menu modifiers, kitchen tickets, recipe costing, ingredient deductions and waste tracking.
 - [ ] Pharmacy: batch/expiry/recall traceability and specialist compliance review before enabling pharmacy workflows.
 - [ ] Beauty/personal care: service bookings and consumable usage.
 - [ ] Services: appointments, job cards, deposits and service packages.
+
+## Current implementation handoff — 2026-10-28
+- Fashion PR #23 is the active branch: `feat/fashion-first-workspace`, based on `feat/strap-business-modes` (PR #22). Keep the dependency order; do not merge the fashion branch directly to `main` before its base.
+- Already implemented on the fashion branch: photo-first product entry (up to six images and camera capture), descriptive sizes/colours/material/style notes, fashion-specific navigation/dashboard/settings, catalogue imagery, WhatsApp product sharing, and hiding barcode-first UI in fashion mode.
+- The existing `product_fashion_details` table stores descriptive size/colour options only. It is not variant inventory. The existing `product_variants` table has attributes and prices but no branch-level quantities, and `create_sale` currently decrements product-level `branch_stock`.
+- Next implementation step: inspect and design an additive, branch-aware size/colour stock model, then wire product editing, POS variant selection, sale RPC/line items, online storefront display, and regression tests together. Preserve current product-level checkout for every non-fashion mode. Do not claim variant stock is available until all those paths are implemented and verified.
+- After the fashion completion gate passes: start the Electronics & phones workspace. Keep existing sales, authentication, permissions and store data intact.
 
 ## Release quality checklist
 - [ ] Inspect the current repository before each implementation; reuse existing features instead of duplicating them.
