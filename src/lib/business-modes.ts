@@ -94,13 +94,14 @@ export const BUSINESS_MODES: BusinessMode[] = [
     key: "electronics",
     label: "Electronics & phones",
     eyebrow: "Higher-value products",
-    description: "Keep product records, stock and sales close together for higher-value items.",
+    description: "Track each device by serial number or IMEI, manage warranty coverage, and keep repair jobs visible beside stock and sales.",
     bestFor: "Phone shops, electronics, accessories and computer stores",
     workflows: [
       { title: "Product catalogue and stock", detail: "Keep prices and available quantities visible.", status: "available" },
       { title: "Receipts and sales history", detail: "Find completed sales and their recorded details.", status: "available" },
-      { title: "Serial number and IMEI records", detail: "Associate unique device identifiers with purchases and sales.", status: "planned" },
-      { title: "Warranty and repair intake", detail: "Track warranty periods and devices accepted for repair.", status: "planned" },
+      { title: "Serial number and IMEI records", detail: "Register each physical unit, link its identifier to checkout, and track available devices.", status: "available" },
+      { title: "Warranty tracking", detail: "Start warranty coverage when a registered device is sold and keep the expiry visible.", status: "available" },
+      { title: "Repair intake and status queue", detail: "Record customer devices, reported faults, warranty claims, estimates and repair progress.", status: "available" },
     ],
     quickActions: [
       { label: "Product catalogue", description: "Review stock", to: "/products" },
