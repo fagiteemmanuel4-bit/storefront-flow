@@ -27,7 +27,7 @@ type ProductImage = { id: string; image_url: string; sort_order: number };
 type PendingImage = { file: File; preview: string };
 
 export function ProductFormDialog({ open, onOpenChange, storeId, branchId, product, onSaved, businessMode = "general-retail" }: Props) {
-  const isFashion = businessMode === "fashion";
+  const isFashion = businessMode === "fashion"; const isGrocery = businessMode === "grocery-provision";
   const [name, setName] = useState(""); const [sku, setSku] = useState(""); const [barcode, setBarcode] = useState(""); const [category, setCategory] = useState("");
   const [price, setPrice] = useState("0"); const [cost, setCost] = useState("0"); const [threshold, setThreshold] = useState("5"); const [quantity, setQuantity] = useState("0");
   const [packMode, setPackMode] = useState(false); const [unitsPerPack, setUnitsPerPack] = useState("1"); const [packPrice, setPackPrice] = useState("0"); const [piecePrice, setPiecePrice] = useState("0");
@@ -101,7 +101,7 @@ export function ProductFormDialog({ open, onOpenChange, storeId, branchId, produ
       const db = supabase as any; let productId = product?.id ?? null;
       if (productId) { const { error } = await db.from("products").update(payload).eq("id", productId); if (error) throw new Error(error.message); } else { const { data, error } = await db.from("products").insert(payload).select("id").single(); if (error) throw new Error(error.message); productId = data?.id; }
       if (!productId) throw new Error("The product was not saved. Please try again.");
-      if (!isFashion) { const { error: stockError } = await supabase.from("branch_stock").upsert({ branch_id: branchId, product_id: productId, store_id: storeId, quantity: v.quantity }, { onConflict: "branch_id,product_id" }); if (stockError) throw new Error(stockError.message); }
+      if (!isFashion) { const db = supabase as any; const { data: batchRows, error: batchError } = isGrocery ? await db.from("inventory_batches").select("id").eq("store_id",storeId).eq("branch_id",branchId).eq("product_id",productId).limit(1) : { data: [], error: null }; if (batchError) throw new Error(batchError.message); if (!(batchRows ?? []).length) { const { error: stockError } = await supabase.from("branch_stock").upsert({ branch_id: branchId, product_id: productId, store_id: storeId, quantity: v.quantity }, { onConflict: "branch_id,product_id" }); if (stockError) throw new Error(stockError.message); } }
       await saveImages(productId); await saveFashionDetails(productId); await saveFashionVariantStock(productId, v.quantity); await onSaved(); toast.success(product ? "Product updated" : "Product added"); onOpenChange(false);
     } catch (error) { toast.error(errorMessage(error, "We couldn't save this product.")); } finally { setSaving(false); }
   }
