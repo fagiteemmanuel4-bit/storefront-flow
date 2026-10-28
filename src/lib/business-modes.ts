@@ -17,7 +17,7 @@ export type BusinessWorkflow = {
 export type BusinessQuickAction = {
   label: string;
   description: string;
-  to: "/pos" | "/products" | "/customers" | "/reports" | "/expenses" | "/settings/inventory";
+  to: "/pos" | "/products" | "/customers" | "/reports" | "/expenses" | "/settings/inventory" | "/online-store" | "/online-store/orders";
 };
 
 export type BusinessMode = {
@@ -73,18 +73,20 @@ export const BUSINESS_MODES: BusinessMode[] = [
     key: "fashion",
     label: "Fashion & boutiques",
     eyebrow: "Style and variants",
-    description: "Keep collections organised and make product and customer activity easy to review.",
+    description: "Build a photo-first clothing catalogue, list sizes and colours, and share styles with customers.",
     bestFor: "Clothing, footwear, bags, accessories and beauty boutiques",
     workflows: [
       { title: "Product catalogue and stock", detail: "Maintain the catalogue, prices and current stock.", status: "available" },
       { title: "Customer purchase history", detail: "Review customer records and support repeat visits.", status: "available" },
-      { title: "Size and colour variants", detail: "Track stock separately for each size and colour combination.", status: "planned" },
+      { title: "Sizes and colours", detail: "Add available sizes, colours, fabric and style notes to each clothing item.", status: "available" },
+      { title: "Stock by size and colour", detail: "Track exact quantities for each size-and-colour combination during checkout.", status: "planned" },
+      { title: "WhatsApp product sharing", detail: "Share a product message with its price, sizes, colours and online-store link.", status: "available" },
       { title: "Exchanges and returns workflow", detail: "Record exchanges and return reasons with clear stock adjustments.", status: "planned" },
     ],
     quickActions: [
-      { label: "Manage collection", description: "Products and prices", to: "/products" },
-      { label: "Customers", description: "Customer records", to: "/customers" },
-      { label: "Review sales", description: "See performance", to: "/reports" },
+      { label: "Manage collection", description: "Photos, sizes and prices", to: "/products" },
+      { label: "Online storefront", description: "Publish and promote styles", to: "/online-store" },
+      { label: "Customer orders", description: "Review incoming orders", to: "/online-store/orders" },
     ],
   },
   {
