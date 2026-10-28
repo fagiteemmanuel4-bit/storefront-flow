@@ -143,6 +143,8 @@ begin
     from jsonb_array_elements(_items) as cart_row(value)
     join public.products p on p.id=(cart_row.value->>'product_id')::uuid and p.store_id=_store_id
     where exists(select 1 from public.inventory_batches ib where ib.store_id=_store_id and ib.branch_id=_branch_id and ib.product_id=p.id)
+      and nullif(cart_row.value->>'fashion_variant_stock_id','') is null
+      and nullif(cart_row.value->>'electronics_device_id','') is null
     group by p.id
   loop
     select coalesce(sum(ib.quantity),0)::integer into v_batch_total from public.inventory_batches ib
