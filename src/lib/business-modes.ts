@@ -17,7 +17,7 @@ export type BusinessWorkflow = {
 export type BusinessQuickAction = {
   label: string;
   description: string;
-  to: "/pos" | "/products" | "/customers" | "/reports" | "/expenses" | "/settings/inventory" | "/online-store" | "/online-store/orders" | "/fashion-returns" | "/electronics-workspace";
+  to: "/pos" | "/products" | "/customers" | "/reports" | "/expenses" | "/settings/inventory" | "/online-store" | "/online-store/orders" | "/fashion-returns" | "/electronics-workspace" | "/food-service";
 };
 
 export type BusinessMode = {
@@ -119,15 +119,15 @@ export const BUSINESS_MODES: BusinessMode[] = [
     bestFor: "Restaurants, cafés, bakeries, caterers and takeaway sellers",
     workflows: [
       { title: "Record sales and expenses", detail: "Use the existing checkout and expense records.", status: "available" },
-      { title: "Menu modifiers and order notes", detail: "Capture size, add-ons and preparation notes per order.", status: "planned" },
-      { title: "Kitchen order screen", detail: "Send confirmed orders to a kitchen-facing queue.", status: "planned" },
-      { title: "Recipe costing and ingredient deductions", detail: "Calculate food cost and reduce ingredient stock as meals sell.", status: "planned" },
-      { title: "Waste and spoilage tracking", detail: "Record waste separately from customer sales.", status: "planned" },
+      { title: "Menu modifiers and order notes", detail: "Capture priced options and preparation notes for each menu item at checkout.", status: "available" },
+      { title: "Kitchen order screen", detail: "Create a kitchen ticket automatically for each confirmed food-service sale.", status: "available" },
+      { title: "Recipe costing and ingredient deductions", detail: "Estimate ingredient cost and reduce recipe stock when menu items sell.", status: "available" },
+      { title: "Waste and spoilage tracking", detail: "Record ingredient waste with a reason and deduct stock safely.", status: "available" },
     ],
     quickActions: [
-      { label: "Record a sale", description: "Open checkout", to: "/pos" },
-      { label: "Track expenses", description: "Review costs", to: "/expenses" },
-      { label: "Sales report", description: "Review activity", to: "/reports" },
+      { label: "Kitchen & menu", description: "Tickets, recipes and modifiers", to: "/food-service" },
+      { label: "Record a sale", description: "Sell menu items", to: "/pos" },
+      { label: "Waste log", description: "Track ingredient loss", to: "/food-service" },
     ],
   },
   {
