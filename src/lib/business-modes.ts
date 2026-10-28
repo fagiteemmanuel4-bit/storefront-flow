@@ -17,7 +17,7 @@ export type BusinessWorkflow = {
 export type BusinessQuickAction = {
   label: string;
   description: string;
-  to: "/pos" | "/products" | "/customers" | "/reports" | "/expenses" | "/settings/inventory" | "/online-store" | "/online-store/orders" | "/fashion-returns";
+  to: "/pos" | "/products" | "/customers" | "/reports" | "/expenses" | "/settings/inventory" | "/online-store" | "/online-store/orders" | "/fashion-returns" | "/electronics-workspace";
 };
 
 export type BusinessMode = {
@@ -105,6 +105,8 @@ export const BUSINESS_MODES: BusinessMode[] = [
     quickActions: [
       { label: "Product catalogue", description: "Review stock", to: "/products" },
       { label: "Checkout", description: "Record a sale", to: "/pos" },
+      { label: "Devices & warranty", description: "Serials, IMEIs and coverage", to: "/electronics-workspace" },
+      { label: "Repair desk", description: "Register and track repairs", to: "/electronics-workspace" },
       { label: "Expenses", description: "Track shop costs", to: "/expenses" },
     ],
   },
