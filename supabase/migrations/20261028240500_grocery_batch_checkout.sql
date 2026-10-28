@@ -55,6 +55,7 @@ begin
   if not private.has_store_role(_store_id, v_user_id, array['owner','manager','cashier']::public.store_role[]) then raise exception 'Not authorized for this store'; end if;
   if not exists(select 1 from public.branches b where b.id = _branch_id and b.store_id = _store_id) then raise exception 'Invalid branch'; end if;
   select coalesce(s.storefront_settings->>'businessMode',s.business_type,'general-retail') into v_business_mode from public.stores s where s.id=_store_id;
+  update public.inventory_batches set status='expired',updated_at=now() where store_id=_store_id and branch_id=_branch_id and status='active' and expiry_date is not null and expiry_date<current_date;
   if _payment_method not in ('cash','card','transfer','credit') then raise exception 'Invalid payment method'; end if;
   if _customer_id is not null and not exists(select 1 from public.customers c where c.id = _customer_id and c.store_id = _store_id) then raise exception 'Invalid customer'; end if;
   if _offline_id is not null then
