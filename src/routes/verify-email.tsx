@@ -157,13 +157,66 @@ function VerifyEmailPage() {
   const verifying = state === "verifying";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-5 py-10">
-      <div className="w-full max-w-md rounded-[28px] border bg-card p-7 shadow-lift sm:p-10">
-        <div className="flex justify-center"><div className={`flex h-16 w-16 items-center justify-center rounded-2xl border ${success ? "bg-accent-soft" : "bg-muted/40"}`}>{success ? <CheckCircle2 className="h-7 w-7" /> : checking || verifying ? <ShieldCheck className="h-7 w-7 animate-pulse" /> : <Mail className="h-7 w-7" />}</div></div>
-        <div className="mt-6 text-center"><h1 className="text-2xl font-semibold tracking-tight">{success ? "Verification complete" : checking ? "Confirming securely" : verifying ? "Verifying your code" : state === "error" ? "Verification needs attention" : "Enter your security code"}</h1><p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-muted-foreground">{success ? message : checking ? "We're securely confirming your verification." : verifying ? "Supabase is checking your one-time code securely." : `We sent an ${OTP_LENGTH}-digit one-time code to ${email || "your email address"}.`}</p></div>
-        {message && !success && !checking && !verifying && <div className={`mt-6 flex items-start gap-3 rounded-2xl border p-3.5 text-sm ${state === "error" ? "bg-destructive/5" : "bg-secondary/50"}`} role={state === "error" ? "alert" : "status"}>{state === "error" ? <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" /> : <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />}<span>{message}</span></div>}
-        {!success && !checking && <><form onSubmit={(event) => void verifyCode(event)} className="mt-6 space-y-4"><div className="space-y-2"><Label htmlFor="verification-email">Email</Label><Input id="verification-email" className="h-12 rounded-2xl" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" autoComplete="email" /></div><div className="space-y-2"><Label htmlFor="verification-code">One-time code</Label><Input id="verification-code" autoFocus inputMode="numeric" autoComplete="one-time-code" className="h-14 rounded-2xl text-center text-xl font-semibold tracking-[0.38em]" value={code} onChange={(e) => { const next = e.target.value.replace(/\D/g, "").slice(0, OTP_LENGTH); setCode(next); }} disabled={verifying || loading} placeholder={"0".repeat(OTP_LENGTH)} maxLength={OTP_LENGTH} aria-label={`${OTP_LENGTH}-digit verification code`} /><p className="text-center text-xs text-muted-foreground">{code.length}/{OTP_LENGTH}</p></div><Button type="submit" disabled={loading || code.length !== OTP_LENGTH} className="h-12 w-full rounded-2xl">{loading ? "Verifying…" : "Verify & continue"}</Button></form><div className="mt-5 rounded-2xl border p-4"><div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 h-5 w-5 shrink-0" /><div><p className="text-sm font-medium">Protected by one-time verification</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Codes are single-use and expire. Never share your code with anyone.</p></div></div><button type="button" disabled={resending || cooldown > 0 || loading} onClick={() => void resend()} className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium disabled:opacity-50">{cooldown > 0 ? <Clock3 className="h-4 w-4" /> : <RefreshCw className="h-4 w-4" />}{resending ? "Sending…" : cooldown > 0 ? `Try again in ${cooldown}s` : "Send a new code"}</button></div></>}
-        <Button asChild variant={success ? "default" : "outline"} className="mt-6 h-12 w-full rounded-2xl"><Link to="/auth">{success ? flow === "signup" ? "Go to login" : "Return to Strap" : "Back to login"}</Link></Button>
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8">
+      <div className="w-full max-w-sm rounded-3xl border border-border bg-card p-6 shadow-lift sm:p-8">
+        <div className="text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-muted/50">
+            {success ? <CheckCircle2 className="h-6 w-6" /> : checking || verifying ? <ShieldCheck className="h-6 w-6 animate-pulse" /> : <Mail className="h-6 w-6" />}
+          </div>
+          <h1 className="mt-4 text-xl font-semibold tracking-tight">
+            {success ? "Email verified" : checking ? "Confirming email…" : verifying ? "Checking code…" : "Verify your email"}
+          </h1>
+          <p className="mt-2 text-sm leading-5 text-muted-foreground">
+            {success ? message : checking ? "Please wait a moment." : verifying ? "Just a moment while we check your code." : <>Enter the 8-digit code sent to <span className="font-medium text-foreground">{email || "your email address"}</span>.</>}
+          </p>
+        </div>
+
+        {message && !success && !checking && !verifying && (
+          <p className={`mt-4 rounded-xl px-3 py-2.5 text-sm ${state === "error" ? "bg-destructive/10 text-destructive" : "bg-secondary text-muted-foreground"}`} role={state === "error" ? "alert" : "status"}>
+            {message}
+          </p>
+        )}
+
+        {!success && !checking && (
+          <form onSubmit={(event) => void verifyCode(event)} className="mt-5 space-y-3">
+            <Input
+              id="verification-code"
+              autoFocus
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              className="h-14 rounded-2xl text-center text-2xl font-semibold tracking-[0.35em]"
+              value={code}
+              onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, OTP_LENGTH))}
+              disabled={verifying || loading}
+              placeholder="••••••••"
+              maxLength={OTP_LENGTH}
+              aria-label="8-digit verification code"
+            />
+            <Button type="submit" disabled={loading || code.length !== OTP_LENGTH} className="h-11 w-full rounded-2xl">
+              {loading ? "Verifying…" : "Verify email"}
+            </Button>
+          </form>
+        )}
+
+        {!success && !checking && (
+          <div className="mt-4 text-center">
+            <p className="text-xs text-muted-foreground">Can’t find it? Check your spam folder.</p>
+            <button
+              type="button"
+              disabled={resending || cooldown > 0 || loading}
+              onClick={() => void resend()}
+              className="mt-2 inline-flex min-h-9 items-center justify-center gap-1.5 text-sm font-medium text-foreground underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {resending ? "Sending new code…" : cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
+            </button>
+          </div>
+        )}
+
+        <div className="mt-5 text-center">
+          <Link to="/auth" className="text-xs text-muted-foreground underline-offset-4 hover:underline">
+            {success ? flow === "signup" ? "Go to login" : "Return to Strap" : "Back to login"}
+          </Link>
+        </div>
       </div>
     </main>
   );
