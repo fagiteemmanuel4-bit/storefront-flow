@@ -93,9 +93,15 @@ declare
   v_product_id uuid;
   v_total integer;
 begin
-  v_store_id := coalesce(new.store_id, old.store_id);
-  v_branch_id := coalesce(new.branch_id, old.branch_id);
-  v_product_id := coalesce(new.product_id, old.product_id);
+  if tg_op = 'DELETE' then
+    v_store_id := old.store_id;
+    v_branch_id := old.branch_id;
+    v_product_id := old.product_id;
+  else
+    v_store_id := new.store_id;
+    v_branch_id := new.branch_id;
+    v_product_id := new.product_id;
+  end if;
 
   select coalesce(sum(quantity), 0)::integer into v_total
   from public.fashion_variant_stock
@@ -106,7 +112,8 @@ begin
   on conflict (branch_id, product_id)
   do update set quantity = excluded.quantity, updated_at = now();
 
-  return coalesce(new, old);
+  if tg_op = 'DELETE' then return old; end if;
+  return new;
 end;
 $$;
 
