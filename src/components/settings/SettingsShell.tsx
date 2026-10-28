@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { useStoreContext } from "@/components/shell/StoreProvider";
+import { getBusinessMode } from "@/lib/business-modes";
 
 const items = [
   { path: "/settings/store-profile", title: "Store profile", description: "Business mode, identity, contact and regional settings", icon: Store, group: "Store" },
@@ -20,8 +22,6 @@ const items = [
   { path: "/settings/sessions", title: "Active sessions", description: "Review and revoke authenticated sessions", icon: Laptop, group: "Account" },
   { path: "/settings/advanced", title: "Advanced", description: "Deeper operational and developer controls", icon: SlidersHorizontal, group: "Advanced" },
 ] as const;
-const groups = [...new Set(items.map(i => i.group))];
-
 export function SettingsShell() {
   const location = useLocation();
   return location.pathname === "/settings" ? null : <FocusedSettingsPage />;
@@ -34,7 +34,10 @@ function FocusedSettingsPage() {
   const [dirty, setDirty] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingPath, setPendingPath] = useState<string | null>(null);
-  const current = useMemo(() => items.find(item => location.pathname === item.path), [location.pathname]);
+  const { store } = useStoreContext(); const businessMode = getBusinessMode((store?.storefront_settings as any)?.businessMode ?? (store as any)?.business_type); const isFashion = businessMode.key === "fashion";
+  const modeItems = useMemo(() => { const priority = isFashion ? ["/settings/online-store", "/settings/appearance", "/settings/store-profile", "/settings/checkout", "/settings/receipts", "/settings/inventory"] : []; const overrides: Record<string, { title: string; description: string }> = isFashion ? { "/settings/online-store": { title: "Fashion storefront", description: "Product catalogue, publishing and search visibility" }, "/settings/appearance": { title: "Brand & lookbook", description: "Logo, visual identity and storefront style" }, "/settings/inventory": { title: "Stock & availability", description: "Clothing quantities and stock alerts" }, "/settings/checkout": { title: "Sales & discounts", description: "Pricing, discounts and checkout behaviour" } } : {}; return [...items].map(item => ({ ...item, ...(overrides[item.path] ?? {}) })).sort((a,b) => { if (!isFashion) return 0; const ai = priority.indexOf(a.path), bi = priority.indexOf(b.path); return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi); }); }, [isFashion]);
+  const groups = useMemo(() => [...new Set(modeItems.map(item => item.group))], [modeItems]);
+  const current = useMemo(() => modeItems.find(item => location.pathname === item.path), [location.pathname, modeItems]);
 
   useEffect(() => {
     const markDirty = () => setDirty(true);
@@ -73,7 +76,7 @@ function FocusedSettingsPage() {
     </header>
     <main className="mx-auto w-full max-w-4xl px-4 py-7 pb-28 sm:px-6 sm:py-10"><Outlet /></main>
     {dirty && <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background px-4 py-3 shadow-[0_-8px_24px_rgba(0,0,0,.06)]"><div className="mx-auto flex max-w-4xl items-center justify-between gap-3"><div><p className="text-sm font-semibold">Unsaved changes</p><p className="hidden text-xs text-muted-foreground sm:block">Save before leaving this section.</p></div><div className="flex gap-2"><Button variant="ghost" onClick={() => clickExisting(["Discard"])}>Discard</Button><Button onClick={() => clickExisting(["Save changes", "Save"])}>Save changes</Button></div></div></div>}
-    <Sheet open={menuOpen} onOpenChange={setMenuOpen}><SheetContent side="right" className="w-full max-w-sm p-0 duration-100 ease-out"><SheetHeader className="border-b border-border px-5 py-5 text-left"><SheetTitle>Settings</SheetTitle></SheetHeader><div className="flex-1 overflow-y-auto p-3">{groups.map(group => <section key={group} className="mb-4"><p className="px-2 pb-1.5 pt-2 text-[10px] font-bold uppercase tracking-[.16em] text-muted-foreground">{group}</p>{items.filter(i => i.group === group).map(item => { const Icon = item.icon; return <button key={item.path} type="button" onClick={() => requestNavigation(item.path)} className={cn("flex w-full items-center gap-3 rounded-xl p-3 text-left transition-colors active:bg-secondary hover:bg-secondary", location.pathname === item.path && "bg-accent-soft")}><span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary"><Icon className="size-4"/></span><span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{item.title}</span><span className="mt-0.5 block truncate text-xs text-muted-foreground">{item.description}</span></span><ChevronRight className="size-4 text-muted-foreground"/></button>; })}</section>)}</div></SheetContent></Sheet>
+    <Sheet open={menuOpen} onOpenChange={setMenuOpen}><SheetContent side="right" className="w-full max-w-sm p-0 duration-100 ease-out"><SheetHeader className="border-b border-border px-5 py-5 text-left"><SheetTitle>Settings</SheetTitle></SheetHeader><div className="flex-1 overflow-y-auto p-3">{groups.map(group => <section key={group} className="mb-4"><p className="px-2 pb-1.5 pt-2 text-[10px] font-bold uppercase tracking-[.16em] text-muted-foreground">{group}</p>{modeItems.filter(i => i.group === group).map(item => { const Icon = item.icon; return <button key={item.path} type="button" onClick={() => requestNavigation(item.path)} className={cn("flex w-full items-center gap-3 rounded-xl p-3 text-left transition-colors active:bg-secondary hover:bg-secondary", location.pathname === item.path && "bg-accent-soft")}><span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary"><Icon className="size-4"/></span><span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{item.title}</span><span className="mt-0.5 block truncate text-xs text-muted-foreground">{item.description}</span></span><ChevronRight className="size-4 text-muted-foreground"/></button>; })}</section>)}</div></SheetContent></Sheet>
     {confirmOpen && <div className="fixed inset-0 z-[100] flex items-end justify-center bg-foreground/30 p-4 sm:items-center"><div role="dialog" aria-modal="true" className="w-full max-w-md rounded-3xl border border-border bg-background p-5 shadow-2xl"><h2 className="font-display text-lg font-bold">Unsaved changes</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">You have changes that haven't been saved. Save them before leaving?</p><div className="mt-6 grid gap-2 sm:grid-cols-3"><Button variant="ghost" onClick={() => { setConfirmOpen(false); setPendingPath(null); }}>Keep editing</Button><Button variant="outline" onClick={discard}>Discard</Button><Button onClick={save}>Save</Button></div></div></div>}
   </div>;
 }
