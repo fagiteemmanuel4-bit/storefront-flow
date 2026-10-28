@@ -123,7 +123,7 @@ begin
       raise exception 'Insufficient stock for %', v_product.name;
     end if;
 
-    v_unit_price := coalesce(case when v_unit_type = 'pack' then v_product.pack_price else v_product.piece_price end,v_product.price) + v_modifier_total;
+    v_unit_price := case when v_business_mode in ('food-service','restaurant','food','bakery') then v_product.price + v_modifier_total else coalesce(case when v_unit_type = 'pack' then v_product.pack_price else v_product.piece_price end,v_product.price) + v_modifier_total end;
     v_line_total := v_unit_price * v_quantity;
     v_subtotal := v_subtotal + v_line_total;
   end loop;
@@ -161,7 +161,7 @@ begin
       where p.id = (v_item->>'product_id')::uuid and p.store_id = _store_id
       for update;
     v_units_per_sale := case when v_unit_type = 'pack' then greatest(v_product.units_per_pack,1) else 1 end;
-    v_unit_price := coalesce(case when v_unit_type = 'pack' then v_product.pack_price else v_product.piece_price end,v_product.price) + coalesce((select sum(coalesce((m.value->>'price_delta')::numeric,0)) from jsonb_array_elements(v_modifiers) as m(value)),0);
+    v_unit_price := case when v_business_mode in ('food-service','restaurant','food','bakery') then v_product.price + coalesce((select sum(coalesce((m.value->>'price_delta')::numeric,0)) from jsonb_array_elements(v_modifiers) as m(value)),0) else coalesce(case when v_unit_type = 'pack' then v_product.pack_price else v_product.piece_price end,v_product.price) + coalesce((select sum(coalesce((m.value->>'price_delta')::numeric,0)) from jsonb_array_elements(v_modifiers) as m(value)),0) end;
     v_stock_units := v_quantity * v_units_per_sale;
     v_line_total := v_unit_price * v_quantity;
 
