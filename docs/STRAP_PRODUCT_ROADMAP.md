@@ -49,11 +49,12 @@ This roadmap starts with **business-specific workspaces** and then progresses th
 - [ ] Services: appointments, job cards, deposits and service packages.
 
 ## Current implementation handoff — 2026-10-28
-- Fashion PR #23 is the active branch: `feat/fashion-first-workspace`, based on `feat/strap-business-modes` (PR #22). Keep the dependency order; do not merge the fashion branch directly to `main` before its base.
+- Fashion PR #23 (`feat/fashion-first-workspace`) is based on `feat/strap-business-modes` (PR #22). POS refinement PR #24 (`feat/fashion-completion-and-compact-pos`) is stacked on PR #23. Preserve this merge order; do not merge either branch directly to `main` before its base.
 - Already implemented on the fashion branch: photo-first product entry (up to six images and camera capture), descriptive sizes/colours/material/style notes, fashion-specific navigation/dashboard/settings, catalogue imagery, WhatsApp product sharing, and hiding barcode-first UI in fashion mode.
 - The existing `product_fashion_details` table stores descriptive size/colour options only. It is not variant inventory. The existing `product_variants` table has attributes and prices but no branch-level quantities, and `create_sale` currently decrements product-level `branch_stock`.
 - Next implementation step: inspect and design an additive, branch-aware size/colour stock model, then wire product editing, POS variant selection, sale RPC/line items, online storefront display, and regression tests together. Preserve current product-level checkout for every non-fashion mode. Do not claim variant stock is available until all those paths are implemented and verified.
 - After the fashion completion gate passes: start the Electronics & phones workspace. Keep existing sales, authentication, permissions and store data intact.
+- User instruction: proceed autonomously through the current mode and then the next mode without asking for routine confirmations; return only when a deployed, verified working version is available. Keep this roadmap and handoff notes current after each meaningful change.
 
 ## Release quality checklist
 - [ ] Inspect the current repository before each implementation; reuse existing features instead of duplicating them.
