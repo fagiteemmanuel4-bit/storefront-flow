@@ -3,11 +3,11 @@
 This roadmap starts with **business-specific workspaces** and then progresses through the supporting capabilities discussed for Strap. Keep existing sales, authentication, permissions and database behaviour intact unless a task explicitly requires a reviewed change.
 
 ## 4. Dedicated modes for different businesses — current work
-- [ ] Add business-mode selection to Store Profile with clear descriptions and a mobile-friendly card layout.
-- [ ] Persist the selected mode in the existing store profile settings without a new database migration.
-- [ ] Show mode-specific shortcuts and recommended workflows on the dashboard.
-- [ ] Clearly distinguish working features from planned features; never present planned functionality as already available.
-- [ ] Preserve a general-retail default for existing stores and let owners change the mode later.
+- [x] Add business-mode selection to Store Profile with clear descriptions and a mobile-friendly card layout.
+- [x] Persist the selected mode in the existing store profile settings without a new database migration.
+- [x] Show mode-specific shortcuts and recommended workflows on the dashboard.
+- [x] Clearly distinguish working features from planned features; never present planned functionality as already available.
+- [x] Preserve a general-retail default for existing stores and let owners change the mode later.
 - [ ] Test all mode choices, saving, reload persistence, mobile layout and role permissions.
 - [ ] Add the next mode-specific feature only after reviewing its existing implementation and database dependencies.
 
