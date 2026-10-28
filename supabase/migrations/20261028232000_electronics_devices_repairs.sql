@@ -46,6 +46,8 @@ create table if not exists public.electronics_repairs (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+alter table public.electronics_repairs add column if not exists device_previous_status text;
+
 create index if not exists electronics_repairs_store_status_idx on public.electronics_repairs(store_id,status,received_at desc);
 create index if not exists electronics_repairs_device_idx on public.electronics_repairs(device_id);
 
