@@ -100,7 +100,7 @@ begin
         select ib.id,ib.branch_id,ib.product_id,ib.quantity,ib.batch_number,ib.expiry_date
         from public.inventory_batches ib join public.branches b on b.id=ib.branch_id and b.store_id=s.id
         where ib.store_id=s.id and ib.product_id=product_row.id and ib.status='active' and ib.quantity>0 and (ib.expiry_date is null or ib.expiry_date>=current_date)
-        order by b.is_default desc,ib.expiry_date asc nulls last,ib.received_at asc,ib.id
+        order by ib.expiry_date asc nulls last,b.is_default desc,ib.received_at asc,ib.id
         for update of ib
       loop
         exit when v_batch_remaining<=0;
