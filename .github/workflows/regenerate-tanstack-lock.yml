@@ -1,6 +1,8 @@
 name: Regenerate Bun lockfile for TanStack security fix
 
 on:
+  push:
+    branches: [fix/tanstack-start-security-2026]
   pull_request:
     branches: [main]
 
