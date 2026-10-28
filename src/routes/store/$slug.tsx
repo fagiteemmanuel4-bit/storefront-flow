@@ -43,7 +43,7 @@ function PublicStorefrontPage() {
     queryKey: ["public-store-products", slug],
     enabled: Boolean(store?.store_id),
     queryFn: async () => {
-      const { data, error } = await onlineSupabase.rpc("get_public_store_catalog_v2", { _slug: slug });
+      const { data, error } = await (onlineSupabase as any).rpc("get_public_store_catalog_v2", { _slug: slug });
       if (error) throw new Error(error.message);
       return (data ?? []) as Product[];
     },
