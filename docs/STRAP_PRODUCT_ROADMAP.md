@@ -40,7 +40,8 @@ This roadmap starts with **business-specific workspaces** and then progresses th
 
 ## 7. Business-specific workflow backlog
 - [ ] Groceries/provision: expiry and batch tracking, reorder suggestions and supplier price comparisons.
-- [ ] Fashion: size/colour variants, exchange/return workflows and collection-level reporting.
+- [x] Fashion: photo-first product entry, size/colour/material notes, WhatsApp product sharing, fashion-first dashboard/navigation and barcode-free product entry.
+- [ ] Fashion: per-size/per-colour stock quantities, exchanges/returns and collection-level reporting.
 - [ ] Electronics: serial/IMEI records, warranty tracking and repair intake.
 - [ ] Food service: menu modifiers, kitchen tickets, recipe costing, ingredient deductions and waste tracking.
 - [ ] Pharmacy: batch/expiry/recall traceability and specialist compliance review before enabling pharmacy workflows.
