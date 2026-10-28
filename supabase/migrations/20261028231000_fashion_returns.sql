@@ -70,6 +70,13 @@ begin
   select id,store_id,branch_id,reference into v_sale from public.sales where id=_sale_id and store_id=_store_id for update;
   if not found then raise exception 'Sale not found in this store'; end if;
 
+  -- Reject duplicate line IDs so repeated entries cannot bypass the return limit.
+  if exists (
+    select 1 from jsonb_array_elements(_items) as input_rows(value)
+    group by input_rows.value->>'sale_item_id'
+    having count(*) > 1
+  ) then raise exception 'Each sale item can appear only once in a return'; end if;
+
   -- Validate requested quantities before writing any return records.
   for v_item in select value from jsonb_array_elements(_items) loop
     v_quantity := (v_item->>'quantity')::integer;
