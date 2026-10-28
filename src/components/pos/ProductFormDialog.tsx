@@ -101,7 +101,7 @@ export function ProductFormDialog({ open, onOpenChange, storeId, branchId, produ
       const db = supabase as any; let productId = product?.id ?? null;
       if (productId) { const { error } = await db.from("products").update(payload).eq("id", productId); if (error) throw new Error(error.message); } else { const { data, error } = await db.from("products").insert(payload).select("id").single(); if (error) throw new Error(error.message); productId = data?.id; }
       if (!productId) throw new Error("The product was not saved. Please try again.");
-      const { error: stockError } = await supabase.from("branch_stock").upsert({ branch_id: branchId, product_id: productId, store_id: storeId, quantity: v.quantity }, { onConflict: "branch_id,product_id" }); if (stockError) throw new Error(stockError.message);
+      if (!isFashion) { const { error: stockError } = await supabase.from("branch_stock").upsert({ branch_id: branchId, product_id: productId, store_id: storeId, quantity: v.quantity }, { onConflict: "branch_id,product_id" }); if (stockError) throw new Error(stockError.message); }
       await saveImages(productId); await saveFashionDetails(productId); await saveFashionVariantStock(productId, v.quantity); await onSaved(); toast.success(product ? "Product updated" : "Product added"); onOpenChange(false);
     } catch (error) { toast.error(errorMessage(error, "We couldn't save this product.")); } finally { setSaving(false); }
   }
