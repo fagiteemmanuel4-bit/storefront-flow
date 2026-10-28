@@ -28,7 +28,7 @@ create policy "Store managers can create fashion product details"
   for insert
   to authenticated
   with check (
-    public.has_store_role(array['owner','manager']::public.store_role[], store_id, (select auth.uid()))
+    public.has_store_role(store_id, (select auth.uid()), array['owner','manager']::public.store_role[])
   );
 
 drop policy if exists "Store managers can update fashion product details" on public.product_fashion_details;
@@ -37,10 +37,10 @@ create policy "Store managers can update fashion product details"
   for update
   to authenticated
   using (
-    public.has_store_role(array['owner','manager']::public.store_role[], store_id, (select auth.uid()))
+    public.has_store_role(store_id, (select auth.uid()), array['owner','manager']::public.store_role[])
   )
   with check (
-    public.has_store_role(array['owner','manager']::public.store_role[], store_id, (select auth.uid()))
+    public.has_store_role(store_id, (select auth.uid()), array['owner','manager']::public.store_role[])
   );
 
 drop policy if exists "Store managers can delete fashion product details" on public.product_fashion_details;
@@ -49,7 +49,7 @@ create policy "Store managers can delete fashion product details"
   for delete
   to authenticated
   using (
-    public.has_store_role(array['owner','manager']::public.store_role[], store_id, (select auth.uid()))
+    public.has_store_role(store_id, (select auth.uid()), array['owner','manager']::public.store_role[])
   );
 
 grant select, insert, update, delete on public.product_fashion_details to authenticated;
