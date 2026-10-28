@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, ArrowRight, Building2, Check, Globe2, MapPin, Store, Users } from "lucide-react";
+import { ArrowLeft, ArrowRight, Building2, Check, Globe2, MapPin, Percent, Store, Users } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({ meta: [
