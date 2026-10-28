@@ -28,6 +28,7 @@ create table if not exists public.electronics_repairs (
   store_id uuid not null references public.stores(id) on delete cascade,
   branch_id uuid not null references public.branches(id) on delete cascade,
   device_id uuid references public.electronics_devices(id) on delete set null,
+  device_previous_status text check (device_previous_status is null or device_previous_status in ('in_stock','sold','repair','retired')),
   customer_id uuid references public.customers(id) on delete set null,
   customer_name text not null,
   customer_phone text not null,
@@ -112,3 +113,42 @@ end; $$;
 drop trigger if exists sync_electronics_device_stock on public.electronics_devices;
 create trigger sync_electronics_device_stock after insert or update of status,store_id,branch_id,product_id or delete
 on public.electronics_devices for each row execute function public.sync_electronics_device_stock();
+
+create or replace function public.create_electronics_repair(
+  _store_id uuid,
+  _branch_id uuid,
+  _device_id uuid,
+  _customer_id uuid,
+  _customer_name text,
+  _customer_phone text,
+  _device_label text,
+  _issue_description text,
+  _warranty_claim boolean default false,
+  _estimated_cost numeric default 0,
+  _due_at timestamptz default null
+)
+returns uuid language plpgsql security definer set search_path=public,extensions as $function$
+declare
+  v_user_id uuid:=auth.uid();
+  v_device record;
+  v_previous_status text;
+  v_repair_id uuid;
+begin
+  if v_user_id is null then raise exception 'Not authenticated'; end if;
+  if not public.has_store_role(_store_id,v_user_id,array['owner','manager','cashier']::public.store_role[]) then raise exception 'Not authorized for this store'; end if;
+  if not exists(select 1 from public.branches b where b.id=_branch_id and b.store_id=_store_id) then raise exception 'Invalid branch'; end if;
+  if btrim(coalesce(_customer_name,''))='' or btrim(coalesce(_customer_phone,''))='' or btrim(coalesce(_device_label,''))='' or btrim(coalesce(_issue_description,''))='' then raise exception 'Customer, device and issue details are required'; end if;
+  if coalesce(_estimated_cost,0)<0 then raise exception 'Estimated cost cannot be negative'; end if;
+  if _customer_id is not null and not exists(select 1 from public.customers c where c.id=_customer_id and c.store_id=_store_id) then raise exception 'Invalid customer'; end if;
+  if _device_id is not null then
+    select * into v_device from public.electronics_devices where id=_device_id and store_id=_store_id and branch_id=_branch_id for update;
+    if not found then raise exception 'Selected device is not registered at this branch'; end if;
+    v_previous_status:=v_device.status;
+    update public.electronics_devices set status='repair',updated_at=now() where id=_device_id;
+  end if;
+  insert into public.electronics_repairs(store_id,branch_id,device_id,device_previous_status,customer_id,customer_name,customer_phone,device_label,issue_description,status,warranty_claim,estimated_cost,due_at,created_by)
+  values(_store_id,_branch_id,_device_id,v_previous_status,_customer_id,btrim(_customer_name),btrim(_customer_phone),btrim(_device_label),btrim(_issue_description),'received',coalesce(_warranty_claim,false),coalesce(_estimated_cost,0),_due_at,v_user_id)
+  returning id into v_repair_id;
+  return v_repair_id;
+end;
+$function$;
