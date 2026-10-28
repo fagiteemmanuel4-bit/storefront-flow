@@ -25,9 +25,6 @@ declare
   v_product record;
   v_variant record;
   v_variant_id uuid;
-  v_device record;
-  v_device_id uuid;
-  v_sale_item_id uuid;
   v_quantity integer;
   v_stock_units integer;
   v_unit_type text;
@@ -52,7 +49,6 @@ begin
     v_quantity := (v_item->>'quantity')::integer;
     v_unit_type := coalesce(v_item->>'unit_type', 'piece');
     v_variant_id := nullif(v_item->>'fashion_variant_stock_id', '')::uuid;
-    v_device_id := nullif(v_item->>'electronics_device_id', '')::uuid;
     if v_quantity is null or v_quantity <= 0 then raise exception 'Invalid quantity'; end if;
     if v_unit_type not in ('piece','pack') then raise exception 'Invalid sale unit'; end if;
     select p.id,p.name,p.price,p.piece_price,p.pack_price,p.units_per_pack,bs.quantity
@@ -66,21 +62,14 @@ begin
     v_units_per_sale := case when v_unit_type = 'pack' then greatest(v_product.units_per_pack,1) else 1 end;
     if v_unit_type = 'pack' and v_product.units_per_pack <= 1 then raise exception 'This product is not configured for pack sales'; end if;
     v_stock_units := v_quantity * v_units_per_sale;
-    if v_variant_id is not null and v_device_id is not null then raise exception 'A sale line cannot select both a fashion variant and an electronics device'; end if;
 
-    if v_device_id is not null then
-      if v_quantity <> 1 or v_unit_type <> 'piece' then raise exception 'A serialised device must be sold as one individual item'; end if;
-      select * into v_device from public.electronics_devices where id=v_device_id and store_id=_store_id and branch_id=_branch_id and product_id=v_product.id and status='in_stock' for update;
-      if not found then raise exception 'Selected serial number or IMEI is no longer available'; end if;
-    elsif v_variant_id is not null then
+    if v_variant_id is not null then
       if v_unit_type <> 'piece' then raise exception 'Fashion variants can only be sold as individual items'; end if;
       select * into v_variant from public.fashion_variant_stock
         where id = v_variant_id and store_id = _store_id and branch_id = _branch_id and product_id = v_product.id
         for update;
       if not found then raise exception 'Selected size and colour are not available at this branch'; end if;
       if v_variant.quantity < v_stock_units then raise exception 'Insufficient stock for % (% / %)', v_product.name, v_variant.size, v_variant.color; end if;
-    elsif exists(select 1 from public.electronics_devices ed where ed.store_id=_store_id and ed.branch_id=_branch_id and ed.product_id=v_product.id) then
-      raise exception 'Select an available serial number or IMEI for %',v_product.name;
     elsif v_product.quantity < v_stock_units then
       raise exception 'Insufficient stock for %', v_product.name;
     end if;
@@ -101,7 +90,6 @@ begin
     v_quantity := (v_item->>'quantity')::integer;
     v_unit_type := coalesce(v_item->>'unit_type','piece');
     v_variant_id := nullif(v_item->>'fashion_variant_stock_id','')::uuid;
-    v_device_id := nullif(v_item->>'electronics_device_id','')::uuid;
     select p.id,p.name,p.price,p.piece_price,p.pack_price,p.units_per_pack
       into v_product from public.products p
       where p.id = (v_item->>'product_id')::uuid and p.store_id = _store_id
@@ -111,13 +99,7 @@ begin
     v_stock_units := v_quantity * v_units_per_sale;
     v_line_total := v_unit_price * v_quantity;
 
-    if v_device_id is not null then
-      select * into v_device from public.electronics_devices where id=v_device_id and store_id=_store_id and branch_id=_branch_id and product_id=v_product.id and status='in_stock' for update;
-      if not found then raise exception 'Selected serial number or IMEI is no longer available'; end if;
-      insert into public.sale_items(sale_id,store_id,product_id,product_name,quantity,unit_price,line_total,unit_type,units_per_sale,electronics_device_id,device_serial_number,device_imei)
-        values(v_sale_id,_store_id,v_product.id,v_product.name,1,v_unit_price,v_unit_price,'piece',1,v_device.id,v_device.serial_number,v_device.imei) returning id into v_sale_item_id;
-      update public.electronics_devices set status='sold',sale_item_id=v_sale_item_id,customer_id=_customer_id,warranty_started_at=now(),warranty_expires_at=case when warranty_months>0 then now()+make_interval(months=>warranty_months) else null end,updated_at=now() where id=v_device_id;
-    elsif v_variant_id is not null then
+    if v_variant_id is not null then
       select * into v_variant from public.fashion_variant_stock
         where id = v_variant_id and store_id = _store_id and branch_id = _branch_id and product_id = v_product.id
         for update;
