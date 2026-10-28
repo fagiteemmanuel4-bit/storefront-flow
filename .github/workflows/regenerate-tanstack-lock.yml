@@ -1,0 +1,34 @@
+name: Regenerate Bun lockfile for TanStack security fix
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-lockfile:
+    if: github.event.pull_request.head.ref == 'fix/tanstack-start-security-2026' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/tanstack-start-security-2026
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Resolve patched dependency graph
+        run: bun install
+      - name: Commit regenerated lockfile
+        run: |
+          if git diff --quiet -- bun.lock; then
+            echo "Lockfile already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bun.lock
+          git commit -m "chore: regenerate lockfile for patched TanStack Start"
+          git push origin HEAD:fix/tanstack-start-security-2026
