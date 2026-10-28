@@ -31,7 +31,7 @@ function FashionReturnsPage() {
     queryKey: ["fashion-return-sale", storeId, activeReference],
     enabled: Boolean(storeId && activeReference),
     queryFn: async () => {
-      const { data, error } = await db.from("sales").select("id,reference,branch_id,created_at,total,payment_method").eq("store_id", storeId!).ilike("reference", activeReference).maybeSingle();
+      const { data, error } = await db.from("sales").select("id,reference,branch_id,created_at,total,payment_method").eq("store_id", storeId!).eq("reference", activeReference).maybeSingle();
       if (error) throw new Error(error.message);
       return (data ?? null) as Sale | null;
     },
@@ -78,8 +78,8 @@ function FashionReturnsPage() {
       setReason("");
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["fashion-return-quantities", sale.id] }),
-        queryClient.invalidateQueries({ queryKey: ["products", storeId, branch?.id] }),
-        queryClient.invalidateQueries({ queryKey: ["fashion-variant-stock", storeId, branch?.id] }),
+        queryClient.invalidateQueries({ queryKey: ["products", storeId] }),
+        queryClient.invalidateQueries({ queryKey: ["fashion-variant-stock", storeId] }),
       ]);
     } catch (error) {
       toast.error(errorMessage(error, "The return could not be recorded."));
