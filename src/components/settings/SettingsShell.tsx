@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { cn } from "@/lib/utils";
 
 const items = [
-  { path: "/settings/store-profile", title: "Store profile", description: "Business identity, contact and regional settings", icon: Store, group: "Store" },
+  { path: "/settings/store-profile", title: "Store profile", description: "Business mode, identity, contact and regional settings", icon: Store, group: "Store" },
   { path: "/settings/appearance", title: "Store appearance", description: "Branding, typography and storefront style", icon: Palette, group: "Store" },
   { path: "/settings/online-store", title: "Online store", description: "Publishing, catalogue and SEO", icon: Globe2, group: "Store" },
   { path: "/settings/receipts", title: "Receipts", description: "Receipt identity, content and printing", icon: Receipt, group: "Commerce" },

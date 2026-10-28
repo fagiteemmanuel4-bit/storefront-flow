@@ -8,6 +8,7 @@ import { AppShell } from "@/components/shell/AppShell";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { formatMoney } from "@/lib/currency";
 import { formatDateTime } from "@/lib/format";
+import { getBusinessMode } from "@/lib/business-modes";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -31,6 +32,7 @@ function DashboardPage() {
   const online = onlineStoreQuery.data;
   const lowStockCount = lowStockQuery.data?.length ?? 0;
   const pendingOrders = onlineOrdersQuery.data ?? 0;
+  const businessMode = getBusinessMode((store?.storefront_settings as any)?.businessMode ?? store?.business_type);
 
   return <AppShell title="Today's trading">
     <div className="space-y-6 pb-8">
@@ -43,6 +45,8 @@ function DashboardPage() {
       </section>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><MetricCard icon={<TrendingUp className="size-4" />} label="Revenue today" value={salesQuery.isLoading ? null : formatMoney(todayRevenue, currency)} hint={`${todaySales.length} sale${todaySales.length === 1 ? "" : "s"} completed`} /><MetricCard icon={<Receipt className="size-4" />} label="Sales today" value={salesQuery.isLoading ? null : String(todaySales.length)} hint="Counter activity" /><MetricCard icon={<AlertTriangle className="size-4" />} label="Needs attention" value={lowStockQuery.isLoading ? null : String(lowStockCount)} hint={lowStockCount ? "Below stock threshold" : "Stock looks healthy"} tone={lowStockCount ? "warning" : "success"} /><MetricCard icon={<Bell className="size-4" />} label="Online orders" value={onlineOrdersQuery.isLoading ? null : String(pendingOrders)} hint={online?.setup_completed ? "Waiting for action" : "Store not active"} tone={pendingOrders ? "warning" : "success"} /></section>
+
+      <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6"><div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"><div className="flex items-start gap-3"><span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-ink"><Sparkles className="size-5"/></span><div><p className="text-label-caps text-muted-foreground">Your business workspace</p><h2 className="mt-1 font-display text-xl font-bold tracking-tight">{businessMode.label}</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">{businessMode.description}</p></div></div><Link to="/settings/store-profile" className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-border px-3 text-sm font-semibold transition hover:bg-secondary">Change mode <ArrowRight className="size-4"/></Link></div><div className="mt-4 grid gap-2 sm:grid-cols-3">{businessMode.quickActions.map((action) => <Link key={action.label} to={action.to as any} className="group flex min-w-0 items-center justify-between gap-3 rounded-xl border border-border bg-background p-3 transition hover:border-accent/40 hover:bg-accent-soft"><span className="min-w-0"><span className="block text-sm font-semibold">{action.label}</span><span className="mt-0.5 block text-xs text-muted-foreground">{action.description}</span></span><ChevronRight className="size-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5"/></Link>)}</div></section>
 
       {!storeNudgeDismissed && !online?.setup_completed && <section className="relative overflow-hidden rounded-2xl border border-accent/25 bg-accent-soft p-5 shadow-sm sm:p-6"><button type="button" onClick={() => setStoreNudgeDismissed(true)} aria-label="Dismiss online store reminder" className="touch-target absolute right-3 top-3 flex size-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-surface hover:text-foreground"><X className="size-4" /></button><div className="flex flex-col gap-5 pr-8 sm:flex-row sm:items-center sm:justify-between"><div className="flex items-start gap-4"><span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-accent text-foreground"><Globe2 className="size-5" /></span><div><p className="text-label-caps text-accent-ink">Your online store isn't set up</p><h2 className="mt-1 font-display text-lg font-semibold">Start selling online when you're ready.</h2><p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">Turn your catalogue into a storefront, share your link with customers and receive orders beyond your physical shop.</p></div></div><Link to="/online-store/setup" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-foreground px-5 py-3 text-sm font-bold text-background transition hover:-translate-y-0.5 hover:shadow-md">Set up online store <ArrowRight className="size-4" /></Link></div></section>}
 
