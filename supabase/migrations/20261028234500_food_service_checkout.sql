@@ -85,6 +85,7 @@ begin
           where id=(v_modifier_item->>'modifier_id')::uuid and store_id=_store_id and product_id=v_product.id and is_active
           for share;
         if not found then raise exception 'A menu modifier is no longer available for %',v_product.name; end if;
+        if coalesce((v_modifier_item->>'price_delta')::numeric,0)<0 then raise exception 'Modifier price additions cannot be negative'; end if;
         if not exists(
           select 1 from jsonb_array_elements(v_modifier_row.options) as option_row(value)
           where option_row.value->>'label'=v_modifier_item->>'option_label'
