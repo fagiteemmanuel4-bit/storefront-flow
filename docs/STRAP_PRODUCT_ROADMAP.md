@@ -4,6 +4,7 @@ This roadmap starts with **business-specific workspaces** and then progresses th
 
 ## 4. Dedicated modes for different businesses — current work
 - [x] Add business-mode selection to Store Profile with clear descriptions and a mobile-friendly card layout.
+- [x] Add business-mode selection and a clear mode summary during new-store onboarding.
 - [x] Persist the selected mode in the existing store profile settings without a new database migration.
 - [x] Show mode-specific shortcuts and recommended workflows on the dashboard.
 - [x] Clearly distinguish working features from planned features; never present planned functionality as already available.
