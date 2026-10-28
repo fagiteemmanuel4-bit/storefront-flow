@@ -1,4 +1,4 @@
-/* Kudi landing page — modern visual layer. Scoped to the public landing route so app/POS screens stay untouched. */
+/* Strap landing page — modern visual layer. Scoped to the public landing route so app/POS screens stay untouched. */
 
 body:has(#features) {
   --landing-ink: oklch(0.18 0.01 82);

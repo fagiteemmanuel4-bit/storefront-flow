@@ -1,9 +1,25 @@
 User-agent: *
 Allow: /
+Allow: /docs
+Allow: /partners
+Allow: /support
+Allow: /help
+Allow: /store/
+Allow: /sitemap.xml
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+# Keep private application and account areas out of search indexes.
 Disallow: /dashboard
-Disallow: /settings
 Disallow: /admin
+Disallow: /staff
 Disallow: /auth
+Disallow: /account
+Disallow: /settings
 Disallow: /track/
+Disallow: /api/
+
+# Public sitemap endpoint is explicitly crawlable.
+Allow: /api/sitemap
 
 Sitemap: https://storefront-flow.vercel.app/sitemap.xml

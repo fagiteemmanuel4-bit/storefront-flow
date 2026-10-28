@@ -1,0 +1,72 @@
+@media (max-width: 767px) {
+  :root { --mobile-gutter: 16px; --mobile-radius: 16px; --mobile-nav-height: 68px; }
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; overscroll-behavior-x: none; }
+  body { -webkit-text-size-adjust: 100%; }
+  button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+  button, a[role="button"] { touch-action: manipulation; }
+  .kudi-app-shell { min-height: 100dvh !important; padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom)) !important; }
+  .kudi-app-shell > header { position: sticky; top: 0; box-shadow: 0 1px 0 color-mix(in oklch, var(--color-border) 80%, transparent); }
+  .kudi-app-shell > header > div { min-height: 58px !important; padding: 8px var(--mobile-gutter) !important; }
+  .kudi-app-shell > header .ml-auto { gap: 6px; }
+  .kudi-app-shell > header button { min-height: 44px; min-width: 44px; border-radius: 12px; }
+  .kudi-app-shell > main { width: 100% !important; max-width: none !important; padding: 18px var(--mobile-gutter) 22px !important; }
+  .kudi-app-shell > main > div:first-child { margin-bottom: 18px !important; }
+  .kudi-app-shell > main h1 { max-width: 100%; font-size: clamp(24px, 7vw, 30px); line-height: 1.08; letter-spacing: -.035em; }
+  .kudi-app-shell main > div { min-width: 0; }
+  .kudi-app-shell main [class*="lg:grid-cols"] { grid-template-columns: minmax(0, 1fr) !important; }
+  .kudi-app-shell main .grid-cols-2:not(.stack-mobile), .kudi-app-shell main .grid-cols-3:not(.stack-mobile), .kudi-app-shell main .grid-cols-4:not(.stack-mobile), .kudi-app-shell main .grid-cols-5:not(.stack-mobile), .kudi-app-shell main .grid-cols-6:not(.stack-mobile) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kudi-app-shell main .grid-cols-3:not(.stack-mobile) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kudi-app-shell main .stack-mobile { grid-template-columns: minmax(0, 1fr) !important; }
+  .kudi-app-shell .surface-card { min-width: 0; border-radius: var(--mobile-radius); box-shadow: 0 6px 22px -24px rgba(0,0,0,.45); }
+  .kudi-app-shell .surface-card.p-6 { padding: 16px !important; }
+  .kudi-app-shell .surface-card.p-5 { padding: 15px !important; }
+  .kudi-app-shell .surface-card.p-4 { padding: 14px !important; }
+  .kudi-app-shell main .overflow-x-auto { max-width: 100%; border-radius: 14px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .kudi-app-shell main .overflow-x-auto::-webkit-scrollbar { display: none; }
+  .kudi-app-shell main table { min-width: 620px; font-size: 12px; }
+  .kudi-app-shell main th, .kudi-app-shell main td { padding: 9px 10px !important; white-space: nowrap; }
+  .kudi-app-shell input, .kudi-app-shell textarea, .kudi-app-shell [role="combobox"], .kudi-app-shell select { min-height: 44px; border-radius: 12px; font-size: 16px; }
+  .kudi-app-shell button:not([data-radix-collection-item]), .kudi-app-shell a.rounded-xl, .kudi-app-shell a.rounded-2xl { min-height: 44px; }
+  .kudi-app-shell .flex-wrap { row-gap: 8px; }
+  .kudi-app-shell main .sticky.bottom-0 { bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom)) !important; }
+  .settings-nav { overflow: hidden; }
+  .settings-nav nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; }
+  .settings-nav nav > a:first-child { grid-column: 1 / -1; margin-bottom: 3px !important; }
+  .settings-nav-group { min-width: 0; margin: 0 !important; padding: 0 !important; }
+  .settings-nav-group > p { padding: 9px 8px 4px !important; }
+  .settings-nav-group > a { min-width: 0; padding: 10px 8px !important; }
+  .settings-nav-group > a svg:last-child { display: none; }
+  .settings-nav-group > a span { font-size: 11px !important; }
+  main:has(form) { min-height: 100dvh; }
+  main:has(form) form input { min-height: 48px; }
+  main:has(form) form button[type="submit"] { min-height: 48px; border-radius: 13px; }
+
+  .pos-sell-page { min-width: 0; }
+  .pos-mobile-shell .pos-sell-page > .pos-mobile-header { display: none !important; }
+  .pos-mobile-shell .pos-sell-page > .pos-domain-banner { margin-top: 0; }
+  .pos-mobile-brand { display: flex; align-items: center; gap: 8px; font-family: "Space Grotesk", sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -.03em; }
+  .pos-brand-mark { display: flex; width: 30px; height: 30px; align-items: center; justify-content: center; border-radius: 10px; background: var(--color-accent); }
+  .pos-brand-mark > span { width: 11px; height: 11px; transform: rotate(45deg); border-radius: 3px; background: var(--color-foreground); }
+  .pos-icon-toolbar { display: flex; align-items: center; gap: 4px; }
+  .pos-toolbar-button { position: relative; display: flex; width: 40px; height: 40px; align-items: center; justify-content: center; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface); color: var(--color-muted-foreground); transition: background .18s ease, color .18s ease, transform .18s ease; }
+  .pos-toolbar-button:active { transform: scale(.95); }
+  .pos-toolbar-button:hover { background: var(--color-secondary); color: var(--color-foreground); }
+  .pos-toolbar-button.pos-toolbar-active { border-color: color-mix(in oklch, var(--color-accent) 25%, var(--color-border)); background: var(--color-accent-soft); color: var(--color-accent-ink); }
+  .pos-cart-count { position: absolute; right: -2px; top: -2px; display: flex; width: 16px; height: 16px; align-items: center; justify-content: center; border: 2px solid var(--color-background); border-radius: 999px; background: var(--color-foreground); color: var(--color-background); font-size: 8px; font-weight: 800; line-height: 1; }
+  .pos-sell-page .pos-domain-banner { position: relative; }
+  .pos-sell-page .pos-domain-banner span { line-height: 1.3; }
+  .pos-sell-page .surface-card.pos-product-card { border: 1px solid color-mix(in oklch, var(--color-border) 92%, transparent); background: var(--color-surface); box-shadow: 0 8px 24px -22px rgba(0,0,0,.55); }
+  .pos-sell-page .pos-product-card:active { transform: scale(.985); }
+  .pos-sell-page .pos-product-out { background: color-mix(in oklch, var(--color-secondary) 68%, var(--color-background)); border-color: color-mix(in oklch, #dc2626 14%, var(--color-border)); }
+  .pos-sell-page .pos-product-out .text-accent-ink { color: var(--color-muted-foreground); }
+  .pos-sell-page .field { padding-inline: 12px; }
+  .pos-mobile-shell .pos-sell-page > div.mb-3 > span { display: none !important; }
+  .pos-mobile-shell .pos-sell-page > div.mt-3.flex-wrap > button { color: var(--color-foreground) !important; opacity: 1 !important; border: 1px solid var(--color-border); background: transparent; }
+  .pos-mobile-shell .pos-sell-page > div.mt-3.flex-wrap > button:hover { background: var(--color-secondary); }
+  .pos-mobile-shell .pos-sell-page > div.mt-5.grid { margin-top: 12px !important; }
+  @media (max-width: 380px) { :root { --mobile-gutter: 12px; } .kudi-app-shell > main h1 { font-size: 23px; } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

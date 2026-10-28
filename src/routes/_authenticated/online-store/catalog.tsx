@@ -142,7 +142,7 @@ function OnlineCatalogPage() {
       <div className="relative overflow-hidden bg-foreground p-6 text-background sm:p-8">
         <div className="pointer-events-none absolute -right-16 -top-24 size-72 rounded-full bg-background/10 blur-3xl" />
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl"><div className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-background/60"><Globe2 className="size-4" /> Online store</div><h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Choose what customers can buy online.</h2><p className="mt-3 max-w-xl text-sm leading-6 text-background/65">Your POS products stay in Kudi. Publishing here simply makes them available in the public storefront.</p></div>
+          <div className="max-w-2xl"><div className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-background/60"><Globe2 className="size-4" /> Online store</div><h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Choose what customers can buy online.</h2><p className="mt-3 max-w-xl text-sm leading-6 text-background/65">Your POS products stay in Strap. Publishing here simply makes them available in the public storefront.</p></div>
           <div className="grid grid-cols-3 gap-2"><Stat label="Products" value={rows.length} /><Stat label="Published" value={publishedCount} /><Stat label="Featured" value={featuredCount} /></div>
         </div>
       </div>

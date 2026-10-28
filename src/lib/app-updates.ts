@@ -13,7 +13,7 @@ export const APP_UPDATES: AppUpdate[] = [
       "Save regular customers and attach them to sales so visits and spending build a useful history.",
       "Sales can now be queued safely on the device when the connection drops and sync automatically when you reconnect.",
       "Print receipts directly from the completed-sale screen, including to printers available through your computer or device print system.",
-      "A guided Kudi tour now helps new users learn the register, stock, customers, reports and menu.",
+      "A guided Strap tour now helps new users learn the register, stock, customers, reports and menu.",
     ],
   },
   {
