@@ -68,19 +68,19 @@ function FoodServicePage() {
   }
   async function saveModifier(event:React.FormEvent) {
     event.preventDefault();
-    if(!storeId||!menuProductId||!modifierName.trim())return toast.error("Choose a menu item and enter a modifier name.");
+    if(!storeId||!menuProductId||!modifierName.trim()){toast.error("Choose a menu item and enter a modifier name.");return;}
     const options=modifierOptions.split("\n").map(line=>line.trim()).filter(Boolean).map(line=>{const index=line.lastIndexOf(":");const label=(index<0?line:line.slice(0,index)).trim();const price=index<0?0:Number(line.slice(index+1).trim());return {label,price_delta:price};});
-    if(!options.length||options.some(o=>!o.label||!Number.isFinite(o.price_delta)||o.price_delta<0))return toast.error("Enter options one per line as Option name:Price addition (for example Large:500).");
-    if(new Set(options.map(o=>o.label.toLowerCase())).size!==options.length)return toast.error("Modifier option names must be unique.");
+    if(!options.length||options.some(o=>!o.label||!Number.isFinite(o.price_delta)||o.price_delta<0)){toast.error("Enter options one per line as Option name:Price addition (for example Large:500).");return;}
+    if(new Set(options.map(o=>o.label.toLowerCase())).size!==options.length){toast.error("Modifier option names must be unique.");return;}
     setSaving(true);
     try{const {error}=await db.from("food_menu_modifiers").upsert({store_id:storeId,product_id:menuProductId,name:modifierName.trim(),options,is_required:modifierRequired,is_active:true},{onConflict:"store_id,product_id,name"});if(error)throw new Error(error.message);toast.success("Menu modifier saved.");setModifierName("");setModifierOptions("");setModifierRequired(false);await refresh();}
     catch(error){toast.error(errorMessage(error,"Modifier could not be saved."));}finally{setSaving(false);}
   }
   async function saveRecipe(event:React.FormEvent) {
     event.preventDefault();
-    if(!storeId||!branchId||!recipeMenuId||!ingredientId)return toast.error("Choose the menu item and ingredient.");
+    if(!storeId||!branchId||!recipeMenuId||!ingredientId){toast.error("Choose the menu item and ingredient.");return;}
     const quantity=Number(ingredientQty);
-    if(!Number.isInteger(quantity)||quantity<1)return toast.error("Ingredient quantity must be a whole number of at least one.");
+    if(!Number.isInteger(quantity)||quantity<1){toast.error("Ingredient quantity must be a whole number of at least one.");return;}
     setSaving(true);
     try{const {error}=await db.from("food_recipe_ingredients").upsert({store_id:storeId,branch_id:branchId,menu_product_id:recipeMenuId,ingredient_product_id:ingredientId,quantity_per_serving:quantity},{onConflict:"branch_id,menu_product_id,ingredient_product_id"});if(error)throw new Error(error.message);toast.success("Recipe ingredient saved.");setIngredientQty("1");await refresh();}
     catch(error){toast.error(errorMessage(error,"Recipe ingredient could not be saved."));}finally{setSaving(false);}
@@ -100,7 +100,7 @@ function FoodServicePage() {
   }
   async function recordWaste(event:React.FormEvent) {
     event.preventDefault();
-    if(!storeId||!branchId||!wasteIngredientId)return toast.error("Choose an ingredient.");
+    if(!storeId||!branchId||!wasteIngredientId){toast.error("Choose an ingredient.");return;}
     setSaving(true);
     try{const {error}=await db.rpc("record_food_waste",{_store_id:storeId,_branch_id:branchId,_ingredient_product_id:wasteIngredientId,_quantity:Number(wasteQty),_reason:wasteReason.trim()});if(error)throw new Error(error.message);toast.success("Waste recorded and stock reduced.");setWasteQty("1");setWasteReason("");await refresh();}
     catch(error){toast.error(errorMessage(error,"Waste could not be recorded."));}finally{setSaving(false);}
