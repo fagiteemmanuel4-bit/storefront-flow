@@ -79,9 +79,9 @@ export const BUSINESS_MODES: BusinessMode[] = [
       { title: "Product catalogue and stock", detail: "Maintain the catalogue, prices and current stock.", status: "available" },
       { title: "Customer purchase history", detail: "Review customer records and support repeat visits.", status: "available" },
       { title: "Sizes and colours", detail: "Add available sizes, colours, fabric and style notes to each clothing item.", status: "available" },
-      { title: "Stock by size and colour", detail: "Track exact quantities for each size-and-colour combination during checkout.", status: "planned" },
+      { title: "Stock by size and colour", detail: "Track exact quantities for each size-and-colour combination and decrement the selected variant at checkout.", status: "available" },
       { title: "WhatsApp product sharing", detail: "Share a product message with its price, sizes, colours and online-store link.", status: "available" },
-      { title: "Exchanges and returns workflow", detail: "Record exchanges and return reasons with clear stock adjustments.", status: "planned" },
+      { title: "Exchanges and returns workflow", detail: "Record returns, prevent over-returning, restock the original size/colour, then record the replacement sale.", status: "available" },
     ],
     quickActions: [
       { label: "Manage collection", description: "Photos, sizes and prices", to: "/products" },
