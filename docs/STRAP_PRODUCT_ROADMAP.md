@@ -41,7 +41,7 @@ This roadmap starts with **business-specific workspaces** and then progresses th
 ## 7. Business-specific workflow backlog
 - [ ] Groceries/provision: expiry and batch tracking, reorder suggestions and supplier price comparisons.
 - [x] Fashion: photo-first product entry, size/colour/material notes, WhatsApp product sharing, fashion-first dashboard/navigation and barcode-free product entry.
-- [ ] Fashion completion gate: per-size/per-colour quantities, variant selection at checkout, variant-aware stock decrement and sales records, storefront variant display, exchanges/returns with stock adjustments, and collection-level reporting. Do not start the next business mode until this gate is tested end-to-end.
+- [ ] Fashion release gate: run end-to-end checks for per-size/per-colour quantities, POS checkout and stock decrement, online ordering, returns/restocking, role permissions, and collection reporting before production release. Do not start the next business mode until this gate is tested end-to-end.
 - [ ] Next after fashion completion: Electronics & phones — serial/IMEI records linked to device stock and sales, warranty tracking, and repair intake.
 - [ ] Food service: menu modifiers, kitchen tickets, recipe costing, ingredient deductions and waste tracking.
 - [ ] Pharmacy: batch/expiry/recall traceability and specialist compliance review before enabling pharmacy workflows.
@@ -49,11 +49,16 @@ This roadmap starts with **business-specific workspaces** and then progresses th
 - [ ] Services: appointments, job cards, deposits and service packages.
 
 ## Current implementation handoff — 2026-10-28
-- Fashion PR #23 is the active branch: `feat/fashion-first-workspace`, based on `feat/strap-business-modes` (PR #22). Keep the dependency order; do not merge the fashion branch directly to `main` before its base.
+- Fashion PR #23 (`feat/fashion-first-workspace`) is based on `feat/strap-business-modes` (PR #22). POS refinement PR #24 (`feat/fashion-completion-and-compact-pos`) is stacked on PR #23. Preserve this merge order; do not merge either branch directly to `main` before its base.
 - Already implemented on the fashion branch: photo-first product entry (up to six images and camera capture), descriptive sizes/colours/material/style notes, fashion-specific navigation/dashboard/settings, catalogue imagery, WhatsApp product sharing, and hiding barcode-first UI in fashion mode.
-- The existing `product_fashion_details` table stores descriptive size/colour options only. It is not variant inventory. The existing `product_variants` table has attributes and prices but no branch-level quantities, and `create_sale` currently decrements product-level `branch_stock`.
-- Next implementation step: inspect and design an additive, branch-aware size/colour stock model, then wire product editing, POS variant selection, sale RPC/line items, online storefront display, and regression tests together. Preserve current product-level checkout for every non-fashion mode. Do not claim variant stock is available until all those paths are implemented and verified.
+- Additive `fashion_variant_stock` now stores quantities by store, branch, product, size and colour. Its trigger keeps legacy product-level `branch_stock` totals in sync so existing product lists and non-fashion checkout continue to use their current contract.
+- Product editing now supports one `Size | Colour | Quantity` row per variant; POS offers exact size/colour selection and sends the chosen variant to `create_sale`, which validates and decrements that variant. Variant details are snapshotted onto sale items.
+- The public catalogue now has a v2 RPC that exposes available size/colour options; the storefront lets customers choose an option, and online order creation allocates/decrements the selected variant across branches. The order detail view displays the chosen size and colour.
+- Returns are recorded in `sale_returns` / `sale_return_items`; `process_fashion_return` validates remaining returnable quantity and restocks the original size/colour where recorded. The new Returns & Exchanges workspace is linked from fashion quick actions. Exchanges are handled as a return followed by a replacement sale.
+- Reports now include best-selling size/colour combinations for fashion mode. The POS toolbar was compacted so search is prominent and scan/hold controls use less space.
+- Remaining before declaring fashion complete: inspect the newest Vercel build, exercise the new flows against real authenticated preview data, verify permission and stock edge cases, fix any build/runtime issues, and promote only after those checks. Do not start electronics until fashion passes this release gate.
 - After the fashion completion gate passes: start the Electronics & phones workspace. Keep existing sales, authentication, permissions and store data intact.
+- User instruction: proceed autonomously through the current mode and then the next mode without asking for routine confirmations; return only when a deployed, verified working version is available. Keep this roadmap and handoff notes current after each meaningful change.
 
 ## Release quality checklist
 - [ ] Inspect the current repository before each implementation; reuse existing features instead of duplicating them.

@@ -17,7 +17,7 @@ export type BusinessWorkflow = {
 export type BusinessQuickAction = {
   label: string;
   description: string;
-  to: "/pos" | "/products" | "/customers" | "/reports" | "/expenses" | "/settings/inventory" | "/online-store" | "/online-store/orders";
+  to: "/pos" | "/products" | "/customers" | "/reports" | "/expenses" | "/settings/inventory" | "/online-store" | "/online-store/orders" | "/fashion-returns";
 };
 
 export type BusinessMode = {
@@ -87,6 +87,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
       { label: "Manage collection", description: "Photos, sizes and prices", to: "/products" },
       { label: "Online storefront", description: "Publish and promote styles", to: "/online-store" },
       { label: "Customer orders", description: "Review incoming orders", to: "/online-store/orders" },
+      { label: "Returns & exchanges", description: "Restock returned clothing", to: "/fashion-returns" },
     ],
   },
   {
