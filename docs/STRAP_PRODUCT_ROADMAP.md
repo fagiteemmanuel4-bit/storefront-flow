@@ -1,5 +1,7 @@
 # Strap product roadmap — checklist
 
+> **Release gate (2026-10-29):** General Store is the only active business mode. Grocery/provision, fashion, electronics, food service, pharmacy, beauty/personal care, and services are shown as **Coming soon** and their specialist routes are gated until each mode passes its release checks. Their implementation is preserved; this is an availability decision, not a deletion of work.
+
 This roadmap starts with **business-specific workspaces** and then progresses through the supporting capabilities discussed for Strap. Keep existing sales, authentication, permissions and database behaviour intact unless a task explicitly requires a reviewed change.
 
 ## 4. Dedicated modes for different businesses — current work
