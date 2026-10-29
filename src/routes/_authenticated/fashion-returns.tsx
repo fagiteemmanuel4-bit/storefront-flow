@@ -5,13 +5,14 @@ import { ArrowLeftRight, Search, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/shell/AppShell";
+import { BusinessModeGate } from "@/components/shell/BusinessModeGate";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatMoney } from "@/lib/currency";
 import { formatDateTime, errorMessage } from "@/lib/format";
 
-export const Route = createFileRoute("/_authenticated/fashion-returns")({ component: FashionReturnsPage });
+export const Route = createFileRoute("/_authenticated/fashion-returns")({ component: () => <BusinessModeGate modeKey="fashion"><FashionReturnsPage /></BusinessModeGate> });
 type Sale = { id: string; reference: string; branch_id: string; created_at: string; total: number; payment_method: string };
 type SaleItem = { id: string; product_id: string | null; product_name: string; quantity: number; unit_price: number; line_total: number; variant_size: string | null; variant_color: string | null };
 
