@@ -8,17 +8,14 @@ export function getPublicProductCanonicalUrl(slug: string, productSlug: string, 
   return `${base}/store/${encodeURIComponent(slug.trim().toLowerCase())}/products/${encodeURIComponent(productSlug)}`;
 }
 
-export function buildStoreJsonLd(
-  store: {
-    name: string;
-    description?: string | null;
-    logoUrl?: string | null;
-    slug: string;
-    email?: string | null;
-    phone?: string | null;
-  },
-  origin?: string,
-) {
+export function buildStoreJsonLd(store: {
+  name: string;
+  description?: string | null;
+  logoUrl?: string | null;
+  slug: string;
+  email?: string | null;
+  phone?: string | null;
+}, origin?: string) {
   const sameAs: string[] = [];
   const data: Record<string, unknown> = {
     "@context": "https://schema.org",
@@ -34,22 +31,19 @@ export function buildStoreJsonLd(
   return data;
 }
 
-export function buildProductJsonLd(
-  product: {
-    name: string;
-    description?: string | null;
-    price: number;
-    currency: string;
-    imageUrls?: string[];
-    sku?: string | null;
-    category?: string | null;
-    available: boolean;
-    slug: string;
-    storeSlug: string;
-    brandName?: string | null;
-  },
-  origin?: string,
-) {
+export function buildProductJsonLd(product: {
+  name: string;
+  description?: string | null;
+  price: number;
+  currency: string;
+  imageUrls?: string[];
+  sku?: string | null;
+  category?: string | null;
+  available: boolean;
+  slug: string;
+  storeSlug: string;
+  brandName?: string | null;
+}, origin?: string) {
   const data: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",

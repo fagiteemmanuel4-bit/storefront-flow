@@ -50,15 +50,12 @@ export function buildProductJsonLd(product: StorefrontSeoProduct): Record<string
       "@type": "Offer",
       price: product.price,
       priceCurrency: product.currency,
-      availability: product.available
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
+      availability: product.available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: product.url,
     },
   };
   if (product.description) data.description = product.description;
-  if (product.imageUrl)
-    data.image = Array.isArray(product.imageUrl) ? product.imageUrl : [product.imageUrl];
+  if (product.imageUrl) data.image = Array.isArray(product.imageUrl) ? product.imageUrl : [product.imageUrl];
   if (product.sku) data.sku = product.sku;
   if (product.brand) data.brand = { "@type": "Brand", name: product.brand };
   if (product.category) data.category = product.category;

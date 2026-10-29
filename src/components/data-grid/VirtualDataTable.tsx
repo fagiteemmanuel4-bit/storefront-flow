@@ -77,8 +77,7 @@ export function VirtualDataTable<TData>({
                     type="button"
                     className={cn(
                       "inline-flex min-h-8 items-center gap-1.5 rounded-md text-left transition-colors",
-                      canSort &&
-                        "hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      canSort && "hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                       !canSort && "cursor-default",
                     )}
                     onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
@@ -101,14 +100,15 @@ export function VirtualDataTable<TData>({
         </div>
 
         {rows.length === 0 ? (
-          <div
-            className="flex min-h-32 items-center justify-center px-6 text-sm text-muted-foreground"
-            role="status"
-          >
+          <div className="flex min-h-32 items-center justify-center px-6 text-sm text-muted-foreground" role="status">
             {emptyMessage}
           </div>
         ) : (
-          <div role="rowgroup" className="relative" style={{ height: virtualizer.getTotalSize() }}>
+          <div
+            role="rowgroup"
+            className="relative"
+            style={{ height: virtualizer.getTotalSize() }}
+          >
             {virtualizer.getVirtualItems().map((virtualRow) => {
               const row = rows[virtualRow.index];
 

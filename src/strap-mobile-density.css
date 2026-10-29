@@ -31,11 +31,7 @@
   }
 
   .kudi-app-shell > .lg\:pl-60 > header .bg-accent.flex.size-8 > span,
-  .kudi-app-shell
-    > .lg\:pl-60
-    > header
-    .flex.size-8.items-center.justify-center.rounded-full
-    > span {
+  .kudi-app-shell > .lg\:pl-60 > header .flex.size-8.items-center.justify-center.rounded-full > span {
     width: 10px !important;
     height: 10px !important;
   }
@@ -99,63 +95,27 @@
   .kudi-app-shell > .lg\:pl-60 > main > .lg\:mb-7 p {
     font-size: 10px !important;
     line-height: 1.35 !important;
-    letter-spacing: 0.1em !important;
+    letter-spacing: .1em !important;
   }
 
   /* Compact the common Tailwind spacing used by operational cards on narrow screens. */
-  .kudi-app-shell > .lg\:pl-60 > main .p-6 {
-    padding: 16px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .p-5 {
-    padding: 14px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .p-4 {
-    padding: 12px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .px-6 {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .px-5 {
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .py-6 {
-    padding-top: 16px !important;
-    padding-bottom: 16px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .py-5 {
-    padding-top: 14px !important;
-    padding-bottom: 14px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .gap-6 {
-    gap: 14px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .gap-5 {
-    gap: 12px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .gap-4 {
-    gap: 10px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .space-y-6 > :not([hidden]) ~ :not([hidden]) {
-    margin-top: 14px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .space-y-5 > :not([hidden]) ~ :not([hidden]) {
-    margin-top: 12px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .space-y-4 > :not([hidden]) ~ :not([hidden]) {
-    margin-top: 10px !important;
-  }
+  .kudi-app-shell > .lg\:pl-60 > main .p-6 { padding: 16px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .p-5 { padding: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .p-4 { padding: 12px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .px-6 { padding-left: 16px !important; padding-right: 16px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .px-5 { padding-left: 14px !important; padding-right: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .py-6 { padding-top: 16px !important; padding-bottom: 16px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .py-5 { padding-top: 14px !important; padding-bottom: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .gap-6 { gap: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .gap-5 { gap: 12px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .gap-4 { gap: 10px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: 12px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 10px !important; }
 
-  .kudi-app-shell > .lg\:pl-60 > main .rounded-3xl {
-    border-radius: 16px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .rounded-2xl {
-    border-radius: 14px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .rounded-xl {
-    border-radius: 11px !important;
-  }
+  .kudi-app-shell > .lg\:pl-60 > main .rounded-3xl { border-radius: 16px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .rounded-2xl { border-radius: 14px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .rounded-xl { border-radius: 11px !important; }
 
   /* Keep controls compact while preserving the 40–44px touch target rule. */
   .kudi-app-shell > .lg\:pl-60 > main input:not([type="checkbox"]):not([type="radio"]),
@@ -166,23 +126,15 @@
     font-size: 14px !important;
   }
 
-  .kudi-app-shell > .lg\:pl-60 > main textarea {
-    font-size: 14px !important;
-  }
+  .kudi-app-shell > .lg\:pl-60 > main textarea { font-size: 14px !important; }
 
   .kudi-app-shell > .lg\:pl-60 > main button:not([aria-hidden="true"]) {
     min-height: 40px;
   }
 
-  .kudi-app-shell > .lg\:pl-60 > main .text-3xl {
-    font-size: 24px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .text-2xl {
-    font-size: 21px !important;
-  }
-  .kudi-app-shell > .lg\:pl-60 > main .text-xl {
-    font-size: 18px !important;
-  }
+  .kudi-app-shell > .lg\:pl-60 > main .text-3xl { font-size: 24px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .text-2xl { font-size: 21px !important; }
+  .kudi-app-shell > .lg\:pl-60 > main .text-xl { font-size: 18px !important; }
 
   /* POS search/actions: one clean row, with enough room for real product names. */
   .kudi-app-shell > .lg\:pl-60 > main [data-tour="sell"] input {

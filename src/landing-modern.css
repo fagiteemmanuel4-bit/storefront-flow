@@ -3,7 +3,7 @@
 body:has(#features) {
   --landing-ink: oklch(0.18 0.01 82);
   --landing-muted: oklch(0.48 0.015 82);
-  --landing-line: oklch(0.9 0.012 90);
+  --landing-line: oklch(0.90 0.012 90);
   --landing-warm: oklch(0.985 0.012 88);
   background: var(--landing-warm);
   color: var(--landing-ink);
@@ -13,11 +13,7 @@ body:has(#features) main {
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(
-      circle at 50% -10%,
-      color-mix(in oklch, var(--color-accent) 16%, transparent),
-      transparent 34rem
-    ),
+    radial-gradient(circle at 50% -10%, color-mix(in oklch, var(--color-accent) 16%, transparent), transparent 34rem),
     linear-gradient(180deg, oklch(0.992 0.006 88), oklch(0.975 0.012 88) 42%, oklch(0.992 0.006 88));
 }
 
@@ -27,8 +23,8 @@ body:has(#features) main::before {
   inset: 0;
   z-index: -2;
   pointer-events: none;
-  opacity: 0.34;
-  background-image: radial-gradient(oklch(0.35 0.02 80 / 0.14) 0.7px, transparent 0.7px);
+  opacity: .34;
+  background-image: radial-gradient(oklch(0.35 0.02 80 / .14) .7px, transparent .7px);
   background-size: 22px 22px;
   mask-image: linear-gradient(to bottom, black, transparent 72%);
 }
@@ -42,35 +38,29 @@ body:has(#features) main::after {
   width: 42rem;
   height: 42rem;
   border-radius: 999px;
-  background: radial-gradient(
-    circle,
-    color-mix(in oklch, var(--color-accent) 13%, transparent),
-    transparent 68%
-  );
+  background: radial-gradient(circle, color-mix(in oklch, var(--color-accent) 13%, transparent), transparent 68%);
   filter: blur(20px);
   pointer-events: none;
 }
 
 /* Header: floating glass, rather than a hard full-width bar. */
 body:has(#features) header.sticky {
-  margin: 0.75rem auto 0;
+  margin: .75rem auto 0;
   width: min(calc(100% - 1.5rem), 82rem);
   border: 1px solid color-mix(in oklch, var(--color-border) 78%, transparent) !important;
   border-radius: 999px;
   background: color-mix(in oklch, var(--color-surface) 82%, transparent) !important;
-  box-shadow: 0 14px 45px -30px oklch(0.18 0 0 / 0.34);
+  box-shadow: 0 14px 45px -30px oklch(0.18 0 0 / .34);
 }
 
 body:has(#features) header.sticky > div {
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
+  padding-top: .7rem;
+  padding-bottom: .7rem;
 }
 
 body:has(#features) header.sticky nav a,
 body:has(#features) header.sticky nav a:visited {
-  transition:
-    color 0.2s ease,
-    background 0.2s ease;
+  transition: color .2s ease, background .2s ease;
 }
 
 body:has(#features) header.sticky nav a:hover {
@@ -93,8 +83,8 @@ body:has(#features) main > section:first-child > div:last-child {
 body:has(#features) main > section:first-child h1 {
   max-width: 12ch;
   font-size: clamp(3.4rem, 7.2vw, 6.6rem) !important;
-  line-height: 0.9 !important;
-  letter-spacing: -0.055em !important;
+  line-height: .9 !important;
+  letter-spacing: -.055em !important;
   text-wrap: balance;
 }
 
@@ -108,12 +98,12 @@ body:has(#features) main > section:first-child h1 .text-accent-ink::after {
   position: absolute;
   left: 0;
   right: 2%;
-  bottom: -0.08em;
-  height: 0.08em;
+  bottom: -.08em;
+  height: .08em;
   border-radius: 999px;
   background: var(--color-accent);
   transform: rotate(-1.5deg);
-  opacity: 0.8;
+  opacity: .8;
 }
 
 body:has(#features) main > section:first-child p {
@@ -131,42 +121,28 @@ body:has(#features) main > section:first-child .inline-flex.rounded-xl.bg-accent
   position: absolute;
   inset: 0;
   transform: translateX(-110%);
-  background: linear-gradient(105deg, transparent 25%, oklch(1 0 0 / 0.35), transparent 70%);
+  background: linear-gradient(105deg, transparent 25%, oklch(1 0 0 / .35), transparent 70%);
   animation: kudi-button-shine 5s ease-in-out infinite;
 }
 
 @keyframes kudi-button-shine {
-  0%,
-  55%,
-  100% {
-    transform: translateX(-110%);
-  }
-  72% {
-    transform: translateX(110%);
-  }
+  0%, 55%, 100% { transform: translateX(-110%); }
+  72% { transform: translateX(110%); }
 }
 
 /* Hero image becomes a product-style visual card. */
 body:has(#features) main > section:first-child img {
-  filter: saturate(0.88) contrast(1.03);
-  transition:
-    transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1),
-    filter 0.4s ease;
+  filter: saturate(.88) contrast(1.03);
+  transition: transform .7s cubic-bezier(.2,.8,.2,1), filter .4s ease;
 }
 
-body:has(#features)
-  main
-  > section:first-child
-  .relative.overflow-hidden.rounded-\[1\.75rem\]:hover
-  img {
+body:has(#features) main > section:first-child .relative.overflow-hidden.rounded-\[1\.75rem\]:hover img {
   transform: scale(1.035);
   filter: saturate(1) contrast(1.04);
 }
 
 body:has(#features) main > section:first-child .relative.overflow-hidden.rounded-\[1\.75rem\] {
-  box-shadow:
-    0 38px 90px -42px oklch(0.18 0 0 / 0.48),
-    0 8px 30px -18px oklch(0.18 0 0 / 0.2);
+  box-shadow: 0 38px 90px -42px oklch(0.18 0 0 / .48), 0 8px 30px -18px oklch(0.18 0 0 / .2);
 }
 
 /* Add a subtle architectural frame around the hero visual. */
@@ -189,7 +165,7 @@ body:has(#features) main > section:first-child .relative.lg\:pl-5::after {
   top: 10%;
   border-radius: 50%;
   background: var(--color-accent);
-  opacity: 0.12;
+  opacity: .12;
   filter: blur(20px);
   z-index: -3;
 }
@@ -199,9 +175,9 @@ body:has(#features) main > section:nth-child(2) {
   position: relative;
   margin: 0 auto;
   width: min(100% - 1.5rem, 82rem);
-  border: 1px solid oklch(1 0 0 / 0.08) !important;
+  border: 1px solid oklch(1 0 0 / .08) !important;
   border-radius: 1.5rem;
-  box-shadow: 0 24px 55px -35px oklch(0 0 0 / 0.55);
+  box-shadow: 0 24px 55px -35px oklch(0 0 0 / .55);
 }
 
 /* Section rhythm */
@@ -224,10 +200,7 @@ body:has(#features) main > section:nth-child(7)::before {
 
 /* Feature cards */
 body:has(#features) article {
-  transition:
-    transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.28s ease,
-    border-color 0.28s ease;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease, border-color .28s ease;
 }
 
 body:has(#features) article:hover {
@@ -248,7 +221,7 @@ body:has(#features) main > section:nth-child(3) article::after {
   bottom: -5rem;
   border-radius: 50%;
   background: color-mix(in oklch, var(--color-accent) 12%, transparent);
-  transition: transform 0.35s ease;
+  transition: transform .35s ease;
 }
 
 body:has(#features) main > section:nth-child(3) article:hover::after {
@@ -257,7 +230,8 @@ body:has(#features) main > section:nth-child(3) article:hover::after {
 
 /* Capability grid feels like a modern product index. */
 body:has(#features) main > section:nth-child(4) {
-  background: linear-gradient(180deg, oklch(0.985 0.008 88), oklch(0.965 0.015 88));
+  background:
+    linear-gradient(180deg, oklch(0.985 0.008 88), oklch(0.965 0.015 88));
 }
 
 body:has(#features) main > section:nth-child(4) article {
@@ -276,17 +250,12 @@ body:has(#features) #how-it-works article:hover {
 }
 
 body:has(#features) #how-it-works article:first-child {
-  box-shadow:
-    inset 3px 0 var(--color-accent),
-    var(--shadow-lift);
+  box-shadow: inset 3px 0 var(--color-accent), var(--shadow-lift);
 }
 
 /* FAQ */
 body:has(#features) #faq details {
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
 }
 
 body:has(#features) #faq details:hover {
@@ -295,7 +264,7 @@ body:has(#features) #faq details:hover {
 }
 
 body:has(#features) #faq summary span {
-  transition: transform 0.2s ease;
+  transition: transform .2s ease;
 }
 
 body:has(#features) #faq details[open] summary span {
@@ -307,8 +276,9 @@ body:has(#features) main > section:last-of-type > div {
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at 85% 10%, oklch(1 0 0 / 0.22), transparent 20rem),
-    radial-gradient(circle at 10% 100%, oklch(1 0 0 / 0.14), transparent 18rem), var(--color-accent) !important;
+    radial-gradient(circle at 85% 10%, oklch(1 0 0 / .22), transparent 20rem),
+    radial-gradient(circle at 10% 100%, oklch(1 0 0 / .14), transparent 18rem),
+    var(--color-accent) !important;
 }
 
 body:has(#features) main > section:last-of-type > div::before {
@@ -318,11 +288,9 @@ body:has(#features) main > section:last-of-type > div::before {
   height: 20rem;
   right: -8rem;
   top: -9rem;
-  border: 1px solid oklch(1 0 0 / 0.22);
+  border: 1px solid oklch(1 0 0 / .22);
   border-radius: 50%;
-  box-shadow:
-    0 0 0 3rem oklch(1 0 0 / 0.04),
-    0 0 0 6rem oklch(1 0 0 / 0.025);
+  box-shadow: 0 0 0 3rem oklch(1 0 0 / .04), 0 0 0 6rem oklch(1 0 0 / .025);
 }
 
 /* Keep all motion comfortable. */
@@ -332,13 +300,13 @@ body:has(#features) main > section:last-of-type > div::before {
   body:has(#features) *::after {
     scroll-behavior: auto !important;
     animation: none !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: .01ms !important;
   }
 }
 
 @media (max-width: 767px) {
   body:has(#features) header.sticky {
-    margin-top: 0.5rem;
+    margin-top: .5rem;
     width: calc(100% - 1rem);
   }
 
@@ -353,6 +321,6 @@ body:has(#features) main > section:last-of-type > div::before {
   }
 
   body:has(#features) main > section:first-child .relative.lg\:pl-5::before {
-    inset: 1.5rem -0.4rem -0.75rem 0.8rem;
+    inset: 1.5rem -.4rem -.75rem .8rem;
   }
 }

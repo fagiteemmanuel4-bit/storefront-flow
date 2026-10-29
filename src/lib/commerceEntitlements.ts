@@ -1,21 +1,21 @@
-export type StrapTier = "free" | "business" | "pro";
+export type StrapTier = 'free' | 'business' | 'pro'
 
 export type EntitlementKey =
-  | "onlineStore"
-  | "advancedInventory"
-  | "staff"
-  | "branches"
-  | "advancedAnalytics"
-  | "loyalty"
-  | "discounts"
-  | "purchaseOrders"
-  | "stockTransfers"
-  | "merchantPayments"
-  | "aiAssistant"
-  | "storeExport"
-  | "stockSense"
-  | "storefrontLayouts"
-  | "featuredProducts";
+  | 'onlineStore'
+  | 'advancedInventory'
+  | 'staff'
+  | 'branches'
+  | 'advancedAnalytics'
+  | 'loyalty'
+  | 'discounts'
+  | 'purchaseOrders'
+  | 'stockTransfers'
+  | 'merchantPayments'
+  | 'aiAssistant'
+  | 'storeExport'
+  | 'stockSense'
+  | 'storefrontLayouts'
+  | 'featuredProducts'
 
 export const STRAP_TIERS: Record<StrapTier, Record<EntitlementKey, boolean | number>> = {
   free: {
@@ -69,13 +69,13 @@ export const STRAP_TIERS: Record<StrapTier, Record<EntitlementKey, boolean | num
     storefrontLayouts: true,
     featuredProducts: true,
   },
-};
+}
 
 /** -1 means unlimited. Payments and AI remain explicitly staged off until their integrations are ready. */
 export function hasEntitlement(tier: StrapTier, key: EntitlementKey) {
-  return STRAP_TIERS[tier][key] !== false;
+  return STRAP_TIERS[tier][key] !== false
 }
 
-export function getLimit(tier: StrapTier, key: "staff" | "branches") {
-  return STRAP_TIERS[tier][key] as number;
+export function getLimit(tier: StrapTier, key: 'staff' | 'branches') {
+  return STRAP_TIERS[tier][key] as number
 }
