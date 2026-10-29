@@ -54,7 +54,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "grocery-provision",
-    availability: "available",
+    availability: "coming-soon",
     label: "Groceries & provision",
     eyebrow: "High-turnover stock",
     description: "Prioritise fast checkout, low-stock visibility and pack-versus-piece selling.",
@@ -75,7 +75,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "fashion",
-    availability: "available",
+    availability: "coming-soon",
     label: "Fashion & boutiques",
     eyebrow: "Style and variants",
     description: "Build a photo-first catalogue for apparel, footwear, bags and accessories, track variants, and share products with customers.",
@@ -97,7 +97,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "electronics",
-    availability: "available",
+    availability: "coming-soon",
     label: "Electronics & phones",
     eyebrow: "Higher-value products",
     description: "Track each device by serial number or IMEI, manage warranty coverage, and keep repair jobs visible beside stock and sales.",
@@ -119,7 +119,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "food-service",
-    availability: "available",
+    availability: "coming-soon",
     label: "Food & restaurants",
     eyebrow: "Orders and ingredients",
     description: "Start with sales and cost visibility, with restaurant-specific workflows clearly mapped for later.",
