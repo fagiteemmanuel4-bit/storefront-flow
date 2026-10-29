@@ -6,27 +6,29 @@ Strap uses one visual language across marketing, authentication, onboarding, ope
 
 1. **Trust before decoration.** Commerce software should feel dependable, quiet, and precise.
 2. **Hierarchy over containers.** Use typography, spacing, alignment, and rules before adding cards.
-3. **One accent.** Strap blue is the action and focus color. Success, warning, and destructive colors are semantic only.
+3. **One accent.** Strap orange is the action and focus color; black and warm white anchor the interface. Success, warning, and destructive colors are semantic only.
 4. **Dense where work happens.** Tables, POS, inventory, and settings prioritize scanability and keyboard/mouse efficiency.
 5. **Motion explains state.** Transitions should communicate loading, completion, or focus—not add spectacle.
 6. **Accessible by default.** Visible focus, comfortable touch targets, reduced-motion support, and semantic controls are part of the design system.
 
 ## Color tokens
 
+The `--strap-blue-*` token names are legacy compatibility names only; their values are orange/brown accent colors. New styles should use semantic accent tokens and must not introduce blue branding.
+
 ### Light
 
 | Token | Value | Use |
 |---|---|---|
-| `--strap-canvas` | `#F8FAFC` | Application background |
+| `--strap-canvas` | `#FAF8F5` | Application background |
 | `--strap-panel` | `#FFFFFF` | Surfaces and controls |
-| `--strap-ink` | `#101828` | Primary text |
-| `--strap-muted` | `#667085` | Secondary text |
-| `--strap-line` | `#E4E7EC` | Borders and rules |
-| `--strap-blue-500` | `#3767E8` | Primary accent |
-| `--strap-blue-600` | `#2856D7` | Primary actions |
-| `--strap-blue-700` | `#2047B7` | Active/strong accent text |
+| `--strap-ink` | `#171717` | Primary text |
+| `--strap-muted` | `#78716C` | Secondary text |
+| `--strap-line` | `#E7E1DA` | Borders and rules |
+| `--strap-blue-500` | `#F97316` | Primary accent |
+| `--strap-blue-600` | `#EA580C` | Primary actions |
+| `--strap-blue-700` | `#C2410C` | Active/strong accent text |
 
-Dark mode maps the same semantic roles to a deep navy canvas and blue-tinted surfaces. It is not a simple inversion.
+Dark mode uses a near-black canvas, dark neutral surfaces, warm-white text and a brighter orange accent. It is not a simple inversion.
 
 ## Typography
 
