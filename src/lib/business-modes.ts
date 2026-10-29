@@ -22,6 +22,7 @@ export type BusinessQuickAction = {
 
 export type BusinessMode = {
   key: BusinessModeKey;
+  availability: "available" | "coming-soon";
   label: string;
   eyebrow: string;
   description: string;
@@ -39,6 +40,7 @@ const commonWorkflows: BusinessWorkflow[] = [
 export const BUSINESS_MODES: BusinessMode[] = [
   {
     key: "general-retail",
+    availability: "available",
     label: "General retail",
     eyebrow: "A flexible starting point",
     description: "A balanced workspace for shops selling a mix of everyday products.",
@@ -52,6 +54,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "grocery-provision",
+    availability: "available",
     label: "Groceries & provision",
     eyebrow: "High-turnover stock",
     description: "Prioritise fast checkout, low-stock visibility and pack-versus-piece selling.",
@@ -72,27 +75,29 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "fashion",
+    availability: "available",
     label: "Fashion & boutiques",
     eyebrow: "Style and variants",
-    description: "Build a photo-first clothing catalogue, list sizes and colours, and share styles with customers.",
-    bestFor: "Clothing, footwear, bags, accessories and beauty boutiques",
+    description: "Build a photo-first catalogue for apparel, footwear, bags and accessories, track variants, and share products with customers.",
+    bestFor: "Apparel, footwear, bags, jewellery and accessories boutiques",
     workflows: [
       { title: "Product catalogue and stock", detail: "Maintain the catalogue, prices and current stock.", status: "available" },
       { title: "Customer purchase history", detail: "Review customer records and support repeat visits.", status: "available" },
-      { title: "Sizes and colours", detail: "Add available sizes, colours, fabric and style notes to each clothing item.", status: "available" },
+      { title: "Sizes and colours", detail: "Add available sizes, colours, material and style notes to each relevant product.", status: "available" },
       { title: "Stock by size and colour", detail: "Track exact quantities for each size-and-colour combination and decrement the selected variant at checkout.", status: "available" },
       { title: "WhatsApp product sharing", detail: "Share a product message with its price, sizes, colours and online-store link.", status: "available" },
       { title: "Exchanges and returns workflow", detail: "Record returns, prevent over-returning, restock the original size/colour, then record the replacement sale.", status: "available" },
     ],
     quickActions: [
-      { label: "Manage collection", description: "Photos, sizes and prices", to: "/products" },
+      { label: "Manage products", description: "Photos, variants and prices", to: "/products" },
       { label: "Online storefront", description: "Publish and promote styles", to: "/online-store" },
       { label: "Customer orders", description: "Review incoming orders", to: "/online-store/orders" },
-      { label: "Returns & exchanges", description: "Restock returned clothing", to: "/fashion-returns" },
+      { label: "Returns & exchanges", description: "Restock returned items", to: "/fashion-returns" },
     ],
   },
   {
     key: "electronics",
+    availability: "available",
     label: "Electronics & phones",
     eyebrow: "Higher-value products",
     description: "Track each device by serial number or IMEI, manage warranty coverage, and keep repair jobs visible beside stock and sales.",
@@ -114,6 +119,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "food-service",
+    availability: "available",
     label: "Food & restaurants",
     eyebrow: "Orders and ingredients",
     description: "Start with sales and cost visibility, with restaurant-specific workflows clearly mapped for later.",
@@ -133,6 +139,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "pharmacy",
+    availability: "coming-soon",
     label: "Pharmacy & health products",
     eyebrow: "Traceability first",
     description: "Keep catalogue and stock visibility central while specialist controls are planned carefully.",
@@ -151,6 +158,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "beauty-personal-care",
+    availability: "coming-soon",
     label: "Beauty & personal care",
     eyebrow: "Products and repeat visits",
     description: "Make product stock and customer records easy to access for repeat business.",
@@ -169,6 +177,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "services",
+    availability: "coming-soon",
     label: "Services & appointments",
     eyebrow: "People and jobs",
     description: "Use customer and financial records now, with service-specific scheduling mapped as a future workflow.",
