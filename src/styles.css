@@ -249,3 +249,62 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) main > sect
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+
+/* Strap workspace polish: consistent contrast, layered surfaces and restrained depth. */
+.kudi-app-shell {
+  background:
+    radial-gradient(ellipse at 82% 0%, color-mix(in oklch, var(--color-accent) 7%, transparent), transparent 34rem),
+    var(--color-background);
+}
+.kudi-app-shell aside {
+  background: color-mix(in oklch, var(--color-surface) 96%, var(--color-background));
+  box-shadow: 8px 0 32px -30px oklch(0.18 0.02 90 / 0.24);
+}
+.kudi-app-shell header {
+  background: color-mix(in oklch, var(--color-surface) 92%, transparent);
+  box-shadow: 0 8px 28px -27px oklch(0.18 0.02 90 / 0.32);
+}
+.kudi-app-shell main [class~="surface-card"],
+.kudi-app-shell main article,
+.kudi-app-shell main [data-slot="card"] {
+  box-shadow: 0 1px 2px oklch(0.18 0.02 90 / 0.035), 0 16px 36px -30px oklch(0.18 0.02 90 / 0.24);
+}
+.kudi-app-shell main input:not([type="checkbox"]),
+.kudi-app-shell main textarea,
+.kudi-app-shell main [role="combobox"] {
+  color: var(--color-foreground);
+}
+.kudi-app-shell main input::placeholder,
+.kudi-app-shell main textarea::placeholder {
+  color: var(--color-muted-foreground);
+  opacity: 0.88;
+}
+.kudi-app-shell main button,
+.kudi-app-shell aside a,
+.kudi-app-shell header button {
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: 160ms;
+}
+.kudi-app-shell main button:focus-visible,
+.kudi-app-shell aside a:focus-visible,
+.kudi-app-shell header button:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 3px;
+}
+.kudi-app-shell main h1,
+.kudi-app-shell main h2,
+.kudi-app-shell main h3,
+.kudi-app-shell main h4 {
+  color: var(--color-foreground);
+}
+@media (prefers-reduced-motion: reduce) {
+  .kudi-app-shell *,
+  .kudi-app-shell *::before,
+  .kudi-app-shell *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
