@@ -195,7 +195,7 @@ a[class*="bg-primary"] {
 button[class*="bg-primary"]:hover,
 a[class*="bg-primary"]:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgb(40 86 215 / .16);
+  box-shadow: 0 6px 18px rgb(249 115 22 / .16);
 }
 
 /* Quiet, dense operational controls. */
@@ -237,7 +237,7 @@ button:not([aria-hidden="true"]) { transition: background var(--strap-duration) 
   max-width: 1440px;
 }
 
-/* Turn the old diamond/orange mark into a restrained blue product mark. */
+/* Use orange for actions and focus, with black and warm white for the product foundation. */
 .kudi-app-shell .bg-accent,
 .kudi-app-shell .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
 .kudi-app-shell .text-accent,
@@ -322,11 +322,11 @@ table tbody tr:hover { background: var(--strap-blue-50) !important; }
 }
 
 /* -------------------------------------------------------------------------- */
-/* Marketing + auth: replace the previous warm/black visual language          */
+/* Marketing + auth: preserve the orange, black and warm-white visual language          */
 /* -------------------------------------------------------------------------- */
 
 body:has(main input#email) {
-  --strap-auth-bg: #f8fafc;
+  --strap-auth-bg: var(--strap-canvas);
   background: var(--strap-auth-bg) !important;
 }
 
@@ -335,27 +335,40 @@ body:has(main input#email) main {
   color: var(--strap-ink) !important;
 }
 
-body:has(main input#email) main .bg-\[\#171715\] { background: #0f172a !important; }
+body:has(main input#email) main .bg-\[\#171715\] { background: #171717 !important; }
 body:has(main input#email) main .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
 body:has(main input#email) main .text-\[\#171715\],
 body:has(main input#email) main .text-black { color: var(--strap-ink) !important; }
 body:has(main input#email) main [class*="border-black"] { border-color: var(--strap-line) !important; }
-body:has(main input#email) main [class*="bg-[#fbfaf7]"] { background: #ffffff !important; }
+body:has(main input#email) main [class*="bg-[#fbfaf7]"] { background: var(--strap-panel) !important; }
 body:has(main input#email) main [class*="focus:border-[#c79508]"]:focus { border-color: var(--strap-blue-500) !important; }
-body:has(main input#email) main [class*="focus:ring-[#f5c23e]"]:focus { box-shadow: 0 0 0 3px rgb(55 103 232 / .14) !important; }
+body:has(main input#email) main [class*="focus:ring-[#f5c23e]"]:focus { box-shadow: 0 0 0 3px rgb(249 115 22 / .14) !important; }
 
-/* Public marketing pages: light, editorial, no ornamental orange atmosphere. */
+/* Public marketing pages: share the orange, black and warm-white palette. */
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) {
-  --background: #f8fafc !important;
-  --foreground: #101828 !important;
+  --background: #faf8f5 !important;
+  --foreground: #171717 !important;
   --surface: #ffffff !important;
   --card: #ffffff !important;
-  --primary: #2856d7 !important;
-  --primary-foreground: #ffffff !important;
-  --accent: #3767e8 !important;
-  --accent-foreground: #ffffff !important;
-  --accent-soft: #eaf0ff !important;
-  --accent-ink: #2047b7 !important;
+  --primary: #f97316 !important;
+  --primary-foreground: #111111 !important;
+  --accent: #f97316 !important;
+  --accent-foreground: #111111 !important;
+  --accent-soft: #fff0e5 !important;
+  --accent-ink: #9a3412 !important;
+}
+
+html.dark body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) {
+  --background: #111111 !important;
+  --foreground: #faf8f5 !important;
+  --surface: #1b1b1b !important;
+  --card: #1b1b1b !important;
+  --primary: #fb923c !important;
+  --primary-foreground: #111111 !important;
+  --accent: #fb923c !important;
+  --accent-foreground: #111111 !important;
+  --accent-soft: #431f0b !important;
+  --accent-ink: #fdba74 !important;
 }
 
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#171715\],
@@ -383,3 +396,9 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   .strap-spinner { animation: none; }
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+
+/* Compact workspace is a real, locally persisted preference. */
+html.strap-compact-workspace table th,
+html.strap-compact-workspace table td { padding-top: .45rem !important; padding-bottom: .45rem !important; }
+html.strap-compact-workspace [data-compact-row] { min-height: 2rem !important; }
