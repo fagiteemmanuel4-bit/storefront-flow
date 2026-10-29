@@ -12,6 +12,15 @@
   --strap-orange-600: #ea580c;
   --strap-orange-700: #c2410c;
   --strap-orange-800: #9a3412;
+  /* Backward-compatible variable names; these aliases resolve to the orange palette. */
+  --strap-blue-50: var(--strap-orange-50);
+  --strap-blue-100: var(--strap-orange-100);
+  --strap-blue-200: var(--strap-orange-200);
+  --strap-blue-300: var(--strap-orange-300);
+  --strap-blue-500: var(--strap-orange-500);
+  --strap-blue-600: var(--strap-orange-600);
+  --strap-blue-700: var(--strap-orange-700);
+  --strap-blue-800: var(--strap-orange-800);
   --strap-ink: #171717;
   --strap-ink-soft: #292524;
   --strap-muted: #78716c;
@@ -42,6 +51,14 @@
   --strap-orange-600: #fdba74;
   --strap-orange-700: #fed7aa;
   --strap-orange-800: #ffedd5;
+  --strap-blue-50: #2a160b;
+  --strap-blue-100: #431f0b;
+  --strap-blue-200: #7c2d12;
+  --strap-blue-300: #9a3412;
+  --strap-blue-500: #fb923c;
+  --strap-blue-600: #fdba74;
+  --strap-blue-700: #fed7aa;
+  --strap-blue-800: #ffedd5;
   --strap-ink: #faf8f5;
   --strap-ink-soft: #e7e5e4;
   --strap-muted: #d6d3d1;
