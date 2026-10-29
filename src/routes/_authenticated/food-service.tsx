@@ -5,6 +5,7 @@ import { AlertTriangle, ChefHat, ClipboardList, Plus, Trash2, Utensils, CookingP
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/shell/AppShell";
+import { BusinessModeGate } from "@/components/shell/BusinessModeGate";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +13,7 @@ import { fetchProductsWithStock } from "@/routes/_authenticated/products";
 import { formatMoney } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
 
-export const Route = createFileRoute("/_authenticated/food-service")({ component: FoodServicePage });
+export const Route = createFileRoute("/_authenticated/food-service")({ component: () => <BusinessModeGate modeKey="food-service"><FoodServicePage /></BusinessModeGate> });
 type Tab = "kitchen" | "recipes" | "waste";
 type Product = { id: string; name: string; price: number; cost: number | null; quantity: number };
 type Modifier = { id: string; product_id: string; name: string; options: Array<{label:string;price_delta:number}>; is_required: boolean; is_active: boolean };
