@@ -11,8 +11,20 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => readLocal());
   useEffect(() => { apply(theme); try { localStorage.setItem(KEY, theme); } catch {} }, [theme]);
   useEffect(() => { const media = window.matchMedia("(prefers-color-scheme: dark)"); const onChange = () => { if (theme === "system") apply("system"); }; media.addEventListener("change", onChange); return () => media.removeEventListener("change", onChange); }, [theme]);
-  useEffect(() => { let cancelled = false; void supabase.auth.getUser().then(async ({ data }) => { if (!data.user || cancelled) return; const { data: profile } = await supabase.from("profiles").select("theme_preference").eq("id", data.user.id).maybeSingle(); const value = profile?.theme_preference as Theme | undefined; if (!cancelled && (value === "light" || value === "dark" || value === "system")) setTheme(value); }); return () => { cancelled = true; }; }, []);
-  useEffect(() => { const { data } = supabase.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") setTheme("system"); }); return () => data.subscription.unsubscribe(); }, []);
+  useEffect(() => {
+    let cancelled = false;
+    const loadPreference = async (userId: string) => {
+      const { data: profile } = await supabase.from("profiles").select("theme_preference").eq("id", userId).maybeSingle();
+      const value = profile?.theme_preference as Theme | undefined;
+      if (!cancelled && (value === "light" || value === "dark" || value === "system")) setTheme(value);
+    };
+    void supabase.auth.getUser().then(({ data }) => { if (data.user) void loadPreference(data.user.id); });
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") setTheme("system");
+      if (event === "SIGNED_IN" && session?.user) queueMicrotask(() => { void loadPreference(session.user.id); });
+    });
+    return () => { cancelled = true; data.subscription.unsubscribe(); };
+  }, []);
   return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
 }
 
