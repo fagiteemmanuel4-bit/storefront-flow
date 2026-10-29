@@ -339,6 +339,8 @@ body:has(main input#email) main .bg-\[\#171715\] { background: #171717 !importan
 body:has(main input#email) main .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
 body:has(main input#email) main .text-\[\#171715\],
 body:has(main input#email) main .text-black { color: var(--strap-ink) !important; }
+body:has(main input#email) main .bg-\[\#f5c23e\].text-black,
+body:has(main input#email) main .bg-\[\#f5c23e\] [class*="text-black"] { color: #111111 !important; }
 body:has(main input#email) main [class*="border-black"] { border-color: var(--strap-line) !important; }
 body:has(main input#email) main [class*="bg-[#fbfaf7]"] { background: var(--strap-panel) !important; }
 body:has(main input#email) main [class*="focus:border-[#c79508]"]:focus { border-color: var(--strap-blue-500) !important; }
@@ -375,6 +377,8 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#171
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-[#171715]"],
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-black"] { color: var(--strap-ink) !important; }
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#f5c23e\].text-black,
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#f5c23e\] [class*="text-black"] { color: #111111 !important; }
 
 /* Remove excessive rounded-card language without destroying intentional controls. */
 .rounded-\[28px\], .rounded-3xl { box-shadow: none; }
