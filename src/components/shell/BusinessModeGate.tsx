@@ -23,9 +23,8 @@ export function BusinessModeGate({
           {mode.label} is not active yet
         </h2>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          We are preparing this specialist workspace. For now, General Store is
-          the active mode. Your existing products, sales, customers and stock
-          remain available.
+          We are preparing this specialist workspace. For now, General Store is the active mode.
+          Your existing products, sales, customers and stock remain available.
         </p>
         <Link
           to="/dashboard"
