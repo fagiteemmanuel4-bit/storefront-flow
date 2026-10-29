@@ -4,14 +4,14 @@
  */
 
 :root {
-  --strap-blue-50: #fff7ed;
-  --strap-blue-100: #ffedd5;
-  --strap-blue-200: #fed7aa;
-  --strap-blue-300: #fdba74;
-  --strap-blue-500: #f97316;
-  --strap-blue-600: #ea580c;
-  --strap-blue-700: #c2410c;
-  --strap-blue-800: #9a3412;
+  --strap-orange-50: #fff7ed;
+  --strap-orange-100: #ffedd5;
+  --strap-orange-200: #fed7aa;
+  --strap-orange-300: #fdba74;
+  --strap-orange-500: #f97316;
+  --strap-orange-600: #ea580c;
+  --strap-orange-700: #c2410c;
+  --strap-orange-800: #9a3412;
   --strap-ink: #171717;
   --strap-ink-soft: #292524;
   --strap-muted: #78716c;
@@ -26,22 +26,22 @@
   --strap-radius-lg: 14px;
   --strap-radius-xl: 18px;
   --strap-radius-2xl: 24px;
-  --strap-shadow-sm: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.03);
-  --strap-shadow-md: 0 8px 24px rgb(16 24 40 / 0.07);
-  --strap-shadow-lg: 0 24px 64px rgb(16 24 40 / 0.12);
+  --strap-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 3px rgb(0 0 0 / 0.03);
+  --strap-shadow-md: 0 8px 24px rgb(0 0 0 / 0.07);
+  --strap-shadow-lg: 0 24px 64px rgb(0 0 0 / 0.12);
   --strap-ease: cubic-bezier(.2,.7,.2,1);
   --strap-duration: 160ms;
 }
 
 .dark {
-  --strap-blue-50: #2a160b;
-  --strap-blue-100: #431f0b;
-  --strap-blue-200: #7c2d12;
-  --strap-blue-300: #9a3412;
-  --strap-blue-500: #fb923c;
-  --strap-blue-600: #fdba74;
-  --strap-blue-700: #fed7aa;
-  --strap-blue-800: #ffedd5;
+  --strap-orange-50: #2a160b;
+  --strap-orange-100: #431f0b;
+  --strap-orange-200: #7c2d12;
+  --strap-orange-300: #9a3412;
+  --strap-orange-500: #fb923c;
+  --strap-orange-600: #fdba74;
+  --strap-orange-700: #fed7aa;
+  --strap-orange-800: #ffedd5;
   --strap-ink: #faf8f5;
   --strap-ink-soft: #e7e5e4;
   --strap-muted: #d6d3d1;
@@ -161,7 +161,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 .surface-card:hover {
-  border-color: color-mix(in srgb, var(--strap-blue-500) 22%, var(--strap-line));
+  border-color: color-mix(in srgb, var(--strap-orange-500) 22%, var(--strap-line));
 }
 
 input:not([type="checkbox"]):not([type="radio"]),
@@ -172,7 +172,7 @@ select,
   border-color: var(--strap-line) !important;
   background: var(--strap-panel) !important;
   color: var(--strap-ink) !important;
-  box-shadow: inset 0 1px 1px rgb(16 24 40 / .025);
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / .025);
   transition: border-color var(--strap-duration) var(--strap-ease), box-shadow var(--strap-duration) var(--strap-ease), background var(--strap-duration) var(--strap-ease);
 }
 
@@ -180,22 +180,22 @@ input:not([type="checkbox"]):not([type="radio"]):focus,
 textarea:focus,
 select:focus,
 .field:focus {
-  border-color: var(--strap-blue-500) !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--strap-blue-500) 15%, transparent) !important;
+  border-color: var(--strap-orange-500) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--strap-orange-500) 15%, transparent) !important;
   outline: none;
 }
 
 button[class*="bg-primary"],
 a[class*="bg-primary"] {
   border-radius: var(--strap-radius-md);
-  box-shadow: 0 1px 1px rgb(16 24 40 / .08);
+  box-shadow: 0 1px 1px rgb(0 0 0 / .08);
   transition: transform var(--strap-duration) var(--strap-ease), box-shadow var(--strap-duration) var(--strap-ease), background var(--strap-duration) var(--strap-ease);
 }
 
 button[class*="bg-primary"]:hover,
 a[class*="bg-primary"]:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgb(40 86 215 / .16);
+  box-shadow: 0 6px 18px rgb(249 115 22 / .16);
 }
 
 /* Quiet, dense operational controls. */
@@ -217,32 +217,32 @@ button:not([aria-hidden="true"]) { transition: background var(--strap-duration) 
 }
 
 [data-sidebar="menu-button"]:hover {
-  background: var(--strap-blue-50) !important;
+  background: var(--strap-orange-50) !important;
   color: var(--strap-ink) !important;
 }
 
 [data-sidebar="menu-button"][data-active="true"] {
-  background: var(--strap-blue-50) !important;
-  color: var(--strap-blue-700) !important;
+  background: var(--strap-orange-50) !important;
+  color: var(--strap-orange-700) !important;
   font-weight: 650;
 }
 
 .kudi-app-shell > .lg\:pl-60 > header {
   background: color-mix(in srgb, var(--strap-panel) 92%, transparent) !important;
   border-color: var(--strap-line) !important;
-  box-shadow: 0 1px 0 rgb(16 24 40 / .02);
+  box-shadow: 0 1px 0 rgb(0 0 0 / .02);
 }
 
 .kudi-app-shell > .lg\:pl-60 > main {
   max-width: 1440px;
 }
 
-/* Turn the old diamond/orange mark into a restrained blue product mark. */
+/* Turn the old diamond/orange mark into a restrained orange product mark. */
 .kudi-app-shell .bg-accent,
-.kudi-app-shell .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
+.kudi-app-shell .bg-\[\#f5c23e\] { background: var(--strap-orange-500) !important; }
 .kudi-app-shell .text-accent,
-.kudi-app-shell .text-accent-ink { color: var(--strap-blue-700) !important; }
-.kudi-app-shell .bg-accent-soft { background: var(--strap-blue-50) !important; }
+.kudi-app-shell .text-accent-ink { color: var(--strap-orange-700) !important; }
+.kudi-app-shell .bg-accent-soft { background: var(--strap-orange-50) !important; }
 
 /* -------------------------------------------------------------------------- */
 /* Loading: one language, two primitives                                      */
@@ -263,8 +263,8 @@ button:not([aria-hidden="true"]) { transition: background var(--strap-duration) 
   display: block;
   width: 34%;
   height: 100%;
-  background: var(--strap-blue-500);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--strap-blue-500) 45%, transparent);
+  background: var(--strap-orange-500);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--strap-orange-500) 45%, transparent);
   animation: strap-progress 1.05s var(--strap-ease) infinite;
 }
 
@@ -298,13 +298,21 @@ button:not([aria-hidden="true"]) { transition: background var(--strap-duration) 
 .strap-loading-overlay > *,
 [data-strap-loading-overlay] > * { display: none !important; }
 
+
+/* Compact workspace preference is applied globally from Appearance settings. */
+.strap-compact table th,
+.strap-compact table td { padding-block: .45rem !important; }
+.strap-compact [data-sidebar="menu-button"] { min-height: 32px; }
+.strap-compact .surface-card,
+.strap-compact .storefront-card { border-radius: 12px !important; }
+
 /* -------------------------------------------------------------------------- */
 /* Tables, dialogs, notifications                                             */
 /* -------------------------------------------------------------------------- */
 
 table thead tr { border-bottom-color: var(--strap-line) !important; }
 table tbody tr { border-bottom-color: color-mix(in srgb, var(--strap-line) 75%, transparent) !important; }
-table tbody tr:hover { background: var(--strap-blue-50) !important; }
+table tbody tr:hover { background: var(--strap-orange-50) !important; }
 
 [data-slot="dialog-content"],
 [data-slot="sheet-content"] {
@@ -322,11 +330,11 @@ table tbody tr:hover { background: var(--strap-blue-50) !important; }
 }
 
 /* -------------------------------------------------------------------------- */
-/* Marketing + auth: replace the previous warm/black visual language          */
+/* Marketing + auth: replace the previous orange, black and warm-white visual language          */
 /* -------------------------------------------------------------------------- */
 
 body:has(main input#email) {
-  --strap-auth-bg: #f8fafc;
+  --strap-auth-bg: #faf8f5;
   background: var(--strap-auth-bg) !important;
 }
 
@@ -335,31 +343,31 @@ body:has(main input#email) main {
   color: var(--strap-ink) !important;
 }
 
-body:has(main input#email) main .bg-\[\#171715\] { background: #0f172a !important; }
-body:has(main input#email) main .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
+body:has(main input#email) main .bg-\[\#171715\] { background: #171717 !important; }
+body:has(main input#email) main .bg-\[\#f5c23e\] { background: var(--strap-orange-500) !important; }
 body:has(main input#email) main .text-\[\#171715\],
 body:has(main input#email) main .text-black { color: var(--strap-ink) !important; }
 body:has(main input#email) main [class*="border-black"] { border-color: var(--strap-line) !important; }
 body:has(main input#email) main [class*="bg-[#fbfaf7]"] { background: #ffffff !important; }
-body:has(main input#email) main [class*="focus:border-[#c79508]"]:focus { border-color: var(--strap-blue-500) !important; }
-body:has(main input#email) main [class*="focus:ring-[#f5c23e]"]:focus { box-shadow: 0 0 0 3px rgb(55 103 232 / .14) !important; }
+body:has(main input#email) main [class*="focus:border-[#c79508]"]:focus { border-color: var(--strap-orange-500) !important; }
+body:has(main input#email) main [class*="focus:ring-[#f5c23e]"]:focus { box-shadow: 0 0 0 3px rgb(249 115 22 / .14) !important; }
 
-/* Public marketing pages: light, editorial, no ornamental orange atmosphere. */
+/* Public marketing pages: warm-white, black and orange, restrained and readable. */
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) {
-  --background: #f8fafc !important;
-  --foreground: #101828 !important;
+  --background: #faf8f5 !important;
+  --foreground: #171717 !important;
   --surface: #ffffff !important;
   --card: #ffffff !important;
-  --primary: #2856d7 !important;
+  --primary: #ea580c !important;
   --primary-foreground: #ffffff !important;
-  --accent: #3767e8 !important;
+  --accent: #f97316 !important;
   --accent-foreground: #ffffff !important;
-  --accent-soft: #eaf0ff !important;
-  --accent-ink: #2047b7 !important;
+  --accent-soft: #fff0e5 !important;
+  --accent-ink: #c2410c !important;
 }
 
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#171715\],
-body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#f5c23e\] { background: var(--strap-orange-500) !important; }
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-[#171715]"],
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-black"] { color: var(--strap-ink) !important; }
 
@@ -368,7 +376,7 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
 
 /* Focus visibility and reduced motion are non-negotiable. */
 :focus-visible {
-  outline: 2px solid var(--strap-blue-500) !important;
+  outline: 2px solid var(--strap-orange-500) !important;
   outline-offset: 2px;
 }
 
