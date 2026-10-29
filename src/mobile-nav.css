@@ -1,13 +1,7 @@
 @keyframes mobile-nav-pop {
-  0% {
-    transform: scale(0.86);
-  }
-  65% {
-    transform: scale(1.08);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(.86); }
+  65% { transform: scale(1.08); }
+  100% { transform: scale(1); }
 }
 
 @media (max-width: 1023px) {

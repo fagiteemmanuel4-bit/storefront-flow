@@ -21,10 +21,7 @@ function getSessionIdFromToken(token: string): string | null {
   try {
     const [, payload] = token.split(".");
     if (!payload) return null;
-    const normalized = payload
-      .replace(/-/g, "+")
-      .replace(/_/g, "/")
-      .padEnd(Math.ceil(payload.length / 4) * 4, "=");
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(payload.length / 4) * 4, "=");
     const claims = JSON.parse(atob(normalized)) as { session_id?: unknown };
     return typeof claims.session_id === "string" ? claims.session_id : null;
   } catch {
@@ -33,10 +30,7 @@ function getSessionIdFromToken(token: string): string | null {
 }
 
 function isUuid(value: unknown): value is string {
-  return (
-    typeof value === "string" &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
-  );
+  return typeof value === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
 Deno.serve(async (req: Request) => {
@@ -64,12 +58,9 @@ Deno.serve(async (req: Request) => {
     const body = (await req.json().catch(() => ({}))) as RequestBody;
     const action: Action = body.action ?? "get";
 
-    const { data: sessions, error: sessionError } = await supabase.rpc(
-      "account_security_list_sessions",
-      {
-        p_user_id: userId,
-      },
-    );
+    const { data: sessions, error: sessionError } = await supabase.rpc("account_security_list_sessions", {
+      p_user_id: userId,
+    });
     if (sessionError) throw sessionError;
 
     const normalizedSessions = (sessions ?? []).map((session: Record<string, unknown>) => ({
@@ -79,21 +70,17 @@ Deno.serve(async (req: Request) => {
     }));
 
     if (action === "get") {
-      const { data: ipHistory, error: historyError } = await supabase.rpc(
-        "account_security_list_ip_history",
-        {
-          p_user_id: userId,
-          p_limit: 25,
-        },
-      );
+      const { data: ipHistory, error: historyError } = await supabase.rpc("account_security_list_ip_history", {
+        p_user_id: userId,
+        p_limit: 25,
+      });
       if (historyError) throw historyError;
       return json({ sessions: normalizedSessions, ipHistory: ipHistory ?? [] });
     }
 
     if (action === "revoke") {
       if (!isUuid(body.sessionId)) return json({ error: "A valid session ID is required." }, 400);
-      if (body.sessionId === currentSessionId)
-        return json({ error: "Use local sign out to end the current session." }, 400);
+      if (body.sessionId === currentSessionId) return json({ error: "Use local sign out to end the current session." }, 400);
 
       const { data: revoked, error } = await supabase.rpc("account_security_revoke_session", {
         p_user_id: userId,
@@ -104,16 +91,11 @@ Deno.serve(async (req: Request) => {
     }
 
     if (action === "revoke_all_others") {
-      const otherSessions = normalizedSessions.filter(
-        (session: { current?: boolean }) => !session.current,
-      );
+      const otherSessions = normalizedSessions.filter((session: { current?: boolean }) => !session.current);
       const results = await Promise.all(
         otherSessions.map((session: { session_id?: unknown }) =>
           typeof session.session_id === "string"
-            ? supabase.rpc("account_security_revoke_session", {
-                p_user_id: userId,
-                p_session_id: session.session_id,
-              })
+            ? supabase.rpc("account_security_revoke_session", { p_user_id: userId, p_session_id: session.session_id })
             : Promise.resolve({ error: null }),
         ),
       );

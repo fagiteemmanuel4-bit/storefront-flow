@@ -3,5 +3,7 @@
   "framework": null,
   "installCommand": "bun install",
   "buildCommand": "npm run build",
-  "regions": ["fra1"]
+  "regions": [
+    "fra1"
+  ]
 }

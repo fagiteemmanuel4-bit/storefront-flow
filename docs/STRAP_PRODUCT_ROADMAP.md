@@ -3,7 +3,6 @@
 This roadmap starts with **business-specific workspaces** and then progresses through the supporting capabilities discussed for Strap. Keep existing sales, authentication, permissions and database behaviour intact unless a task explicitly requires a reviewed change.
 
 ## 4. Dedicated modes for different businesses — current work
-
 - [x] Add business-mode selection to Store Profile with clear descriptions and a mobile-friendly card layout.
 - [x] Add business-mode selection and a clear mode summary during new-store onboarding.
 - [x] Persist the selected mode in the existing store profile settings without a new database migration.
@@ -14,7 +13,6 @@ This roadmap starts with **business-specific workspaces** and then progresses th
 - [ ] Add the next mode-specific feature only after reviewing its existing implementation and database dependencies.
 
 ## 5. Competitive differentiation and daily microfeatures
-
 - [ ] Reliable offline checkout: visible sync status, safe retry, duplicate-sale protection and clear recovery after a browser crash.
 - [ ] Stock units: carton/pack/piece conversions and distinct buying and selling prices.
 - [ ] Accurate profit view: cost of goods, discounts, refunds, expenses, credit sales and cash movement.
@@ -31,7 +29,6 @@ This roadmap starts with **business-specific workspaces** and then progresses th
 - [ ] Reliability: transparent sync status, backup visibility and safe recovery paths.
 
 ## 6. Strap differentiators
-
 - [ ] WhatsApp-ready receipts, invoices, statements and catalogue lists.
 - [ ] Convert incoming WhatsApp orders into reviewed draft sales.
 - [ ] Supplier-receipt OCR that extracts editable draft rows and never changes stock before confirmation.
@@ -42,7 +39,6 @@ This roadmap starts with **business-specific workspaces** and then progresses th
 - [ ] Build safe audit trails and permission checks before introducing AI actions.
 
 ## 7. Business-specific workflow backlog
-
 - [ ] Groceries/provision: expiry and batch tracking, reorder suggestions and supplier price comparisons.
 - [x] Fashion: photo-first product entry, size/colour/material notes, WhatsApp product sharing, fashion-first dashboard/navigation and barcode-free product entry.
 - [x] Fashion implementation merged: per-size/per-colour inventory, POS selection and decrement, online variant ordering, returns/restocking and size/colour reporting are implemented.
@@ -61,7 +57,6 @@ This roadmap starts with **business-specific workspaces** and then progresses th
 - [ ] Services: appointments, job cards, deposits and service packages.
 
 ## Current implementation handoff — 2026-10-28
-
 - Fashion PR #23 (`feat/fashion-first-workspace`) is based on `feat/strap-business-modes` (PR #22). Fashion completion/POS PR #24 (`feat/fashion-completion-and-compact-pos`) is stacked on PR #23. Electronics PR #25 (`feat/electronics-workspace`) is stacked on PR #24. Preserve this merge order; do not merge a child branch directly to `main` before its base.
 - Already implemented on the fashion branch: photo-first product entry (up to six images and camera capture), descriptive sizes/colours/material/style notes, fashion-specific navigation/dashboard/settings, catalogue imagery, WhatsApp product sharing, and hiding barcode-first UI in fashion mode.
 - Additive `fashion_variant_stock` now stores quantities by store, branch, product, size and colour. Its trigger keeps legacy product-level `branch_stock` totals in sync so existing product lists and non-fashion checkout continue to use their current contract.
@@ -75,7 +70,6 @@ This roadmap starts with **business-specific workspaces** and then progresses th
 - User instruction: proceed autonomously through the current mode and then the next mode without asking for routine confirmations; return only when a deployed, verified working version is available. Keep this roadmap and handoff notes current after each meaningful change.
 
 ## Release quality checklist
-
 - [ ] Inspect the current repository before each implementation; reuse existing features instead of duplicating them.
 - [ ] Preserve business name, existing transactions, authentication, permissions and established business logic.
 - [ ] Keep the UI responsive, accessible, consistent with Strap's orange/black visual language, and usable on small screens.

@@ -15,15 +15,15 @@ Strap uses one visual language across marketing, authentication, onboarding, ope
 
 ### Light
 
-| Token              | Value     | Use                       |
-| ------------------ | --------- | ------------------------- |
-| `--strap-canvas`   | `#F8FAFC` | Application background    |
-| `--strap-panel`    | `#FFFFFF` | Surfaces and controls     |
-| `--strap-ink`      | `#101828` | Primary text              |
-| `--strap-muted`    | `#667085` | Secondary text            |
-| `--strap-line`     | `#E4E7EC` | Borders and rules         |
-| `--strap-blue-500` | `#3767E8` | Primary accent            |
-| `--strap-blue-600` | `#2856D7` | Primary actions           |
+| Token | Value | Use |
+|---|---|---|
+| `--strap-canvas` | `#F8FAFC` | Application background |
+| `--strap-panel` | `#FFFFFF` | Surfaces and controls |
+| `--strap-ink` | `#101828` | Primary text |
+| `--strap-muted` | `#667085` | Secondary text |
+| `--strap-line` | `#E4E7EC` | Borders and rules |
+| `--strap-blue-500` | `#3767E8` | Primary accent |
+| `--strap-blue-600` | `#2856D7` | Primary actions |
 | `--strap-blue-700` | `#2047B7` | Active/strong accent text |
 
 Dark mode maps the same semantic roles to a deep navy canvas and blue-tinted surfaces. It is not a simple inversion.

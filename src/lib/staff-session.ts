@@ -11,35 +11,12 @@ export type StaffSession = {
 const KEY = "kudi-staff-session";
 const EVENT = "kudi-staff-session-changed";
 
-export const STAFF_ROLE_META: Record<
-  StaffRole,
-  { label: string; description: string; defaultRoute: string }
-> = {
-  manager: {
-    label: "Manager",
-    description: "Sales, stock, reports and store operations",
-    defaultRoute: "/dashboard",
-  },
-  cashier: {
-    label: "Cashier",
-    description: "Sell products and manage customers",
-    defaultRoute: "/pos",
-  },
-  inventory: {
-    label: "Inventory",
-    description: "Stock, products and imports",
-    defaultRoute: "/products",
-  },
-  sales: {
-    label: "Sales",
-    description: "Sales floor, customers and reports",
-    defaultRoute: "/pos",
-  },
-  viewer: {
-    label: "Viewer",
-    description: "Read-only dashboard and reports",
-    defaultRoute: "/dashboard",
-  },
+export const STAFF_ROLE_META: Record<StaffRole, { label: string; description: string; defaultRoute: string }> = {
+  manager: { label: "Manager", description: "Sales, stock, reports and store operations", defaultRoute: "/dashboard" },
+  cashier: { label: "Cashier", description: "Sell products and manage customers", defaultRoute: "/pos" },
+  inventory: { label: "Inventory", description: "Stock, products and imports", defaultRoute: "/products" },
+  sales: { label: "Sales", description: "Sales floor, customers and reports", defaultRoute: "/pos" },
+  viewer: { label: "Viewer", description: "Read-only dashboard and reports", defaultRoute: "/dashboard" },
 };
 
 export function getStaffSession(storeId?: string | null): StaffSession | null {
@@ -71,17 +48,7 @@ export function subscribeStaffSession(listener: () => void) {
 }
 
 const PERMISSIONS: Record<StaffRole, Set<string>> = {
-  manager: new Set([
-    "dashboard",
-    "pos",
-    "products",
-    "customers",
-    "reports",
-    "expenses",
-    "import",
-    "online-store",
-    "help",
-  ]),
+  manager: new Set(["dashboard", "pos", "products", "customers", "reports", "expenses", "import", "online-store", "help"]),
   cashier: new Set(["pos", "customers", "help"]),
   inventory: new Set(["products", "import", "dashboard", "help"]),
   sales: new Set(["pos", "customers", "reports", "dashboard", "help"]),

@@ -1,24 +1,24 @@
 export type StorefrontSeoStore = {
   name: string;
   slug?: string;
-  description?: string | null | undefined;
-  logoUrl?: string | null | undefined;
-  phone?: string | null | undefined;
-  email?: string | null | undefined;
-  category?: string | null | undefined;
-  address?: string | null | undefined;
+  description?: string | null;
+  logoUrl?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  category?: string | null;
+  address?: string | null;
   url: string;
 };
 
 export type StorefrontSeoProduct = {
   name: string;
-  description?: string | null | undefined;
+  description?: string | null;
   price: number;
   currency: string;
-  imageUrl?: string | string[] | null | undefined;
-  sku?: string | null | undefined;
-  brand?: string | null | undefined;
-  category?: string | null | undefined;
+  imageUrl?: string | string[] | null;
+  sku?: string | null;
+  brand?: string | null;
+  category?: string | null;
   available: boolean;
   url: string;
 };
@@ -50,15 +50,12 @@ export function buildProductJsonLd(product: StorefrontSeoProduct): Record<string
       "@type": "Offer",
       price: product.price,
       priceCurrency: product.currency,
-      availability: product.available
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
+      availability: product.available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: product.url,
     },
   };
   if (product.description) data.description = product.description;
-  if (product.imageUrl)
-    data.image = Array.isArray(product.imageUrl) ? product.imageUrl : [product.imageUrl];
+  if (product.imageUrl) data.image = Array.isArray(product.imageUrl) ? product.imageUrl : [product.imageUrl];
   if (product.sku) data.sku = product.sku;
   if (product.brand) data.brand = { "@type": "Brand", name: product.brand };
   if (product.category) data.category = product.category;

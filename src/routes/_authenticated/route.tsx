@@ -16,21 +16,11 @@ export const Route = createFileRoute("/_authenticated")({
       throw redirect({ to: "/verify-email", search: { email: data.user.email ?? "" } });
     }
     if (isPaidArea(location.pathname)) {
-      const { data: memberships } = await supabase
-        .from("store_members")
-        .select("store_id")
-        .eq("user_id", data.user.id)
-        .limit(1);
+      const { data: memberships } = await supabase.from("store_members").select("store_id").eq("user_id", data.user.id).limit(1);
       const storeId = memberships?.[0]?.store_id;
       if (storeId) {
-        const { data: subscription } = await supabase
-          .from("store_subscriptions")
-          .select("plan_code,status")
-          .eq("store_id", storeId)
-          .maybeSingle();
-        const active =
-          subscription?.status === "active" &&
-          (subscription?.plan_code === "business" || subscription?.plan_code === "pro");
+        const { data: subscription } = await supabase.from("store_subscriptions").select("plan_code,status").eq("store_id", storeId).maybeSingle();
+        const active = subscription?.status === "active" && (subscription?.plan_code === "business" || subscription?.plan_code === "pro");
         if (!active) throw redirect({ to: "/upgrade" });
       }
     }
@@ -41,12 +31,5 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedLayout() {
   const { user } = Route.useRouteContext();
-  return (
-    <StoreProvider userId={user.id}>
-      <RouteLoadingOverlay />
-      <Outlet />
-      <WelcomeTour />
-      <StrapReviewPrompt />
-    </StoreProvider>
-  );
+  return <StoreProvider userId={user.id}><RouteLoadingOverlay/><Outlet/><WelcomeTour/><StrapReviewPrompt/></StoreProvider>;
 }
