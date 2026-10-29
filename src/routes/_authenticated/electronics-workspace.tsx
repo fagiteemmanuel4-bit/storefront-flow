@@ -5,6 +5,7 @@ import { BadgeCheck, ClipboardList, Cpu, Plus, Search, ShieldCheck, Wrench } fro
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/shell/AppShell";
+import { BusinessModeGate } from "@/components/shell/BusinessModeGate";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +13,7 @@ import { fetchProductsWithStock } from "@/routes/_authenticated/products";
 import { formatMoney } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
 
-export const Route = createFileRoute("/_authenticated/electronics-workspace")({ component: ElectronicsWorkspacePage });
+export const Route = createFileRoute("/_authenticated/electronics-workspace")({ component: () => <BusinessModeGate modeKey="electronics"><ElectronicsWorkspacePage /></BusinessModeGate> });
 type Tab = "devices" | "repairs";
 type Device = { id: string; product_id: string; branch_id: string; serial_number: string | null; imei: string | null; status: string; warranty_months: number; warranty_started_at: string | null; warranty_expires_at: string | null; notes: string; created_at: string; products?: { name: string; price: number } | null };
 type Repair = { id: string; device_id: string | null; device_previous_status: string | null; customer_name: string; customer_phone: string; device_label: string; issue_description: string; diagnosis: string; status: string; warranty_claim: boolean; estimated_cost: number; final_cost: number; received_at: string; due_at: string | null; completed_at: string | null };
