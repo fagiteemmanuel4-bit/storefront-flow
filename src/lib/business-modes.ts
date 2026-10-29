@@ -39,7 +39,7 @@ const commonWorkflows: BusinessWorkflow[] = [
 export const BUSINESS_MODES: BusinessMode[] = [
   {
     key: "general-retail",
-    label: "General retail",
+    label: "General Store",
     eyebrow: "A flexible starting point",
     description: "A balanced workspace for shops selling a mix of everyday products.",
     bestFor: "Mini-marts, general shops, kiosks and mixed catalogues",
@@ -194,6 +194,7 @@ function resolveBusinessModeKey(value: unknown): BusinessModeKey | undefined {
   const aliases: Record<string, BusinessModeKey> = {
     retail: "general-retail",
     "general retail": "general-retail",
+    "general store": "general-retail",
     grocery: "grocery-provision",
     groceries: "grocery-provision",
     provision: "grocery-provision",
