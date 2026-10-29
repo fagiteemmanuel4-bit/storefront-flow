@@ -224,6 +224,7 @@ export type Database = {
           email: string
           full_name: string
           id: string
+          theme_preference: "system" | "light" | "dark"
           updated_at: string
         }
         Insert: {
@@ -231,6 +232,7 @@ export type Database = {
           email?: string
           full_name?: string
           id: string
+          theme_preference?: "system" | "light" | "dark"
           updated_at?: string
         }
         Update: {
@@ -238,6 +240,7 @@ export type Database = {
           email?: string
           full_name?: string
           id?: string
+          theme_preference?: "system" | "light" | "dark"
           updated_at?: string
         }
         Relationships: []
