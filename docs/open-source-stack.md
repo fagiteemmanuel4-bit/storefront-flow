@@ -6,22 +6,22 @@ This document records the open-source candidates reviewed against Strap's curren
 
 ## Approved and already integrated
 
-| Project | License | Decision | Use in Strap |
-| --- | --- | --- | --- |
-| [cmdk](https://github.com/dip/cmdk) | MIT | Approved | Global Quick Find / command navigation |
-| [Radix Primitives](https://github.com/radix-ui/primitives) | MIT | Approved | Accessible interaction primitives already used throughout the app |
-| [Recharts](https://github.com/recharts/recharts) | MIT | Approved | Business analytics visualization where charts add operational value |
-| [Zod](https://github.com/colinhacks/zod) | MIT | Approved | Runtime validation at application boundaries |
-| [React Hook Form](https://github.com/react-hook-form/react-hook-form) | MIT | Approved | Existing complex form workflows |
+| Project                                                               | License | Decision | Use in Strap                                                        |
+| --------------------------------------------------------------------- | ------- | -------- | ------------------------------------------------------------------- |
+| [cmdk](https://github.com/dip/cmdk)                                   | MIT     | Approved | Global Quick Find / command navigation                              |
+| [Radix Primitives](https://github.com/radix-ui/primitives)            | MIT     | Approved | Accessible interaction primitives already used throughout the app   |
+| [Recharts](https://github.com/recharts/recharts)                      | MIT     | Approved | Business analytics visualization where charts add operational value |
+| [Zod](https://github.com/colinhacks/zod)                              | MIT     | Approved | Runtime validation at application boundaries                        |
+| [React Hook Form](https://github.com/react-hook-form/react-hook-form) | MIT     | Approved | Existing complex form workflows                                     |
 
 ## Approved for targeted future use
 
-| Project | License | Decision | Reason |
-| --- | --- | --- | --- |
-| [TanStack Table](https://github.com/TanStack/table) | MIT | Approved | Product/order/customer grids, server-side sorting/filtering and bulk operations |
-| [TanStack Virtual](https://github.com/TanStack/virtual) | MIT | Approved | Large catalogues and operational lists once measured list sizes justify virtualization |
-| [TanStack Form](https://github.com/TanStack/form) | MIT | Approved | Future migration of the highest-value complex forms where it materially improves validation/state handling |
-| [dnd-kit](https://github.com/clauderic/dnd-kit) | MIT | Approved | Storefront/category ordering and other workflows where drag-and-drop is genuinely better than forms |
+| Project                                                 | License | Decision | Reason                                                                                                     |
+| ------------------------------------------------------- | ------- | -------- | ---------------------------------------------------------------------------------------------------------- |
+| [TanStack Table](https://github.com/TanStack/table)     | MIT     | Approved | Product/order/customer grids, server-side sorting/filtering and bulk operations                            |
+| [TanStack Virtual](https://github.com/TanStack/virtual) | MIT     | Approved | Large catalogues and operational lists once measured list sizes justify virtualization                     |
+| [TanStack Form](https://github.com/TanStack/form)       | MIT     | Approved | Future migration of the highest-value complex forms where it materially improves validation/state handling |
+| [dnd-kit](https://github.com/clauderic/dnd-kit)         | MIT     | Approved | Storefront/category ordering and other workflows where drag-and-drop is genuinely better than forms        |
 
 ## Not added blindly
 
