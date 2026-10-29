@@ -371,8 +371,8 @@ html.dark body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) {
   --accent-ink: #fdba74 !important;
 }
 
-body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\\[\\#171715\\] { background: #171717 !important; }
-body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\\[\\#f5c23e\\] { background: var(--strap-blue-500) !important; }
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#171715\] { background: #171717 !important; }
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-[#171715]"],
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-black"] { color: var(--strap-ink) !important; }
 
