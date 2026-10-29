@@ -241,3 +241,15 @@ No route component, data hook, API client, database migration, auth logic, permi
 1. Please confirm that `fagiteemmanuel4-bit/storefront-flow` is the exact Strap repository you want redesigned (rather than another Strap-related repo).
 2. Should the new palette replace the existing dark theme too, or should the current dark-mode preference remain supported with a mapped dark palette?
 3. Should the 26 reference marketing/app HTML pages be treated as in-scope redesign targets, or are they visual guidance only while we restyle the actual production routes listed above?
+
+
+## 10. Attached reference HTML review
+
+All three primary reference files and all 26 files under `reference/marketing-pages/` were opened and reviewed for page title, heading hierarchy and page intent. The primary approved app references are:
+- `reference/login.html` and `reference/verify.html` — split auth panel, login, eight-digit verification and verified state.
+- `reference/dashboard.html` — dashboard, Sell, Products, Search, Menu, cart bar, product form and sale sheet.
+
+The 26 marketing/app reference pages reviewed are:
+`index.html`, `about.html`, `contact.html`, `features.html`, `pricing.html`, `login.html`, `signup.html`, `forgot-password.html`, `dashboard.html`, `register.html`, `products.html`, `stock.html`, `orders.html`, `customers.html`, `expenses.html`, `reports.html`, `online-store.html`, `team.html`, `branches.html`, `receipts.html`, `hardware.html`, `settings.html`, `billing.html`, `help-centre.html`, `privacy.html`, and `terms.html`.
+
+They are treated as a visual target, not production source. The references contain sample/demo content; real labels, data, plan names, routes and capabilities must continue to come from the existing app.
