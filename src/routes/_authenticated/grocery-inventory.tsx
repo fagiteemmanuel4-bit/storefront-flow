@@ -5,6 +5,7 @@ import { AlertTriangle, Boxes, PackagePlus, RefreshCw, Truck } from "lucide-reac
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/shell/AppShell";
+import { BusinessModeGate } from "@/components/shell/BusinessModeGate";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +13,7 @@ import { fetchProductsWithStock } from "@/routes/_authenticated/products";
 import { formatMoney } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
 
-export const Route = createFileRoute("/_authenticated/grocery-inventory")({ component: GroceryInventoryPage });
+export const Route = createFileRoute("/_authenticated/grocery-inventory")({ component: () => <BusinessModeGate modeKey="grocery-provision"><GroceryInventoryPage /></BusinessModeGate> });
 type Tab = "batches" | "restock" | "waste";
 type Product = { id:string; name:string; quantity:number; low_stock_threshold:number; cost:number|null; price:number };
 type Batch = { id:string; product_id:string; batch_number:string; expiry_date:string|null; quantity:number; cost_per_unit:number; supplier_name:string; status:string; received_at:string; notes:string };
