@@ -308,3 +308,75 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) main > sect
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* App-wide visual system: clear contrast, restrained depth, and consistent surfaces. */
+.kudi-app-shell {
+  background:
+    radial-gradient(ellipse at 82% 0%, color-mix(in oklch, var(--color-accent) 7%, transparent), transparent 34rem),
+    var(--color-background);
+}
+.kudi-app-shell > aside {
+  box-shadow: 8px 0 32px -30px oklch(0.18 0.015 80 / 0.28);
+}
+.kudi-app-shell > header {
+  background: color-mix(in oklch, var(--color-surface) 94%, transparent);
+  box-shadow: 0 1px 0 color-mix(in oklch, var(--color-border) 82%, transparent);
+  backdrop-filter: blur(16px);
+}
+.kudi-app-shell main {
+  isolation: isolate;
+}
+.kudi-app-shell main .surface-card,
+.kudi-app-shell main article.surface-card,
+.kudi-app-shell main [data-slot="card"] {
+  box-shadow: 0 1px 2px oklch(0.18 0.01 80 / 0.035), 0 12px 32px -24px oklch(0.18 0.01 80 / 0.24);
+  transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+.kudi-app-shell main article.surface-card:hover {
+  border-color: color-mix(in oklch, var(--color-accent) 35%, var(--color-border));
+  box-shadow: 0 2px 5px oklch(0.18 0.01 80 / 0.055), 0 20px 38px -26px oklch(0.18 0.01 80 / 0.28);
+  transform: translateY(-2px);
+}
+.kudi-app-shell main input,
+.kudi-app-shell main textarea,
+.kudi-app-shell main select,
+.kudi-app-shell main [role="combobox"] {
+  color: var(--color-foreground);
+  background-color: var(--color-surface);
+}
+.kudi-app-shell main input::placeholder,
+.kudi-app-shell main textarea::placeholder {
+  color: var(--color-muted-foreground);
+  opacity: 1;
+}
+.kudi-app-shell main p.text-muted-foreground,
+.kudi-app-shell main span.text-muted-foreground,
+.kudi-app-shell aside .text-muted-foreground {
+  color: var(--color-muted-foreground);
+}
+.kudi-app-shell main button:not(:disabled):active {
+  transform: translateY(1px);
+}
+.kudi-app-shell main :is(input, textarea, select, [role="combobox"]):focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+  border-color: var(--color-ring);
+}
+.dark .kudi-app-shell {
+  background:
+    radial-gradient(ellipse at 82% 0%, color-mix(in oklch, var(--color-accent) 8%, transparent), transparent 34rem),
+    var(--color-background);
+}
+.dark .kudi-app-shell main .surface-card,
+.dark .kudi-app-shell main article.surface-card,
+.dark .kudi-app-shell main [data-slot="card"] {
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.16), 0 16px 32px -24px oklch(0 0 0 / 0.55);
+}
+@media (prefers-reduced-motion: reduce) {
+  .kudi-app-shell main .surface-card,
+  .kudi-app-shell main article.surface-card,
+  .kudi-app-shell main [data-slot="card"] {
+    transition: none;
+  }
+}
