@@ -187,7 +187,9 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
 ];
 
-export function getBusinessMode(value: unknown): BusinessMode {
+export const ACTIVE_BUSINESS_MODE: BusinessModeKey = "general-retail";
+
+function resolveBusinessModeKey(value: unknown): BusinessModeKey | undefined {
   const normalized = typeof value === "string" ? value.trim().toLowerCase() : "";
   const aliases: Record<string, BusinessModeKey> = {
     retail: "general-retail",
@@ -210,8 +212,16 @@ export function getBusinessMode(value: unknown): BusinessMode {
     beauty: "beauty-personal-care",
     services: "services",
   };
-  const key = BUSINESS_MODES.some((mode) => mode.key === normalized)
+  return BUSINESS_MODES.some((mode) => mode.key === normalized)
     ? (normalized as BusinessModeKey)
     : aliases[normalized];
-  return BUSINESS_MODES.find((mode) => mode.key === key) ?? BUSINESS_MODES[0]!;
+}
+
+export function isBusinessModeAvailable(value: unknown): boolean {
+  return (resolveBusinessModeKey(value) ?? ACTIVE_BUSINESS_MODE) === ACTIVE_BUSINESS_MODE;
+}
+
+export function getBusinessMode(value: unknown): BusinessMode {
+  const key = resolveBusinessModeKey(value);
+  return BUSINESS_MODES.find((mode) => mode.key === key && mode.key === ACTIVE_BUSINESS_MODE) ?? BUSINESS_MODES[0]!;
 }
