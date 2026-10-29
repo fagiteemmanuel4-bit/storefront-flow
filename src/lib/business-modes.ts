@@ -22,6 +22,7 @@ export type BusinessQuickAction = {
 
 export type BusinessMode = {
   key: BusinessModeKey;
+  availability: "available" | "coming-soon";
   label: string;
   eyebrow: string;
   description: string;
@@ -39,9 +40,10 @@ const commonWorkflows: BusinessWorkflow[] = [
 export const BUSINESS_MODES: BusinessMode[] = [
   {
     key: "general-retail",
-    label: "General retail",
+    availability: "available",
+    label: "General Store",
     eyebrow: "A flexible starting point",
-    description: "A balanced workspace for shops selling a mix of everyday products.",
+    description: "Your active workspace for everyday retail, mixed catalogues and general shop operations.",
     bestFor: "Mini-marts, general shops, kiosks and mixed catalogues",
     workflows: commonWorkflows,
     quickActions: [
@@ -52,6 +54,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "grocery-provision",
+    availability: "coming-soon",
     label: "Groceries & provision",
     eyebrow: "High-turnover stock",
     description: "Prioritise fast checkout, low-stock visibility and pack-versus-piece selling.",
@@ -72,6 +75,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "fashion",
+    availability: "coming-soon",
     label: "Fashion & boutiques",
     eyebrow: "Style and variants",
     description: "Build a photo-first clothing catalogue, list sizes and colours, and share styles with customers.",
@@ -93,6 +97,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "electronics",
+    availability: "coming-soon",
     label: "Electronics & phones",
     eyebrow: "Higher-value products",
     description: "Track each device by serial number or IMEI, manage warranty coverage, and keep repair jobs visible beside stock and sales.",
@@ -114,6 +119,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "food-service",
+    availability: "coming-soon",
     label: "Food & restaurants",
     eyebrow: "Orders and ingredients",
     description: "Start with sales and cost visibility, with restaurant-specific workflows clearly mapped for later.",
@@ -133,6 +139,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "pharmacy",
+    availability: "coming-soon",
     label: "Pharmacy & health products",
     eyebrow: "Traceability first",
     description: "Keep catalogue and stock visibility central while specialist controls are planned carefully.",
@@ -151,6 +158,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "beauty-personal-care",
+    availability: "coming-soon",
     label: "Beauty & personal care",
     eyebrow: "Products and repeat visits",
     description: "Make product stock and customer records easy to access for repeat business.",
@@ -169,6 +177,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
   {
     key: "services",
+    availability: "coming-soon",
     label: "Services & appointments",
     eyebrow: "People and jobs",
     description: "Use customer and financial records now, with service-specific scheduling mapped as a future workflow.",
@@ -187,7 +196,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
 ];
 
-export function getBusinessMode(value: unknown): BusinessMode {
+export function getRequestedBusinessMode(value: unknown): BusinessMode {
   const normalized = typeof value === "string" ? value.trim().toLowerCase() : "";
   const aliases: Record<string, BusinessModeKey> = {
     retail: "general-retail",
@@ -214,4 +223,11 @@ export function getBusinessMode(value: unknown): BusinessMode {
     ? (normalized as BusinessModeKey)
     : aliases[normalized];
   return BUSINESS_MODES.find((mode) => mode.key === key) ?? BUSINESS_MODES[0]!;
+}
+
+
+/** Resolve the active workspace mode. Planned modes always fall back to General Store. */
+export function getBusinessMode(value: unknown): BusinessMode {
+  const requested = getRequestedBusinessMode(value);
+  return requested.availability === "available" ? requested : BUSINESS_MODES[0]!;
 }
