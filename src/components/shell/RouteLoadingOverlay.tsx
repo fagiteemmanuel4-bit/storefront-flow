@@ -8,5 +8,12 @@ import { useRouterState } from "@tanstack/react-router";
 export function RouteLoadingOverlay() {
   const isLoading = useRouterState({ select: (state) => state.status === "pending" });
   if (!isLoading) return null;
-  return <div className="strap-route-progress" role="progressbar" aria-label="Loading" aria-busy="true" />;
+  return (
+    <div
+      className="strap-route-progress"
+      role="progressbar"
+      aria-label="Loading"
+      aria-busy="true"
+    />
+  );
 }

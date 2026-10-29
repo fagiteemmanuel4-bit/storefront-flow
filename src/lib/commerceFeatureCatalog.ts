@@ -1,4 +1,4 @@
-import { COMMERCE_FEATURES } from './commerceFeatureFlags'
+import { COMMERCE_FEATURES } from "./commerceFeatureFlags";
 
 export const COMMERCE_FEATURE_CATALOG = [
   COMMERCE_FEATURES.merchantPayments,
@@ -8,12 +8,12 @@ export const COMMERCE_FEATURE_CATALOG = [
   COMMERCE_FEATURES.discounts,
   COMMERCE_FEATURES.purchaseOrders,
   COMMERCE_FEATURES.stockTransfers,
-]
+];
 
 export const COMING_SOON_FEATURES = COMMERCE_FEATURE_CATALOG.filter(
-  (feature) => feature.status === 'coming-soon',
-)
+  (feature) => feature.status === "coming-soon",
+);
 
 export const LIMITED_FREE_FEATURES = COMMERCE_FEATURE_CATALOG.filter(
-  (feature) => feature.status === 'limited-free',
-)
+  (feature) => feature.status === "limited-free",
+);

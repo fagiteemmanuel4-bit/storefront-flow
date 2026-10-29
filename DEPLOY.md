@@ -18,11 +18,11 @@ preset as "Other" (`vercel.json` already sets `framework: null`).
 Add these to **Project → Settings → Environment Variables** for Production,
 Preview and Development:
 
-| Name                            | Value                                       |
-| ------------------------------- | ------------------------------------------- |
-| `VITE_SUPABASE_URL`             | your backend URL                            |
+| Name                            | Value                                        |
+| ------------------------------- | -------------------------------------------- |
+| `VITE_SUPABASE_URL`             | your backend URL                             |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | publishable (anon) key — safe in the browser |
-| `VITE_SUPABASE_PROJECT_ID`      | project ref                                 |
+| `VITE_SUPABASE_PROJECT_ID`      | project ref                                  |
 | `SUPABASE_URL`                  | same as `VITE_SUPABASE_URL` (server side)    |
 | `SUPABASE_PUBLISHABLE_KEY`      | same publishable key (server side)           |
 
