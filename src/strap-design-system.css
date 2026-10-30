@@ -1,22 +1,24 @@
-/* Strap Design System v2
- * Premium commerce UI foundation. Keep product behavior in components;
- * keep visual decisions here so the application reads as one product.
+/* Strap Design System v3 — ink + lime
+ * One visual language for auth, marketing and the workspace.
+ * Product behavior lives in components; visual decisions live here.
+ * Fonts load from this file, so no HTML changes are needed.
  */
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Inter:wght@400;500;600&display=swap");
 
 :root {
-  --strap-blue-50: #fff7ed;
-  --strap-blue-100: #ffedd5;
-  --strap-blue-200: #fed7aa;
-  --strap-blue-300: #fdba74;
-  --strap-blue-500: #f97316;
-  --strap-blue-600: #ea580c;
-  --strap-blue-700: #c2410c;
-  --strap-blue-800: #9a3412;
-  --strap-ink: #171717;
-  --strap-ink-soft: #292524;
-  --strap-muted: #78716c;
-  --strap-line: #e7e1da;
-  --strap-canvas: #faf8f5;
+  --strap-blue-50: #f3fbd6;
+  --strap-blue-100: #e8f7ae;
+  --strap-blue-200: #d8f18a;
+  --strap-blue-300: #c6f432;
+  --strap-blue-500: #c6f432;
+  --strap-blue-600: #b0dc20;
+  --strap-blue-700: #789b12;
+  --strap-blue-800: #526d0c;
+  --strap-ink: #0e1116;
+  --strap-ink-soft: #242a33;
+  --strap-muted: #555c6a;
+  --strap-line: #d5d8de;
+  --strap-canvas: #f7f7f5;
   --strap-panel: #ffffff;
   --strap-success: #16805a;
   --strap-warning: #b54708;
@@ -31,29 +33,88 @@
   --strap-shadow-lg: 0 24px 64px rgb(16 24 40 / 0.12);
   --strap-ease: cubic-bezier(.2,.7,.2,1);
   --strap-duration: 160ms;
+
+  /* shadcn / app token bridge */
+  --background: #f7f7f5 !important;
+  --foreground: #0e1116 !important;
+  --surface: #ffffff !important;
+  --card: #ffffff !important;
+  --card-foreground: #0e1116 !important;
+  --popover: #ffffff !important;
+  --popover-foreground: #0e1116 !important;
+  --primary: #c6f432 !important;
+  --primary-foreground: #0e1116 !important;
+  --secondary: #eef0e9 !important;
+  --secondary-foreground: #0e1116 !important;
+  --muted: #eef0e9 !important;
+  --muted-foreground: #555c6a !important;
+  --accent: #c6f432 !important;
+  --accent-foreground: #0e1116 !important;
+  --accent-ink: #526d0c !important;
+  --accent-soft: #f3fbd6 !important;
+  --border: #d5d8de !important;
+  --input: #d5d8de !important;
+  --ring: #c6f432 !important;
+  --sidebar: #ffffff !important;
+  --sidebar-foreground: #0e1116 !important;
+  --sidebar-primary: #c6f432 !important;
+  --sidebar-primary-foreground: #0e1116 !important;
+  --sidebar-accent: #f3fbd6 !important;
+  --sidebar-accent-foreground: #526d0c !important;
+  --sidebar-border: #d5d8de !important;
+  --sidebar-ring: #c6f432 !important;
 }
 
 .dark {
-  --strap-blue-50: #2a160b;
-  --strap-blue-100: #431f0b;
-  --strap-blue-200: #7c2d12;
-  --strap-blue-300: #9a3412;
-  --strap-blue-500: #fb923c;
-  --strap-blue-600: #fdba74;
-  --strap-blue-700: #fed7aa;
-  --strap-blue-800: #ffedd5;
-  --strap-ink: #faf8f5;
-  --strap-ink-soft: #e7e5e4;
-  --strap-muted: #d6d3d1;
-  --strap-line: #3f3a35;
-  --strap-canvas: #111111;
-  --strap-panel: #1b1b1b;
+  --strap-blue-50: #202a0d;
+  --strap-blue-100: #2b3a10;
+  --strap-blue-200: #405616;
+  --strap-blue-300: #66851d;
+  --strap-blue-500: #c6f432;
+  --strap-blue-600: #d8f18a;
+  --strap-blue-700: #e8f7ae;
+  --strap-blue-800: #f3fbd6;
+  --strap-ink: #f7f7f5;
+  --strap-ink-soft: #e7e9ed;
+  --strap-muted: #aeb5c0;
+  --strap-line: #343b46;
+  --strap-canvas: #0e1116;
+  --strap-panel: #171c24;
   --strap-success: #6ce0b0;
   --strap-warning: #fdb022;
   --strap-danger: #f97066;
   --strap-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.25);
   --strap-shadow-md: 0 12px 30px rgb(0 0 0 / 0.25);
   --strap-shadow-lg: 0 28px 80px rgb(0 0 0 / 0.4);
+
+  --background: #0e1116 !important;
+  --foreground: #f7f7f5 !important;
+  --surface: #171c24 !important;
+  --card: #171c24 !important;
+  --card-foreground: #f7f7f5 !important;
+  --popover: #171c24 !important;
+  --popover-foreground: #f7f7f5 !important;
+  --primary: #c6f432 !important;
+  --primary-foreground: #0e1116 !important;
+  --secondary: #242a33 !important;
+  --secondary-foreground: #f7f7f5 !important;
+  --muted: #242a33 !important;
+  --muted-foreground: #aeb5c0 !important;
+  --accent: #c6f432 !important;
+  --accent-foreground: #0e1116 !important;
+  --accent-ink: #d8f18a !important;
+  --accent-soft: #202a0d !important;
+  --border: #343b46 !important;
+  --input: #343b46 !important;
+  --ring: #c6f432 !important;
+  --sidebar: #171c24 !important;
+  --sidebar-foreground: #f7f7f5 !important;
+  --sidebar-primary: #c6f432 !important;
+  --sidebar-primary-foreground: #0e1116 !important;
+  --sidebar-accent: #202a0d !important;
+  --sidebar-accent-foreground: #f3fbd6 !important;
+  --sidebar-border: #343b46 !important;
+  --sidebar-ring: #c6f432 !important;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -66,87 +127,24 @@ html.dark { color-scheme: dark; }
 body {
   background: var(--strap-canvas) !important;
   color: var(--strap-ink) !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6,
 .font-display {
-  font-family: "Manrope", "Inter", ui-sans-serif, system-ui, sans-serif !important;
+  font-family: "Bricolage Grotesque", Inter, ui-sans-serif, system-ui, sans-serif !important;
   font-weight: 650;
-  letter-spacing: -0.032em;
+  letter-spacing: -0.03em;
 }
 
 button, input, textarea, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 
-/* Type scale: compact enough for operational screens, expressive enough for marketing. */
 .text-display-lg { font-size: clamp(2.75rem, 7vw, 5rem) !important; line-height: .98 !important; letter-spacing: -.055em !important; }
 .text-display-md { font-size: clamp(2rem, 4.5vw, 3.15rem) !important; line-height: 1.02 !important; letter-spacing: -.045em !important; }
 .text-title-lg { font-size: clamp(1.45rem, 2.4vw, 1.9rem) !important; line-height: 1.12 !important; letter-spacing: -.035em !important; }
-
-/* Token bridge: restore Strap's orange, black and warm-white palette. */
-:root {
-  --background: #faf8f5 !important;
-  --foreground: #171717 !important;
-  --surface: #ffffff !important;
-  --card: #ffffff !important;
-  --card-foreground: #171717 !important;
-  --popover: #ffffff !important;
-  --popover-foreground: #171717 !important;
-  --primary: #f97316 !important;
-  --primary-foreground: #111111 !important;
-  --secondary: #f3f0eb !important;
-  --secondary-foreground: #292524 !important;
-  --muted: #f3f0eb !important;
-  --muted-foreground: #78716c !important;
-  --accent: #f97316 !important;
-  --accent-foreground: #111111 !important;
-  --accent-ink: #9a3412 !important;
-  --accent-soft: #fff0e5 !important;
-  --border: #e7e1da !important;
-  --input: #e7e1da !important;
-  --ring: #f97316 !important;
-  --sidebar: #ffffff !important;
-  --sidebar-foreground: #171717 !important;
-  --sidebar-primary: #f97316 !important;
-  --sidebar-primary-foreground: #111111 !important;
-  --sidebar-accent: #fff7ed !important;
-  --sidebar-accent-foreground: #9a3412 !important;
-  --sidebar-border: #e7e1da !important;
-  --sidebar-ring: #f97316 !important;
-}
-
-.dark {
-  --background: #111111 !important;
-  --foreground: #faf8f5 !important;
-  --surface: #1b1b1b !important;
-  --card: #1b1b1b !important;
-  --card-foreground: #faf8f5 !important;
-  --popover: #1b1b1b !important;
-  --popover-foreground: #faf8f5 !important;
-  --primary: #fb923c !important;
-  --primary-foreground: #111111 !important;
-  --secondary: #292524 !important;
-  --secondary-foreground: #faf8f5 !important;
-  --muted: #292524 !important;
-  --muted-foreground: #d6d3d1 !important;
-  --accent: #fb923c !important;
-  --accent-foreground: #111111 !important;
-  --accent-ink: #fdba74 !important;
-  --accent-soft: #431f0b !important;
-  --border: #3f3a35 !important;
-  --input: #51443a !important;
-  --ring: #fb923c !important;
-  --sidebar: #1b1b1b !important;
-  --sidebar-foreground: #faf8f5 !important;
-  --sidebar-primary: #fb923c !important;
-  --sidebar-primary-foreground: #111111 !important;
-  --sidebar-accent: #431f0b !important;
-  --sidebar-accent-foreground: #ffedd5 !important;
-  --sidebar-border: #3f3a35 !important;
-  --sidebar-ring: #fb923c !important;
-}
 
 /* -------------------------------------------------------------------------- */
 /* Surfaces, fields, buttons                                                   */
@@ -161,7 +159,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 .surface-card:hover {
-  border-color: color-mix(in srgb, var(--strap-blue-500) 22%, var(--strap-line));
+  border-color: color-mix(in srgb, var(--strap-blue-500) 45%, var(--strap-line));
 }
 
 input:not([type="checkbox"]):not([type="radio"]),
@@ -180,8 +178,8 @@ input:not([type="checkbox"]):not([type="radio"]):focus,
 textarea:focus,
 select:focus,
 .field:focus {
-  border-color: var(--strap-blue-500) !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--strap-blue-500) 15%, transparent) !important;
+  border-color: var(--strap-ink) !important;
+  box-shadow: 0 0 0 4px rgb(198 244 50 / .55) !important;
   outline: none;
 }
 
@@ -195,11 +193,12 @@ a[class*="bg-primary"] {
 button[class*="bg-primary"]:hover,
 a[class*="bg-primary"]:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgb(40 86 215 / .16);
+  box-shadow: 0 6px 18px rgb(198 244 50 / .22);
 }
 
-/* Quiet, dense operational controls. */
-button:not([aria-hidden="true"]) { transition: background var(--strap-duration) var(--strap-ease), border-color var(--strap-duration) var(--strap-ease), color var(--strap-duration) var(--strap-ease), transform var(--strap-duration) var(--strap-ease); }
+button:not([aria-hidden="true"]) {
+  transition: background var(--strap-duration) var(--strap-ease), border-color var(--strap-duration) var(--strap-ease), color var(--strap-duration) var(--strap-ease), transform var(--strap-duration) var(--strap-ease);
+}
 
 /* -------------------------------------------------------------------------- */
 /* Application shell                                                           */
@@ -223,7 +222,7 @@ button:not([aria-hidden="true"]) { transition: background var(--strap-duration) 
 
 [data-sidebar="menu-button"][data-active="true"] {
   background: var(--strap-blue-50) !important;
-  color: var(--strap-blue-700) !important;
+  color: var(--strap-ink) !important;
   font-weight: 650;
 }
 
@@ -233,15 +232,15 @@ button:not([aria-hidden="true"]) { transition: background var(--strap-duration) 
   box-shadow: 0 1px 0 rgb(16 24 40 / .02);
 }
 
-.kudi-app-shell > .lg\:pl-60 > main {
-  max-width: 1440px;
-}
+.kudi-app-shell > .lg\:pl-60 > main { max-width: 1440px; }
 
-/* Turn the old diamond/orange mark into a restrained blue product mark. */
+/* Legacy orange marks become the lime Strap accent. */
 .kudi-app-shell .bg-accent,
 .kudi-app-shell .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
 .kudi-app-shell .text-accent,
-.kudi-app-shell .text-accent-ink { color: var(--strap-blue-700) !important; }
+.kudi-app-shell .text-accent-ink { color: var(--strap-blue-800) !important; }
+.dark .kudi-app-shell .text-accent,
+.dark .kudi-app-shell .text-accent-ink { color: var(--strap-blue-500) !important; }
 .kudi-app-shell .bg-accent-soft { background: var(--strap-blue-50) !important; }
 
 /* -------------------------------------------------------------------------- */
@@ -264,7 +263,7 @@ button:not([aria-hidden="true"]) { transition: background var(--strap-duration) 
   width: 34%;
   height: 100%;
   background: var(--strap-blue-500);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--strap-blue-500) 45%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--strap-blue-500) 55%, transparent);
   animation: strap-progress 1.05s var(--strap-ease) infinite;
 }
 
@@ -285,7 +284,6 @@ button:not([aria-hidden="true"]) { transition: background var(--strap-duration) 
 
 @keyframes strap-spin { to { transform: rotate(360deg); } }
 
-/* The previous full-screen loading card is deliberately flattened. */
 .strap-loading-overlay,
 [data-strap-loading-overlay] {
   position: fixed !important;
@@ -322,40 +320,20 @@ table tbody tr:hover { background: var(--strap-blue-50) !important; }
 }
 
 /* -------------------------------------------------------------------------- */
-/* Marketing + auth: replace the previous warm/black visual language          */
+/* Public marketing pages                                                      */
 /* -------------------------------------------------------------------------- */
 
-body:has(main input#email) {
-  --strap-auth-bg: #f8fafc;
-  background: var(--strap-auth-bg) !important;
-}
-
-body:has(main input#email) main {
-  background: var(--strap-auth-bg) !important;
-  color: var(--strap-ink) !important;
-}
-
-body:has(main input#email) main .bg-\[\#171715\] { background: #0f172a !important; }
-body:has(main input#email) main .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
-body:has(main input#email) main .text-\[\#171715\],
-body:has(main input#email) main .text-black { color: var(--strap-ink) !important; }
-body:has(main input#email) main [class*="border-black"] { border-color: var(--strap-line) !important; }
-body:has(main input#email) main [class*="bg-[#fbfaf7]"] { background: #ffffff !important; }
-body:has(main input#email) main [class*="focus:border-[#c79508]"]:focus { border-color: var(--strap-blue-500) !important; }
-body:has(main input#email) main [class*="focus:ring-[#f5c23e]"]:focus { box-shadow: 0 0 0 3px rgb(55 103 232 / .14) !important; }
-
-/* Public marketing pages: light, editorial, no ornamental orange atmosphere. */
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) {
-  --background: #f8fafc !important;
-  --foreground: #101828 !important;
+  --background: #f7f7f5 !important;
+  --foreground: #0e1116 !important;
   --surface: #ffffff !important;
   --card: #ffffff !important;
-  --primary: #2856d7 !important;
-  --primary-foreground: #ffffff !important;
-  --accent: #3767e8 !important;
-  --accent-foreground: #ffffff !important;
-  --accent-soft: #eaf0ff !important;
-  --accent-ink: #2047b7 !important;
+  --primary: #c6f432 !important;
+  --primary-foreground: #0e1116 !important;
+  --accent: #c6f432 !important;
+  --accent-foreground: #0e1116 !important;
+  --accent-soft: #f3fbd6 !important;
+  --accent-ink: #526d0c !important;
 }
 
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#171715\],
@@ -363,10 +341,12 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#f5c
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-[#171715]"],
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-black"] { color: var(--strap-ink) !important; }
 
-/* Remove excessive rounded-card language without destroying intentional controls. */
 .rounded-\[28px\], .rounded-3xl { box-shadow: none; }
 
-/* Focus visibility and reduced motion are non-negotiable. */
+/* -------------------------------------------------------------------------- */
+/* Focus + motion                                                              */
+/* -------------------------------------------------------------------------- */
+
 :focus-visible {
   outline: 2px solid var(--strap-blue-500) !important;
   outline-offset: 2px;
@@ -384,379 +364,341 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
 
+/* ========================================================================== */
+/* AUTH — log in, sign up, reset, recover                                      */
+/* Pairs with src/routes/auth.tsx. Light + dark.                               */
+/* ========================================================================== */
 
-/* -------------------------------------------------------------------------- */
-/* Strap lemon visual system — shared across auth and workspace               */
-/* -------------------------------------------------------------------------- */
-:root {
-  --strap-blue-50: #f3fbd6;
-  --strap-blue-100: #e8f7ae;
-  --strap-blue-200: #d8f18a;
-  --strap-blue-300: #c6f432;
-  --strap-blue-500: #c6f432;
-  --strap-blue-600: #b0dc20;
-  --strap-blue-700: #789b12;
-  --strap-blue-800: #526d0c;
-  --strap-ink: #0e1116;
-  --strap-ink-soft: #242a33;
-  --strap-muted: #555c6a;
-  --strap-line: #d5d8de;
-  --strap-canvas: #f7f7f5;
-  --strap-panel: #ffffff;
-  --background: #f7f7f5 !important;
-  --foreground: #0e1116 !important;
-  --surface: #ffffff !important;
-  --card: #ffffff !important;
-  --card-foreground: #0e1116 !important;
-  --popover: #ffffff !important;
-  --popover-foreground: #0e1116 !important;
-  --primary: #c6f432 !important;
-  --primary-foreground: #0e1116 !important;
-  --secondary: #eef0e9 !important;
-  --secondary-foreground: #0e1116 !important;
-  --muted: #eef0e9 !important;
-  --muted-foreground: #555c6a !important;
-  --accent: #c6f432 !important;
-  --accent-foreground: #0e1116 !important;
-  --accent-ink: #526d0c !important;
-  --accent-soft: #f3fbd6 !important;
-  --border: #d5d8de !important;
-  --input: #d5d8de !important;
-  --ring: #c6f432 !important;
-  --sidebar-primary: #c6f432 !important;
-  --sidebar-primary-foreground: #0e1116 !important;
-  --sidebar-accent: #f3fbd6 !important;
-  --sidebar-accent-foreground: #526d0c !important;
-  --sidebar-ring: #c6f432 !important;
-}
-.dark {
-  --strap-blue-50: #202a0d;
-  --strap-blue-100: #2b3a10;
-  --strap-blue-200: #405616;
-  --strap-blue-300: #66851d;
-  --strap-blue-500: #c6f432;
-  --strap-blue-600: #d8f18a;
-  --strap-blue-700: #e8f7ae;
-  --strap-blue-800: #f3fbd6;
-  --strap-ink: #f7f7f5;
-  --strap-ink-soft: #e7e9ed;
-  --strap-muted: #aeb5c0;
-  --strap-line: #343b46;
-  --strap-canvas: #0e1116;
-  --strap-panel: #171c24;
-  --background: #0e1116 !important;
-  --foreground: #f7f7f5 !important;
-  --surface: #171c24 !important;
-  --card: #171c24 !important;
-  --card-foreground: #f7f7f5 !important;
-  --popover: #171c24 !important;
-  --popover-foreground: #f7f7f5 !important;
-  --primary: #c6f432 !important;
-  --primary-foreground: #0e1116 !important;
-  --secondary: #242a33 !important;
-  --secondary-foreground: #f7f7f5 !important;
-  --muted: #242a33 !important;
-  --muted-foreground: #aeb5c0 !important;
-  --accent: #c6f432 !important;
-  --accent-foreground: #0e1116 !important;
-  --accent-ink: #d8f18a !important;
-  --accent-soft: #202a0d !important;
-  --border: #343b46 !important;
-  --input: #343b46 !important;
-  --ring: #c6f432 !important;
-  --sidebar-primary: #c6f432 !important;
-  --sidebar-primary-foreground: #0e1116 !important;
-  --sidebar-accent: #202a0d !important;
-  --sidebar-accent-foreground: #f3fbd6 !important;
-  --sidebar-ring: #c6f432 !important;
-}
-html { color-scheme: light; }
-html.dark { color-scheme: dark; }
-h1, h2, h3, h4, h5, h6, .font-display {
-  font-family: "Bricolage Grotesque", Inter, ui-sans-serif, system-ui, sans-serif !important;
-}
-body { background: var(--strap-canvas) !important; color: var(--strap-ink) !important; }
-button[class*="bg-primary"]:hover, a[class*="bg-primary"]:hover {
-  box-shadow: 0 6px 18px rgb(198 244 50 / .18);
-}
-:focus-visible { outline-color: #c6f432 !important; }
-
-/* Auth screens reproduce the supplied Strap composition without touching auth logic. */
 .strap-auth-main {
-  min-height: 100dvh !important;
+  --a-bg: #f7f7f5;
+  --a-ink: #0e1116;
+  --a-mut: #555c6a;
+  --a-line: #d5d8de;
+  --a-field: #ffffff;
+  --a-hover: #edeef0;
+  display: block !important;
+  min-height: 100vh;
+  min-height: 100dvh;
   padding: 0 !important;
-  background: #f7f7f5 !important;
-  color: #0e1116 !important;
+  background: var(--a-bg) !important;
+  color: var(--a-ink) !important;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
 }
-.dark .strap-auth-main { background: #0e1116 !important; color: #f7f7f5 !important; }
-.strap-auth-main > div { width: 100% !important; max-width: 1160px !important; min-height: 100dvh; }
-.strap-auth-card {
-  min-height: 100dvh !important;
-  grid-template-columns: 1.1fr 1fr !important;
-  overflow: hidden !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: #f7f7f5 !important;
-  box-shadow: none !important;
+.dark .strap-auth-main {
+  --a-bg: #0e1116;
+  --a-ink: #f7f7f5;
+  --a-mut: #aeb5c0;
+  --a-line: #343b46;
+  --a-field: #171c24;
+  --a-hover: #242a33;
 }
-.dark .strap-auth-card { background: #0e1116 !important; }
-.strap-auth-aside {
-  display: flex !important;
+
+.strap-auth-card {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  min-height: 100vh;
   min-height: 100dvh;
+}
+
+/* Brand panel (always dark) */
+.strap-auth-aside {
+  position: relative;
+  overflow: hidden;
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
-  overflow: hidden;
-  position: relative;
-  padding: 56px 64px !important;
-  background: #0e1116 !important;
-  color: #ffffff !important;
+  gap: 40px;
+  padding: 56px 64px;
+  background: #0e1116;
+  color: #ffffff;
 }
-.strap-auth-aside::after {
-  content: "";
+.strap-auth-aside > * { position: relative; z-index: 1; }
+.strap-auth-aside > .strap-auth-rings {
   position: absolute;
-  right: -145px;
-  bottom: -175px;
-  width: 560px;
-  height: 560px;
-  border-radius: 50%;
+  z-index: 0;
+  right: -200px;
+  bottom: -220px;
+  width: 760px;
+  height: 760px;
   pointer-events: none;
-  background: repeating-radial-gradient(circle, transparent 0 49px, rgb(198 244 50 / .34) 50px 51px);
 }
-.strap-auth-aside > div { position: relative; z-index: 1; }
-.strap-auth-aside h2 {
+.strap-auth-hero h2 {
+  margin: 0;
   max-width: 520px;
-  font-size: clamp(40px, 5vw, 64px) !important;
-  line-height: 1.04 !important;
-  letter-spacing: -.045em !important;
-  color: #ffffff !important;
+  color: #ffffff;
+  font-family: "Bricolage Grotesque", Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -.03em;
 }
-.strap-auth-aside h2 span { color: #c6f432 !important; }
-.strap-auth-aside p { color: #b4bac6 !important; }
-.strap-auth-aside a > span:first-child,
-.strap-auth-main .mb-5 a > span:first-child {
-  background: transparent !important;
-  border: 2px solid #c6f432 !important;
-  border-radius: 50% !important;
+.strap-auth-hero p {
+  margin: 20px 0 0;
+  max-width: 420px;
+  color: #b4bac6;
+  font-size: 18px;
+  line-height: 1.55;
 }
-.strap-auth-aside a > span:first-child > span,
-.strap-auth-main .mb-5 a > span:first-child > span {
-  width: 10px !important;
-  height: 10px !important;
-  border-radius: 50% !important;
-  transform: none !important;
-  background: #c6f432 !important;
+.strap-auth-copy { color: #9aa1ae; font-size: 13px; }
+
+/* Logo: ring + lime dot + wordmark */
+.strap-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: inherit;
+  text-decoration: none;
+  --logo-ring: #0e1116;
 }
-.strap-auth-aside a > span:last-child { color: #ffffff !important; }
-.strap-auth-aside a > span:last-child span { color: #c6f432 !important; }
-.strap-auth-aside [class*="bg-[#e87928]"],
-.strap-auth-aside [class*="bg-[#f28a32]"],
-.strap-auth-aside [class*="text-[#f28a32]"] { background-color: #c6f432 !important; color: #0e1116 !important; }
+.strap-logo-mark {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--logo-ring);
+  border-radius: 50%;
+}
+.strap-logo-mark::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #c6f432;
+}
+.strap-logo-word {
+  font-family: "Bricolage Grotesque", Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.strap-auth-aside .strap-logo { --logo-ring: #c6f432; color: #ffffff; }
+
+/* Form panel */
 .strap-auth-form-panel {
-  align-items: center !important;
-  padding: 48px 32px !important;
-  background: #f7f7f5 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  background: var(--a-bg);
 }
-.dark .strap-auth-form-panel { background: #0e1116 !important; }
-.strap-auth-form-panel > div { max-width: 400px !important; }
-.strap-auth-form-panel h1 {
-  color: #0e1116 !important;
-  font-family: "Bricolage Grotesque", Inter, sans-serif !important;
-  font-size: 34px !important;
-  line-height: 1.08 !important;
-  letter-spacing: -.035em !important;
+.strap-auth-box { width: 100%; max-width: 400px; }
+.strap-auth-title {
+  margin: 0 0 8px;
+  color: var(--a-ink) !important;
+  font-family: "Bricolage Grotesque", Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -.02em;
 }
-.dark .strap-auth-form-panel h1 { color: #f7f7f5 !important; }
-.strap-auth-form-panel p { color: #555c6a !important; }
-.dark .strap-auth-form-panel p { color: #aeb5c0 !important; }
-.strap-auth-form-panel label { color: #0e1116 !important; }
-.dark .strap-auth-form-panel label { color: #e7e9ed !important; }
-.strap-auth-form-panel input:not([type="checkbox"]) {
-  min-height: 52px !important;
+.strap-auth-sub { margin: 0; color: var(--a-mut) !important; font-size: 16px; line-height: 1.55; }
+.strap-auth-form { display: flex; flex-direction: column; gap: 16px; margin: 24px 0; }
+.strap-auth-main .strap-field-wrap { display: flex; flex-direction: column; gap: 6px; }
+.strap-auth-main .strap-field-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.strap-auth-main .strap-label { color: var(--a-ink) !important; font-size: 14px !important; font-weight: 500 !important; }
+
+.strap-auth-main .strap-field {
+  width: 100%;
   height: 52px !important;
-  border: 1.5px solid #d5d8de !important;
+  min-height: 52px;
+  padding: 12px 16px !important;
+  border: 1.5px solid var(--a-line) !important;
   border-radius: 12px !important;
-  background: #ffffff !important;
-  color: #0e1116 !important;
+  background: var(--a-field) !important;
+  color: var(--a-ink) !important;
+  font: 400 16px Inter, ui-sans-serif, system-ui, sans-serif !important;
   box-shadow: none !important;
 }
-.dark .strap-auth-form-panel input:not([type="checkbox"]) {
-  border-color: #343b46 !important;
-  background: #171c24 !important;
-  color: #f7f7f5 !important;
-}
-.strap-auth-form-panel input:focus {
-  border-color: #0e1116 !important;
+.strap-auth-main .strap-field::placeholder { color: #6b7280 !important; }
+.strap-auth-main .strap-field:focus,
+.strap-auth-main .strap-field:focus-visible {
+  border-color: var(--a-ink) !important;
   box-shadow: 0 0 0 4px rgb(198 244 50 / .55) !important;
+  outline: none !important;
 }
-.strap-auth-form-panel button[type="submit"] {
-  min-height: 48px !important;
-  height: 48px !important;
-  border: 1.5px solid #0e1116 !important;
+
+/* Password show / hide */
+.strap-auth-main .strap-pw { position: relative; }
+.strap-auth-main .strap-pw .strap-field { padding-right: 56px !important; }
+.strap-auth-main .strap-eye {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--a-ink) !important;
+  cursor: pointer;
+}
+.strap-auth-main .strap-eye:hover { background: var(--a-hover); }
+
+/* Text links and small buttons */
+.strap-auth-main .strap-link {
+  min-height: 32px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--a-ink) !important;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.strap-auth-main .strap-auth-alt { margin: 0; text-align: center; color: var(--a-mut) !important; font-size: 16px; }
+.strap-auth-main .strap-auth-alt .strap-link { min-height: 44px; font-size: 16px; font-weight: 600; }
+.strap-auth-main .strap-auth-back { display: flex; justify-content: center; width: 100%; margin-top: 8px; }
+
+/* Buttons */
+.strap-auth-main .strap-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 48px;
   border-radius: 12px !important;
+  font: 600 16px Inter, ui-sans-serif, system-ui, sans-serif !important;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: pointer;
+}
+.strap-auth-main .strap-btn-primary {
+  border: 1.5px solid #0e1116 !important;
   background: #0e1116 !important;
   color: #ffffff !important;
+}
+.strap-auth-main .strap-btn-primary:hover { background: #262c38 !important; }
+.dark .strap-auth-main .strap-btn-primary {
+  border-color: #c6f432 !important;
+  background: #c6f432 !important;
+  color: #0e1116 !important;
+}
+.dark .strap-auth-main .strap-btn-primary:hover { background: #d8f18a !important; }
+.strap-auth-main .strap-btn svg { width: 20px; height: 20px; }
+.strap-auth-main .strap-btn:disabled { opacity: .55; cursor: not-allowed; }
+.strap-auth-main .strap-btn-ghost {
+  position: relative;
+  height: 52px;
+  border: 1.5px solid var(--a-line) !important;
+  background: var(--a-field) !important;
+  color: var(--a-ink) !important;
+}
+.strap-auth-main .strap-btn-ghost:disabled { opacity: .9; }
+.strap-auth-main .strap-soon {
+  position: absolute;
+  top: -9px;
+  right: 10px;
+  padding: 1px 9px;
+  border: 1px solid #d8f18a;
+  border-radius: 99px;
+  background: #f3fbd6;
+  color: #3d5209;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.dark .strap-auth-main .strap-soon { border-color: #405616; background: #202a0d; color: #e8f7ae; }
+.strap-auth-main button:focus-visible,
+.strap-auth-main a:focus-visible {
+  outline: 3px solid #c6f432 !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #0e1116;
+}
+.dark .strap-auth-main button:focus-visible,
+.dark .strap-auth-main a:focus-visible { box-shadow: none; }
+
+/* Divider */
+.strap-auth-main .strap-or { display: flex; align-items: center; gap: 14px; margin: 20px 0 0; color: var(--a-mut); font-size: 14px; }
+.strap-auth-main .strap-or::before,
+.strap-auth-main .strap-or::after { content: ""; flex: 1; height: 1px; background: var(--a-line); }
+
+/* Terms checkbox */
+.strap-auth-main .strap-terms { display: flex; align-items: flex-start; gap: 10px; color: var(--a-mut) !important; font-size: 14px; line-height: 1.5; }
+.strap-auth-main .strap-terms a { color: var(--a-ink) !important; font-weight: 600; text-decoration: underline; }
+.strap-auth-main .strap-check {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border: 1.5px solid var(--a-ink) !important;
+  border-radius: 5px !important;
+  background: var(--a-field) !important;
+  color: var(--a-bg) !important;
   box-shadow: none !important;
 }
-.strap-auth-form-panel button[type="submit"]:hover { background: #262c38 !important; }
-.strap-auth-form-panel button[type="submit"]:focus-visible {
-  outline: 3px solid #c6f432 !important;
-  outline-offset: 2px !important;
+.strap-auth-main .strap-check[data-state="checked"] { background: var(--a-ink) !important; }
+
+/* Success notice */
+.strap-auth-main .strap-notice {
+  padding: 12px 14px;
+  border: 1.5px solid #d8f18a;
+  border-radius: 12px;
+  background: #f3fbd6;
+  color: #2f4207;
+  font-size: 14px;
+  line-height: 1.5;
 }
-.strap-auth-form-panel button[aria-label="Show password"],
-.strap-auth-form-panel button[aria-label="Hide password"] { color: #0e1116 !important; }
-.strap-auth-form-panel button[aria-label="Show password"]:hover,
-.strap-auth-form-panel button[aria-label="Hide password"]:hover { background: #edeef0 !important; }
-.strap-auth-form-panel a,
-.strap-auth-form-panel button:not([type="submit"]) { color: #0e1116 !important; }
-.dark .strap-auth-form-panel a,
-.dark .strap-auth-form-panel button:not([type="submit"]) { color: #f7f7f5 !important; }
-.strap-auth-form-panel [data-state="checked"] { background: #c6f432 !important; border-color: #c6f432 !important; color: #0e1116 !important; }
-.strap-auth-form-panel .text-\[\#a65318\],
-.strap-auth-form-panel .text-\[\#c16b2b\] { color: #526d0c !important; }
-.strap-auth-form-panel .bg-\[\#d96b1b\] { background: #0e1116 !important; }
-.strap-auth-form-panel .bg-\[\#e87928\] { background: #c6f432 !important; }
-.strap-auth-form-panel .text-\[\#21150c\] { color: #0e1116 !important; }
-.strap-auth-main .mb-5 { color: #0e1116 !important; }
-.strap-auth-main .mb-5 > span { color: #555c6a !important; }
+.dark .strap-auth-main .strap-notice { border-color: #405616; background: #202a0d; color: #e8f7ae; }
+
+/* Phones: the dark panel shrinks to a slim logo bar so the form fits the screen */
+@media (max-width: 860px) {
+  .strap-auth-card { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .strap-auth-aside { min-height: 0; padding: 18px 24px; }
+  .strap-auth-aside .strap-auth-hero,
+  .strap-auth-aside .strap-auth-copy,
+  .strap-auth-aside > .strap-auth-rings { display: none; }
+  .strap-auth-form-panel { align-items: flex-start; padding: 32px 24px 40px; }
+  .strap-auth-title { font-size: 30px; }
+}
+
+/* ========================================================================== */
+/* AUTH CODE — /verify-email (styled from CSS; component unchanged)            */
+/* ========================================================================== */
+
 body:has(main input#verification-code) main {
-  min-height: 100dvh !important;
+  min-height: 100vh;
+  min-height: 100dvh;
   padding: 0 24px !important;
-  background: #f7f7f5 !important;
-  color: #0e1116 !important;
+  background: var(--strap-canvas) !important;
+  color: var(--strap-ink) !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 body:has(main input#verification-code) main > div {
   max-width: 440px !important;
-  border: 1.5px solid #d5d8de !important;
+  border: 1.5px solid var(--strap-line) !important;
   border-radius: 16px !important;
-  background: #ffffff !important;
+  background: var(--strap-panel) !important;
   box-shadow: none !important;
 }
 body:has(main input#verification-code) input#verification-code {
-  border: 1.5px solid #d5d8de !important;
+  height: 56px;
+  border: 1.5px solid var(--strap-line) !important;
   border-radius: 12px !important;
-  background: #ffffff !important;
+  background: var(--strap-panel) !important;
+  color: var(--strap-ink) !important;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: .3em;
+  text-align: center;
 }
 body:has(main input#verification-code) button[type="submit"] {
+  min-height: 48px;
   border: 1.5px solid #0e1116 !important;
   border-radius: 12px !important;
   background: #0e1116 !important;
   color: #ffffff !important;
-}
-@media (max-width: 860px) {
-  .strap-auth-card { grid-template-columns: 1fr !important; }
-  .strap-auth-aside { display: none !important; }
-  .strap-auth-form-panel {
-    align-items: flex-start !important;
-    padding: 32px 24px 40px !important;
-  }
-  .strap-auth-form-panel > div { max-width: 400px !important; }
-}
-
-
-/* High-specificity brand overrides for legacy utility classes on public surfaces. */
-body:has(main input#email) main.strap-auth-main {
-  background: #f7f7f5 !important;
-  color: #0e1116 !important;
-}
-body:has(main input#email) main.strap-auth-main .strap-auth-card {
-  border-color: transparent !important;
-  background: #f7f7f5 !important;
+  font-weight: 600;
   box-shadow: none !important;
+  transform: none !important;
 }
-body:has(main input#email) main.strap-auth-main .strap-auth-aside {
-  background: #0e1116 !important;
-}
-body:has(main input#email) main.strap-auth-main .strap-auth-form-panel {
-  background: #f7f7f5 !important;
-}
-body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="text-[#a65318]"],
-body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="text-[#c16b2b]"],
-body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="text-[#e87928]"],
-body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="text-[#f28a32]"] {
-  color: #526d0c !important;
-}
-body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="bg-[#d96b1b]"] {
-  background: #0e1116 !important;
-}
-body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="bg-[#e87928]"],
-body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="bg-[#f28a32]"] {
-  background: #c6f432 !important;
-}
-body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="border-[#d96b1b]"],
-body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="border-[#e87928]"] {
+body:has(main input#verification-code) button[type="submit"]:hover { background: #262c38 !important; }
+body:has(main input#verification-code) button[type="submit"]:disabled { opacity: .4; }
+.dark body:has(main input#verification-code) button[type="submit"] {
   border-color: #c6f432 !important;
-}
-.dark body:has(main input#email) main.strap-auth-main,
-.dark body:has(main input#email) main.strap-auth-main .strap-auth-card,
-.dark body:has(main input#email) main.strap-auth-main .strap-auth-form-panel {
-  background: #0e1116 !important;
-}
-body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) {
-  --background: #f7f7f5 !important;
-  --foreground: #0e1116 !important;
-  --surface: #ffffff !important;
-  --card: #ffffff !important;
-  --primary: #c6f432 !important;
-  --primary-foreground: #0e1116 !important;
-  --accent: #c6f432 !important;
-  --accent-foreground: #0e1116 !important;
-  --accent-soft: #f3fbd6 !important;
-  --accent-ink: #526d0c !important;
-}
-body:has(main input#verification-code) main {
-  background: #f7f7f5 !important;
+  background: #c6f432 !important;
   color: #0e1116 !important;
-}
-.dark body:has(main input#verification-code) main { background: #0e1116 !important; color: #f7f7f5 !important; }
-.dark body:has(main input#verification-code) main > div {
-  background: #171c24 !important;
-  border-color: #343b46 !important;
-}
-.dark body:has(main input#verification-code) input#verification-code {
-  background: #171c24 !important;
-  color: #f7f7f5 !important;
-  border-color: #343b46 !important;
-}
-
-
-/* Exact supplied Strap auth layout: match the reference dimensions and alignment. */
-.strap-auth-main { padding: 0 !important; min-height: 100vh !important; background: #F7F7F5 !important; color: #0E1116 !important; }
-.strap-auth-main > div { width: 100% !important; max-width: none !important; min-height: 100vh !important; margin: 0 !important; padding: 0 !important; }
-.strap-auth-main > div > .mb-5 { display: none !important; }
-.strap-auth-card { display: grid !important; width: 100% !important; min-height: 100vh !important; grid-template-columns: 1.1fr 1fr !important; border: 0 !important; border-radius: 0 !important; }
-.strap-auth-aside { display: flex !important; min-height: 100vh !important; padding: 56px 64px !important; background: #0E1116 !important; color: #fff !important; }
-.strap-auth-aside > div:last-child { display: none !important; }
-.strap-auth-aside > div:nth-last-child(2) { position: relative !important; z-index: 2 !important; margin-top: 0 !important; }
-.strap-auth-aside > div:nth-last-child(2) > span { display: none !important; }
-.strap-auth-aside > div:nth-last-child(2) h2 { margin-top: 0 !important; max-width: 520px !important; font-size: clamp(40px, 5vw, 64px) !important; line-height: 1.08 !important; letter-spacing: -.02em !important; }
-.strap-auth-aside > div:nth-last-child(2) p { margin-top: 20px !important; color: #B4BAC6 !important; font-size: 18px !important; line-height: 1.55 !important; }
-.strap-auth-aside::after { right: -200px !important; bottom: -220px !important; width: 760px !important; height: 760px !important; background: repeating-radial-gradient(circle, transparent 0 59px, rgb(198 244 50 / .34) 60px 61px) !important; }
-.strap-auth-aside::before { content: "© 2026 Strap by Kryonara"; position: absolute; z-index: 2; left: 64px; bottom: 56px; color: #9AA1AE; font-size: 13px; }
-.strap-auth-aside a > span:first-child { width: 26px !important; height: 26px !important; border: 2px solid #C6F432 !important; border-radius: 50% !important; background: transparent !important; }
-.strap-auth-aside a > span:first-child > span { width: 10px !important; height: 10px !important; border-radius: 50% !important; background: #C6F432 !important; }
-.strap-auth-aside a > span:last-child { font-size: 22px !important; font-weight: 700 !important; letter-spacing: -.02em !important; }
-.strap-auth-form-panel { min-height: 100vh !important; padding: 48px 24px !important; background: #F7F7F5 !important; }
-.strap-auth-form-panel > div { width: 100% !important; max-width: 400px !important; }
-.strap-auth-form-panel > div > div:first-child > div:first-child { display: none !important; }
-.strap-auth-form-panel > div > div:first-child > p:first-of-type { display: none !important; }
-.strap-auth-form-panel h1 { margin: 0 0 8px !important; font-size: 34px !important; line-height: 1.08 !important; letter-spacing: -.02em !important; }
-.strap-auth-form-panel > div > div:first-child > p:last-child { margin: 0 !important; max-width: none !important; font-size: 16px !important; line-height: 1.55 !important; }
-.strap-auth-form-panel form { display: flex !important; flex-direction: column !important; gap: 16px !important; margin: 24px 0 !important; }
-.strap-auth-form-panel form > div { display: flex !important; flex-direction: column !important; gap: 6px !important; }
-.strap-auth-form-panel form label { font-size: 14px !important; font-weight: 500 !important; }
-.strap-auth-form-panel input:not([type=checkbox]) { min-height: 52px !important; height: 52px !important; padding: 12px 16px !important; border: 1.5px solid #D5D8DE !important; border-radius: 12px !important; background: #fff !important; font: 400 16px Inter, sans-serif !important; color: #0E1116 !important; }
-.strap-auth-form-panel input::placeholder { color: #6B7280 !important; }
-.strap-auth-form-panel input:focus { border-color: #0E1116 !important; box-shadow: 0 0 0 4px rgb(198 244 50 / .55) !important; }
-.strap-auth-form-panel button[type=submit] { min-height: 48px !important; height: 48px !important; border: 1.5px solid #0E1116 !important; border-radius: 12px !important; background: #0E1116 !important; color: #fff !important; font: 600 16px Inter, sans-serif !important; box-shadow: none !important; }
-.strap-auth-form-panel button[type=submit] svg { display: none !important; }
-.strap-auth-form-panel > div > div:last-child { display: none !important; }
-.strap-auth-form-panel > div > p { margin-top: 20px !important; text-align: center !important; color: #555C6A !important; }
-.strap-auth-form-panel a, .strap-auth-form-panel button:not([type=submit]) { color: #0E1116 !important; }
-.strap-auth-form-panel [data-state=checked] { background: #0E1116 !important; border-color: #0E1116 !important; }
-@media (max-width: 860px) {
-  .strap-auth-card { grid-template-columns: 1fr !important; }
-  .strap-auth-aside { display: none !important; }
-  .strap-auth-form-panel { min-height: 100vh !important; align-items: flex-start !important; justify-content: center !important; padding: 32px 24px 40px !important; }
-  .strap-auth-form-panel > div { max-width: 400px !important; }
 }
