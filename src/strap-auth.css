@@ -1,19 +1,69 @@
-/* Strap authentication and verification screens. Scoped to .sa. */
-.sa{--sa-bg:var(--bg,#f7f7f5);--sa-surface:#fff;--sa-line:#d5d8de;--sa-mut:#555c6a;--sa-text:#0e1116;--sa-btn:#0e1116;--sa-btn-t:#fff;display:grid;grid-template-columns:1.1fr 1fr;min-height:100dvh;background:var(--sa-bg);color:var(--sa-text);font:16px/1.55 var(--font-body,Inter,system-ui,sans-serif)}
-:root.dark .sa{--sa-bg:#0a0d11;--sa-surface:#161b22;--sa-line:#2c3340;--sa-mut:#a3aab8;--sa-text:#f2f4f7;--sa-btn:#c6f432;--sa-btn-t:#0e1116}
-.sa *,.sa *:before,.sa *:after{box-sizing:border-box}
-.sa-l{position:relative;overflow:hidden;background:#0e1116;color:#fff;padding:56px 64px;display:flex;flex-direction:column;justify-content:space-between;gap:40px}
-.sa-l>*{position:relative}.sa-l h2{font-family:var(--font-display,inherit);font-weight:700;letter-spacing:-.03em;line-height:1.08;font-size:clamp(36px,5vw,64px);max-width:520px;margin:0;color:#fff}
-.sa-lead{color:#b4bac6;font-size:18px;max-width:420px;margin:20px 0 0}.sa-l small{color:#9aa1ae;font-size:13px}
-.sa-ring{position:absolute!important;right:-200px;bottom:-220px;width:760px;height:760px;pointer-events:none}
-.sa-logo{display:flex;align-items:center;gap:10px;width:max-content;color:#fff;text-decoration:none;font:700 22px var(--font-display,inherit);letter-spacing:-.02em}
-.sa-dot{width:26px;height:26px;border:2px solid #c6f432;border-radius:50%;display:grid;place-items:center}.sa-dot:after{content:"";width:10px;height:10px;border-radius:50%;background:#c6f432}
-.sa-r{display:flex;align-items:center;justify-content:center;padding:48px 24px;min-width:0}.sa-box{width:100%;max-width:400px}.sa-box h1{font:700 34px/1.08 var(--font-display,inherit);letter-spacing:-.03em;margin:0 0 8px;color:var(--sa-text)}
-.sa-mut{color:var(--sa-mut);margin:0}.sa-fm{display:flex;flex-direction:column;gap:16px;margin:24px 0}.sa-notice{border-radius:12px;padding:12px 16px;font-size:14px;background:#eef9c9;color:#0e1116}
-.sa-b{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:48px;padding:0 22px;border-radius:12px;border:1.5px solid var(--sa-btn);background:var(--sa-btn);color:var(--sa-btn-t);font:600 16px var(--font-body,inherit);cursor:pointer}
-.sa-b:disabled{opacity:.45;cursor:not-allowed}.sa-b:hover:not(:disabled){filter:brightness(.94)}
-.sa-ok{width:56px;height:56px;border-radius:50%;background:#c6f432;display:grid;place-items:center;margin-bottom:20px}.sa-ok.err{background:#b42318}
-.sa-label{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#637c13;margin:0 0 8px}.sa-alt{text-align:center;color:var(--sa-mut);margin:16px 0 0}
-.sa-lk{background:none;border:0;padding:4px;color:var(--sa-text);font:600 14px var(--font-body,inherit);text-decoration:underline;cursor:pointer}
-@media(max-width:860px){.sa{grid-template-columns:1fr;grid-template-rows:auto 1fr}.sa-l{padding:18px 24px;min-height:0}.sa-l>div,.sa-l small,.sa-ring{display:none!important}.sa-logo{font-size:20px}.sa-r{align-items:flex-start;padding:40px 24px}.sa-box h1{font-size:30px}}
-@media(prefers-reduced-motion:no-preference){.sa-box{animation:sa-enter .25s ease-out}@keyframes sa-enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}}
+/* Strap redesign — auth screens (log in, create shop, reset, verify code).
+ * Scoped to .sa so nothing else in the app is affected. Uses the Phase 1 tokens. */
+
+.sa {
+  --sa-bg: var(--bg, #f7f7f5);
+  --sa-surface: #fff;
+  --sa-line: #d5d8de;
+  --sa-mut: #555c6a;
+  --sa-text: #0e1116;
+  --sa-ph: #6b7280;
+  --sa-btn: #0e1116;
+  --sa-btn-t: #fff;
+  --sa-btn-h: #262c38;
+  --sa-hover: #edeef0;
+  --sa-danger: #b42318;
+  --sa-danger-bg: #ffe9e6;
+  --sa-ok-bg: #eef9c9;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  min-height: 100dvh;
+  background: var(--sa-bg);
+  color: var(--sa-text);
+  font-family: var(--font-body, Inter, system-ui, sans-serif);
+  font-size: 16px;
+  line-height: 1.55;
+}
+:root.dark .sa {
+  --sa-bg: #0a0d11;
+  --sa-surface: #161b22;
+  --sa-line: #2c3340;
+  --sa-mut: #a3aab8;
+  --sa-text: #f2f4f7;
+  --sa-ph: #8a93a3;
+  --sa-btn: #c6f432;
+  --sa-btn-t: #0e1116;
+  --sa-btn-h: #d6f76a;
+  --sa-hover: #232a35;
+  --sa-danger: #ff8a80;
+  --sa-danger-bg: #3a1b19;
+  --sa-ok-bg: #26310a;
+}
+.sa *,
+.sa *::before,
+.sa *::after {
+  box-sizing: border-box;
+}
+
+/* Brand panel */
+.sa-l {
+  position: relative;
+  overflow: hidden;
+  background: #0e1116;
+  color: #fff;
+  padding: 56px 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+}
+.sa-l > * {
+  position: relative;
+}
+.sa-l h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  font-size: clamp(36px, 5vw, 64px);
+  max-widthֻǱ˞
