@@ -383,3 +383,272 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   .strap-spinner { animation: none; }
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Strap lemon visual system — shared across auth and workspace               */
+/* -------------------------------------------------------------------------- */
+:root {
+  --strap-blue-50: #f3fbd6;
+  --strap-blue-100: #e8f7ae;
+  --strap-blue-200: #d8f18a;
+  --strap-blue-300: #c6f432;
+  --strap-blue-500: #c6f432;
+  --strap-blue-600: #b0dc20;
+  --strap-blue-700: #789b12;
+  --strap-blue-800: #526d0c;
+  --strap-ink: #0e1116;
+  --strap-ink-soft: #242a33;
+  --strap-muted: #555c6a;
+  --strap-line: #d5d8de;
+  --strap-canvas: #f7f7f5;
+  --strap-panel: #ffffff;
+  --background: #f7f7f5 !important;
+  --foreground: #0e1116 !important;
+  --surface: #ffffff !important;
+  --card: #ffffff !important;
+  --card-foreground: #0e1116 !important;
+  --popover: #ffffff !important;
+  --popover-foreground: #0e1116 !important;
+  --primary: #c6f432 !important;
+  --primary-foreground: #0e1116 !important;
+  --secondary: #eef0e9 !important;
+  --secondary-foreground: #0e1116 !important;
+  --muted: #eef0e9 !important;
+  --muted-foreground: #555c6a !important;
+  --accent: #c6f432 !important;
+  --accent-foreground: #0e1116 !important;
+  --accent-ink: #526d0c !important;
+  --accent-soft: #f3fbd6 !important;
+  --border: #d5d8de !important;
+  --input: #d5d8de !important;
+  --ring: #c6f432 !important;
+  --sidebar-primary: #c6f432 !important;
+  --sidebar-primary-foreground: #0e1116 !important;
+  --sidebar-accent: #f3fbd6 !important;
+  --sidebar-accent-foreground: #526d0c !important;
+  --sidebar-ring: #c6f432 !important;
+}
+.dark {
+  --strap-blue-50: #202a0d;
+  --strap-blue-100: #2b3a10;
+  --strap-blue-200: #405616;
+  --strap-blue-300: #66851d;
+  --strap-blue-500: #c6f432;
+  --strap-blue-600: #d8f18a;
+  --strap-blue-700: #e8f7ae;
+  --strap-blue-800: #f3fbd6;
+  --strap-ink: #f7f7f5;
+  --strap-ink-soft: #e7e9ed;
+  --strap-muted: #aeb5c0;
+  --strap-line: #343b46;
+  --strap-canvas: #0e1116;
+  --strap-panel: #171c24;
+  --background: #0e1116 !important;
+  --foreground: #f7f7f5 !important;
+  --surface: #171c24 !important;
+  --card: #171c24 !important;
+  --card-foreground: #f7f7f5 !important;
+  --popover: #171c24 !important;
+  --popover-foreground: #f7f7f5 !important;
+  --primary: #c6f432 !important;
+  --primary-foreground: #0e1116 !important;
+  --secondary: #242a33 !important;
+  --secondary-foreground: #f7f7f5 !important;
+  --muted: #242a33 !important;
+  --muted-foreground: #aeb5c0 !important;
+  --accent: #c6f432 !important;
+  --accent-foreground: #0e1116 !important;
+  --accent-ink: #d8f18a !important;
+  --accent-soft: #202a0d !important;
+  --border: #343b46 !important;
+  --input: #343b46 !important;
+  --ring: #c6f432 !important;
+  --sidebar-primary: #c6f432 !important;
+  --sidebar-primary-foreground: #0e1116 !important;
+  --sidebar-accent: #202a0d !important;
+  --sidebar-accent-foreground: #f3fbd6 !important;
+  --sidebar-ring: #c6f432 !important;
+}
+html { color-scheme: light; }
+html.dark { color-scheme: dark; }
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: "Bricolage Grotesque", Inter, ui-sans-serif, system-ui, sans-serif !important;
+}
+body { background: var(--strap-canvas) !important; color: var(--strap-ink) !important; }
+button[class*="bg-primary"]:hover, a[class*="bg-primary"]:hover {
+  box-shadow: 0 6px 18px rgb(198 244 50 / .18);
+}
+:focus-visible { outline-color: #c6f432 !important; }
+
+/* Auth screens reproduce the supplied Strap composition without touching auth logic. */
+.strap-auth-main {
+  min-height: 100dvh !important;
+  padding: 0 !important;
+  background: #f7f7f5 !important;
+  color: #0e1116 !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+}
+.dark .strap-auth-main { background: #0e1116 !important; color: #f7f7f5 !important; }
+.strap-auth-main > div { width: 100% !important; max-width: 1160px !important; min-height: 100dvh; }
+.strap-auth-card {
+  min-height: 100dvh !important;
+  grid-template-columns: 1.1fr 1fr !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #f7f7f5 !important;
+  box-shadow: none !important;
+}
+.dark .strap-auth-card { background: #0e1116 !important; }
+.strap-auth-aside {
+  display: flex !important;
+  min-height: 100dvh;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  position: relative;
+  padding: 56px 64px !important;
+  background: #0e1116 !important;
+  color: #ffffff !important;
+}
+.strap-auth-aside::after {
+  content: "";
+  position: absolute;
+  right: -145px;
+  bottom: -175px;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: repeating-radial-gradient(circle, transparent 0 49px, rgb(198 244 50 / .34) 50px 51px);
+}
+.strap-auth-aside > div { position: relative; z-index: 1; }
+.strap-auth-aside h2 {
+  max-width: 520px;
+  font-size: clamp(40px, 5vw, 64px) !important;
+  line-height: 1.04 !important;
+  letter-spacing: -.045em !important;
+  color: #ffffff !important;
+}
+.strap-auth-aside h2 span { color: #c6f432 !important; }
+.strap-auth-aside p { color: #b4bac6 !important; }
+.strap-auth-aside a > span:first-child,
+.strap-auth-main .mb-5 a > span:first-child {
+  background: transparent !important;
+  border: 2px solid #c6f432 !important;
+  border-radius: 50% !important;
+}
+.strap-auth-aside a > span:first-child > span,
+.strap-auth-main .mb-5 a > span:first-child > span {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  transform: none !important;
+  background: #c6f432 !important;
+}
+.strap-auth-aside a > span:last-child { color: #ffffff !important; }
+.strap-auth-aside a > span:last-child span { color: #c6f432 !important; }
+.strap-auth-aside [class*="bg-[#e87928]"],
+.strap-auth-aside [class*="bg-[#f28a32]"],
+.strap-auth-aside [class*="text-[#f28a32]"] { background-color: #c6f432 !important; color: #0e1116 !important; }
+.strap-auth-form-panel {
+  align-items: center !important;
+  padding: 48px 32px !important;
+  background: #f7f7f5 !important;
+}
+.dark .strap-auth-form-panel { background: #0e1116 !important; }
+.strap-auth-form-panel > div { max-width: 400px !important; }
+.strap-auth-form-panel h1 {
+  color: #0e1116 !important;
+  font-family: "Bricolage Grotesque", Inter, sans-serif !important;
+  font-size: 34px !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.035em !important;
+}
+.dark .strap-auth-form-panel h1 { color: #f7f7f5 !important; }
+.strap-auth-form-panel p { color: #555c6a !important; }
+.dark .strap-auth-form-panel p { color: #aeb5c0 !important; }
+.strap-auth-form-panel label { color: #0e1116 !important; }
+.dark .strap-auth-form-panel label { color: #e7e9ed !important; }
+.strap-auth-form-panel input:not([type="checkbox"]) {
+  min-height: 52px !important;
+  height: 52px !important;
+  border: 1.5px solid #d5d8de !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  color: #0e1116 !important;
+  box-shadow: none !important;
+}
+.dark .strap-auth-form-panel input:not([type="checkbox"]) {
+  border-color: #343b46 !important;
+  background: #171c24 !important;
+  color: #f7f7f5 !important;
+}
+.strap-auth-form-panel input:focus {
+  border-color: #0e1116 !important;
+  box-shadow: 0 0 0 4px rgb(198 244 50 / .55) !important;
+}
+.strap-auth-form-panel button[type="submit"] {
+  min-height: 48px !important;
+  height: 48px !important;
+  border: 1.5px solid #0e1116 !important;
+  border-radius: 12px !important;
+  background: #0e1116 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+.strap-auth-form-panel button[type="submit"]:hover { background: #262c38 !important; }
+.strap-auth-form-panel button[type="submit"]:focus-visible {
+  outline: 3px solid #c6f432 !important;
+  outline-offset: 2px !important;
+}
+.strap-auth-form-panel button[aria-label="Show password"],
+.strap-auth-form-panel button[aria-label="Hide password"] { color: #0e1116 !important; }
+.strap-auth-form-panel button[aria-label="Show password"]:hover,
+.strap-auth-form-panel button[aria-label="Hide password"]:hover { background: #edeef0 !important; }
+.strap-auth-form-panel a,
+.strap-auth-form-panel button:not([type="submit"]) { color: #0e1116 !important; }
+.dark .strap-auth-form-panel a,
+.dark .strap-auth-form-panel button:not([type="submit"]) { color: #f7f7f5 !important; }
+.strap-auth-form-panel [data-state="checked"] { background: #c6f432 !important; border-color: #c6f432 !important; color: #0e1116 !important; }
+.strap-auth-form-panel .text-\[\#a65318\],
+.strap-auth-form-panel .text-\[\#c16b2b\] { color: #526d0c !important; }
+.strap-auth-form-panel .bg-\[\#d96b1b\] { background: #0e1116 !important; }
+.strap-auth-form-panel .bg-\[\#e87928\] { background: #c6f432 !important; }
+.strap-auth-form-panel .text-\[\#21150c\] { color: #0e1116 !important; }
+.strap-auth-main .mb-5 { color: #0e1116 !important; }
+.strap-auth-main .mb-5 > span { color: #555c6a !important; }
+body:has(main input#verification-code) main {
+  min-height: 100dvh !important;
+  padding: 0 24px !important;
+  background: #f7f7f5 !important;
+  color: #0e1116 !important;
+}
+body:has(main input#verification-code) main > div {
+  max-width: 440px !important;
+  border: 1.5px solid #d5d8de !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+body:has(main input#verification-code) input#verification-code {
+  border: 1.5px solid #d5d8de !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+}
+body:has(main input#verification-code) button[type="submit"] {
+  border: 1.5px solid #0e1116 !important;
+  border-radius: 12px !important;
+  background: #0e1116 !important;
+  color: #ffffff !important;
+}
+@media (max-width: 860px) {
+  .strap-auth-card { grid-template-columns: 1fr !important; }
+  .strap-auth-aside { display: none !important; }
+  .strap-auth-form-panel {
+    align-items: flex-start !important;
+    padding: 32px 24px 40px !important;
+  }
+  .strap-auth-form-panel > div { max-width: 400px !important; }
+}
