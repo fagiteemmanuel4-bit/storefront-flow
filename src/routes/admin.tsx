@@ -1,8 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Activity, BadgeDollarSign, Check, Globe2, Inbox, LoaderCircle, MessageSquare, RefreshCw, Search, ShieldCheck, Users } from "lucide-react";
+import { Activity, BadgeDollarSign, Check, Globe2, Inbox, LoaderCircle, Megaphone, MessageSquare, RefreshCw, Search, ShieldCheck, Users } from "lucide-react";
 import { toast } from "sonner";
+import { PlatformAnnouncementsPanel } from "@/components/admin/PlatformAnnouncementsPanel";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/admin")({
   component: PlatformAdminPage,
 });
 
-type Tab = "overview" | "users" | "subscriptions" | "feedback" | "support" | "pricing";
+type Tab = "overview" | "users" | "subscriptions" | "feedback" | "support" | "pricing" | "announcements";
 type AnyRow = Record<string, any>;
 const money = (amount: number, currency = "NGN") => {
   try { return new Intl.NumberFormat(undefined, { style: "currency", currency, maximumFractionDigits: 2 }).format(Number(amount || 0)); }
@@ -99,6 +100,7 @@ function PlatformAdminPage() {
     { id: "overview", label: "Overview", icon: Activity }, { id: "users", label: "Users", icon: Users },
     { id: "subscriptions", label: "Subscriptions", icon: BadgeDollarSign }, { id: "feedback", label: "Feedback", icon: MessageSquare },
     { id: "support", label: "Support inbox", icon: Inbox }, { id: "pricing", label: "Global pricing", icon: Globe2 },
+    { id: "announcements", label: "Announcements", icon: Megaphone },
   ];
 
   if (loading) return <main className="grid min-h-screen place-items-center bg-background"><div className="flex items-center gap-3 text-sm text-muted-foreground"><LoaderCircle className="size-5 animate-spin"/>Loading private admin workspace…</div></main>;
@@ -145,6 +147,7 @@ function PlatformAdminPage() {
         {tab === "pricing" && <div className="space-y-4"><PageTitle title="Global plan pricing" subtitle="Set the currency and prices for each country. Nigeria's current prices are preserved."/><Panel title="Current country prices" subtitle="Changes save to the pricing table; checkout currency must be supported by the payment provider before charging it."><div className="overflow-x-auto"><table className="w-full min-w-[740px] text-left text-sm"><thead><tr className="border-b border-border text-xs text-muted-foreground"><th className="py-3 pr-3">Country</th><th className="py-3 pr-3">Plan</th><th className="py-3 pr-3">Billing</th><th className="py-3 pr-3">Currency</th><th className="py-3 pr-3">Price</th><th className="py-3">Action</th></tr></thead><tbody>{(data?.pricing ?? []).map((p: AnyRow) => <tr key={p.id} className="border-b border-border/70"><td className="py-3 pr-3">{p.country_name} <span className="text-xs text-muted-foreground">({p.country_code})</span></td><td className="py-3 pr-3 capitalize">{p.plan_code}</td><td className="py-3 pr-3 capitalize">{p.billing_interval}</td><td className="py-3 pr-3">{p.currency}</td><td className="py-3 pr-3"><input aria-label={`${p.country_name} ${p.plan_code} ${p.billing_interval} price`} type="number" min="0" step="0.01" value={priceDrafts[p.id] ?? String(p.amount)} onChange={e=>setPriceDrafts(v=>({...v,[p.id]:e.target.value}))} className="field h-9 w-32"/></td><td className="py-3"><button disabled={saving===p.id || priceDrafts[p.id]===undefined} onClick={()=>void savePrice(p)} className="inline-flex h-9 items-center gap-2 rounded-lg bg-foreground px-3 text-xs font-semibold text-background disabled:opacity-40">{saving===p.id?<LoaderCircle className="size-3 animate-spin"/>:<Check className="size-3"/>}Save</button></td></tr>)}</tbody></table></div></Panel>
           <Panel title="Add a country" subtitle="Enter real local prices. No currency conversion or exchange rate is guessed."><form onSubmit={addCountryPrices} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><Field label="Country name"><input required value={newCountry.country_name} onChange={e=>setNewCountry(v=>({...v,country_name:e.target.value}))} placeholder="e.g. United States" className="field h-10"/></Field><Field label="Country code"><input required maxLength={2} value={newCountry.country_code} onChange={e=>setNewCountry(v=>({...v,country_code:e.target.value.toUpperCase()}))} placeholder="US" className="field h-10"/></Field><Field label="Currency code"><input required maxLength={3} value={newCountry.currency} onChange={e=>setNewCountry(v=>({...v,currency:e.target.value.toUpperCase()}))} placeholder="USD" className="field h-10"/></Field><div className="hidden xl:block"/>{(["business_month","business_year","pro_month","pro_year"] as const).map(key=><Field key={key} label={key.replace("_"," · ").replace("_"," ")}><input required min="0" type="number" step="0.01" value={newCountry[key]} onChange={e=>setNewCountry(v=>({...v,[key]:e.target.value}))} placeholder="0.00" className="field h-10"/></Field>)}<div className="sm:col-span-2 xl:col-span-4"><button disabled={saving!==null} className="inline-flex h-11 items-center gap-2 rounded-xl bg-foreground px-5 text-sm font-semibold text-background disabled:opacity-50">{saving?<LoaderCircle className="size-4 animate-spin"/>:<Globe2 className="size-4"/>}Save country pricing</button></div></form></Panel>
         </div>}
+        {tab === "announcements" && <PlatformAnnouncementsPanel />}
       </section>
     </div>
   </main>;
