@@ -1,9 +1,17 @@
 import { Link } from "@tanstack/react-router";
 
+/** Dark brand panel for the auth screens. On phones it shrinks to a slim logo bar (see strap-auth.css). */
 export function AuthBrand() {
   return (
     <section className="sa-l">
-      <svg className="sa-ring" aria-hidden="true" viewBox="0 0 700 700" fill="none" stroke="#C6F432" strokeWidth="2">
+      <svg
+        className="sa-ring"
+        aria-hidden="true"
+        viewBox="0 0 700 700"
+        fill="none"
+        stroke="#C6F432"
+        strokeWidth="2"
+      >
         <circle cx="350" cy="350" r="60" />
         <circle cx="350" cy="350" r="120" strokeOpacity=".7" />
         <circle cx="350" cy="350" r="180" strokeOpacity=".5" />

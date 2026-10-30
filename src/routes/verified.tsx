@@ -19,7 +19,11 @@ function VerifiedPage() {
   const hash = window.location.hash;
   const kind =
     params.get("kind") ??
-    (hash.includes("type=recovery") ? "password" : hash.includes("type=signup") ? "email" : "security");
+    (hash.includes("type=recovery")
+      ? "password"
+      : hash.includes("type=signup")
+        ? "email"
+        : "security");
   const next = safeNext(params.get("next"));
 
   const copy =
@@ -67,7 +71,9 @@ function VerifiedPage() {
       } catch (error) {
         if (!active) return;
         setFailed(
-          error instanceof Error ? error.message : "This verification link is invalid or has expired.",
+          error instanceof Error
+            ? error.message
+            : "This verification link is invalid or has expired.",
         );
         setReady(true);
       }
@@ -147,8 +153,15 @@ function VerifiedPage() {
             {copy.body}
           </p>
           <div className="sa-fm">
-            <div className="sa-notice">Your verification was processed securely by Strap and Supabase.</div>
-            <button type="button" className="sa-b p" onClick={continueToDestination} disabled={!ready}>
+            <div className="sa-notice">
+              Your verification was processed securely by Strap and Supabase.
+            </div>
+            <button
+              type="button"
+              className="sa-b p"
+              onClick={continueToDestination}
+              disabled={!ready}
+            >
               {ready ? copy.action : "Checking verification…"}
             </button>
           </div>
