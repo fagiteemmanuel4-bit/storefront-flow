@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, CheckCircle2, ShieldCheck, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
+import { AuthBrand } from "@/components/auth/AuthBrand";
+import "@/strap-auth.css";
 
 export const Route = createFileRoute("/verified")({ ssr: false, component: VerifiedPage });
 
@@ -17,14 +17,32 @@ function VerifiedPage() {
   const [failed, setFailed] = useState("");
   const params = useMemo(() => new URLSearchParams(window.location.search), []);
   const hash = window.location.hash;
-  const kind = params.get("kind") ?? (hash.includes("type=recovery") ? "password" : hash.includes("type=signup") ? "email" : "security");
+  const kind =
+    params.get("kind") ??
+    (hash.includes("type=recovery") ? "password" : hash.includes("type=signup") ? "email" : "security");
   const next = safeNext(params.get("next"));
 
-  const copy = kind === "password"
-    ? { label: "Password verified", title: "You're cleared to continue.", body: "Your secure verification link is valid. Continue to choose your new password.", action: "Continue" }
-    : kind === "email"
-      ? { label: "Email verified", title: "Your email is confirmed.", body: "Your account is now verified. You can return to Strap and sign in normally.", action: "Continue to Strap" }
-      : { label: "Verified", title: "You're all set.", body: "Your security action has been verified successfully.", action: "Continue" };
+  const copy =
+    kind === "password"
+      ? {
+          label: "Password verified",
+          title: "You’re cleared to continue.",
+          body: "Your secure verification link is valid. Continue to choose your new password.",
+          action: "Continue",
+        }
+      : kind === "email"
+        ? {
+            label: "Email verified",
+            title: "Your email is confirmed.",
+            body: "Your account is now verified. You can return to Strap and sign in normally.",
+            action: "Continue to Strap",
+          }
+        : {
+            label: "Verified",
+            title: "You’re all set.",
+            body: "Your security action has been verified successfully.",
+            action: "Continue",
+          };
 
   useEffect(() => {
     let active = true;
@@ -41,21 +59,110 @@ function VerifiedPage() {
         }
         if (!active) return;
         const { data } = await supabase.auth.getSession();
-        if (!data.session && kind !== "security") throw new Error("We couldn't establish the verification session. Please request a fresh link and try again.");
+        if (!data.session && kind !== "security")
+          throw new Error(
+            "We couldn't establish the verification session. Please request a fresh link and try again.",
+          );
         setReady(true);
       } catch (error) {
         if (!active) return;
-        setFailed(error instanceof Error ? error.message : "This verification link is invalid or has expired.");
+        setFailed(
+          error instanceof Error ? error.message : "This verification link is invalid or has expired.",
+        );
         setReady(true);
       }
     };
     void finish();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [kind, next]);
 
-  function continueToDestination() { void navigate({ to: next as never, replace: true }); }
+  function continueToDestination() {
+    void navigate({ to: next as never, replace: true });
+  }
 
-  if (failed) return <main className="flex min-h-screen items-center justify-center bg-background px-5 py-10"><section className="w-full max-w-md rounded-[2rem] border border-border bg-surface p-7 text-center shadow-float sm:p-9"><div className="mx-auto flex size-20 items-center justify-center rounded-full bg-destructive/10 text-destructive"><XCircle className="size-10" /></div><p className="text-label-caps mt-7 text-destructive">Verification failed</p><h1 className="text-display-md mt-3">We couldn't verify that link.</h1><p className="mt-4 leading-7 text-muted-foreground">{failed}</p><Button className="mt-7 h-12 w-full rounded-xl" onClick={() => void navigate({ to: "/auth", replace: true })}>Return to sign in</Button></section></main>;
+  if (failed)
+    return (
+      <main className="sa">
+        <AuthBrand />
+        <section className="sa-r">
+          <div className="sa-box">
+            <div className="sa-ok err">
+              <svg
+                aria-hidden="true"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </div>
+            <h1>We couldn’t verify that link</h1>
+            <p className="sa-mut" role="alert">
+              {failed}
+            </p>
+            <div className="sa-fm">
+              <button
+                type="button"
+                className="sa-b p"
+                onClick={() => void navigate({ to: "/auth", replace: true })}
+              >
+                Return to log in
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
 
-  return <main className="flex min-h-screen items-center justify-center bg-background px-5 py-10"><section className="w-full max-w-md rounded-[2rem] border border-border bg-surface p-7 text-center shadow-float sm:p-9"><div className="mx-auto flex size-20 items-center justify-center rounded-full bg-foreground text-background"><CheckCircle2 className="size-10 animate-[verified-pop_500ms_ease-out_both]" strokeWidth={1.8} /></div><p className="text-label-caps mt-7 text-accent-ink">{copy.label}</p><h1 className="text-display-md mt-3">{copy.title}</h1><p className="mt-4 leading-7 text-muted-foreground">{copy.body}</p><div className="mt-7 flex items-start gap-3 rounded-2xl border border-border bg-secondary/60 p-4 text-left"><ShieldCheck className="mt-0.5 size-5 shrink-0" /><p className="text-xs leading-5 text-muted-foreground">Your verification was processed securely by Strap and Supabase.</p></div><Button className="mt-7 h-12 w-full rounded-xl" onClick={continueToDestination} disabled={!ready}>{ready ? copy.action : "Checking verification…"}<ArrowRight className="ml-2 size-4" /></Button><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="mt-4 text-sm font-semibold text-muted-foreground underline underline-offset-4">Exit to sign in</button></section></main>;
+  return (
+    <main className="sa">
+      <AuthBrand />
+      <section className="sa-r">
+        <div className="sa-box">
+          <div className="sa-ok">
+            <svg
+              aria-hidden="true"
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#0E1116"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12l5 5 9-10" />
+            </svg>
+          </div>
+          <p className="sa-label">{copy.label}</p>
+          <h1>{copy.title}</h1>
+          <p className="sa-mut" role="status">
+            {copy.body}
+          </p>
+          <div className="sa-fm">
+            <div className="sa-notice">Your verification was processed securely by Strap and Supabase.</div>
+            <button type="button" className="sa-b p" onClick={continueToDestination} disabled={!ready}>
+              {ready ? copy.action : "Checking verification…"}
+            </button>
+          </div>
+          <p className="sa-alt">
+            <button
+              type="button"
+              className="sa-lk"
+              onClick={() => void navigate({ to: "/auth", replace: true })}
+            >
+              Exit to log in
+            </button>
+          </p>
+        </div>
+      </section>
+    </main>
+  );
 }
