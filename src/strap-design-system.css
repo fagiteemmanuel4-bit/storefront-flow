@@ -652,3 +652,69 @@ body:has(main input#verification-code) button[type="submit"] {
   }
   .strap-auth-form-panel > div { max-width: 400px !important; }
 }
+
+
+/* High-specificity brand overrides for legacy utility classes on public surfaces. */
+body:has(main input#email) main.strap-auth-main {
+  background: #f7f7f5 !important;
+  color: #0e1116 !important;
+}
+body:has(main input#email) main.strap-auth-main .strap-auth-card {
+  border-color: transparent !important;
+  background: #f7f7f5 !important;
+  box-shadow: none !important;
+}
+body:has(main input#email) main.strap-auth-main .strap-auth-aside {
+  background: #0e1116 !important;
+}
+body:has(main input#email) main.strap-auth-main .strap-auth-form-panel {
+  background: #f7f7f5 !important;
+}
+body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="text-[#a65318]"],
+body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="text-[#c16b2b]"],
+body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="text-[#e87928]"],
+body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="text-[#f28a32]"] {
+  color: #526d0c !important;
+}
+body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="bg-[#d96b1b]"] {
+  background: #0e1116 !important;
+}
+body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="bg-[#e87928]"],
+body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="bg-[#f28a32]"] {
+  background: #c6f432 !important;
+}
+body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="border-[#d96b1b]"],
+body:has(main input#email) main.strap-auth-main .strap-auth-form-panel [class*="border-[#e87928]"] {
+  border-color: #c6f432 !important;
+}
+.dark body:has(main input#email) main.strap-auth-main,
+.dark body:has(main input#email) main.strap-auth-main .strap-auth-card,
+.dark body:has(main input#email) main.strap-auth-main .strap-auth-form-panel {
+  background: #0e1116 !important;
+}
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) {
+  --background: #f7f7f5 !important;
+  --foreground: #0e1116 !important;
+  --surface: #ffffff !important;
+  --card: #ffffff !important;
+  --primary: #c6f432 !important;
+  --primary-foreground: #0e1116 !important;
+  --accent: #c6f432 !important;
+  --accent-foreground: #0e1116 !important;
+  --accent-soft: #f3fbd6 !important;
+  --accent-ink: #526d0c !important;
+}
+body:has(main input#verification-code) main {
+  background: #f7f7f5 !important;
+  color: #0e1116 !important;
+}
+.dark body:has(main input#verification-code) main { background: #0e1116 !important; color: #f7f7f5 !important; }
+.dark body:has(main input#verification-code) main > div {
+  background: #171c24 !important;
+  border-color: #343b46 !important;
+}
+.dark body:has(main input#verification-code) input#verification-code {
+  background: #171c24 !important;
+  color: #f7f7f5 !important;
+  border-color: #343b46 !important;
+}
