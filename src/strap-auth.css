@@ -66,4 +66,356 @@
   letter-spacing: -0.02em;
   line-height: 1.08;
   font-size: clamp(36px, 5vw, 64px);
-  max-widthֻǱ˞
+  max-width: 520px;
+  margin: 0;
+  color: #fff;
+}
+.sa-lead {
+  color: #b4bac6;
+  font-size: 18px;
+  max-width: 420px;
+  margin: 20px 0 0;
+}
+.sa-l small {
+  color: #9aa1ae;
+  font-size: 13px;
+}
+.sa-ring {
+  position: absolute !important;
+  right: -200px;
+  bottom: -220px;
+  width: 760px;
+  height: 760px;
+  pointer-events: none;
+}
+.sa-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  color: #fff;
+  text-decoration: none;
+  font: 700 22px var(--font-display);
+  letter-spacing: -0.02em;
+}
+.sa-dot {
+  width: 26px;
+  height: 26px;
+  border: 2px solid #c6f432;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.sa-dot::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #c6f432;
+}
+
+/* Form side */
+.sa-r {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  min-width: 0;
+}
+.sa-box {
+  width: 100%;
+  max-width: 400px;
+}
+.sa-box h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  font-size: 34px;
+  margin: 0 0 8px;
+  color: var(--sa-text);
+}
+.sa-mut {
+  color: var(--sa-mut);
+  margin: 0;
+}
+.sa-box p b {
+  overflow-wrap: anywhere;
+}
+.sa-fm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 24px 0;
+}
+.sa-f {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sa-f label,
+.sa-label {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--sa-text);
+}
+.sa-rowl {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.sa-in {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--sa-line);
+  border-radius: 12px;
+  background: var(--sa-surface);
+  font: 400 16px var(--font-body, Inter, system-ui, sans-serif);
+  color: var(--sa-text);
+  box-shadow: none;
+}
+.sa-in::placeholder {
+  color: var(--sa-ph);
+}
+.sa-in:focus {
+  outline: none;
+  border-color: var(--sa-text);
+  box-shadow: 0 0 0 4px rgba(198, 244, 50, 0.55);
+}
+.sa-pw {
+  position: relative;
+}
+.sa-pw .sa-in {
+  padding-right: 56px;
+}
+.sa-eye {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: var(--sa-text);
+}
+.sa-eye:hover {
+  background: var(--sa-hover);
+}
+
+.sa-b {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 12px;
+  border: 1.5px solid var(--sa-text);
+  background: var(--sa-surface);
+  color: var(--sa-text);
+  font: 600 16px var(--font-body, Inter, system-ui, sans-serif);
+  text-decoration: none;
+  cursor: pointer;
+}
+.sa-b.p {
+  background: var(--sa-btn);
+  border-color: var(--sa-btn);
+  color: var(--sa-btn-t);
+}
+.sa-b.p:hover:not(:disabled) {
+  background: var(--sa-btn-h);
+}
+.sa-b:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sa-lk {
+  background: none;
+  border: 0;
+  padding: 0 4px;
+  min-height: 44px;
+  font: 600 16px var(--font-body, Inter, system-ui, sans-serif);
+  color: var(--sa-text);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.sa-lk.sm {
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  min-height: 32px;
+}
+.sa-lk:disabled {
+  color: var(--sa-mut);
+  text-decoration: none;
+  cursor: default;
+}
+.sa-alt {
+  text-align: center;
+  color: var(--sa-mut);
+  margin: 16px 0 0;
+}
+.sa-alt a {
+  font-weight: 600;
+  color: var(--sa-text);
+}
+.sa-or {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--sa-mut);
+  margin: 20px 0;
+}
+.sa-or::before,
+.sa-or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--sa-line);
+}
+.sa-soon {
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--sa-hover);
+  border-radius: 99px;
+  padding: 2px 10px;
+  margin-left: 10px;
+}
+
+.sa-ck {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 14px;
+  color: var(--sa-mut);
+}
+.sa-ck input {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: #0e1116;
+  flex: none;
+}
+.sa-ck a {
+  color: var(--sa-text);
+  font-weight: 600;
+}
+
+.sa-notice {
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  background: var(--sa-ok-bg);
+  color: var(--sa-text);
+}
+.sa-notice.err {
+  background: var(--sa-danger-bg);
+  color: var(--sa-danger);
+}
+
+.sa-otp {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.sa-otp .sep {
+  width: 10px;
+  height: 2px;
+  background: var(--sa-line);
+  flex: none;
+  margin: 0 2px;
+}
+.sa-otp .sa-in {
+  flex: 1;
+  min-width: 0;
+  height: 56px;
+  min-height: 56px;
+  padding: 0;
+  text-align: center;
+  font: 600 24px var(--font-body, Inter, system-ui, sans-serif);
+}
+.sa-otp .sa-in.filled {
+  border-color: var(--sa-text);
+}
+.sa-ok {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #c6f432;
+  display: grid;
+  place-items: center;
+  margin-bottom: 20px;
+}
+
+.sa-ok.err {
+  background: var(--sa-danger, #dc2626);
+}
+
+.sa :is(a, button, input):focus-visible {
+  outline: 3px solid #c6f432;
+  outline-offset: 2px;
+}
+.sa .sa-in:focus-visible {
+  outline: none;
+}
+
+@media (max-width: 860px) {
+  .sa {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .sa-l {
+    padding: 18px 24px;
+    min-height: 0;
+  }
+  .sa-l > div,
+  .sa-l small,
+  .sa-ring {
+    display: none !important;
+  }
+  .sa-r {
+    align-items: flex-start;
+    padding: 32px 24px 40px;
+  }
+  .sa-box h1 {
+    font-size: 30px;
+  }
+}
+@media (max-width: 420px) {
+  .sa-otp {
+    gap: 4px;
+  }
+  .sa-otp .sep {
+    width: 6px;
+  }
+  .sa-otp .sa-in {
+    height: 50px;
+    min-height: 50px;
+    font-size: 20px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sa-box {
+    animation: sa-in 0.25s ease-out;
+  }
+  @keyframes sa-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
