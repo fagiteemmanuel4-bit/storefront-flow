@@ -101,7 +101,6 @@ function UnitSalePage() {
         _payment_method: "cash",
         _items: items,
         _note: "",
-        _customer_id: null,
         _offline_id: crypto.randomUUID(),
       });
       if (error) throw new Error(error.message);
