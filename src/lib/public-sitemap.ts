@@ -11,10 +11,7 @@ export async function buildPublicSitemapXml() {
         .from("online_stores")
         .select("store_id,slug,updated_at")
         .eq("is_published", true),
-      onlineSupabase
-        .from("online_products")
-        .select("store_id,slug,updated_at")
-        .eq("enabled", true),
+      onlineSupabase.from("online_products").select("store_id,slug,updated_at").eq("enabled", true),
     ]);
   if (storesError) throw storesError;
   if (productsError) throw productsError;

@@ -54,10 +54,7 @@ export async function fetchProductsWithStock(
       .eq("is_active", true)
       .order("name"),
     supabase.from("branch_stock").select("product_id,quantity").eq("branch_id", branchId),
-    onlineSupabase
-      .from("online_products")
-      .select("product_id,enabled")
-      .eq("store_id", storeId),
+    onlineSupabase.from("online_products").select("product_id,enabled").eq("store_id", storeId),
   ]);
   if (pe) throw new Error(pe.message);
   if (se) throw new Error(se.message);
