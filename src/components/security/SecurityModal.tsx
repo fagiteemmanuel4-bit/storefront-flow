@@ -72,12 +72,6 @@ export function SecurityModal({
         onEscapeKeyDown={(event) => {
           if (!dismissible) event.preventDefault();
         }}
-        onPointerDownOutside={(event) => {
-          if (!dismissible) event.preventDefault();
-        }}
-        onInteractOutside={(event) => {
-          if (!dismissible) event.preventDefault();
-        }}
         className="security-modal w-[min(92vw,520px)] overflow-hidden rounded-3xl border-border/80 bg-surface p-0 shadow-2xl"
       >
         <div className="select-none p-6 sm:p-7" onContextMenu={(event) => event.preventDefault()}>
