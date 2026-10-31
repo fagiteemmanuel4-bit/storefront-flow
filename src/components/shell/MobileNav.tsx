@@ -32,16 +32,10 @@ export function MobileNav() {
   if (!visible || pathname.startsWith("/settings")) return null;
 
   const openSharedSearch = () => {
-    const trigger = document.querySelector<HTMLButtonElement>(
-      '.kudi-app-shell header button[aria-label="Search"]',
-    );
-    trigger?.click();
+    window.dispatchEvent(new Event("strap-open-quick-find"));
   };
   const openSharedMenu = () => {
-    const trigger = document.querySelector<HTMLButtonElement>(
-      '.kudi-app-shell header button[aria-label="Open Strap menu"]',
-    );
-    trigger?.click();
+    window.dispatchEvent(new Event("strap-open-mobile-menu"));
   };
 
   return (
@@ -72,6 +66,7 @@ export function MobileNav() {
         <button
           type="button"
           aria-label="Search Strap"
+          data-tour="quick-find"
           onClick={openSharedSearch}
           className="flex h-11 min-h-11 items-center justify-center rounded-2xl p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground active:scale-[.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
@@ -80,6 +75,7 @@ export function MobileNav() {
         <button
           type="button"
           aria-label="Open Strap menu"
+          data-tour="mobile-menu"
           onClick={openSharedMenu}
           className="flex h-11 min-h-11 items-center justify-center rounded-2xl p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground active:scale-[.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
