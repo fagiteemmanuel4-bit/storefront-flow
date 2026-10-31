@@ -1016,7 +1016,9 @@ function PosPage() {
                   {cart.reduce((n, l) => n + l.quantity, 0) === 1 ? "item" : "items"}
                 </span>
               </span>
-              <span className="numeric ml-auto text-base font-extrabold text-[#C6F432]">{formatMoney(total, currency)}</span>
+              <span className="numeric ml-auto text-base font-extrabold text-[#C6F432]">
+                {formatMoney(total, currency)}
+              </span>
             </Button>
           </div>
         )}

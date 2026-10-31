@@ -147,7 +147,11 @@ function CustomersPage() {
                 type="email"
                 aria-label="Customer email"
               />
-              <Button className="h-11 rounded-xl bg-[#C6F432] text-[#0E1116] shadow-sm hover:bg-[#b0dc20]" onClick={() => void addCustomer()} disabled={saving}>
+              <Button
+                className="h-11 rounded-xl bg-[#C6F432] text-[#0E1116] shadow-sm hover:bg-[#b0dc20]"
+                onClick={() => void addCustomer()}
+                disabled={saving}
+              >
                 <Plus className="mr-2 size-4" />
                 {saving ? "Adding…" : "Add"}
               </Button>

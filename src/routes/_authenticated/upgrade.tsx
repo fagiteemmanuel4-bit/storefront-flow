@@ -109,27 +109,39 @@ function UpgradePage() {
                       Popular
                     </span>
                   )}
-                  <p className={`text-xs font-bold uppercase tracking-[.16em] ${featured ? "text-[#C6F432]" : "text-muted-foreground"}`}>
+                  <p
+                    className={`text-xs font-bold uppercase tracking-[.16em] ${featured ? "text-[#C6F432]" : "text-muted-foreground"}`}
+                  >
                     {plan.name}
                   </p>
-                  <p className={`mt-3 min-h-12 max-w-[17rem] text-sm leading-6 ${featured ? "text-white/70" : "text-muted-foreground"}`}>
+                  <p
+                    className={`mt-3 min-h-12 max-w-[17rem] text-sm leading-6 ${featured ? "text-white/70" : "text-muted-foreground"}`}
+                  >
                     {plan.description}
                   </p>
                   <div className="mt-6 flex items-end gap-1.5">
-                    <span className={`font-display text-3xl font-bold tracking-tight ${featured ? "text-white" : "text-foreground"}`}>
+                    <span
+                      className={`font-display text-3xl font-bold tracking-tight ${featured ? "text-white" : "text-foreground"}`}
+                    >
                       {formatNaira(price)}
                     </span>
-                    <span className={`pb-1 text-xs font-medium ${featured ? "text-white/60" : "text-muted-foreground"}`}>
+                    <span
+                      className={`pb-1 text-xs font-medium ${featured ? "text-white/60" : "text-muted-foreground"}`}
+                    >
                       /{billing === "year" ? "year" : "month"}
                     </span>
                   </div>
                   {billing === "year" && plan.code !== "free" && (
-                    <p className={`mt-1 text-xs font-medium ${featured ? "text-[#C6F432]" : "text-success"}`}>
+                    <p
+                      className={`mt-1 text-xs font-medium ${featured ? "text-[#C6F432]" : "text-success"}`}
+                    >
                       Billed yearly · save 20%
                     </p>
                   )}
                   <div className={`my-6 h-px ${featured ? "bg-white/15" : "bg-border"}`} />
-                  <p className={`text-xs font-bold uppercase tracking-[.12em] ${featured ? "text-white/60" : "text-muted-foreground"}`}>
+                  <p
+                    className={`text-xs font-bold uppercase tracking-[.12em] ${featured ? "text-white/60" : "text-muted-foreground"}`}
+                  >
                     Included features
                   </p>
                   <ul className="mt-4 flex-1 space-y-3">

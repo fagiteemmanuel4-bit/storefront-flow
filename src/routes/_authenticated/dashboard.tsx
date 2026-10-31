@@ -114,7 +114,10 @@ function DashboardPage() {
     <AppShell title={isFashion ? "Fashion studio" : "Today's trading"}>
       <div className="space-y-6 pb-8">
         <section className="relative isolate overflow-hidden rounded-[2rem] border border-border bg-foreground px-6 py-7 text-background shadow-float sm:px-8 sm:py-9">
-          <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-36 z-0 size-[420px] rounded-full border border-[#C6F432]/35">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-24 -top-36 z-0 size-[420px] rounded-full border border-[#C6F432]/35"
+          >
             <div className="absolute inset-8 rounded-full border border-[#C6F432]/30" />
             <div className="absolute inset-16 rounded-full border border-[#C6F432]/25" />
             <div className="absolute inset-24 rounded-full border border-[#C6F432]/20" />
