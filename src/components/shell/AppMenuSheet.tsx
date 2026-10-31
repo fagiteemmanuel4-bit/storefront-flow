@@ -46,9 +46,11 @@ function MenuLink({
   onClick,
   badge,
   featured = false,
+  locked = false,
 }: {
   to:
     | "/reports"
+    | "/stock-sense"
     | "/expenses"
     | "/online-store"
     | "/online-store/orders"
@@ -68,10 +70,11 @@ function MenuLink({
   onClick: () => void;
   badge?: number;
   featured?: boolean;
+  locked?: boolean;
 }) {
   return (
     <Link
-      to={to}
+      to={(locked ? "/upgrade" : to) as any}
       onClick={onClick}
       className={cn(
         "group flex w-full items-center gap-3 rounded-2xl border px-3 py-3 transition-colors active:bg-secondary",
@@ -106,6 +109,7 @@ function ActionLink({
   icon: Icon,
   label,
   onClick,
+  locked = false,
 }: {
   to:
     | "/products"
@@ -119,15 +123,17 @@ function ActionLink({
   icon: typeof Store;
   label: string;
   onClick: () => void;
+  locked?: boolean;
 }) {
   return (
     <Link
-      to={to}
+      to={(locked ? "/upgrade" : to) as any}
       onClick={onClick}
       className="flex min-w-0 flex-col items-center gap-2 rounded-2xl border border-border/70 bg-secondary/45 px-2 py-3 text-center transition hover:border-accent/30 hover:bg-accent-soft active:scale-[.98]"
     >
       <span className="flex size-9 items-center justify-center rounded-xl bg-background">
         <Icon className="size-[17px]" />
+        {locked && <LockKeyhole className="absolute -right-1 -top-1 size-3.5 text-accent-ink" aria-label="Business plan required" />}
       </span>
       <span className="text-[11px] font-semibold leading-tight">{label}</span>
     </Link>
@@ -162,6 +168,10 @@ export function AppMenuSheet({
   role,
   onSignOut,
   canExport,
+  canOnlineStore,
+  canAnalytics,
+  canTeam,
+  canStockSense,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -170,6 +180,10 @@ export function AppMenuSheet({
   role: StoreRole | null;
   onSignOut: () => void;
   canExport: boolean;
+  canOnlineStore: boolean;
+  canAnalytics: boolean;
+  canTeam: boolean;
+  canStockSense: boolean;
 }) {
   const [exportOpen, setExportOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -354,12 +368,14 @@ export function AppMenuSheet({
                       icon={isFashion ? Globe2 : ScanLine}
                       label={isFashion ? "Promote store" : "New sale"}
                       onClick={close}
+                      locked={isFashion && !canOnlineStore}
                     />
                     <ActionLink
                       to="/online-store/orders"
                       icon={ShoppingBag}
                       label={isFashion ? "Customer orders" : "View orders"}
                       onClick={close}
+                      locked={!canOnlineStore}
                     />
                     <ActionLink
                       to={isFashion ? "/products" : "/expenses"}
@@ -430,6 +446,7 @@ export function AppMenuSheet({
                   hint="Sales from every channel"
                   badge={pendingOrders}
                   onClick={close}
+                  locked={!canOnlineStore}
                 />
                 <MenuLink
                   to="/customers"
@@ -461,6 +478,7 @@ export function AppMenuSheet({
                     hint="Manage your public storefront"
                     onClick={close}
                     featured
+                    locked={!canOnlineStore}
                   />
                 )}
                 {storefront?.setup_completed && (
@@ -472,6 +490,7 @@ export function AppMenuSheet({
                         label="Catalog"
                         hint="Publish and organise products"
                         onClick={close}
+                        locked={!canOnlineStore}
                       />
                     }{" "}
                     {storefrontPath && (
@@ -510,6 +529,7 @@ export function AppMenuSheet({
                   label="Reports"
                   hint="Trading insight and performance"
                   onClick={close}
+                  locked={!canAnalytics}
                 />
                 <MenuLink
                   to="/staff"
@@ -517,6 +537,7 @@ export function AppMenuSheet({
                   label="Team"
                   hint="Staff accounts and permissions"
                   onClick={close}
+                  locked={!canTeam}
                 />
                 <MenuLink
                   to="/hardware"
@@ -524,6 +545,15 @@ export function AppMenuSheet({
                   label="Hardware"
                   hint="Printers and connected devices"
                   onClick={close}
+                  locked={!canTeam}
+                />
+                <MenuLink
+                  to="/stock-sense"
+                  icon={Boxes}
+                  label="Stock Sense"
+                  hint="Stock health and replenishment suggestions"
+                  onClick={close}
+                  locked={!canStockSense}
                 />
                 <MenuLink
                   to="/help"
