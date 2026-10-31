@@ -270,3 +270,34 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) main > sect
   background-clip: padding-box;
 }
 *::-webkit-scrollbar-corner { background: transparent; }
+
+
+/* Desktop workspace: floating navigation, header and a calm central canvas. */
+@media (min-width: 1280px) {
+  .kudi-app-shell { background: color-mix(in oklch, var(--color-background) 92%, var(--color-secondary)); }
+  .kudi-app-shell main[data-tour="main-content"] { min-height: calc(100dvh - 7.5rem); }
+}
+
+/* Lemon is an accent surface, never a white-on-yellow text treatment. */
+.bg-accent { color: var(--color-accent-foreground); }
+.bg-accent.text-foreground,
+.bg-accent .text-foreground,
+.bg-accent .text-background,
+.bg-accent.text-background { color: var(--color-accent-foreground) !important; }
+a.bg-accent:hover, button.bg-accent:hover { color: var(--color-accent-foreground); }
+
+/* A quieter custom scrollbar with a generous thumb hit area. */
+* { scrollbar-width: thin; scrollbar-color: color-mix(in oklch, var(--color-foreground) 26%, transparent) transparent; }
+*::-webkit-scrollbar { width: 9px; height: 9px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--color-foreground) 24%, transparent);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklch, var(--color-foreground) 42%, transparent);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
