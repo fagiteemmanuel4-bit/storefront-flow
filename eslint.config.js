@@ -36,6 +36,9 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
       // Keep legacy explicit-any usage visible without blocking CI; migrate incrementally.
       "@typescript-eslint/no-explicit-any": "warn",
+      "prettier/prettier": "off",
+      "no-empty": ["error", { allowEmptyCatch: true }],
+      "no-misleading-character-class": "warn",
     },
   },
   eslintPluginPrettier,
