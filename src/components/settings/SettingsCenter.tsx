@@ -239,7 +239,7 @@ export function SettingsLayout() {
               </p>
             </div>
             <Link
-              to="/settings/advanced"
+              to="/settings"
               className="hidden items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline-flex"
             >
               Advanced controls <ArrowRight className="size-4" />
@@ -1699,13 +1699,13 @@ function OnlineStore() {
       <CardSection title="Storefront actions">
         <div className="flex flex-wrap gap-2">
           <Link
-            to="/online-store/customize"
+            to="/online-store/builder"
             className="inline-flex rounded-xl border border-border px-4 py-2.5 text-sm font-semibold"
           >
             Customize storefront
           </Link>
           <Link
-            to={form.slug ? `/store/${form.slug}` : "/online-store"}
+            to={form.slug ? (`/store/${form.slug}` as never) : "/online-store"}
             className="inline-flex rounded-xl border border-border px-4 py-2.5 text-sm font-semibold"
           >
             Preview storefront
