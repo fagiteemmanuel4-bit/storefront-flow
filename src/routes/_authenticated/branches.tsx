@@ -23,12 +23,12 @@ function Branches() {
   });
   const tier = subscriptionQuery.data?.status === "active" ? subscriptionQuery.data.plan : "free";
   const branchLimit = getLimit(tier, "branches");
-  const branchLimitReached = branchLimit !== -1 && branches.length >= branchLimit;
   const [branches, setBranches] = useState<Branch[]>([]);
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const branchLimitReached = branchLimit !== -1 && branches.length >= branchLimit;
   useEffect(() => {
     if (store) void load();
   }, [store]);
