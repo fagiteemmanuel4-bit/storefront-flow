@@ -202,11 +202,13 @@ export function UpdatesSheet() {
     const tasks: Promise<unknown>[] = [];
     if (unreadNoticeIds.length && userId)
       tasks.push(
-        supabase
-          .from("notifications")
-          .update({ read_at: now })
-          .in("id", unreadNoticeIds)
-          .eq("user_id", userId),
+        Promise.resolve(
+          supabase
+            .from("notifications")
+            .update({ read_at: now })
+            .in("id", unreadNoticeIds)
+            .eq("user_id", userId),
+        ),
       );
     if (unreadAnnouncements.length && userId)
       tasks.push(
