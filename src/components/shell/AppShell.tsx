@@ -880,4 +880,3 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
     </div>
   );
 }
-}
