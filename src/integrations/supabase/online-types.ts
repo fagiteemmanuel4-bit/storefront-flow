@@ -24,6 +24,7 @@ export type OnlineProductRow = {
   id: string;
   store_id: string;
   product_id: string;
+  slug: string;
   enabled: boolean;
   featured: boolean;
   description: string;
