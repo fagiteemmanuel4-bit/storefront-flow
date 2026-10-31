@@ -757,8 +757,8 @@ function OnboardingPage() {
                   })}
                 </div>
                 <p className="ob-hint">
-                  Paid plans are selected now and marked pending until the payment provider is connected.
-                  Strap never unlocks paid features from a pending payment.
+                  Paid plans are selected now and marked pending until the payment provider is
+                  connected. Strap never unlocks paid features from a pending payment.
                 </p>
               </>
             )}
