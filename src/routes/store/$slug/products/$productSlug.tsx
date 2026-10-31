@@ -72,7 +72,7 @@ function PublicProductPage() {
       const { data, error } = await onlineSupabase.rpc("get_public_related_products", {
         _store_slug: slug,
         _product_id: product.product_id,
-        _category: product.product_category,
+        _category: product.product_category ?? "",
         _limit: 4,
       });
       if (error) throw new Error(error.message);
