@@ -1711,7 +1711,7 @@ function OnlineStore() {
             Preview storefront
           </Link>
           <Link
-            to={form.slug ? `/store/${form.slug}` : "/online-store"}
+            to={form.slug ? (`/store/${form.slug}` as never) : "/online-store"}
             className="inline-flex rounded-xl bg-foreground px-4 py-2.5 text-sm font-semibold text-background"
           >
             Open storefront
