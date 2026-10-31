@@ -145,6 +145,13 @@ function OnlineCatalogPage() {
       enabled: values.enabled ?? current?.enabled ?? true,
       featured: values.featured ?? current?.featured ?? false,
       description: current?.description ?? "",
+      slug:
+        current?.slug ??
+        product.name
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, ""),
     };
     const result = await supabase
       .from("online_products")
