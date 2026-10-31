@@ -16,7 +16,6 @@ import {
   HelpCircle,
   LockKeyhole,
   LogOut,
-  Menu,
   Package,
   PanelLeftClose,
   PanelLeftOpen,
@@ -347,6 +346,11 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
       window.removeEventListener("online", onOnline);
     };
   }, [online, store?.id, queryClient, staffActive]);
+  useEffect(() => {
+    const openMobileMenu = () => setMenuOpen(true);
+    window.addEventListener("strap-open-mobile-menu", openMobileMenu);
+    return () => window.removeEventListener("strap-open-mobile-menu", openMobileMenu);
+  }, []);
   async function handleSignOut() {
     await queryClient.cancelQueries();
     queryClient.clear();
@@ -770,7 +774,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                   data-tour="quick-find"
                   aria-label="Search"
                   title="Search Strap (Ctrl/⌘ K)"
-                  className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+                  className="hidden size-9 shrink-0 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition hover:bg-secondary hover:text-foreground lg:flex"
                 >
                   <Search className="size-4" aria-hidden />
                   <span className="sr-only">Search Strap</span>
@@ -798,16 +802,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                     <span>{online ? "Online" : "Offline"}</span>
                   )}
                 </div>
-                <button
-                  type="button"
-                  data-tour="mobile-menu"
-                  aria-label="Open Strap menu"
-                  aria-expanded={menuOpen}
-                  onClick={() => setMenuOpen(true)}
-                  className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary text-foreground transition hover:border-accent/30 hover:bg-accent-soft active:scale-95 lg:hidden"
-                >
-                  <Menu className="size-4" />
-                </button>
+
               </div>
             </header>
 
