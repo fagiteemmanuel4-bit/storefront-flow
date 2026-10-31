@@ -65,15 +65,14 @@ function ReceiptDesignerPage() {
   const share = async () => {
     try {
       const text = `${settings.name}\nReceipt preview for your Strap store.`;
-      const share = (navigator as Navigator & { share?: (data: ShareData) => Promise<void> }).share;
-      if (typeof share === "function") {
+      const share = (navigator as unknown as { share?: (data: ShareData) => Promise<void> }).share;
+      const canShare = typeof share === "function";
+      if (canShare) {
         await share.call(navigator, { title: `${settings.name} receipt`, text });
       } else {
         await navigator.clipboard.writeText(text);
       }
-      toast.success(
-        navigator.share ? "Receipt preview ready to share." : "Receipt preview copied.",
-      );
+      toast.success(canShare ? "Receipt preview ready to share." : "Receipt preview copied.");
     } catch {}
   };
   return (
