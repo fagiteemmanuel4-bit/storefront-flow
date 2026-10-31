@@ -383,7 +383,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
           className={cn(
             "relative flex h-16 shrink-0 items-center border-b border-border/70",
             "justify-between",
-            sidebarCollapsed ? "px-2" : "px-4",
+            sidebarCollapsed ? "px-2" : "px-5",
           )}
         >
           <Link to="/pos" className="flex min-w-0 items-center gap-2" aria-label="Strap home">
@@ -413,7 +413,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 py-4 [scrollbar-width:thin]">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-5 [scrollbar-width:thin]">
           <section data-tour="sidebar-navigation">
             {!sidebarCollapsed && (
               <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
@@ -435,7 +435,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
             </nav>
           </section>
 
-          <div className="my-4 border-t border-border/70" />
+          <div className="my-5 border-t border-border/70" />
           <section data-tour="sidebar-manage">
             {!sidebarCollapsed && (
               <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
@@ -457,7 +457,11 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
               {canManageStaff && storefront?.setup_completed && storefrontPath && (
                 <Link
                   to={(canOnlineStore ? storefrontPath : "/upgrade") as any}
-                  title={canOnlineStore ? "Open live storefront" : "Live storefront · Business plan"}
+                  title={
+                    canOnlineStore
+                      ? "Open live storefront"
+                      : "Live storefront · Business plan"
+                  }
                   aria-label={sidebarCollapsed ? "Open live storefront" : undefined}
                   className={cn(
                     "flex min-h-10 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition hover:bg-secondary",
@@ -573,7 +577,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
           </section>
         </div>
 
-        <div className="shrink-0 border-t border-border/70 p-2.5">
+        <div className="shrink-0 border-t border-border/70 p-3">
           {staffActive && (
             <div
               className={cn(
