@@ -131,7 +131,7 @@ function ActionLink({
       onClick={onClick}
       className="flex min-w-0 flex-col items-center gap-2 rounded-2xl border border-border/70 bg-secondary/45 px-2 py-3 text-center transition hover:border-accent/30 hover:bg-accent-soft active:scale-[.98]"
     >
-      <span className="flex size-9 items-center justify-center rounded-xl bg-background">
+      <span className="relative flex size-9 items-center justify-center rounded-xl bg-background">
         <Icon className="size-[17px]" />
         {locked && <LockKeyhole className="absolute -right-1 -top-1 size-3.5 text-accent-ink" aria-label="Business plan required" />}
       </span>
