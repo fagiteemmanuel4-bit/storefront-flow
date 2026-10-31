@@ -23,7 +23,8 @@ export function StrapReviewPrompt() {
     const timer = window.setTimeout(() => setOpen(true), 18_000);
     return () => window.clearTimeout(timer);
   }, [store?.id]);
-  if (!open || !store) return null;
+  const activeStore = store;
+  if (!open || !activeStore) return null;
   async function submit() {
     if (!rating) {
       toast.error("Choose a rating first.");
@@ -32,7 +33,7 @@ export function StrapReviewPrompt() {
     setSubmitting(true);
     try {
       const { error } = await supabase.from("store_feedback").insert({
-        store_id: store.id,
+        store_id: activeStore.id,
         feedback_type: "strap_review",
         rating,
         reason: "product_review",
