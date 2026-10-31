@@ -33,9 +33,9 @@ export async function buildPublicSitemapXml() {
 
 function escapeXml(value: string) {
   return value.replace(
-    /[<>&'\"]/g,
+    /[<>&'"]/g,
     (character) =>
-      ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '\"': "&quot;" })[character] ??
+      ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" })[character] ??
       character,
   );
 }
