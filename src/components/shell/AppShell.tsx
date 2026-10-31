@@ -458,8 +458,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 <Link
                   to={(canOnlineStore ? storefrontPath : "/upgrade") as any}
                   title={
-                    canOnlineStore ? "Open live storefront"
-                      : "Live storefront · Business plan"
+                    canOnlineStore ? "Open live storefront" : "Live storefront · Business plan"
                   }
                   aria-label={sidebarCollapsed ? "Open live storefront" : undefined}
                   className={cn(
