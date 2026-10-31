@@ -35,11 +35,18 @@ import { getBusinessMode } from "@/lib/business-modes";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 
 export const Route = createFileRoute("/_authenticated/products")({ component: ProductsPage });
+
+type ProductWithPublishState = ProductWithStock & { is_published: boolean };
+
 export async function fetchProductsWithStock(
   storeId: string,
   branchId: string,
-): Promise<ProductWithStock[]> {
-  const [{ data: products, error: pe }, { data: stock, error: se }] = await Promise.all([
+): Promise<ProductWithPublishState[]> {
+  const [
+    { data: products, error: pe },
+    { data: stock, error: se },
+    { data: onlineProducts, error: oe },
+  ] = await Promise.all([
     supabase
       .from("products")
       .select("*")
@@ -47,14 +54,23 @@ export async function fetchProductsWithStock(
       .eq("is_active", true)
       .order("name"),
     supabase.from("branch_stock").select("product_id,quantity").eq("branch_id", branchId),
+    onlineSupabase
+      .from("online_products")
+      .select("product_id,enabled")
+      .eq("store_id", storeId),
   ]);
   if (pe) throw new Error(pe.message);
   if (se) throw new Error(se.message);
-  const map = new Map((stock ?? []).map((row) => [row.product_id, row.quantity]));
+  if (oe) throw new Error(oe.message);
+  const stockByProduct = new Map((stock ?? []).map((row) => [row.product_id, row.quantity]));
+  const publishedByProduct = new Map(
+    (onlineProducts ?? []).map((row) => [row.product_id, row.enabled]),
+  );
   return (products ?? []).map((product) => ({
     ...product,
-    quantity: map.get(product.id) ?? 0,
-  })) as ProductWithStock[];
+    quantity: stockByProduct.get(product.id) ?? 0,
+    is_published: publishedByProduct.get(product.id) ?? false,
+  }));
 }
 
 type Filter = "all" | "low" | "out" | "published";
@@ -64,8 +80,8 @@ function ProductsPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
-  const [selected, setSelected] = useState<ProductWithStock | null>(null);
-  const [editing, setEditing] = useState<ProductWithStock | null>(null);
+  const [selected, setSelected] = useState<ProductWithPublishState | null>(null);
+  const [editing, setEditing] = useState<ProductWithPublishState | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [scanOpen, setScanOpen] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
@@ -208,7 +224,7 @@ function ProductsPage() {
     }
   }
   async function adjustStock(delta: number) {
-    if (!selected || !branchId || !canManage) return;
+    if (!selected || !branchId || !storeId || !canManage) return;
     if (isFashion && (variantStockQuery.data ?? []).some((v) => v.product_id === selected.id)) {
       toast.error(
         "This style has size/colour stock. Edit the product to adjust the exact variant instead.",
@@ -229,7 +245,7 @@ function ProductsPage() {
     const { error } = await supabase
       .from("branch_stock")
       .upsert(
-        { branch_id: branchId, product_id: selected.id, quantity: next },
+        { branch_id: branchId, product_id: selected.id, store_id: storeId, quantity: next },
         { onConflict: "branch_id,product_id" },
       );
     if (error) toast.error(error.message);
@@ -239,12 +255,35 @@ function ProductsPage() {
     }
   }
   async function togglePublished() {
-    if (!selected || !canManage) return;
-    const next = !(selected as any).is_published;
-    const { error } = await supabase
-      .from("products")
-      .update({ is_published: next })
-      .eq("id", selected.id);
+    if (!selected || !canManage || !storeId) return;
+    const { data: current, error: readError } = await onlineSupabase
+      .from("online_products")
+      .select("featured,description,slug")
+      .eq("store_id", storeId)
+      .eq("product_id", selected.id)
+      .maybeSingle();
+    if (readError) {
+      toast.error(readError.message);
+      return;
+    }
+    const next = !selected.is_published;
+    const { error } = await onlineSupabase.from("online_products").upsert(
+      {
+        store_id: storeId,
+        product_id: selected.id,
+        enabled: next,
+        featured: current?.featured ?? false,
+        description: current?.description ?? "",
+        slug:
+          current?.slug ??
+          selected.name
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, ""),
+      },
+      { onConflict: "product_id" },
+    );
     if (error) toast.error(error.message);
     else {
       toast.success(next ? "Product published" : "Product unpublished");
@@ -590,7 +629,7 @@ function ProductsPage() {
                     onClick={() => void togglePublished()}
                   >
                     <Upload className="size-4" />
-                    {(selected as any).is_published ? "Unpublish" : "Publish"}
+                    {selected.is_published ? "Unpublish" : "Publish"}
                   </button>
                   <button
                     className="flex w-full items-center gap-3 rounded-xl p-3 text-left text-destructive hover:bg-destructive/10"
