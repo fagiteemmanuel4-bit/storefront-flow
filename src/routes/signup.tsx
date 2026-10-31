@@ -134,7 +134,7 @@ function SignupPage() {
         </p>
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link to="/login" className="underline">
+          <Link to="/auth" className="underline">
             Sign in
           </Link>
         </p>
