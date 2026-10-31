@@ -343,7 +343,7 @@ function PlatformAdminPage() {
                 >
                   <div className="divide-y divide-border">
                     {(data?.revenue_by_currency ?? []).length ? (
-                      data.revenue_by_currency.map((r: AnyRow) => (
+                      (data?.revenue_by_currency ?? []).map((r: AnyRow) => (
                         <div
                           key={r.currency}
                           className="flex items-center justify-between gap-3 py-4"
