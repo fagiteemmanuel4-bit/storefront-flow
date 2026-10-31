@@ -33,7 +33,7 @@ export function StrapReviewPrompt() {
     setSubmitting(true);
     try {
       const { error } = await supabase.from("store_feedback").insert({
-        store_id: activeStore.id,
+        store_id: activeStore!.id,
         feedback_type: "strap_review",
         rating,
         reason: "product_review",
