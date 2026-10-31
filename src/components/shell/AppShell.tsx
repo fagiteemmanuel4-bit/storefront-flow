@@ -189,10 +189,11 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
       void navigate({ to: STAFF_ROLE_META[staffSession!.role].defaultRoute as any, replace: true });
   }, [navigate, pathname, staffActive, staffSession]);
   useEffect(() => {
-    if (!online || !store?.id || staffActive) return;
+    const activeStoreId = store?.id;
+    if (!online || !activeStoreId || staffActive) return;
     let cancelled = false;
     async function sync() {
-      const queue = getOfflineSales().filter((sale) => sale.storeId === store.id);
+      const queue = getOfflineSales().filter((sale) => sale.storeId === activeStoreId);
       for (const sale of queue) {
         if (cancelled) return;
         const { error } = await supabase.rpc("create_sale", {
@@ -201,7 +202,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
           _payment_method: sale.paymentMethod,
           _items: sale.items,
           _note: sale.note,
-          _customer_id: sale.customerId,
+          _customer_id: sale.customerId ?? undefined,
           _offline_id: sale.offlineId,
         });
         if (error) continue;
