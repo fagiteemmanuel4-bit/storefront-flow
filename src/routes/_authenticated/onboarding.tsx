@@ -552,8 +552,8 @@ function OnboardingPage() {
                       <div>
                         <p className="t">Prepare Strap Online Store</p>
                         <p className="ob-hint">
-                          You can keep this off and enable it later from Settings → Preferences → Strap
-                          Online Store.
+                          You can keep this off and enable it later from Settings → Preferences →
+                          Strap Online Store.
                         </p>
                       </div>
                       <button
@@ -757,8 +757,7 @@ function OnboardingPage() {
                   })}
                 </div>
                 <p className="ob-hint">
-                  Paid plans are selected now and marked pending until the payment provider is
-                  connected.
+                  Paid plans are selected now and marked pending until the payment provider is connected.
                   Strap never unlocks paid features from a pending payment.
                 </p>
               </>
@@ -794,8 +793,8 @@ function OnboardingPage() {
                   </div>
                 </div>
                 <div className="sa-notice">
-                  After setup, Strap will take you into the workspace and give you a guided
-                  tour. You can revisit preferences and online-store controls any time.
+                  After setup, Strap will take you into the workspace and give you a guided tour.
+                  You can revisit preferences and online-store controls any time.
                 </div>
               </>
             )}
