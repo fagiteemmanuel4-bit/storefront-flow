@@ -10,6 +10,7 @@ import {
   HardDrive,
   HelpCircle,
   LogOut,
+  LockKeyhole,
   Package,
   Plus,
   ReceiptText,
@@ -160,6 +161,7 @@ export function AppMenuSheet({
   branchName,
   role,
   onSignOut,
+  canExport,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -167,10 +169,10 @@ export function AppMenuSheet({
   branchName: string | null;
   role: StoreRole | null;
   onSignOut: () => void;
+  canExport: boolean;
 }) {
   const [exportOpen, setExportOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [staffActive, setStaffActive] = useState(() => getStaffSession(store?.id));
   const isOwner = role === "owner";
   const canManageStaff = role === "owner" || role === "manager";
@@ -530,9 +532,9 @@ export function AppMenuSheet({
                   hint="Guides and support"
                   onClick={close}
                 />
-                <button
-                  type="button"
-                  onClick={() => setSettingsOpen(true)}
+                <Link
+                  to="/settings"
+                  onClick={close}
                   className="group flex w-full items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-left transition hover:border-border hover:bg-secondary/70"
                 >
                   <span className="flex size-10 items-center justify-center rounded-xl bg-secondary group-hover:bg-accent-soft">
@@ -545,21 +547,35 @@ export function AppMenuSheet({
                     </span>
                   </span>
                   <ChevronRight className="size-4 text-muted-foreground" />
-                </button>
+                </Link>
               </div>
             </section>
             <div className="mt-5 rounded-2xl border border-border bg-secondary/35 p-3">
-              <button
-                type="button"
-                onClick={() => {
-                  close();
-                  setExportOpen(true);
-                }}
-                className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left text-sm font-semibold hover:bg-background"
-              >
-                <Download className="size-4" />
-                Download store data
-              </button>
+              {canExport ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    close();
+                    setExportOpen(true);
+                  }}
+                  className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left text-sm font-semibold hover:bg-background"
+                >
+                  <Download className="size-4" />
+                  Download store data
+                </button>
+              ) : (
+                <Link
+                  to="/upgrade"
+                  onClick={close}
+                  className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left text-sm font-semibold text-accent-ink hover:bg-background"
+                >
+                  <LockKeyhole className="size-4" />
+                  <span className="min-w-0 flex-1">Download store data</span>
+                  <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[9px] font-bold uppercase">
+                    Business
+                  </span>
+                </Link>
+              )}
             </div>
           </div>
           <div className="shrink-0 border-t border-border/70 bg-background/90 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
@@ -582,112 +598,7 @@ export function AppMenuSheet({
           </div>
         </SheetContent>
       </Sheet>
-      <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <SheetContent
-          side="right"
-          className="flex h-[100dvh] w-full max-w-none flex-col bg-background p-0 sm:w-[420px]"
-        >
-          <SheetHeader className="border-b border-border/70 px-5 pb-5 pt-[max(1.25rem,env(safe-area-inset-top))] text-left">
-            <button
-              type="button"
-              onClick={() => setSettingsOpen(false)}
-              className="mb-3 flex w-fit items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground"
-            >
-              ← Back
-            </button>
-            <SheetTitle className="text-xl">Settings</SheetTitle>
-            <p className="text-xs text-muted-foreground">
-              Configure how your Strap workspace works.
-            </p>
-          </SheetHeader>
-          <div className="flex-1 overflow-y-auto p-4">
-            <div className="space-y-1.5">
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/store-profile"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Store className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Store profile</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/appearance"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Store className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Appearance</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/online-store"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Globe2 className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Online store</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/checkout"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <ShoppingBag className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Checkout</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/inventory"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Package className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Inventory</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/staff"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Users className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Team</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/notifications"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Bell className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Notifications</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/security"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Settings className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Security</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/password"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Settings className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Password</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-      <ExportDataDialog store={store} open={exportOpen} onOpenChange={setExportOpen} />
+      <ExportDataDialog store={store} open={exportOpen} onOpenChange={setExportOpen} canExport={canExport} />
       <DeleteStoreDialog store={store} open={deleteOpen} onOpenChange={setDeleteOpen} />
     </>
   );
