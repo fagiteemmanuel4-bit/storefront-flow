@@ -1,17 +1,30 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Building2, MapPin, Plus, Star, Trash2 } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Building2, LockKeyhole, MapPin, Plus, Star, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { AppShell } from "@/components/shell/AppShell";
 import { Button } from "@/components/ui/button";
+import { getStoreSubscription } from "@/lib/plan-access";
+import { getLimit } from "@/lib/commerceEntitlements";
 
 type Branch = { id: string; name: string; address: string; is_default: boolean };
 export const Route = createFileRoute("/_authenticated/branches")({ component: Branches });
 function Branches() {
   const { store, role } = useStoreContext();
+  const navigate = useNavigate();
   const canEdit = role === "owner" || role === "manager";
+  const subscriptionQuery = useQuery({
+    queryKey: ["store-subscription", store?.id],
+    queryFn: () => getStoreSubscription(store!.id),
+    enabled: Boolean(store?.id),
+  });
+  const tier =
+    subscriptionQuery.data?.status === "active" ? subscriptionQuery.data.plan : "free";
+  const branchLimit = getLimit(tier, "branches");
+  const branchLimitReached = branchLimit !== -1 && branches.length >= branchLimit;
   const [branches, setBranches] = useState<Branch[]>([]);
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -35,6 +48,11 @@ function Branches() {
   }
   async function add() {
     if (!store || !name.trim()) return;
+    if (branchLimitReached) {
+      toast.error("Your current plan has reached its branch limit.");
+      void navigate({ to: "/upgrade" });
+      return;
+    }
     const { data, error } = await onlineSupabase
       .from("branches")
       .insert({
@@ -109,10 +127,20 @@ function Branches() {
               </p>
             </div>
             {canEdit && (
-              <Button onClick={() => setOpen(true)}>
-                <Plus className="mr-2 size-4" />
-                Add branch
-              </Button>
+              branchLimitReached ? (
+                <Button
+                  variant="outline"
+                  onClick={() => void navigate({ to: "/upgrade" })}
+                >
+                  <LockKeyhole className="mr-2 size-4" />
+                  Unlock more branches
+                </Button>
+              ) : (
+                <Button onClick={() => setOpen(true)}>
+                  <Plus className="mr-2 size-4" />
+                  Add branch
+                </Button>
+              )
             )}
           </div>
         </section>
