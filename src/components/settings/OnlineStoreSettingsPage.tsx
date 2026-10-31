@@ -48,6 +48,10 @@ export function OnlineStoreSettingsPage() {
     setOnline(o.data);
     setConfig(c.data);
     setPlan(s.data?.status === "active" ? (s.data?.plan_code ?? "free") : "free");
+    const seo =
+      c.data?.seo && typeof c.data.seo === "object" && !Array.isArray(c.data.seo)
+        ? (c.data.seo as Record<string, unknown>)
+        : {};
     const next = {
       status: o.data?.is_published ? "Online" : o.data?.setup_completed ? "Offline" : "Coming Soon",
       enabled: Boolean(o.data?.is_published || o.data?.setup_completed),
@@ -55,10 +59,10 @@ export function OnlineStoreSettingsPage() {
       homepage: "Storefront home",
       productVisibility: true,
       collectionVisibility: true,
-      seoTitle: c.data?.seo?.title ?? "",
-      metaDescription: c.data?.seo?.description ?? "",
-      noIndex: Boolean(c.data?.seo?.noIndex),
-      socialImage: c.data?.seo?.socialImage ?? "",
+      seoTitle: typeof seo.title === "string" ? seo.title : "",
+      metaDescription: typeof seo.description === "string" ? seo.description : "",
+      noIndex: Boolean(seo.noIndex),
+      socialImage: typeof seo.socialImage === "string" ? seo.socialImage : "",
     };
     setForm(next);
     setInitial(next);
