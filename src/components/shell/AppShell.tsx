@@ -155,10 +155,7 @@ function NavItem({
       {!collapsed && <span className="min-w-0 flex-1 truncate">{item.label}</span>}
       {locked && (
         <LockKeyhole
-          className={cn(
-            "size-3.5 shrink-0 text-accent-ink",
-            collapsed && "absolute right-1 top-1",
-          )}
+          className={cn("size-3.5 shrink-0 text-accent-ink", collapsed && "absolute right-1 top-1")}
           aria-label="Requires Business plan"
         />
       )}
@@ -271,7 +268,12 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
   const secondaryNav = isFashion
     ? [
         ...SECONDARY_NAV.filter((item) => item.to !== "/online-store"),
-        { to: "/fashion-returns", label: "Returns & exchanges", icon: ReceiptText, area: "products" },
+        {
+          to: "/fashion-returns",
+          label: "Returns & exchanges",
+          icon: ReceiptText,
+          area: "products",
+        },
       ]
     : isElectronics
       ? SECONDARY_NAV.filter((item) => item.to !== "/online-store")
@@ -455,7 +457,11 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
               {canManageStaff && storefront?.setup_completed && storefrontPath && (
                 <Link
                   to={(canOnlineStore ? storefrontPath : "/upgrade") as any}
-                  title={canOnlineStore ? "Open live storefront" : "Live storefront · Business plan"}
+                  title={
+                    canOnlineStore
+                      ? "Open live storefront"
+                      : "Live storefront · Business plan"
+                  }
                   aria-label={sidebarCollapsed ? "Open live storefront" : undefined}
                   className={cn(
                     "flex min-h-10 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition hover:bg-secondary",
@@ -707,7 +713,9 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 </div>
               )}
             </div>
-            <div className={cn("mt-2 flex items-center gap-1", sidebarCollapsed && "mt-1 flex-col")}>
+            <div
+              className={cn("mt-2 flex items-center gap-1", sidebarCollapsed && "mt-1 flex-col")}
+            >
               {memberships.length > 1 && (
                 <Select value={store?.id ?? undefined} onValueChange={setActiveStore}>
                   <SelectTrigger
@@ -816,7 +824,6 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                     <span>{online ? "Online" : "Offline"}</span>
                   )}
                 </div>
-
               </div>
             </header>
 
