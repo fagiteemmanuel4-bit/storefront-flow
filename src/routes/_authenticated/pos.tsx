@@ -462,7 +462,7 @@ function PosPage() {
         _payment_method: method,
         _items: items,
         _note: "",
-        _customer_id: customerId,
+        _customer_id: customerId ?? undefined,
         _offline_id: offlineId,
       });
       if (error) throw new Error(error.message);
