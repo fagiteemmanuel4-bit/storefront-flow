@@ -81,7 +81,7 @@ function UpgradePage() {
             <p className="mt-1 text-sm text-muted-foreground">A closer look at the tools available across paid plans.</p>
           </div>
           <div className="grid gap-x-8 divide-y divide-border sm:grid-cols-2 sm:divide-y-0 sm:px-2">
-            {PREMIUM_FEATURES.map((feature, index) => <div key={feature} className="flex items-center gap-3 px-5 py-3.5 text-sm sm:px-4 sm:[&:nth-child(n+3)]:border-t sm:[&:nth-child(n+3)]:border-border"><span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent-ink"><Crown className="size-3.5" /></span>{feature}</div>)}
+            {PREMIUM_FEATURES.map((feature) => <div key={feature} className="flex items-center gap-3 px-5 py-3.5 text-sm sm:px-4 sm:[&:nth-child(n+3)]:border-t sm:[&:nth-child(n+3)]:border-border"><span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent-ink"><Crown className="size-3.5" /></span>{feature}</div>)}
           </div>
         </section>
 
