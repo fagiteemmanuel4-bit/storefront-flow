@@ -240,7 +240,7 @@ function ProductsPage() {
   }
   async function togglePublished() {
     if (!selected || !canManage) return;
-    const next = !Boolean((selected as any).is_published);
+    const next = !(selected as any).is_published;
     const { error } = await supabase
       .from("products")
       .update({ is_published: next })
@@ -590,7 +590,7 @@ function ProductsPage() {
                     onClick={() => void togglePublished()}
                   >
                     <Upload className="size-4" />
-                    {Boolean((selected as any).is_published) ? "Unpublish" : "Publish"}
+                    {(selected as any).is_published ? "Unpublish" : "Publish"}
                   </button>
                   <button
                     className="flex w-full items-center gap-3 rounded-xl p-3 text-left text-destructive hover:bg-destructive/10"
