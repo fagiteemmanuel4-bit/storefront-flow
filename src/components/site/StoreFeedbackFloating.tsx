@@ -44,7 +44,7 @@ export function StoreFeedbackFloating() {
       const { data: store, error: storeError } = await onlineSupabase
         .from("online_stores")
         .select("store_id")
-        .eq("slug", storeSlug)
+        .eq("slug", storeSlug!)
         .maybeSingle();
       if (storeError) throw new Error(storeError.message);
       if (!store?.store_id) throw new Error("This storefront could not be found.");
