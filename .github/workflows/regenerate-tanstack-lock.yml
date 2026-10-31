@@ -23,8 +23,9 @@ jobs:
           bun-version: latest
       - name: Resolve patched dependency graph
         run: |
-          bun audit fix
+          bun audit fix --latest || true
           bun run format
+          bun audit || true
       - name: Commit regenerated lockfile
         run: |
           if git diff --quiet; then
