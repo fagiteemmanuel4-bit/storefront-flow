@@ -10,7 +10,16 @@ import { errorMessage } from "@/lib/format";
 import "@/strap-auth.css";
 import "@/strap-onboarding.css";
 import { BUSINESS_MODES, type BusinessModeKey } from "@/lib/business-modes";
-import { ArrowLeft, ArrowRight, Building2, Check, Globe2, MapPin, Store, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Building2,
+  Check,
+  Globe2,
+  MapPin,
+  Store,
+  Users,
+} from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
@@ -36,7 +45,13 @@ const PLANS: Record<
     monthly: 0,
     yearly: 0,
     description: "The essentials for a small physical shop.",
-    features: ["Point of sale", "Product catalogue", "Basic inventory", "Customers", "Basic sales history"],
+    features: [
+      "Point of sale",
+      "Product catalogue",
+      "Basic inventory",
+      "Customers",
+      "Basic sales history",
+    ],
   },
   business: {
     name: "Business",
@@ -128,7 +143,8 @@ function OnboardingPage() {
   const totalSteps = 7;
 
   useEffect(() => {
-    if (!isLoading && !error && memberships.length > 0) void navigate({ to: "/pos", replace: true });
+    if (!isLoading && !error && memberships.length > 0)
+      void navigate({ to: "/pos", replace: true });
   }, [error, isLoading, memberships.length, navigate]);
 
   const selectedPlan = plan ? PLANS[plan] : null;
@@ -144,7 +160,9 @@ function OnboardingPage() {
     if (step === 0) return Boolean(businessModel);
     if (step === 1) return businessType.trim().length >= 2 && Boolean(businessMode);
     if (step === 2)
-      return websiteStatus === "existing" ? /^https?:\/\//i.test(websiteUrl.trim()) : Boolean(websiteStatus);
+      return websiteStatus === "existing"
+        ? /^https?:\/\//i.test(websiteUrl.trim())
+        : Boolean(websiteStatus);
     if (step === 3) return businessName.trim().length >= 2 && branchName.trim().length >= 1;
     if (step === 4) return Boolean(teamSize && goal && currency);
     if (step === 5) return Boolean(plan);
@@ -207,23 +225,22 @@ function OnboardingPage() {
         .eq("id", storeId);
       if (storeError) throw new Error(storeError.message);
 
-      const amount = plan === "free" ? 0 : billing === "year" ? PLANS[plan].yearly : PLANS[plan].monthly;
-      const { error: subscriptionError } = await supabase
-        .from("store_subscriptions")
-        .upsert(
-          {
-            store_id: storeId,
-            provider: "korapay",
-            plan_code: plan,
-            status: plan === "free" ? "active" : "pending",
-            currency,
-            amount,
-            interval: billing,
-            metadata: { selected_during_onboarding: true, billing, annual_saving: annualSaving },
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "store_id" },
-        );
+      const amount =
+        plan === "free" ? 0 : billing === "year" ? PLANS[plan].yearly : PLANS[plan].monthly;
+      const { error: subscriptionError } = await supabase.from("store_subscriptions").upsert(
+        {
+          store_id: storeId,
+          provider: "korapay",
+          plan_code: plan,
+          status: plan === "free" ? "active" : "pending",
+          currency,
+          amount,
+          interval: billing,
+          metadata: { selected_during_onboarding: true, billing, annual_saving: annualSaving },
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "store_id" },
+      );
       if (subscriptionError) throw new Error(subscriptionError.message);
 
       if (onlineStoreEnabled && (plan === "business" || plan === "pro")) {
@@ -426,7 +443,8 @@ function OnboardingPage() {
                 <div className="sa-f">
                   <span className="sa-label">Choose a business mode</span>
                   <p className="ob-hint">
-                    Strap will tailor the workspace shortcuts and setup guidance to this type of business.
+                    Strap will tailor the workspace shortcuts and setup guidance to this type of
+                    business.
                   </p>
                   <div className="ob-g2" style={{ marginTop: 8 }}>
                     {BUSINESS_MODES.map((mode) => (
@@ -453,7 +471,12 @@ function OnboardingPage() {
                 </div>
                 <div className="sa-f">
                   <label htmlFor="goal">What is the biggest reason you are using Strap?</label>
-                  <select id="goal" className="sa-in" value={goal} onChange={(e) => setGoal(e.target.value)}>
+                  <select
+                    id="goal"
+                    className="sa-in"
+                    value={goal}
+                    onChange={(e) => setGoal(e.target.value)}
+                  >
                     <option value="">Choose a primary goal</option>
                     {GOAL_OPTIONS.map((x) => (
                       <option key={x}>{x}</option>
@@ -529,8 +552,8 @@ function OnboardingPage() {
                       <div>
                         <p className="t">Prepare Strap Online Store</p>
                         <p className="ob-hint">
-                          You can keep this off and enable it later from Settings → Preferences → Strap Online
-                          Store.
+                          You can keep this off and enable it later from Settings → Preferences → Strap
+                          Online Store.
                         </p>
                       </div>
                       <button
@@ -625,7 +648,10 @@ function OnboardingPage() {
             {step === 4 && (
               <>
                 <div className="ob-panel">
-                  <div className="ob-row" style={{ justifyContent: "flex-start", alignItems: "flex-start" }}>
+                  <div
+                    className="ob-row"
+                    style={{ justifyContent: "flex-start", alignItems: "flex-start" }}
+                  >
                     <span className="ob-chip">
                       <Users className="size-5" />
                     </span>
@@ -655,7 +681,12 @@ function OnboardingPage() {
                 </div>
                 <div className="sa-f">
                   <label htmlFor="goal2">Primary outcome</label>
-                  <select id="goal2" className="sa-in" value={goal} onChange={(e) => setGoal(e.target.value)}>
+                  <select
+                    id="goal2"
+                    className="sa-in"
+                    value={goal}
+                    onChange={(e) => setGoal(e.target.value)}
+                  >
                     <option value="">Choose one</option>
                     {GOAL_OPTIONS.map((x) => (
                       <option key={x}>{x}</option>
@@ -675,14 +706,20 @@ function OnboardingPage() {
                   >
                     Monthly
                   </button>
-                  <button type="button" aria-pressed={billing === "year"} onClick={() => setBilling("year")}>
+                  <button
+                    type="button"
+                    aria-pressed={billing === "year"}
+                    onClick={() => setBilling("year")}
+                  >
                     Yearly<em>Save 20%</em>
                   </button>
                 </div>
                 <div className="ob-plans">
                   {(Object.keys(PLANS) as Plan[]).map((code) => {
                     const p = PLANS[code];
-                    const yearlySave = p.monthly ? Math.round((1 - p.yearly / (p.monthly * 12)) * 100) : 0;
+                    const yearlySave = p.monthly
+                      ? Math.round((1 - p.yearly / (p.monthly * 12)) * 100)
+                      : 0;
                     return (
                       <button
                         type="button"
@@ -720,7 +757,8 @@ function OnboardingPage() {
                   })}
                 </div>
                 <p className="ob-hint">
-                  Paid plans are selected now and marked pending until the payment provider is connected.
+                  Paid plans are selected now and marked pending until the payment provider is
+                  connected.
                   Strap never unlocks paid features from a pending payment.
                 </p>
               </>
@@ -733,7 +771,9 @@ function OnboardingPage() {
                   <h3>{businessName || "Your business"}</h3>
                   <p>
                     {businessType || "Business"} ·{" "}
-                    {BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ?? "General retail"} ·{" "}
+                    {BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ??
+                      "General retail"}{" "}
+                    ·{" "}
                     {businessModel === "both"
                       ? "Physical + online"
                       : businessModel === "online"
@@ -754,8 +794,8 @@ function OnboardingPage() {
                   </div>
                 </div>
                 <div className="sa-notice">
-                  After setup, Strap will take you into the workspace and give you a guided tour. You can
-                  revisit preferences and online-store controls any time.
+                  After setup, Strap will take you into the workspace and give you a guided
+                  tour. You can revisit preferences and online-store controls any time.
                 </div>
               </>
             )}
