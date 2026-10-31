@@ -42,7 +42,7 @@ const STEPS: TourStep[] = [
   {
     title: "Store and branch switcher",
     body: "When you manage more than one store or branch, switch your active workspace here. The rest of the page follows that selection.",
-    selectors: ['[data-tour="store-switcher"]', '[data-tour="mobile-store-switcher"]'],
+    selectors: ['[data-tour="store-switcher"]', '[data-tour="mobile-store-switcher"]', '[data-tour="main-content"]'],
   },
   {
     title: "Page title and workspace details",
