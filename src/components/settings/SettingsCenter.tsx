@@ -911,24 +911,22 @@ function Appearance() {
         logoUrl: form.logoUrl,
         faviconUrl: form.faviconUrl,
       };
-      const { error } = await db
-        .from("storefront_configs")
-        .upsert(
-          {
-            store_id: store.id,
-            template: config?.template ?? "minimal-commerce",
-            theme,
-            branding,
-            navigation: config?.navigation ?? {},
-            sections: config?.sections ?? [],
-            seo: config?.seo ?? {},
-            custom_css: config?.custom_css ?? "",
-            is_published: config?.is_published ?? false,
-            version: config?.version ?? 1,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "store_id" },
-        );
+      const { error } = await db.from("storefront_configs").upsert(
+        {
+          store_id: store.id,
+          template: config?.template ?? "minimal-commerce",
+          theme,
+          branding,
+          navigation: config?.navigation ?? {},
+          sections: config?.sections ?? [],
+          seo: config?.seo ?? {},
+          custom_css: config?.custom_css ?? "",
+          is_published: config?.is_published ?? false,
+          version: config?.version ?? 1,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "store_id" },
+      );
       if (error) throw new Error(error.message);
       setInitial(form);
       await reload();
@@ -1583,54 +1581,50 @@ function OnlineStore() {
     if (!store?.id || !canManage) return;
     setSaving(true);
     try {
-      const { error: oe } = await db
-        .from("online_stores")
-        .upsert(
-          {
-            store_id: store.id,
-            slug: form.slug || online?.slug || store.id.slice(0, 8),
-            display_name: online?.display_name ?? store.name,
-            logo_url: online?.logo_url ?? "",
-            display_email: online?.display_email ?? "",
-            display_phone: online?.display_phone ?? "",
-            description: online?.description ?? "",
-            shipping_note: online?.shipping_note ?? "",
-            checkout_note: online?.checkout_note ?? "",
-            is_published: form.status === "Online",
-            setup_completed: form.status !== "Coming Soon",
-            terms_version: online?.terms_version ?? "2026-08-18",
-            privacy_version: online?.privacy_version ?? "2026-08-18",
-            accepted_terms_at: online?.accepted_terms_at ?? null,
-            accepted_privacy_at: online?.accepted_privacy_at ?? null,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "store_id" },
-        );
+      const { error: oe } = await db.from("online_stores").upsert(
+        {
+          store_id: store.id,
+          slug: form.slug || online?.slug || store.id.slice(0, 8),
+          display_name: online?.display_name ?? store.name,
+          logo_url: online?.logo_url ?? "",
+          display_email: online?.display_email ?? "",
+          display_phone: online?.display_phone ?? "",
+          description: online?.description ?? "",
+          shipping_note: online?.shipping_note ?? "",
+          checkout_note: online?.checkout_note ?? "",
+          is_published: form.status === "Online",
+          setup_completed: form.status !== "Coming Soon",
+          terms_version: online?.terms_version ?? "2026-08-18",
+          privacy_version: online?.privacy_version ?? "2026-08-18",
+          accepted_terms_at: online?.accepted_terms_at ?? null,
+          accepted_privacy_at: online?.accepted_privacy_at ?? null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "store_id" },
+      );
       if (oe) throw new Error(oe.message);
-      const { error: ce } = await db
-        .from("storefront_configs")
-        .upsert(
-          {
-            store_id: store.id,
-            template: config?.template ?? "minimal-commerce",
-            theme: config?.theme ?? {},
-            branding: config?.branding ?? {},
-            navigation: config?.navigation ?? {},
-            sections: config?.sections ?? [],
-            seo: {
-              ...(config?.seo ?? {}),
-              title: form.seoTitle,
-              description: form.metaDescription,
-              noIndex: form.noIndex,
-              socialImage: form.socialImage,
-            },
-            custom_css: config?.custom_css ?? "",
-            is_published: config?.is_published ?? false,
-            version: config?.version ?? 1,
-            updated_at: new Date().toISOString(),
+      const { error: ce } = await db.from("storefront_configs").upsert(
+        {
+          store_id: store.id,
+          template: config?.template ?? "minimal-commerce",
+          theme: config?.theme ?? {},
+          branding: config?.branding ?? {},
+          navigation: config?.navigation ?? {},
+          sections: config?.sections ?? [],
+          seo: {
+            ...(config?.seo ?? {}),
+            title: form.seoTitle,
+            description: form.metaDescription,
+            noIndex: form.noIndex,
+            socialImage: form.socialImage,
           },
-          { onConflict: "store_id" },
-        );
+          custom_css: config?.custom_css ?? "",
+          is_published: config?.is_published ?? false,
+          version: config?.version ?? 1,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "store_id" },
+      );
       if (ce) throw new Error(ce.message);
       setInitial(form);
       await reload();

@@ -216,19 +216,17 @@ function GroceryInventoryPage() {
     }
     setSaving(true);
     try {
-      const { error } = await db
-        .from("inventory_batches")
-        .insert({
-          store_id: storeId,
-          branch_id: branchId,
-          product_id: productId,
-          batch_number: batchNumber.trim(),
-          expiry_date: expiryDate || null,
-          quantity,
-          cost_per_unit: cost,
-          supplier_name: supplierName.trim(),
-          notes: batchNotes.trim(),
-        });
+      const { error } = await db.from("inventory_batches").insert({
+        store_id: storeId,
+        branch_id: branchId,
+        product_id: productId,
+        batch_number: batchNumber.trim(),
+        expiry_date: expiryDate || null,
+        quantity,
+        cost_per_unit: cost,
+        supplier_name: supplierName.trim(),
+        notes: batchNotes.trim(),
+      });
       if (error) throw new Error(error.message);
       toast.success("Batch received and stock updated.");
       setBatchNumber("");

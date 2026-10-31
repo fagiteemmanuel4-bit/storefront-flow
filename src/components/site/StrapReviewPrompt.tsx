@@ -31,16 +31,14 @@ export function StrapReviewPrompt() {
     }
     setSubmitting(true);
     try {
-      const { error } = await supabase
-        .from("store_feedback")
-        .insert({
-          store_id: store.id,
-          feedback_type: "strap_review",
-          rating,
-          reason: "product_review",
-          message: message.trim(),
-          contact_email: "",
-        });
+      const { error } = await supabase.from("store_feedback").insert({
+        store_id: store.id,
+        feedback_type: "strap_review",
+        rating,
+        reason: "product_review",
+        message: message.trim(),
+        contact_email: "",
+      });
       if (error) throw new Error(error.message);
       try {
         localStorage.setItem(SUBMITTED, "1");

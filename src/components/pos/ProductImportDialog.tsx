@@ -304,17 +304,15 @@ export function ProductImportDialog({ open, onOpenChange, storeId, branchId, onI
           created += 1;
         }
         if (!productId) throw new Error(`No product id returned for ${row.name}.`);
-        const { error: stockError } = await supabase
-          .from("branch_stock")
-          .upsert(
-            {
-              branch_id: branchId,
-              product_id: productId,
-              store_id: storeId,
-              quantity: row.quantity,
-            },
-            { onConflict: "branch_id,product_id" },
-          );
+        const { error: stockError } = await supabase.from("branch_stock").upsert(
+          {
+            branch_id: branchId,
+            product_id: productId,
+            store_id: storeId,
+            quantity: row.quantity,
+          },
+          { onConflict: "branch_id,product_id" },
+        );
         if (stockError) throw new Error(`${row.name}: ${stockError.message}`);
       };
       for (let i = 0; i < validRows.length; i += 8)

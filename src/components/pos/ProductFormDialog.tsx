@@ -293,20 +293,18 @@ export function ProductFormDialog({
       if (error) throw new Error(error.message);
       return;
     }
-    const { error } = await db
-      .from("product_fashion_details")
-      .upsert(
-        {
-          product_id: productId,
-          store_id: storeId,
-          size_options: sizeOptions,
-          color_options: colorOptions,
-          material: material.trim(),
-          style_notes: styleNotes.trim(),
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "product_id" },
-      );
+    const { error } = await db.from("product_fashion_details").upsert(
+      {
+        product_id: productId,
+        store_id: storeId,
+        size_options: sizeOptions,
+        color_options: colorOptions,
+        material: material.trim(),
+        style_notes: styleNotes.trim(),
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "product_id" },
+    );
     if (error) throw new Error(error.message);
   }
 
@@ -337,17 +335,15 @@ export function ProductFormDialog({
           .eq("branch_id", branchId);
         if (error) throw new Error(error.message);
       }
-      const { error } = await db
-        .from("branch_stock")
-        .upsert(
-          {
-            branch_id: branchId,
-            product_id: productId,
-            store_id: storeId,
-            quantity: fallbackQuantity,
-          },
-          { onConflict: "branch_id,product_id" },
-        );
+      const { error } = await db.from("branch_stock").upsert(
+        {
+          branch_id: branchId,
+          product_id: productId,
+          store_id: storeId,
+          quantity: fallbackQuantity,
+        },
+        { onConflict: "branch_id,product_id" },
+      );
       if (error) throw new Error(error.message);
       return;
     }
@@ -451,17 +447,15 @@ export function ProductFormDialog({
           : { data: [], error: null };
         if (batchError) throw new Error(batchError.message);
         if (!(batchRows ?? []).length) {
-          const { error: stockError } = await supabase
-            .from("branch_stock")
-            .upsert(
-              {
-                branch_id: branchId,
-                product_id: productId,
-                store_id: storeId,
-                quantity: v.quantity,
-              },
-              { onConflict: "branch_id,product_id" },
-            );
+          const { error: stockError } = await supabase.from("branch_stock").upsert(
+            {
+              branch_id: branchId,
+              product_id: productId,
+              store_id: storeId,
+              quantity: v.quantity,
+            },
+            { onConflict: "branch_id,product_id" },
+          );
           if (stockError) throw new Error(stockError.message);
         }
       }

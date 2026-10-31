@@ -83,14 +83,12 @@ function CustomersPage() {
     if (!store?.id || !name.trim()) return toast.error("Enter a customer name.");
     setSaving(true);
     try {
-      const { error } = await (supabase as any)
-        .from("customers")
-        .insert({
-          store_id: store.id,
-          name: name.trim(),
-          phone: phone.trim(),
-          email: email.trim(),
-        });
+      const { error } = await (supabase as any).from("customers").insert({
+        store_id: store.id,
+        name: name.trim(),
+        phone: phone.trim(),
+        email: email.trim(),
+      });
       if (error) throw new Error(error.message);
       setName("");
       setPhone("");

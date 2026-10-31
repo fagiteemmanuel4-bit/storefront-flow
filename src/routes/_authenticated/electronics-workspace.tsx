@@ -154,17 +154,15 @@ function ElectronicsWorkspacePage() {
     if (!serial.trim() && !imei.trim()) return toast.error("Enter a serial number or IMEI.");
     setSavingDevice(true);
     try {
-      const { error } = await db
-        .from("electronics_devices")
-        .insert({
-          store_id: storeId,
-          branch_id: branchId,
-          product_id: productId,
-          serial_number: serial.trim() || null,
-          imei: imei.trim() || null,
-          warranty_months: Number(warrantyMonths),
-          notes: deviceNotes.trim(),
-        });
+      const { error } = await db.from("electronics_devices").insert({
+        store_id: storeId,
+        branch_id: branchId,
+        product_id: productId,
+        serial_number: serial.trim() || null,
+        imei: imei.trim() || null,
+        warranty_months: Number(warrantyMonths),
+        notes: deviceNotes.trim(),
+      });
       if (error) throw new Error(error.message);
       toast.success("Device registered and available stock updated.");
       setSerial("");

@@ -99,30 +99,28 @@ export function OnlineStoreSettingsPage() {
         .from("online_stores")
         .upsert(onlinePayload, { onConflict: "store_id" });
       if (oe) throw new Error(oe.message);
-      const { error: ce } = await supabase
-        .from("storefront_configs")
-        .upsert(
-          {
-            store_id: store.id,
-            template: config?.template ?? "minimal-commerce",
-            theme: config?.theme ?? {},
-            branding: config?.branding ?? {},
-            navigation: config?.navigation ?? {},
-            sections: config?.sections ?? [],
-            seo: {
-              ...(config?.seo ?? {}),
-              title: form.seoTitle,
-              description: form.metaDescription,
-              noIndex: form.noIndex,
-              socialImage: form.socialImage,
-            },
-            custom_css: config?.custom_css ?? "",
-            is_published: form.enabled && form.status === "Online",
-            version: config?.version ?? 1,
-            updated_at: new Date().toISOString(),
+      const { error: ce } = await supabase.from("storefront_configs").upsert(
+        {
+          store_id: store.id,
+          template: config?.template ?? "minimal-commerce",
+          theme: config?.theme ?? {},
+          branding: config?.branding ?? {},
+          navigation: config?.navigation ?? {},
+          sections: config?.sections ?? [],
+          seo: {
+            ...(config?.seo ?? {}),
+            title: form.seoTitle,
+            description: form.metaDescription,
+            noIndex: form.noIndex,
+            socialImage: form.socialImage,
           },
-          { onConflict: "store_id" },
-        );
+          custom_css: config?.custom_css ?? "",
+          is_published: form.enabled && form.status === "Online",
+          version: config?.version ?? 1,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "store_id" },
+      );
       if (ce) throw new Error(ce.message);
       setInitial(form);
       await load();

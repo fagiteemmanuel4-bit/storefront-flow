@@ -137,17 +137,15 @@ function ExpensesPage() {
     try {
       const { data } = await supabase.auth.getUser();
       if (!data.user) throw new Error("Not authenticated");
-      const { error } = await supabase
-        .from("expenses")
-        .insert({
-          store_id: storeId,
-          branch_id: branch?.id ?? null,
-          created_by: data.user.id,
-          amount: v.amount,
-          category: v.category,
-          expense_date: v.date,
-          description: v.description,
-        });
+      const { error } = await supabase.from("expenses").insert({
+        store_id: storeId,
+        branch_id: branch?.id ?? null,
+        created_by: data.user.id,
+        amount: v.amount,
+        category: v.category,
+        expense_date: v.date,
+        description: v.description,
+      });
       if (error) throw new Error(error.message);
       toast.success("Expense added");
       setAddOpen(false);

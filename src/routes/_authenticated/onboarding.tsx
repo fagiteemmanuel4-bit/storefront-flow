@@ -258,22 +258,20 @@ function OnboardingPage() {
 
       const amount =
         plan === "free" ? 0 : billing === "year" ? PLANS[plan].yearly : PLANS[plan].monthly;
-      const { error: subscriptionError } = await supabase
-        .from("store_subscriptions")
-        .upsert(
-          {
-            store_id: storeId,
-            provider: "korapay",
-            plan_code: plan,
-            status: plan === "free" ? "active" : "pending",
-            currency,
-            amount,
-            interval: billing,
-            metadata: { selected_during_onboarding: true, billing, annual_saving: annualSaving },
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "store_id" },
-        );
+      const { error: subscriptionError } = await supabase.from("store_subscriptions").upsert(
+        {
+          store_id: storeId,
+          provider: "korapay",
+          plan_code: plan,
+          status: plan === "free" ? "active" : "pending",
+          currency,
+          amount,
+          interval: billing,
+          metadata: { selected_during_onboarding: true, billing, annual_saving: annualSaving },
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "store_id" },
+      );
       if (subscriptionError) throw new Error(subscriptionError.message);
 
       if (onlineStoreEnabled && (plan === "business" || plan === "pro")) {

@@ -1450,7 +1450,7 @@
 
     "@tanstack/router-generator/@tanstack/router-core/@tanstack/history": ["@tanstack/history@1.162.0", "", {}, "sha512-79pf/RkhteYZTRgcR4F9kbk84P2N8rugQJswxfIqovlbRiT3yI7eBE+5QorIrZaOKktsgzRlXh1l/du/xpl4iA=="],
 
-    "@tanstack/router-generator/@tanstack/router-core/seroval": ["seroval@1.6.10", "", {}, "sha512-GKZbsOHLV6GToR1rNQc9CZ+s8HZTS5X5N9D++z/xUh4SV9UwepLzqc60pKJTEEfEHzGdtWTXHpp+GhLoGLT1UA=="],
+    "@tanstack/router-generator/@tanstack/router-core/seroval": ["seroval@1.6.11", "", {}, "sha512-hpb6XnMCGN/A+79Uf8V7/iTGkyyyazNn5X0CoCAp7Uy9vT3RT8jZ9GLcnxGoVjg3P8AArbe4ZVHq6C8oT2a0kA=="],
 
     "@tanstack/router-generator/@tanstack/router-core/seroval-plugins": ["seroval-plugins@1.5.6", "", { "peerDependencies": { "seroval": "^1.0" } }, "sha512-HXuLAX2pu/UByPpaeo/TaMfvMIi+1QqIoPJYCcAtU8QkVNwgR6MPlGuCQTErV1JwraaMbYaWVIBX7mppzGLATQ=="],
 
@@ -1460,7 +1460,7 @@
 
     "@tanstack/router-plugin/@tanstack/router-core/@tanstack/history": ["@tanstack/history@1.162.0", "", {}, "sha512-79pf/RkhteYZTRgcR4F9kbk84P2N8rugQJswxfIqovlbRiT3yI7eBE+5QorIrZaOKktsgzRlXh1l/du/xpl4iA=="],
 
-    "@tanstack/router-plugin/@tanstack/router-core/seroval": ["seroval@1.6.10", "", {}, "sha512-GKZbsOHLV6GToR1rNQc9CZ+s8HZTS5X5N9D++z/xUh4SV9UwepLzqc60pKJTEEfEHzGdtWTXHpp+GhLoGLT1UA=="],
+    "@tanstack/router-plugin/@tanstack/router-core/seroval": ["seroval@1.6.11", "", {}, "sha512-hpb6XnMCGN/A+79Uf8V7/iTGkyyyazNn5X0CoCAp7Uy9vT3RT8jZ9GLcnxGoVjg3P8AArbe4ZVHq6C8oT2a0kA=="],
 
     "@tanstack/router-plugin/@tanstack/router-core/seroval-plugins": ["seroval-plugins@1.5.6", "", { "peerDependencies": { "seroval": "^1.0" } }, "sha512-HXuLAX2pu/UByPpaeo/TaMfvMIi+1QqIoPJYCcAtU8QkVNwgR6MPlGuCQTErV1JwraaMbYaWVIBX7mppzGLATQ=="],
 

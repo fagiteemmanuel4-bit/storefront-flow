@@ -227,19 +227,17 @@ function FoodServicePage() {
     }
     setSaving(true);
     try {
-      const { error } = await db
-        .from("food_menu_modifiers")
-        .upsert(
-          {
-            store_id: storeId,
-            product_id: menuProductId,
-            name: modifierName.trim(),
-            options,
-            is_required: modifierRequired,
-            is_active: true,
-          },
-          { onConflict: "store_id,product_id,name" },
-        );
+      const { error } = await db.from("food_menu_modifiers").upsert(
+        {
+          store_id: storeId,
+          product_id: menuProductId,
+          name: modifierName.trim(),
+          options,
+          is_required: modifierRequired,
+          is_active: true,
+        },
+        { onConflict: "store_id,product_id,name" },
+      );
       if (error) throw new Error(error.message);
       toast.success("Menu modifier saved.");
       setModifierName("");
@@ -265,18 +263,16 @@ function FoodServicePage() {
     }
     setSaving(true);
     try {
-      const { error } = await db
-        .from("food_recipe_ingredients")
-        .upsert(
-          {
-            store_id: storeId,
-            branch_id: branchId,
-            menu_product_id: recipeMenuId,
-            ingredient_product_id: ingredientId,
-            quantity_per_serving: quantity,
-          },
-          { onConflict: "branch_id,menu_product_id,ingredient_product_id" },
-        );
+      const { error } = await db.from("food_recipe_ingredients").upsert(
+        {
+          store_id: storeId,
+          branch_id: branchId,
+          menu_product_id: recipeMenuId,
+          ingredient_product_id: ingredientId,
+          quantity_per_serving: quantity,
+        },
+        { onConflict: "branch_id,menu_product_id,ingredient_product_id" },
+      );
       if (error) throw new Error(error.message);
       toast.success("Recipe ingredient saved.");
       setIngredientQty("1");

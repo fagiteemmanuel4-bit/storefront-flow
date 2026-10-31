@@ -336,15 +336,13 @@ function HelpPage() {
               return;
             }
             setTicketSending(true);
-            const { error } = await (supabase as any)
-              .from("platform_support_tickets")
-              .insert({
-                user_id: authData.user.id,
-                contact_email: ticketEmail.trim() || authData.user.email || "",
-                category: ticketCategory,
-                subject: ticketSubject.trim(),
-                message: ticketMessage.trim(),
-              });
+            const { error } = await (supabase as any).from("platform_support_tickets").insert({
+              user_id: authData.user.id,
+              contact_email: ticketEmail.trim() || authData.user.email || "",
+              category: ticketCategory,
+              subject: ticketSubject.trim(),
+              message: ticketMessage.trim(),
+            });
             setTicketSending(false);
             if (error) {
               toast.error(error.message || "Could not send your request.");

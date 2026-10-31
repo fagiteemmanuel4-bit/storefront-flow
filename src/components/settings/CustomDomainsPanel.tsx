@@ -37,20 +37,18 @@ export function CustomDomainsPanel() {
         .replace(/^https?:\/\//, "")
         .replace(/\/$/, "");
       const value = `strap-verify=${crypto.randomUUID().replaceAll("-", "")}`;
-      const { error } = await (supabase as any)
-        .from("store_custom_domains")
-        .upsert(
-          {
-            store_id: store.id,
-            hostname: host,
-            status: "pending",
-            verification_type: "TXT",
-            verification_name: `_strap.${host}`,
-            verification_value: value,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "store_id,hostname" },
-        );
+      const { error } = await (supabase as any).from("store_custom_domains").upsert(
+        {
+          store_id: store.id,
+          hostname: host,
+          status: "pending",
+          verification_type: "TXT",
+          verification_name: `_strap.${host}`,
+          verification_value: value,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "store_id,hostname" },
+      );
       if (error) throw new Error(error.message);
       setHostname("");
       await load();

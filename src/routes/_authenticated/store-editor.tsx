@@ -270,17 +270,15 @@ function StoreEditor() {
     if (!store || !canEdit) return;
     setSaving(true);
     const payload = { sections };
-    const { error } = await onlineSupabase
-      .from("storefront_editor_layouts")
-      .upsert(
-        {
-          store_id: store.id,
-          draft: payload,
-          ...(publish ? { published: payload, published_at: new Date().toISOString() } : {}),
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "store_id" },
-      );
+    const { error } = await onlineSupabase.from("storefront_editor_layouts").upsert(
+      {
+        store_id: store.id,
+        draft: payload,
+        ...(publish ? { published: payload, published_at: new Date().toISOString() } : {}),
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "store_id" },
+    );
     if (error) toast.error(error.message);
     else toast.success(publish ? "Storefront published" : "Draft saved");
     setSaving(false);

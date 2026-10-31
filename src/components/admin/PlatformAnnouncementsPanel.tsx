@@ -56,16 +56,14 @@ export function PlatformAnnouncementsPanel() {
       setSaving(false);
       return;
     }
-    const { error } = await (supabase as any)
-      .from("platform_announcements")
-      .insert({
-        title: title.trim(),
-        body: body.trim(),
-        kind,
-        is_published: publishNow,
-        starts_at: new Date().toISOString(),
-        created_by: auth.user.id,
-      });
+    const { error } = await (supabase as any).from("platform_announcements").insert({
+      title: title.trim(),
+      body: body.trim(),
+      kind,
+      is_published: publishNow,
+      starts_at: new Date().toISOString(),
+      created_by: auth.user.id,
+    });
     if (error) toast.error(error.message || "Could not create announcement.");
     else {
       toast.success(
