@@ -134,10 +134,13 @@ export function QuickFind({ open, onOpenChange }: QuickFindProps) {
         onOpenChange(true);
       }
     };
+    const onOpenQuickFind = () => onOpenChange(true);
     window.addEventListener("keydown", onGlobalKeyDown);
+    window.addEventListener("strap-open-quick-find", onOpenQuickFind);
     document.addEventListener("click", onSearchClick, true);
     return () => {
       window.removeEventListener("keydown", onGlobalKeyDown);
+      window.removeEventListener("strap-open-quick-find", onOpenQuickFind);
       document.removeEventListener("click", onSearchClick, true);
     };
   }, [onOpenChange]);
