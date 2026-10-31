@@ -114,8 +114,16 @@ function DashboardPage() {
     <AppShell title={isFashion ? "Fashion studio" : "Today's trading"}>
       <div className="space-y-6 pb-8">
         <section className="relative isolate overflow-hidden rounded-[2rem] border border-border bg-foreground px-6 py-7 text-background shadow-float sm:px-8 sm:py-9">
-          <div className="pointer-events-none absolute -right-28 -top-28 -z-10 size-80 rounded-full bg-accent/25 blur-3xl" />
-          <div className="relative flex flex-col gap-7 xl:flex-row xl:items-end xl:justify-between">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-24 -top-36 z-0 size-[420px] rounded-full border border-[#C6F432]/35"
+          >
+            <div className="absolute inset-8 rounded-full border border-[#C6F432]/30" />
+            <div className="absolute inset-16 rounded-full border border-[#C6F432]/25" />
+            <div className="absolute inset-24 rounded-full border border-[#C6F432]/20" />
+            <div className="absolute inset-[7.25rem] rounded-full border border-[#C6F432]/15" />
+          </div>
+          <div className="relative z-10 flex flex-col gap-7 xl:flex-row xl:items-end xl:justify-between">
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 rounded-full border border-background/10 bg-background/5 px-3 py-1.5 text-[11px] font-semibold text-background/65">
                 <span className="size-1.5 rounded-full bg-accent" />{" "}

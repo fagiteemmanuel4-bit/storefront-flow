@@ -105,7 +105,7 @@ function OnlineOrdersPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search order or customer"
-              className="pl-9"
+              className="h-12 rounded-xl pl-10 text-base sm:h-14"
             />
           </div>
         </div>

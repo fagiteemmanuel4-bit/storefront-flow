@@ -147,7 +147,11 @@ function CustomersPage() {
                 type="email"
                 aria-label="Customer email"
               />
-              <Button onClick={() => void addCustomer()} disabled={saving}>
+              <Button
+                className="h-11 rounded-xl bg-[#C6F432] text-[#0E1116] shadow-sm hover:bg-[#b0dc20]"
+                onClick={() => void addCustomer()}
+                disabled={saving}
+              >
                 <Plus className="mr-2 size-4" />
                 {saving ? "Adding…" : "Add"}
               </Button>
@@ -165,7 +169,8 @@ function CustomersPage() {
               key={name}
               type="button"
               onClick={() => setSearch(name)}
-              className={`rounded-xl border px-3 py-3 text-left transition ${search === name ? "border-accent/40 bg-accent-soft" : "border-border bg-background hover:bg-secondary"}`}
+              aria-pressed={search === name}
+              className={`rounded-xl border px-3 py-3 text-left transition ${search === name ? "border-[#C6F432] bg-[#C6F432] text-[#0E1116] ring-2 ring-[#C6F432]/35 shadow-sm" : "border-border bg-background hover:border-[#C6F432]/50 hover:bg-secondary"}`}
             >
               <p className="text-xs font-semibold">{name}</p>
               <p className="mt-1 font-display text-xl font-bold">{segmentCounts[name]}</p>
