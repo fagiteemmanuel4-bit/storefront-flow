@@ -1,7 +1,10 @@
 // Server-side Supabase client. The publishable key is intentionally public; RLS remains the security boundary.
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
-import { SUPABASE_URL as DEFAULT_SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY as DEFAULT_SUPABASE_KEY } from "./config";
+import {
+  SUPABASE_URL as DEFAULT_SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY as DEFAULT_SUPABASE_KEY,
+} from "./config";
 
 function isNewSupabaseApiKey(value: string): boolean {
   return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");
@@ -28,7 +31,10 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 
 function createSupabaseAdminClient() {
   const url = process.env["SUPABASE_URL"] || DEFAULT_SUPABASE_URL;
-  const key = process.env["SUPABASE_SERVICE_ROLE_KEY"] || process.env["SUPABASE_PUBLISHABLE_KEY"] || DEFAULT_SUPABASE_KEY;
+  const key =
+    process.env["SUPABASE_SERVICE_ROLE_KEY"] ||
+    process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+    DEFAULT_SUPABASE_KEY;
 
   return createClient<Database>(url, key, {
     global: { fetch: createSupabaseFetch(key) },

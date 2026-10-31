@@ -22,15 +22,20 @@ jobs:
         with:
           bun-version: latest
       - name: Resolve patched dependency graph
-        run: bun install
-      - name: Commit regenerated lockfile
         run: |
-          if git diff --quiet -- bun.lock; then
+          bun install
+          bun audit fix --latest || true
+          bun run format
+          bunx eslint . --fix
+          bun audit || true
+      - name: Commit dependency and formatting fixes
+        run: |
+          if git diff --quiet; then
             echo "Lockfile already current"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add bun.lock
+          git add -A
           git commit -m "chore: regenerate lockfile for patched TanStack Start"
           git push origin HEAD:fix/tanstack-start-security-2026

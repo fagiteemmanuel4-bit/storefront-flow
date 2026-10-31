@@ -1,70 +1,461 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BarChart3, BookOpen, Boxes, CircleHelp, CreditCard, Globe2, Mail, Menu, Printer, Receipt, ScanLine, Settings2, ShieldCheck, ShoppingCart, Smartphone, Store, Users, X, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  BookOpen,
+  Boxes,
+  CircleHelp,
+  CreditCard,
+  Globe2,
+  Mail,
+  Menu,
+  Printer,
+  Receipt,
+  ScanLine,
+  Settings2,
+  ShieldCheck,
+  ShoppingCart,
+  Smartphone,
+  Store,
+  Users,
+  X,
+  Zap,
+} from "lucide-react";
 
 const COLUMNS = [
-  { title: "Product", links: [["Features", "#features"], ["How it works", "#how-it-works"], ["Why Strap", "#about"], ["Inventory", "#inventory"], ["Insights", "#insights"], ["Team access", "#teams"]] },
-  { title: "Selling", links: [["Fast checkout", "#checkout"], ["Online store", "#online-store"], ["Barcode & QR scanning", "#hardware"], ["Receipts", "#hardware"], ["Hardware", "#hardware"], ["Customer questions", "#faq"]] },
-  { title: "Operations", links: [["Stock management", "#inventory"], ["Multiple branches", "#branches"], ["Business insights", "#insights"], ["Store security", "#security"], ["Shop teams", "#teams"], ["FAQs", "#faq"]] },
+  {
+    title: "Product",
+    links: [
+      ["Features", "#features"],
+      ["How it works", "#how-it-works"],
+      ["Why Strap", "#about"],
+      ["Inventory", "#inventory"],
+      ["Insights", "#insights"],
+      ["Team access", "#teams"],
+    ],
+  },
+  {
+    title: "Selling",
+    links: [
+      ["Fast checkout", "#checkout"],
+      ["Online store", "#online-store"],
+      ["Barcode & QR scanning", "#hardware"],
+      ["Receipts", "#hardware"],
+      ["Hardware", "#hardware"],
+      ["Customer questions", "#faq"],
+    ],
+  },
+  {
+    title: "Operations",
+    links: [
+      ["Stock management", "#inventory"],
+      ["Multiple branches", "#branches"],
+      ["Business insights", "#insights"],
+      ["Store security", "#security"],
+      ["Shop teams", "#teams"],
+      ["FAQs", "#faq"],
+    ],
+  },
 ] as const;
 
-const RESOURCES = [["Help Centre", "/support", CircleHelp], ["Guides & documentation", "/support", BookOpen], ["Getting started", "/support", Zap], ["Hardware Center", "/hardware", ScanLine], ["Receipt printing help", "/support", Printer], ["Contact support", "/support", Mail]] as const;
+const RESOURCES = [
+  ["Help Centre", "/support", CircleHelp],
+  ["Guides & documentation", "/support", BookOpen],
+  ["Getting started", "/support", Zap],
+  ["Hardware Center", "/hardware", ScanLine],
+  ["Receipt printing help", "/support", Printer],
+  ["Contact support", "/support", Mail],
+] as const;
 
-const NAV_ITEMS = [["Features", "#features"], ["How it works", "#how-it-works"], ["Online store", "#online-store"], ["Insights", "#insights"]] as const;
+const NAV_ITEMS = [
+  ["Features", "#features"],
+  ["How it works", "#how-it-works"],
+  ["Online store", "#online-store"],
+  ["Insights", "#insights"],
+] as const;
 
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMenu = () => setMobileOpen(false);
 
-  return <>
-    <style>{`
+  return (
+    <>
+      <style>{`
       @keyframes kudi-header-in { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: translateY(0); } }
       @keyframes kudi-brand-pop { 0% { opacity: 0; transform: scale(.72) rotate(-18deg); } 70% { transform: scale(1.06) rotate(3deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
       @keyframes kudi-orb-in { from { opacity: 0; transform: scale(.55); } to { opacity: .9; transform: scale(1); } }
       @keyframes kudi-mobile-in { from { opacity: 0; transform: translateY(-8px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
       @media (prefers-reduced-motion: reduce) { .kudi-motion, .kudi-motion * { animation: none !important; transition: none !important; } }
     `}</style>
-    <header className="kudi-motion sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur-xl" style={{ animation: "kudi-header-in .7s cubic-bezier(.22,1,.36,1) both" }}>
-      <div className="pointer-events-none absolute left-[16%] top-[-70px] h-32 w-32 rounded-full bg-accent/15 blur-3xl" style={{ animation: "kudi-orb-in 1.2s .15s ease-out both" }} />
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-        <Link to="/" className="group flex shrink-0 items-center gap-2" onClick={closeMenu}>
-          <span className="flex size-8 items-center justify-center rounded-full bg-accent shadow-sm transition-transform duration-300 group-hover:scale-110" style={{ animation: "kudi-brand-pop .75s .1s cubic-bezier(.22,1,.36,1) both" }}><span className="size-3 rotate-45 rounded-[3px] bg-foreground" /></span>
-          <span className="font-display text-xl font-bold tracking-tight transition-transform duration-300 group-hover:translate-x-0.5">STRAP.</span>
-        </Link>
-        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-          {NAV_ITEMS.map(([label, href]) => <a key={label} href={href} className="relative py-2 transition-colors hover:text-accent-ink after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-accent after:transition-all hover:after:w-full">{label}</a>)}
-          <Link to="/support" className="transition-colors hover:text-accent-ink">Help</Link>
-        </nav>
-        <div className="flex items-center gap-2">
-          <Link to="/support" className="hidden rounded-full px-4 py-2.5 text-sm font-semibold hover:bg-secondary sm:inline-flex">Help</Link>
-          <Link to="/auth" className="hidden items-center rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent hover:text-accent-foreground sm:inline-flex">Open register</Link>
-          <button type="button" aria-label={mobileOpen ? "Close navigation" : "Open navigation"} aria-expanded={mobileOpen} onClick={() => setMobileOpen((open) => !open)} className="inline-flex size-10 items-center justify-center rounded-full border border-border bg-background transition-colors hover:bg-secondary sm:hidden">
-            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-          </button>
+      <header
+        className="kudi-motion sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur-xl"
+        style={{ animation: "kudi-header-in .7s cubic-bezier(.22,1,.36,1) both" }}
+      >
+        <div
+          className="pointer-events-none absolute left-[16%] top-[-70px] h-32 w-32 rounded-full bg-accent/15 blur-3xl"
+          style={{ animation: "kudi-orb-in 1.2s .15s ease-out both" }}
+        />
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+          <Link to="/" className="group flex shrink-0 items-center gap-2" onClick={closeMenu}>
+            <span
+              className="flex size-8 items-center justify-center rounded-full bg-accent shadow-sm transition-transform duration-300 group-hover:scale-110"
+              style={{ animation: "kudi-brand-pop .75s .1s cubic-bezier(.22,1,.36,1) both" }}
+            >
+              <span className="size-3 rotate-45 rounded-[3px] bg-foreground" />
+            </span>
+            <span className="font-display text-xl font-bold tracking-tight transition-transform duration-300 group-hover:translate-x-0.5">
+              STRAP.
+            </span>
+          </Link>
+          <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
+            {NAV_ITEMS.map(([label, href]) => (
+              <a
+                key={label}
+                href={href}
+                className="relative py-2 transition-colors hover:text-accent-ink after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-accent after:transition-all hover:after:w-full"
+              >
+                {label}
+              </a>
+            ))}
+            <Link to="/support" className="transition-colors hover:text-accent-ink">
+              Help
+            </Link>
+          </nav>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/support"
+              className="hidden rounded-full px-4 py-2.5 text-sm font-semibold hover:bg-secondary sm:inline-flex"
+            >
+              Help
+            </Link>
+            <Link
+              to="/auth"
+              className="hidden items-center rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent hover:text-accent-foreground sm:inline-flex"
+            >
+              Open register
+            </Link>
+            <button
+              type="button"
+              aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+              aria-expanded={mobileOpen}
+              onClick={() => setMobileOpen((open) => !open)}
+              className="inline-flex size-10 items-center justify-center rounded-full border border-border bg-background transition-colors hover:bg-secondary sm:hidden"
+            >
+              {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            </button>
+          </div>
         </div>
-      </div>
-      {mobileOpen && <div className="kudi-motion border-t border-border bg-surface/98 px-4 pb-5 pt-3 shadow-lift sm:hidden" style={{ animation: "kudi-mobile-in .22s ease-out both" }}>
-        <nav className="grid gap-1">
-          {NAV_ITEMS.map(([label, href]) => <a key={label} href={href} onClick={closeMenu} className="rounded-xl px-4 py-3.5 text-sm font-semibold transition-colors hover:bg-secondary">{label}</a>)}
-          <Link to="/support" onClick={closeMenu} className="rounded-xl px-4 py-3.5 text-sm font-semibold transition-colors hover:bg-secondary">Help Centre</Link>
-          <Link to="/auth" onClick={closeMenu} className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-foreground px-4 py-3.5 text-sm font-semibold text-background transition-all hover:bg-accent hover:text-accent-foreground">Open register <ArrowRight className="size-4" /></Link>
-        </nav>
-      </div>}
-    </header>
-  </>;
+        {mobileOpen && (
+          <div
+            className="kudi-motion border-t border-border bg-surface/98 px-4 pb-5 pt-3 shadow-lift sm:hidden"
+            style={{ animation: "kudi-mobile-in .22s ease-out both" }}
+          >
+            <nav className="grid gap-1">
+              {NAV_ITEMS.map(([label, href]) => (
+                <a
+                  key={label}
+                  href={href}
+                  onClick={closeMenu}
+                  className="rounded-xl px-4 py-3.5 text-sm font-semibold transition-colors hover:bg-secondary"
+                >
+                  {label}
+                </a>
+              ))}
+              <Link
+                to="/support"
+                onClick={closeMenu}
+                className="rounded-xl px-4 py-3.5 text-sm font-semibold transition-colors hover:bg-secondary"
+              >
+                Help Centre
+              </Link>
+              <Link
+                to="/auth"
+                onClick={closeMenu}
+                className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-foreground px-4 py-3.5 text-sm font-semibold text-background transition-all hover:bg-accent hover:text-accent-foreground"
+              >
+                Open register <ArrowRight className="size-4" />
+              </Link>
+            </nav>
+          </div>
+        )}
+      </header>
+    </>
+  );
 }
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
-  return <footer className="border-t border-background/10 bg-foreground text-background">
-    <div className="mx-auto max-w-7xl px-4 pb-8 pt-16 sm:px-6 sm:pt-20">
-      <section className="grid gap-10 overflow-hidden rounded-[2rem] border border-background/10 bg-background/[.04] p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center lg:p-10"><div><p className="text-label-caps text-accent">Strap for everyday retail</p><h2 className="mt-3 max-w-2xl font-display text-3xl font-bold tracking-tight sm:text-4xl">One place to sell, stock, understand and grow.</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-background/55 sm:text-base">From the first scan of the morning to the final report at night, Strap keeps the important parts of your shop connected.</p></div><Link to="/auth" className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3.5 font-semibold text-accent-foreground hover:-translate-y-0.5">Start selling free <ArrowRight className="size-4" /></Link></section>
-      <section className="grid gap-12 border-b border-background/10 py-14 lg:grid-cols-[1fr_2.1fr]"><div className="max-w-md"><Link to="/" className="inline-flex items-center gap-2"><span className="flex size-9 items-center justify-center rounded-full bg-accent"><span className="size-3.5 rotate-45 rounded-[3px] bg-foreground" /></span><span className="font-display text-2xl font-bold tracking-tight">STRAP.</span></Link><p className="mt-5 text-base leading-7 text-background/60">Strap by Kryonara is a practical retail operating system for shops that want one clear place to sell, manage stock, track money, understand performance and build an online storefront.</p><div className="mt-6 grid gap-2 text-xs text-background/50 sm:grid-cols-2"><span className="inline-flex items-center gap-2"><Store className="size-3.5 text-accent" />Everyday retail</span><span className="inline-flex items-center gap-2"><Smartphone className="size-3.5 text-accent" />Desktop & mobile</span><span className="inline-flex items-center gap-2"><ShieldCheck className="size-3.5 text-accent" />Protected workspace</span><span className="inline-flex items-center gap-2"><Users className="size-3.5 text-accent" />Shop teams</span></div></div><div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3">{COLUMNS.map((column) => <div key={column.title}><p className="text-label-caps text-background/40">{column.title}</p><div className="mt-4 space-y-3">{column.links.map(([label, href]) => <a key={label} href={href} className="block text-sm text-background/60 hover:text-accent">{label}</a>)}</div></div>)}</div></section>
-      <section className="grid gap-10 border-b border-background/10 py-14 sm:grid-cols-2 lg:grid-cols-4"><div><p className="text-label-caps text-background/40">Resources</p><div className="mt-4 space-y-3">{RESOURCES.map(([label, href, Icon]) => <Link key={label} to={href as "/support" | "/hardware"} className="flex items-center gap-2 text-sm text-background/60 hover:text-accent"><Icon className="size-3.5 shrink-0" />{label}</Link>)}</div></div><div><p className="text-label-caps text-background/40">Account</p><div className="mt-4 space-y-3"><Link to="/auth" className="block text-sm text-background/60 hover:text-accent">Sign in</Link><Link to="/auth" className="block text-sm text-background/60 hover:text-accent">Create account</Link><Link to="/support" className="block text-sm text-background/60 hover:text-accent">Account help</Link></div></div><div><p className="text-label-caps text-background/40">Legal & trust</p><div className="mt-4 space-y-3"><Link to="/privacy" className="block text-sm text-background/60 hover:text-accent">Privacy policy</Link><Link to="/terms" className="block text-sm text-background/60 hover:text-accent">Terms of service</Link><Link to="/support" className="block text-sm text-background/60 hover:text-accent">Safety & store reporting</Link></div></div><div><p className="text-label-caps text-background/40">Need a hand?</p><p className="mt-4 text-sm leading-6 text-background/50">Find step-by-step help for setup, scanners, receipts, online selling and everyday Strap workflows.</p><Link to="/support" className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-accent">Visit Help Centre <ArrowRight className="size-4" /></Link></div></section>
-      <section className="grid gap-10 border-b border-background/10 py-14 sm:grid-cols-2 lg:grid-cols-4"><div><p className="text-label-caps text-background/40">Quick access</p><div className="mt-4 space-y-3"><a href="#checkout" className="block text-sm text-background/60 hover:text-accent">Start a sale</a><a href="#inventory" className="block text-sm text-background/60 hover:text-accent">Check inventory</a><a href="#online-store" className="block text-sm text-background/60 hover:text-accent">Open online store</a><a href="#insights" className="block text-sm text-background/60 hover:text-accent">View insights</a></div></div><div><p className="text-label-caps text-background/40">For growing shops</p><div className="mt-4 space-y-3"><a href="#teams" className="block text-sm text-background/60 hover:text-accent">Team access</a><a href="#branches" className="block text-sm text-background/60 hover:text-accent">Multiple branches</a><a href="#hardware" className="block text-sm text-background/60 hover:text-accent">Hardware</a><a href="#security" className="block text-sm text-background/60 hover:text-accent">Security</a></div></div><div><p className="text-label-caps text-background/40">Trust</p><div className="mt-4 space-y-3"><Link to="/privacy" className="block text-sm text-background/60 hover:text-accent">Privacy</Link><Link to="/terms" className="block text-sm text-background/60 hover:text-accent">Terms</Link><Link to="/support" className="block text-sm text-background/60 hover:text-accent">Report a store</Link><Link to="/support" className="block text-sm text-background/60 hover:text-accent">Contact support</Link></div></div><div><p className="text-label-caps text-background/40">Payments & receipts</p><div className="mt-4 space-y-3"><span className="flex items-center gap-2 text-sm text-background/60"><CreditCard className="size-3.5" />Cash, card & transfer</span><span className="flex items-center gap-2 text-sm text-background/60"><Receipt className="size-3.5" />Receipt previews</span><span className="flex items-center gap-2 text-sm text-background/60"><Printer className="size-3.5" />Printer workflows</span><span className="flex items-center gap-2 text-sm text-background/60"><Settings2 className="size-3.5" />Store tools</span></div></div></section>
-      <section className="grid gap-4 border-b border-background/10 py-10 sm:grid-cols-2 lg:grid-cols-4"><div className="flex gap-3 rounded-2xl border border-background/10 bg-background/[.03] p-4"><ShoppingCart className="size-5 shrink-0 text-accent" /><div><p className="text-sm font-semibold">Fast checkout</p><p className="mt-1 text-xs leading-5 text-background/45">Search, scan, pay and finish the sale.</p></div></div><div className="flex gap-3 rounded-2xl border border-background/10 bg-background/[.03] p-4"><Boxes className="size-5 shrink-0 text-accent" /><div><p className="text-sm font-semibold">Stock control</p><p className="mt-1 text-xs leading-5 text-background/45">Know what is available and what needs attention.</p></div></div><div className="flex gap-3 rounded-2xl border border-background/10 bg-background/[.03] p-4"><BarChart3 className="size-5 shrink-0 text-accent" /><div><p className="text-sm font-semibold">Clear insights</p><p className="mt-1 text-xs leading-5 text-background/45">Turn daily activity into useful business information.</p></div></div><div className="flex gap-3 rounded-2xl border border-background/10 bg-background/[.03] p-4"><Globe2 className="size-5 shrink-0 text-accent" /><div><p className="text-sm font-semibold">Sell online</p><p className="mt-1 text-xs leading-5 text-background/45">Give customers a simple way to find your products.</p></div></div></section>
-      <div className="mt-8 flex flex-col gap-5 text-xs text-background/40 md:flex-row md:items-center md:justify-between"><p>© {year} Strap by Kryonara. Built for modern shops and everyday retail.</p><div className="flex flex-wrap gap-x-5 gap-y-2"><Link to="/privacy" className="hover:text-background">Privacy</Link><Link to="/terms" className="hover:text-background">Terms</Link><Link to="/support" className="hover:text-background">Help</Link><Link to="/auth" className="hover:text-background">Open register</Link><a href="#faq" className="hover:text-background">FAQ</a><a href="#about" className="hover:text-background">About</a></div></div>
-    </div>
-  </footer>;
+  return (
+    <footer className="border-t border-background/10 bg-foreground text-background">
+      <div className="mx-auto max-w-7xl px-4 pb-8 pt-16 sm:px-6 sm:pt-20">
+        <section className="grid gap-10 overflow-hidden rounded-[2rem] border border-background/10 bg-background/[.04] p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center lg:p-10">
+          <div>
+            <p className="text-label-caps text-accent">Strap for everyday retail</p>
+            <h2 className="mt-3 max-w-2xl font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              One place to sell, stock, understand and grow.
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-background/55 sm:text-base">
+              From the first scan of the morning to the final report at night, Strap keeps the
+              important parts of your shop connected.
+            </p>
+          </div>
+          <Link
+            to="/auth"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3.5 font-semibold text-accent-foreground hover:-translate-y-0.5"
+          >
+            Start selling free <ArrowRight className="size-4" />
+          </Link>
+        </section>
+        <section className="grid gap-12 border-b border-background/10 py-14 lg:grid-cols-[1fr_2.1fr]">
+          <div className="max-w-md">
+            <Link to="/" className="inline-flex items-center gap-2">
+              <span className="flex size-9 items-center justify-center rounded-full bg-accent">
+                <span className="size-3.5 rotate-45 rounded-[3px] bg-foreground" />
+              </span>
+              <span className="font-display text-2xl font-bold tracking-tight">STRAP.</span>
+            </Link>
+            <p className="mt-5 text-base leading-7 text-background/60">
+              Strap by Kryonara is a practical retail operating system for shops that want one clear
+              place to sell, manage stock, track money, understand performance and build an online
+              storefront.
+            </p>
+            <div className="mt-6 grid gap-2 text-xs text-background/50 sm:grid-cols-2">
+              <span className="inline-flex items-center gap-2">
+                <Store className="size-3.5 text-accent" />
+                Everyday retail
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <Smartphone className="size-3.5 text-accent" />
+                Desktop & mobile
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <ShieldCheck className="size-3.5 text-accent" />
+                Protected workspace
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <Users className="size-3.5 text-accent" />
+                Shop teams
+              </span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3">
+            {COLUMNS.map((column) => (
+              <div key={column.title}>
+                <p className="text-label-caps text-background/40">{column.title}</p>
+                <div className="mt-4 space-y-3">
+                  {column.links.map(([label, href]) => (
+                    <a
+                      key={label}
+                      href={href}
+                      className="block text-sm text-background/60 hover:text-accent"
+                    >
+                      {label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className="grid gap-10 border-b border-background/10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <p className="text-label-caps text-background/40">Resources</p>
+            <div className="mt-4 space-y-3">
+              {RESOURCES.map(([label, href, Icon]) => (
+                <Link
+                  key={label}
+                  to={href as "/support" | "/hardware"}
+                  className="flex items-center gap-2 text-sm text-background/60 hover:text-accent"
+                >
+                  <Icon className="size-3.5 shrink-0" />
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-label-caps text-background/40">Account</p>
+            <div className="mt-4 space-y-3">
+              <Link to="/auth" className="block text-sm text-background/60 hover:text-accent">
+                Sign in
+              </Link>
+              <Link to="/auth" className="block text-sm text-background/60 hover:text-accent">
+                Create account
+              </Link>
+              <Link to="/support" className="block text-sm text-background/60 hover:text-accent">
+                Account help
+              </Link>
+            </div>
+          </div>
+          <div>
+            <p className="text-label-caps text-background/40">Legal & trust</p>
+            <div className="mt-4 space-y-3">
+              <Link to="/privacy" className="block text-sm text-background/60 hover:text-accent">
+                Privacy policy
+              </Link>
+              <Link to="/terms" className="block text-sm text-background/60 hover:text-accent">
+                Terms of service
+              </Link>
+              <Link to="/support" className="block text-sm text-background/60 hover:text-accent">
+                Safety & store reporting
+              </Link>
+            </div>
+          </div>
+          <div>
+            <p className="text-label-caps text-background/40">Need a hand?</p>
+            <p className="mt-4 text-sm leading-6 text-background/50">
+              Find step-by-step help for setup, scanners, receipts, online selling and everyday
+              Strap workflows.
+            </p>
+            <Link
+              to="/support"
+              className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-accent"
+            >
+              Visit Help Centre <ArrowRight className="size-4" />
+            </Link>
+          </div>
+        </section>
+        <section className="grid gap-10 border-b border-background/10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <p className="text-label-caps text-background/40">Quick access</p>
+            <div className="mt-4 space-y-3">
+              <a href="#checkout" className="block text-sm text-background/60 hover:text-accent">
+                Start a sale
+              </a>
+              <a href="#inventory" className="block text-sm text-background/60 hover:text-accent">
+                Check inventory
+              </a>
+              <a
+                href="#online-store"
+                className="block text-sm text-background/60 hover:text-accent"
+              >
+                Open online store
+              </a>
+              <a href="#insights" className="block text-sm text-background/60 hover:text-accent">
+                View insights
+              </a>
+            </div>
+          </div>
+          <div>
+            <p className="text-label-caps text-background/40">For growing shops</p>
+            <div className="mt-4 space-y-3">
+              <a href="#teams" className="block text-sm text-background/60 hover:text-accent">
+                Team access
+              </a>
+              <a href="#branches" className="block text-sm text-background/60 hover:text-accent">
+                Multiple branches
+              </a>
+              <a href="#hardware" className="block text-sm text-background/60 hover:text-accent">
+                Hardware
+              </a>
+              <a href="#security" className="block text-sm text-background/60 hover:text-accent">
+                Security
+              </a>
+            </div>
+          </div>
+          <div>
+            <p className="text-label-caps text-background/40">Trust</p>
+            <div className="mt-4 space-y-3">
+              <Link to="/privacy" className="block text-sm text-background/60 hover:text-accent">
+                Privacy
+              </Link>
+              <Link to="/terms" className="block text-sm text-background/60 hover:text-accent">
+                Terms
+              </Link>
+              <Link to="/support" className="block text-sm text-background/60 hover:text-accent">
+                Report a store
+              </Link>
+              <Link to="/support" className="block text-sm text-background/60 hover:text-accent">
+                Contact support
+              </Link>
+            </div>
+          </div>
+          <div>
+            <p className="text-label-caps text-background/40">Payments & receipts</p>
+            <div className="mt-4 space-y-3">
+              <span className="flex items-center gap-2 text-sm text-background/60">
+                <CreditCard className="size-3.5" />
+                Cash, card & transfer
+              </span>
+              <span className="flex items-center gap-2 text-sm text-background/60">
+                <Receipt className="size-3.5" />
+                Receipt previews
+              </span>
+              <span className="flex items-center gap-2 text-sm text-background/60">
+                <Printer className="size-3.5" />
+                Printer workflows
+              </span>
+              <span className="flex items-center gap-2 text-sm text-background/60">
+                <Settings2 className="size-3.5" />
+                Store tools
+              </span>
+            </div>
+          </div>
+        </section>
+        <section className="grid gap-4 border-b border-background/10 py-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="flex gap-3 rounded-2xl border border-background/10 bg-background/[.03] p-4">
+            <ShoppingCart className="size-5 shrink-0 text-accent" />
+            <div>
+              <p className="text-sm font-semibold">Fast checkout</p>
+              <p className="mt-1 text-xs leading-5 text-background/45">
+                Search, scan, pay and finish the sale.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-3 rounded-2xl border border-background/10 bg-background/[.03] p-4">
+            <Boxes className="size-5 shrink-0 text-accent" />
+            <div>
+              <p className="text-sm font-semibold">Stock control</p>
+              <p className="mt-1 text-xs leading-5 text-background/45">
+                Know what is available and what needs attention.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-3 rounded-2xl border border-background/10 bg-background/[.03] p-4">
+            <BarChart3 className="size-5 shrink-0 text-accent" />
+            <div>
+              <p className="text-sm font-semibold">Clear insights</p>
+              <p className="mt-1 text-xs leading-5 text-background/45">
+                Turn daily activity into useful business information.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-3 rounded-2xl border border-background/10 bg-background/[.03] p-4">
+            <Globe2 className="size-5 shrink-0 text-accent" />
+            <div>
+              <p className="text-sm font-semibold">Sell online</p>
+              <p className="mt-1 text-xs leading-5 text-background/45">
+                Give customers a simple way to find your products.
+              </p>
+            </div>
+          </div>
+        </section>
+        <div className="mt-8 flex flex-col gap-5 text-xs text-background/40 md:flex-row md:items-center md:justify-between">
+          <p>© {year} Strap by Kryonara. Built for modern shops and everyday retail.</p>
+          <div className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link to="/privacy" className="hover:text-background">
+              Privacy
+            </Link>
+            <Link to="/terms" className="hover:text-background">
+              Terms
+            </Link>
+            <Link to="/support" className="hover:text-background">
+              Help
+            </Link>
+            <Link to="/auth" className="hover:text-background">
+              Open register
+            </Link>
+            <a href="#faq" className="hover:text-background">
+              FAQ
+            </a>
+            <a href="#about" className="hover:text-background">
+              About
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 }

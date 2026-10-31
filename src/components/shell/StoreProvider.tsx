@@ -23,10 +23,18 @@ type StoreContextValue = {
 const StoreContext = createContext<StoreContextValue | null>(null);
 
 async function fetchMemberships(userId: string): Promise<Membership[]> {
-  const [{ data: memberRows, error: memberError }, { data: ownedStores, error: ownerError }] = await Promise.all([
-    supabase.from("store_members").select("role, stores!inner(*)").order("created_at", { ascending: true }),
-    supabase.from("stores").select("*").eq("owner_id", userId).order("created_at", { ascending: true }),
-  ]);
+  const [{ data: memberRows, error: memberError }, { data: ownedStores, error: ownerError }] =
+    await Promise.all([
+      supabase
+        .from("store_members")
+        .select("role, stores!inner(*)")
+        .order("created_at", { ascending: true }),
+      supabase
+        .from("stores")
+        .select("*")
+        .eq("owner_id", userId)
+        .order("created_at", { ascending: true }),
+    ]);
 
   if (memberError) throw new Error(memberError.message);
   if (ownerError) throw new Error(ownerError.message);
@@ -42,7 +50,9 @@ async function fetchMemberships(userId: string): Promise<Membership[]> {
     if (!known.has(store.id)) memberships.push({ store: store as StoreRow, role: "owner" });
   }
 
-  return memberships.sort((a, b) => String(a.store.created_at).localeCompare(String(b.store.created_at)));
+  return memberships.sort((a, b) =>
+    String(a.store.created_at).localeCompare(String(b.store.created_at)),
+  );
 }
 
 async function fetchBranches(storeId: string): Promise<BranchRow[]> {

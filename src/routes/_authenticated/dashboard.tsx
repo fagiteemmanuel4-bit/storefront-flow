@@ -1,6 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, ArrowRight, Bell, ChevronRight, Globe2, Package, Receipt, ScanLine, Sparkles, TrendingUp, Users, X } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Bell,
+  ChevronRight,
+  Globe2,
+  Package,
+  Receipt,
+  ScanLine,
+  Sparkles,
+  TrendingUp,
+  Users,
+  X,
+} from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
@@ -12,7 +25,15 @@ import { getBusinessMode } from "@/lib/business-modes";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Today's trading — Strap" }, { name: "description", content: "A live command centre for sales, stock, customers and your online store." }] }),
+  head: () => ({
+    meta: [
+      { title: "Today's trading — Strap" },
+      {
+        name: "description",
+        content: "A live command centre for sales, stock, customers and your online store.",
+      },
+    ],
+  }),
   component: DashboardPage,
 });
 
@@ -21,43 +42,494 @@ function DashboardPage() {
   const storeId = store?.id ?? null;
   const currency = store?.currency ?? "NGN";
   const [storeNudgeDismissed, setStoreNudgeDismissed] = useState(false);
-  const salesQuery = useQuery({ queryKey: ["sales", storeId], enabled: Boolean(storeId), queryFn: async () => { const { data, error } = await supabase.from("sales").select("id, reference, total, payment_method, created_at, branch_id").eq("store_id", storeId as string).order("created_at", { ascending: false }).limit(25); if (error) throw new Error(error.message); return data ?? []; } });
-  const lowStockQuery = useQuery({ queryKey: ["low-stock", storeId, branch?.id], enabled: Boolean(storeId && branch?.id), queryFn: async () => { const { data, error } = await supabase.from("branch_stock").select("quantity, products!inner(id, name, low_stock_threshold)").eq("store_id", storeId as string).eq("branch_id", branch!.id); if (error) throw new Error(error.message); return (data ?? []).filter((row) => row.products && row.quantity <= row.products.low_stock_threshold).sort((a, b) => a.quantity - b.quantity); } });
-  const onlineStoreQuery = useQuery({ queryKey: ["dashboard-online-store", storeId], enabled: Boolean(storeId), queryFn: async () => { const { data, error } = await onlineSupabase.from("online_stores").select("slug,display_name,is_published,setup_completed").eq("store_id", storeId as string).maybeSingle(); if (error) throw new Error(error.message); return data; } });
-  const onlineOrdersQuery = useQuery({ queryKey: ["dashboard-online-orders", storeId], enabled: Boolean(storeId && onlineStoreQuery.data?.setup_completed), queryFn: async () => { const { data, error } = await onlineSupabase.from("online_orders").select("id").eq("store_id", storeId as string).eq("status", "pending"); if (error) throw new Error(error.message); return data?.length ?? 0; } });
+  const salesQuery = useQuery({
+    queryKey: ["sales", storeId],
+    enabled: Boolean(storeId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sales")
+        .select("id, reference, total, payment_method, created_at, branch_id")
+        .eq("store_id", storeId as string)
+        .order("created_at", { ascending: false })
+        .limit(25);
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+  });
+  const lowStockQuery = useQuery({
+    queryKey: ["low-stock", storeId, branch?.id],
+    enabled: Boolean(storeId && branch?.id),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("branch_stock")
+        .select("quantity, products!inner(id, name, low_stock_threshold)")
+        .eq("store_id", storeId as string)
+        .eq("branch_id", branch!.id);
+      if (error) throw new Error(error.message);
+      return (data ?? [])
+        .filter((row) => row.products && row.quantity <= row.products.low_stock_threshold)
+        .sort((a, b) => a.quantity - b.quantity);
+    },
+  });
+  const onlineStoreQuery = useQuery({
+    queryKey: ["dashboard-online-store", storeId],
+    enabled: Boolean(storeId),
+    queryFn: async () => {
+      const { data, error } = await onlineSupabase
+        .from("online_stores")
+        .select("slug,display_name,is_published,setup_completed")
+        .eq("store_id", storeId as string)
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      return data;
+    },
+  });
+  const onlineOrdersQuery = useQuery({
+    queryKey: ["dashboard-online-orders", storeId],
+    enabled: Boolean(storeId && onlineStoreQuery.data?.setup_completed),
+    queryFn: async () => {
+      const { data, error } = await onlineSupabase
+        .from("online_orders")
+        .select("id")
+        .eq("store_id", storeId as string)
+        .eq("status", "pending");
+      if (error) throw new Error(error.message);
+      return data?.length ?? 0;
+    },
+  });
   const sales = salesQuery.data ?? [];
-  const startOfToday = new Date(); startOfToday.setHours(0, 0, 0, 0);
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
   const todaySales = sales.filter((s) => new Date(s.created_at) >= startOfToday);
   const todayRevenue = todaySales.reduce((sum, s) => sum + Number(s.total), 0);
   const online = onlineStoreQuery.data;
   const lowStockCount = lowStockQuery.data?.length ?? 0;
   const pendingOrders = onlineOrdersQuery.data ?? 0;
-  const businessMode = getBusinessMode((store?.storefront_settings as any)?.businessMode ?? store?.business_type); const isFashion = businessMode.key === "fashion";
+  const businessMode = getBusinessMode(
+    (store?.storefront_settings as any)?.businessMode ?? store?.business_type,
+  );
+  const isFashion = businessMode.key === "fashion";
 
-  return <AppShell title={isFashion ? "Fashion studio" : "Today's trading"}>
-    <div className="space-y-6 pb-8">
-      <section className="relative isolate overflow-hidden rounded-[2rem] border border-border bg-foreground px-6 py-7 text-background shadow-float sm:px-8 sm:py-9">
-        <div className="pointer-events-none absolute -right-28 -top-28 -z-10 size-80 rounded-full bg-accent/25 blur-3xl" />
-        <div className="relative flex flex-col gap-7 xl:flex-row xl:items-end xl:justify-between">
-          <div className="max-w-2xl"><div className="inline-flex items-center gap-2 rounded-full border border-background/10 bg-background/5 px-3 py-1.5 text-[11px] font-semibold text-background/65"><span className="size-1.5 rounded-full bg-accent" /> {isFashion ? "Fashion business overview" : "Live business overview"}</div><h2 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">{isFashion ? "Your collection, ready to sell." : "Your business, at a glance."}</h2><p className="mt-3 max-w-xl text-sm leading-6 text-background/65">{isFashion ? "Photograph new arrivals, keep sizes and colours organised, and share your latest styles with customers." : "See today's movement, act on what needs attention and get back to selling without digging through menus."}</p><div className="mt-6 flex flex-wrap gap-2.5"><Link to={isFashion?"/products":"/pos"} className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-bold text-foreground shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">{isFashion?<Package className="size-4"/>:<ScanLine className="size-4"/>} {isFashion ? "Manage collection" : "Sell now"}</Link><Link to={isFashion?(online?.setup_completed?"/online-store":"/online-store/setup"):"/products"} className="inline-flex items-center gap-2 rounded-xl border border-background/15 bg-background/10 px-4 py-3 text-sm font-semibold text-background transition hover:bg-background/15"><Globe2 className="size-4" /> {isFashion ? (online?.setup_completed ? "Promote online store" : "Set up online store") : "Manage stock"}</Link></div></div>
-          <div className="hidden min-w-48 rounded-2xl border border-background/10 bg-background/5 p-4 backdrop-blur sm:block"><p className="text-label-caps text-background/40">Current branch</p><p className="mt-2 font-display text-lg font-semibold">{branch?.name ?? "Main branch"}</p><p className="mt-1 text-xs leading-5 text-background/45">Updates appear here as your team sells.</p></div>
+  return (
+    <AppShell title={isFashion ? "Fashion studio" : "Today's trading"}>
+      <div className="space-y-6 pb-8">
+        <section className="relative isolate overflow-hidden rounded-[2rem] border border-border bg-foreground px-6 py-7 text-background shadow-float sm:px-8 sm:py-9">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-24 -top-36 z-0 size-[420px] rounded-full border border-[#C6F432]/35"
+          >
+            <div className="absolute inset-8 rounded-full border border-[#C6F432]/30" />
+            <div className="absolute inset-16 rounded-full border border-[#C6F432]/25" />
+            <div className="absolute inset-24 rounded-full border border-[#C6F432]/20" />
+            <div className="absolute inset-[7.25rem] rounded-full border border-[#C6F432]/15" />
+          </div>
+          <div className="relative z-10 flex flex-col gap-7 xl:flex-row xl:items-end xl:justify-between">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-background/10 bg-background/5 px-3 py-1.5 text-[11px] font-semibold text-background/65">
+                <span className="size-1.5 rounded-full bg-accent" />{" "}
+                {isFashion ? "Fashion business overview" : "Live business overview"}
+              </div>
+              <h2 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+                {isFashion ? "Your collection, ready to sell." : "Your business, at a glance."}
+              </h2>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-background/65">
+                {isFashion
+                  ? "Photograph new arrivals, keep sizes and colours organised, and share your latest styles with customers."
+                  : "See today's movement, act on what needs attention and get back to selling without digging through menus."}
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2.5">
+                <Link
+                  to={isFashion ? "/products" : "/pos"}
+                  className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-bold text-foreground shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                >
+                  {isFashion ? <Package className="size-4" /> : <ScanLine className="size-4" />}{" "}
+                  {isFashion ? "Manage collection" : "Sell now"}
+                </Link>
+                <Link
+                  to={
+                    isFashion
+                      ? online?.setup_completed
+                        ? "/online-store"
+                        : "/online-store/setup"
+                      : "/products"
+                  }
+                  className="inline-flex items-center gap-2 rounded-xl border border-background/15 bg-background/10 px-4 py-3 text-sm font-semibold text-background transition hover:bg-background/15"
+                >
+                  <Globe2 className="size-4" />{" "}
+                  {isFashion
+                    ? online?.setup_completed
+                      ? "Promote online store"
+                      : "Set up online store"
+                    : "Manage stock"}
+                </Link>
+              </div>
+            </div>
+            <div className="hidden min-w-48 rounded-2xl border border-background/10 bg-background/5 p-4 backdrop-blur sm:block">
+              <p className="text-label-caps text-background/40">Current branch</p>
+              <p className="mt-2 font-display text-lg font-semibold">
+                {branch?.name ?? "Main branch"}
+              </p>
+              <p className="mt-1 text-xs leading-5 text-background/45">
+                Updates appear here as your team sells.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <MetricCard
+            icon={<TrendingUp className="size-4" />}
+            label="Revenue today"
+            value={salesQuery.isLoading ? null : formatMoney(todayRevenue, currency)}
+            hint={`${todaySales.length} sale${todaySales.length === 1 ? "" : "s"} completed`}
+          />
+          <MetricCard
+            icon={<Receipt className="size-4" />}
+            label="Sales today"
+            value={salesQuery.isLoading ? null : String(todaySales.length)}
+            hint="Counter activity"
+          />
+          <MetricCard
+            icon={<AlertTriangle className="size-4" />}
+            label="Needs attention"
+            value={lowStockQuery.isLoading ? null : String(lowStockCount)}
+            hint={lowStockCount ? "Below stock threshold" : "Stock looks healthy"}
+            tone={lowStockCount ? "warning" : "success"}
+          />
+          <MetricCard
+            icon={<Bell className="size-4" />}
+            label="Online orders"
+            value={onlineOrdersQuery.isLoading ? null : String(pendingOrders)}
+            hint={online?.setup_completed ? "Waiting for action" : "Store not active"}
+            tone={pendingOrders ? "warning" : "success"}
+          />
+        </section>
+
+        <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex items-start gap-3">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-ink">
+                <Sparkles className="size-5" />
+              </span>
+              <div>
+                <p className="text-label-caps text-muted-foreground">Your business workspace</p>
+                <h2 className="mt-1 font-display text-xl font-bold tracking-tight">
+                  {businessMode.label}
+                </h2>
+                <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
+                  {businessMode.description}
+                </p>
+                {isFashion && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Your workspace puts product photos, customer sharing and online orders first.
+                    Checkout and stock remain available when you need them.
+                  </p>
+                )}
+              </div>
+            </div>
+            <Link
+              to="/settings/store-profile"
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-border px-3 text-sm font-semibold transition hover:bg-secondary"
+            >
+              Change mode <ArrowRight className="size-4" />
+            </Link>
+          </div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            {businessMode.quickActions.map((action) => (
+              <Link
+                key={action.label}
+                to={action.to as any}
+                className="group flex min-w-0 items-center justify-between gap-3 rounded-xl border border-border bg-background p-3 transition hover:border-accent/40 hover:bg-accent-soft"
+              >
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold">{action.label}</span>
+                  <span className="mt-0.5 block text-xs text-muted-foreground">
+                    {action.description}
+                  </span>
+                </span>
+                <ChevronRight className="size-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5" />
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {!storeNudgeDismissed && !online?.setup_completed && (
+          <section className="relative overflow-hidden rounded-2xl border border-accent/25 bg-accent-soft p-5 shadow-sm sm:p-6">
+            <button
+              type="button"
+              onClick={() => setStoreNudgeDismissed(true)}
+              aria-label="Dismiss online store reminder"
+              className="touch-target absolute right-3 top-3 flex size-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-surface hover:text-foreground"
+            >
+              <X className="size-4" />
+            </button>
+            <div className="flex flex-col gap-5 pr-8 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-accent text-foreground">
+                  <Globe2 className="size-5" />
+                </span>
+                <div>
+                  <p className="text-label-caps text-accent-ink">Your online store isn't set up</p>
+                  <h2 className="mt-1 font-display text-lg font-semibold">
+                    Start selling online when you're ready.
+                  </h2>
+                  <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
+                    Turn your catalogue into a storefront, share your link with customers and
+                    receive orders beyond your physical shop.
+                  </p>
+                </div>
+              </div>
+              <Link
+                to="/online-store/setup"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-foreground px-5 py-3 text-sm font-bold text-background transition hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Set up online store <ArrowRight className="size-4" />
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {online?.setup_completed ? (
+          <section className="relative overflow-hidden rounded-2xl border border-accent/20 bg-accent-soft p-5 sm:p-6">
+            <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex items-start gap-4">
+                <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent shadow-sm">
+                  <Globe2 className="size-6" />
+                </span>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-label-caps text-accent-ink">Online store is live</p>
+                    <span className="rounded-full bg-success/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-success">
+                      Live
+                    </span>
+                  </div>
+                  <h2 className="mt-1 font-display text-xl font-semibold">{online.display_name}</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {pendingOrders
+                      ? `${pendingOrders} pending order${pendingOrders === 1 ? "" : "s"} need your attention.`
+                      : "Your storefront is ready for customers."}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  to="/online-store/catalog"
+                  className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold"
+                >
+                  Catalogue <ArrowRight className="size-4" />
+                </Link>
+                <Link
+                  to="/online-store/orders"
+                  className="inline-flex items-center gap-2 rounded-xl bg-foreground px-4 py-2.5 text-sm font-semibold text-background"
+                >
+                  <Bell className="size-4" /> Orders
+                </Link>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        <div className="grid gap-5 xl:grid-cols-[1.35fr_.65fr]">
+          <section className="surface-card overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6">
+              <div>
+                <p className="text-label-caps text-muted-foreground">Live activity</p>
+                <h2 className="mt-1 font-display text-lg font-semibold">Recent sales</h2>
+              </div>
+              <Link
+                to="/reports"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-accent-ink hover:underline"
+              >
+                Reports <ChevronRight className="size-3.5" />
+              </Link>
+            </div>
+            {salesQuery.isLoading ? (
+              <div className="space-y-3 p-5">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+              </div>
+            ) : sales.length === 0 ? (
+              <EmptyState
+                icon={<Receipt className="size-7" />}
+                title="No sales recorded yet"
+                text="Ring one up from the Sell screen and it will appear here."
+              />
+            ) : (
+              <ul className="divide-y divide-border">
+                {sales.slice(0, 8).map((sale) => (
+                  <li
+                    key={sale.id}
+                    className="group flex items-center justify-between gap-4 px-5 py-4 transition hover:bg-secondary/40 sm:px-6"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="hidden size-9 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-ink sm:flex">
+                        <Receipt className="size-4" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="numeric text-sm font-bold">{sale.reference}</p>
+                        <p className="mt-1 truncate text-xs text-muted-foreground">
+                          {formatDateTime(sale.created_at)} · {sale.payment_method}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="numeric shrink-0 text-sm font-bold">
+                      {formatMoney(Number(sale.total), currency)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+          <section className="surface-card overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6">
+              <div>
+                <p className="text-label-caps text-muted-foreground">Inventory watch</p>
+                <h2 className="mt-1 font-display text-lg font-semibold">Low stock</h2>
+              </div>
+              <Link
+                to="/products"
+                className="text-xs font-semibold text-accent-ink hover:underline"
+              >
+                Open stock
+              </Link>
+            </div>
+            {lowStockQuery.isLoading ? (
+              <div className="space-y-3 p-5">
+                <Skeleton className="h-9 w-full" />
+                <Skeleton className="h-9 w-full" />
+              </div>
+            ) : lowStockCount === 0 ? (
+              <EmptyState
+                icon={<Package className="size-7" />}
+                title="Everything is above threshold"
+                text="Strap will flag products here when they need attention."
+              />
+            ) : (
+              <ul className="divide-y divide-border">
+                {lowStockQuery.data?.slice(0, 7).map((row) => (
+                  <li
+                    key={row.products!.id}
+                    className="flex items-center justify-between gap-3 px-5 py-3.5 sm:px-6"
+                  >
+                    <span className="truncate text-sm font-medium">{row.products!.name}</span>
+                    <span className="numeric rounded-full bg-warning-soft px-2.5 py-1 text-xs font-bold text-accent-ink">
+                      {row.quantity} left
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </div>
-      </section>
-
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><MetricCard icon={<TrendingUp className="size-4" />} label="Revenue today" value={salesQuery.isLoading ? null : formatMoney(todayRevenue, currency)} hint={`${todaySales.length} sale${todaySales.length === 1 ? "" : "s"} completed`} /><MetricCard icon={<Receipt className="size-4" />} label="Sales today" value={salesQuery.isLoading ? null : String(todaySales.length)} hint="Counter activity" /><MetricCard icon={<AlertTriangle className="size-4" />} label="Needs attention" value={lowStockQuery.isLoading ? null : String(lowStockCount)} hint={lowStockCount ? "Below stock threshold" : "Stock looks healthy"} tone={lowStockCount ? "warning" : "success"} /><MetricCard icon={<Bell className="size-4" />} label="Online orders" value={onlineOrdersQuery.isLoading ? null : String(pendingOrders)} hint={online?.setup_completed ? "Waiting for action" : "Store not active"} tone={pendingOrders ? "warning" : "success"} /></section>
-
-      <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6"><div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"><div className="flex items-start gap-3"><span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-ink"><Sparkles className="size-5"/></span><div><p className="text-label-caps text-muted-foreground">Your business workspace</p><h2 className="mt-1 font-display text-xl font-bold tracking-tight">{businessMode.label}</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">{businessMode.description}</p>{isFashion&&<p className="mt-2 text-xs text-muted-foreground">Your workspace puts product photos, customer sharing and online orders first. Checkout and stock remain available when you need them.</p>}</div></div><Link to="/settings/store-profile" className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-border px-3 text-sm font-semibold transition hover:bg-secondary">Change mode <ArrowRight className="size-4"/></Link></div><div className="mt-4 grid gap-2 sm:grid-cols-3">{businessMode.quickActions.map((action) => <Link key={action.label} to={action.to as any} className="group flex min-w-0 items-center justify-between gap-3 rounded-xl border border-border bg-background p-3 transition hover:border-accent/40 hover:bg-accent-soft"><span className="min-w-0"><span className="block text-sm font-semibold">{action.label}</span><span className="mt-0.5 block text-xs text-muted-foreground">{action.description}</span></span><ChevronRight className="size-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5"/></Link>)}</div></section>
-
-      {!storeNudgeDismissed && !online?.setup_completed && <section className="relative overflow-hidden rounded-2xl border border-accent/25 bg-accent-soft p-5 shadow-sm sm:p-6"><button type="button" onClick={() => setStoreNudgeDismissed(true)} aria-label="Dismiss online store reminder" className="touch-target absolute right-3 top-3 flex size-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-surface hover:text-foreground"><X className="size-4" /></button><div className="flex flex-col gap-5 pr-8 sm:flex-row sm:items-center sm:justify-between"><div className="flex items-start gap-4"><span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-accent text-foreground"><Globe2 className="size-5" /></span><div><p className="text-label-caps text-accent-ink">Your online store isn't set up</p><h2 className="mt-1 font-display text-lg font-semibold">Start selling online when you're ready.</h2><p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">Turn your catalogue into a storefront, share your link with customers and receive orders beyond your physical shop.</p></div></div><Link to="/online-store/setup" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-foreground px-5 py-3 text-sm font-bold text-background transition hover:-translate-y-0.5 hover:shadow-md">Set up online store <ArrowRight className="size-4" /></Link></div></section>}
-
-      {online?.setup_completed ? <section className="relative overflow-hidden rounded-2xl border border-accent/20 bg-accent-soft p-5 sm:p-6"><div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between"><div className="flex items-start gap-4"><span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent shadow-sm"><Globe2 className="size-6" /></span><div><div className="flex flex-wrap items-center gap-2"><p className="text-label-caps text-accent-ink">Online store is live</p><span className="rounded-full bg-success/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-success">Live</span></div><h2 className="mt-1 font-display text-xl font-semibold">{online.display_name}</h2><p className="mt-1 text-sm text-muted-foreground">{pendingOrders ? `${pendingOrders} pending order${pendingOrders === 1 ? "" : "s"} need your attention.` : "Your storefront is ready for customers."}</p></div></div><div className="flex flex-wrap gap-2"><Link to="/online-store/catalog" className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold">Catalogue <ArrowRight className="size-4" /></Link><Link to="/online-store/orders" className="inline-flex items-center gap-2 rounded-xl bg-foreground px-4 py-2.5 text-sm font-semibold text-background"><Bell className="size-4" /> Orders</Link></div></div></section> : null}
-
-      <div className="grid gap-5 xl:grid-cols-[1.35fr_.65fr]"><section className="surface-card overflow-hidden"><div className="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6"><div><p className="text-label-caps text-muted-foreground">Live activity</p><h2 className="mt-1 font-display text-lg font-semibold">Recent sales</h2></div><Link to="/reports" className="inline-flex items-center gap-1 text-xs font-semibold text-accent-ink hover:underline">Reports <ChevronRight className="size-3.5" /></Link></div>{salesQuery.isLoading ? <div className="space-y-3 p-5"><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /></div> : sales.length === 0 ? <EmptyState icon={<Receipt className="size-7" />} title="No sales recorded yet" text="Ring one up from the Sell screen and it will appear here." /> : <ul className="divide-y divide-border">{sales.slice(0, 8).map((sale) => <li key={sale.id} className="group flex items-center justify-between gap-4 px-5 py-4 transition hover:bg-secondary/40 sm:px-6"><div className="flex min-w-0 items-center gap-3"><span className="hidden size-9 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-ink sm:flex"><Receipt className="size-4" /></span><div className="min-w-0"><p className="numeric text-sm font-bold">{sale.reference}</p><p className="mt-1 truncate text-xs text-muted-foreground">{formatDateTime(sale.created_at)} · {sale.payment_method}</p></div></div><span className="numeric shrink-0 text-sm font-bold">{formatMoney(Number(sale.total), currency)}</span></li>)}</ul>}</section><section className="surface-card overflow-hidden"><div className="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6"><div><p className="text-label-caps text-muted-foreground">Inventory watch</p><h2 className="mt-1 font-display text-lg font-semibold">Low stock</h2></div><Link to="/products" className="text-xs font-semibold text-accent-ink hover:underline">Open stock</Link></div>{lowStockQuery.isLoading ? <div className="space-y-3 p-5"><Skeleton className="h-9 w-full" /><Skeleton className="h-9 w-full" /></div> : lowStockCount === 0 ? <EmptyState icon={<Package className="size-7" />} title="Everything is above threshold" text="Strap will flag products here when they need attention." /> : <ul className="divide-y divide-border">{lowStockQuery.data?.slice(0, 7).map((row) => <li key={row.products!.id} className="flex items-center justify-between gap-3 px-5 py-3.5 sm:px-6"><span className="truncate text-sm font-medium">{row.products!.name}</span><span className="numeric rounded-full bg-warning-soft px-2.5 py-1 text-xs font-bold text-accent-ink">{row.quantity} left</span></li>)}</ul>}</section></div>
-      <section className="overflow-hidden rounded-2xl border border-border bg-surface"><div className="border-b border-border px-5 py-4 sm:px-6"><div className="flex items-center gap-2"><Sparkles className="size-4 text-accent-ink" /><p className="text-label-caps text-muted-foreground">Quick workspace</p></div><h2 className="mt-1 font-display text-lg font-semibold">What do you want to do?</h2></div><div className="grid divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0"><QuickAction to="/pos" icon={<ScanLine className="size-5" />} title="Open POS" text="Start a sale quickly." /><QuickAction to="/products" icon={<Package className="size-5" />} title="Manage stock" text="Add, edit or count products." /><QuickAction to="/customers" icon={<Users className="size-5" />} title="Customers" text="See purchase relationships." /></div></section>
-    </div>
-  </AppShell>;
+        <section className="overflow-hidden rounded-2xl border border-border bg-surface">
+          <div className="border-b border-border px-5 py-4 sm:px-6">
+            <div className="flex items-center gap-2">
+              <Sparkles className="size-4 text-accent-ink" />
+              <p className="text-label-caps text-muted-foreground">Quick workspace</p>
+            </div>
+            <h2 className="mt-1 font-display text-lg font-semibold">What do you want to do?</h2>
+          </div>
+          <div className="grid divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            <QuickAction
+              to="/pos"
+              icon={<ScanLine className="size-5" />}
+              title="Open POS"
+              text="Start a sale quickly."
+            />
+            <QuickAction
+              to="/products"
+              icon={<Package className="size-5" />}
+              title="Manage stock"
+              text="Add, edit or count products."
+            />
+            <QuickAction
+              to="/customers"
+              icon={<Users className="size-5" />}
+              title="Customers"
+              text="See purchase relationships."
+            />
+          </div>
+        </section>
+      </div>
+    </AppShell>
+  );
 }
 
-function MetricCard({ icon, label, value, hint, tone = "default" }: { icon: React.ReactNode; label: string; value: string | null; hint: string; tone?: "default" | "warning" | "success" }) { const dot = tone === "warning" ? "bg-accent" : tone === "success" ? "bg-success" : "bg-foreground/20"; return <div className={`surface-card group p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-float ${tone === "warning" ? "border-accent/30" : ""}`}><div className="flex items-center justify-between gap-3"><p className="text-label-caps flex items-center gap-1.5 text-muted-foreground">{icon}{label}</p><span className={`size-1.5 rounded-full ${dot}`} /></div>{value === null ? <Skeleton className="mt-4 h-9 w-28" /> : <p className={`numeric mt-3 text-3xl font-bold tracking-tight ${tone === "warning" ? "text-accent-ink" : ""}`}>{value}</p>}<p className="mt-2 text-xs text-muted-foreground">{hint}</p></div>; }
-function EmptyState({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) { return <div className="p-8 text-center"><span className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-secondary text-muted-foreground">{icon}</span><p className="mt-4 text-sm font-semibold">{title}</p><p className="mx-auto mt-1 max-w-xs text-xs leading-5 text-muted-foreground">{text}</p></div>; }
-function QuickAction({ to, icon, title, text }: { to: "/pos" | "/products" | "/customers"; icon: React.ReactNode; title: string; text: string }) { return <Link to={to} className="group flex items-center gap-4 p-5 transition duration-200 hover:bg-secondary/40 sm:p-6"><span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-ink transition group-hover:scale-105">{icon}</span><span className="min-w-0"><span className="block font-display text-base font-semibold">{title}</span><span className="mt-1 block text-sm text-muted-foreground">{text}</span></span><ArrowRight className="ml-auto size-4 shrink-0 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-accent-ink" /></Link>; }
+function MetricCard({
+  icon,
+  label,
+  value,
+  hint,
+  tone = "default",
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string | null;
+  hint: string;
+  tone?: "default" | "warning" | "success";
+}) {
+  const dot =
+    tone === "warning" ? "bg-accent" : tone === "success" ? "bg-success" : "bg-foreground/20";
+  return (
+    <div
+      className={`surface-card group p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-float ${tone === "warning" ? "border-accent/30" : ""}`}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-label-caps flex items-center gap-1.5 text-muted-foreground">
+          {icon}
+          {label}
+        </p>
+        <span className={`size-1.5 rounded-full ${dot}`} />
+      </div>
+      {value === null ? (
+        <Skeleton className="mt-4 h-9 w-28" />
+      ) : (
+        <p
+          className={`numeric mt-3 text-3xl font-bold tracking-tight ${tone === "warning" ? "text-accent-ink" : ""}`}
+        >
+          {value}
+        </p>
+      )}
+      <p className="mt-2 text-xs text-muted-foreground">{hint}</p>
+    </div>
+  );
+}
+function EmptyState({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
+  return (
+    <div className="p-8 text-center">
+      <span className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-secondary text-muted-foreground">
+        {icon}
+      </span>
+      <p className="mt-4 text-sm font-semibold">{title}</p>
+      <p className="mx-auto mt-1 max-w-xs text-xs leading-5 text-muted-foreground">{text}</p>
+    </div>
+  );
+}
+function QuickAction({
+  to,
+  icon,
+  title,
+  text,
+}: {
+  to: "/pos" | "/products" | "/customers";
+  icon: React.ReactNode;
+  title: string;
+  text: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="group flex items-center gap-4 p-5 transition duration-200 hover:bg-secondary/40 sm:p-6"
+    >
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-ink transition group-hover:scale-105">
+        {icon}
+      </span>
+      <span className="min-w-0">
+        <span className="block font-display text-base font-semibold">{title}</span>
+        <span className="mt-1 block text-sm text-muted-foreground">{text}</span>
+      </span>
+      <ArrowRight className="ml-auto size-4 shrink-0 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-accent-ink" />
+    </Link>
+  );
+}
