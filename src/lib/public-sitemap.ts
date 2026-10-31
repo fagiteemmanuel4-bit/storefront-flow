@@ -2,25 +2,38 @@ import { onlineSupabase } from "@/integrations/supabase/online-client";
 
 const siteUrl =
   (import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined)?.replace(/\/$/, "") ||
-  window.location.origin;
+  (typeof window !== "undefined" ? window.location.origin : "https://storefront-flow.vercel.app");
 
 export async function buildPublicSitemapXml() {
   const [{ data: stores, error: storesError }, { data: products, error: productsError }] =
     await Promise.all([
-      onlineSupabase.rpc("get_public_sitemap_stores", { _limit: 5000 }),
-      onlineSupabase.rpc("get_public_sitemap_products", { _limit: 50000 }),
+      onlineSupabase
+        .from("online_stores")
+        .select("store_id,slug,updated_at")
+        .eq("is_published", true),
+      onlineSupabase
+        .from("online_products")
+        .select("store_id,slug,updated_at")
+        .eq("enabled", true),
     ]);
   if (storesError) throw storesError;
   if (productsError) throw productsError;
 
   const urls = new Map<string, string>();
-  for (const store of stores ?? [])
-    urls.set(`/store/${encodeURIComponent(store.store_slug)}`, store.updated_at);
-  for (const product of products ?? [])
+  const storeSlugs = new Map((stores ?? []).map((store) => [store.store_id, store.slug]));
+
+  for (const store of stores ?? []) {
+    urls.set(`/store/${encodeURIComponent(store.slug)}`, store.updated_at);
+  }
+
+  for (const product of products ?? []) {
+    const storeSlug = storeSlugs.get(product.store_id);
+    if (!storeSlug || !product.slug) continue;
     urls.set(
-      `/store/${encodeURIComponent(product.store_slug)}/products/${encodeURIComponent(product.product_slug)}`,
+      `/store/${encodeURIComponent(storeSlug)}/products/${encodeURIComponent(product.slug)}`,
       product.updated_at,
     );
+  }
 
   const body = [...urls.entries()]
     .map(
