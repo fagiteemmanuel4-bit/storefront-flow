@@ -49,7 +49,7 @@ export function AddExpenseSheet({
   saving?: boolean;
 }) {
   const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState(EXPENSE_CATEGORIES[0]);
+  const [category, setCategory] = useState<string>(EXPENSE_CATEGORIES[0]);
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [description, setDescription] = useState("");
   const submit = async (e: React.FormEvent) => {
