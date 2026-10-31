@@ -10,6 +10,7 @@ import {
   HardDrive,
   HelpCircle,
   LogOut,
+  LockKeyhole,
   Package,
   Plus,
   ReceiptText,
@@ -45,9 +46,11 @@ function MenuLink({
   onClick,
   badge,
   featured = false,
+  locked = false,
 }: {
   to:
     | "/reports"
+    | "/stock-sense"
     | "/expenses"
     | "/online-store"
     | "/online-store/orders"
@@ -67,10 +70,11 @@ function MenuLink({
   onClick: () => void;
   badge?: number;
   featured?: boolean;
+  locked?: boolean;
 }) {
   return (
     <Link
-      to={to}
+      to={(locked ? "/upgrade" : to) as any}
       onClick={onClick}
       className={cn(
         "group flex w-full items-center gap-3 rounded-2xl border px-3 py-3 transition-colors active:bg-secondary",
@@ -105,6 +109,7 @@ function ActionLink({
   icon: Icon,
   label,
   onClick,
+  locked = false,
 }: {
   to:
     | "/products"
@@ -118,15 +123,22 @@ function ActionLink({
   icon: typeof Store;
   label: string;
   onClick: () => void;
+  locked?: boolean;
 }) {
   return (
     <Link
-      to={to}
+      to={(locked ? "/upgrade" : to) as any}
       onClick={onClick}
       className="flex min-w-0 flex-col items-center gap-2 rounded-2xl border border-border/70 bg-secondary/45 px-2 py-3 text-center transition hover:border-accent/30 hover:bg-accent-soft active:scale-[.98]"
     >
-      <span className="flex size-9 items-center justify-center rounded-xl bg-background">
+      <span className="relative flex size-9 items-center justify-center rounded-xl bg-background">
         <Icon className="size-[17px]" />
+        {locked && (
+          <LockKeyhole
+            className="absolute -right-1 -top-1 size-3.5 text-accent-ink"
+            aria-label="Business plan required"
+          />
+        )}
       </span>
       <span className="text-[11px] font-semibold leading-tight">{label}</span>
     </Link>
@@ -160,6 +172,11 @@ export function AppMenuSheet({
   branchName,
   role,
   onSignOut,
+  canExport,
+  canOnlineStore,
+  canAnalytics,
+  canTeam,
+  canStockSense,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -167,10 +184,14 @@ export function AppMenuSheet({
   branchName: string | null;
   role: StoreRole | null;
   onSignOut: () => void;
+  canExport: boolean;
+  canOnlineStore: boolean;
+  canAnalytics: boolean;
+  canTeam: boolean;
+  canStockSense: boolean;
 }) {
   const [exportOpen, setExportOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [staffActive, setStaffActive] = useState(() => getStaffSession(store?.id));
   const isOwner = role === "owner";
   const canManageStaff = role === "owner" || role === "manager";
@@ -352,12 +373,14 @@ export function AppMenuSheet({
                       icon={isFashion ? Globe2 : ScanLine}
                       label={isFashion ? "Promote store" : "New sale"}
                       onClick={close}
+                      locked={isFashion && !canOnlineStore}
                     />
                     <ActionLink
                       to="/online-store/orders"
                       icon={ShoppingBag}
                       label={isFashion ? "Customer orders" : "View orders"}
                       onClick={close}
+                      locked={!canOnlineStore}
                     />
                     <ActionLink
                       to={isFashion ? "/products" : "/expenses"}
@@ -428,6 +451,7 @@ export function AppMenuSheet({
                   hint="Sales from every channel"
                   badge={pendingOrders}
                   onClick={close}
+                  locked={!canOnlineStore}
                 />
                 <MenuLink
                   to="/customers"
@@ -459,6 +483,7 @@ export function AppMenuSheet({
                     hint="Manage your public storefront"
                     onClick={close}
                     featured
+                    locked={!canOnlineStore}
                   />
                 )}
                 {storefront?.setup_completed && (
@@ -470,6 +495,7 @@ export function AppMenuSheet({
                         label="Catalog"
                         hint="Publish and organise products"
                         onClick={close}
+                        locked={!canOnlineStore}
                       />
                     }{" "}
                     {storefrontPath && (
@@ -508,6 +534,7 @@ export function AppMenuSheet({
                   label="Reports"
                   hint="Trading insight and performance"
                   onClick={close}
+                  locked={!canAnalytics}
                 />
                 <MenuLink
                   to="/staff"
@@ -515,6 +542,7 @@ export function AppMenuSheet({
                   label="Team"
                   hint="Staff accounts and permissions"
                   onClick={close}
+                  locked={!canTeam}
                 />
                 <MenuLink
                   to="/hardware"
@@ -522,6 +550,15 @@ export function AppMenuSheet({
                   label="Hardware"
                   hint="Printers and connected devices"
                   onClick={close}
+                  locked={!canTeam}
+                />
+                <MenuLink
+                  to="/stock-sense"
+                  icon={Boxes}
+                  label="Stock Sense"
+                  hint="Stock health and replenishment suggestions"
+                  onClick={close}
+                  locked={!canStockSense}
                 />
                 <MenuLink
                   to="/help"
@@ -530,9 +567,9 @@ export function AppMenuSheet({
                   hint="Guides and support"
                   onClick={close}
                 />
-                <button
-                  type="button"
-                  onClick={() => setSettingsOpen(true)}
+                <Link
+                  to="/settings"
+                  onClick={close}
                   className="group flex w-full items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-left transition hover:border-border hover:bg-secondary/70"
                 >
                   <span className="flex size-10 items-center justify-center rounded-xl bg-secondary group-hover:bg-accent-soft">
@@ -545,21 +582,35 @@ export function AppMenuSheet({
                     </span>
                   </span>
                   <ChevronRight className="size-4 text-muted-foreground" />
-                </button>
+                </Link>
               </div>
             </section>
             <div className="mt-5 rounded-2xl border border-border bg-secondary/35 p-3">
-              <button
-                type="button"
-                onClick={() => {
-                  close();
-                  setExportOpen(true);
-                }}
-                className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left text-sm font-semibold hover:bg-background"
-              >
-                <Download className="size-4" />
-                Download store data
-              </button>
+              {canExport ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    close();
+                    setExportOpen(true);
+                  }}
+                  className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left text-sm font-semibold hover:bg-background"
+                >
+                  <Download className="size-4" />
+                  Download store data
+                </button>
+              ) : (
+                <Link
+                  to="/upgrade"
+                  onClick={close}
+                  className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left text-sm font-semibold text-accent-ink hover:bg-background"
+                >
+                  <LockKeyhole className="size-4" />
+                  <span className="min-w-0 flex-1">Download store data</span>
+                  <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[9px] font-bold uppercase">
+                    Business
+                  </span>
+                </Link>
+              )}
             </div>
           </div>
           <div className="shrink-0 border-t border-border/70 bg-background/90 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
@@ -582,112 +633,12 @@ export function AppMenuSheet({
           </div>
         </SheetContent>
       </Sheet>
-      <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <SheetContent
-          side="right"
-          className="flex h-[100dvh] w-full max-w-none flex-col bg-background p-0 sm:w-[420px]"
-        >
-          <SheetHeader className="border-b border-border/70 px-5 pb-5 pt-[max(1.25rem,env(safe-area-inset-top))] text-left">
-            <button
-              type="button"
-              onClick={() => setSettingsOpen(false)}
-              className="mb-3 flex w-fit items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground"
-            >
-              ← Back
-            </button>
-            <SheetTitle className="text-xl">Settings</SheetTitle>
-            <p className="text-xs text-muted-foreground">
-              Configure how your Strap workspace works.
-            </p>
-          </SheetHeader>
-          <div className="flex-1 overflow-y-auto p-4">
-            <div className="space-y-1.5">
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/store-profile"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Store className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Store profile</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/appearance"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Store className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Appearance</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/online-store"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Globe2 className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Online store</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/checkout"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <ShoppingBag className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Checkout</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/inventory"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Package className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Inventory</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/staff"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Users className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Team</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/notifications"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Bell className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Notifications</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/security"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Settings className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Security</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-              <Link
-                onClick={() => setSettingsOpen(false)}
-                to="/settings/password"
-                className="flex items-center gap-3 rounded-2xl p-3 hover:bg-secondary"
-              >
-                <Settings className="size-5" />
-                <span className="flex-1 text-sm font-semibold">Password</span>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </Link>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-      <ExportDataDialog store={store} open={exportOpen} onOpenChange={setExportOpen} />
+      <ExportDataDialog
+        store={store}
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        canExport={canExport}
+      />
       <DeleteStoreDialog store={store} open={deleteOpen} onOpenChange={setDeleteOpen} />
     </>
   );

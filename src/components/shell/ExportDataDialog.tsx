@@ -70,10 +70,12 @@ export function ExportDataDialog({
   store,
   open,
   onOpenChange,
+  canExport,
 }: {
   store: StoreRow | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  canExport: boolean;
 }) {
   const [preset, setPreset] = useState<PresetId>("today");
   const [from, setFrom] = useState("");
@@ -81,6 +83,10 @@ export function ExportDataDialog({
   const [busy, setBusy] = useState(false);
 
   async function handleDownload() {
+    if (!canExport) {
+      toast.error("Store data export is included with the Business plan.");
+      return;
+    }
     if (!store) return;
     if (preset === "custom" && !from) {
       toast.error("Pick a start date first");
@@ -157,13 +163,13 @@ export function ExportDataDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>
             Cancel
           </Button>
-          <Button onClick={() => void handleDownload()} disabled={busy}>
+          <Button onClick={() => void handleDownload()} disabled={busy || !canExport}>
             {busy ? (
               <Loader2 className="size-4 animate-spin" aria-hidden />
             ) : (
               <Download className="size-4" aria-hidden />
             )}
-            {busy ? "Building…" : "Download"}
+            {busy ? "Building…" : canExport ? "Download" : "Business plan required"}
           </Button>
         </BottomSheetFooter>
       </BottomSheetContent>

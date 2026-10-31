@@ -6,6 +6,7 @@ import {
   Copy,
   KeyRound,
   Link2,
+  LockKeyhole,
   Plus,
   Settings2,
   ShieldCheck,
@@ -31,6 +32,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
+import { getStoreSubscription } from "@/lib/plan-access";
+import { getLimit } from "@/lib/commerceEntitlements";
 import {
   STAFF_ROLE_META,
   clearStaffSession,
@@ -119,8 +122,16 @@ function StaffPage() {
     enabled: !!store?.id,
     queryFn: () => branchList(store!.id),
   });
+  const subscriptionQuery = useQuery({
+    queryKey: ["store-subscription", store?.id],
+    enabled: Boolean(store?.id),
+    queryFn: () => getStoreSubscription(store!.id),
+  });
   const staff = sq.data ?? [];
   const branches = bq.data ?? [];
+  const tier = subscriptionQuery.data?.status === "active" ? subscriptionQuery.data.plan : "free";
+  const staffLimit = getLimit(tier, "staff");
+  const staffLimitReached = staffLimit !== -1 && staff.length >= staffLimit;
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const link = (m: StaffRow) => `${origin}/staff-login/${m.login_slug || m.id}`;
   function choose(m: StaffRow) {
@@ -131,6 +142,11 @@ function StaffPage() {
   }
   async function createStaff() {
     if (!store?.id || !canManage) return;
+    if (staffLimitReached) {
+      toast.error("Your current plan has reached its staff limit.");
+      void nav({ to: "/upgrade" });
+      return;
+    }
     if (!name.trim() || !/^\d{4,6}$/.test(pin))
       return toast.error("Enter a name and a 4–6 digit PIN.");
     setBusy(true);
@@ -253,12 +269,18 @@ function StaffPage() {
                 sign-in link.
               </p>
             </div>
-            {canManage && (
-              <Button onClick={() => setCreate(true)}>
-                <Plus className="mr-2 size-4" />
-                Add staff
-              </Button>
-            )}
+            {canManage &&
+              (staffLimitReached ? (
+                <Button variant="outline" onClick={() => void nav({ to: "/upgrade" })}>
+                  <LockKeyhole className="mr-2 size-4" />
+                  Unlock more staff
+                </Button>
+              ) : (
+                <Button onClick={() => setCreate(true)}>
+                  <Plus className="mr-2 size-4" />
+                  Add staff
+                </Button>
+              ))}
           </div>
         </section>
         {session && (
