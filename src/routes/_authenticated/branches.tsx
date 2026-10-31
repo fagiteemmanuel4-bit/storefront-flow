@@ -21,8 +21,7 @@ function Branches() {
     queryFn: () => getStoreSubscription(store!.id),
     enabled: Boolean(store?.id),
   });
-  const tier =
-    subscriptionQuery.data?.status === "active" ? subscriptionQuery.data.plan : "free";
+  const tier = subscriptionQuery.data?.status === "active" ? subscriptionQuery.data.plan : "free";
   const branchLimit = getLimit(tier, "branches");
   const branchLimitReached = branchLimit !== -1 && branches.length >= branchLimit;
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -126,12 +125,9 @@ function Branches() {
                 ready for your growing business.
               </p>
             </div>
-            {canEdit && (
-              branchLimitReached ? (
-                <Button
-                  variant="outline"
-                  onClick={() => void navigate({ to: "/upgrade" })}
-                >
+            {canEdit &&
+              (branchLimitReached ? (
+                <Button variant="outline" onClick={() => void navigate({ to: "/upgrade" })}>
                   <LockKeyhole className="mr-2 size-4" />
                   Unlock more branches
                 </Button>
@@ -140,8 +136,7 @@ function Branches() {
                   <Plus className="mr-2 size-4" />
                   Add branch
                 </Button>
-              )
-            )}
+              ))}
           </div>
         </section>
         {open && (
