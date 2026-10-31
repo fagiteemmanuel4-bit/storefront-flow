@@ -571,11 +571,16 @@ function PosPage() {
           cart.map((line) => (
             <div
               key={line.product.id}
-              className="group rounded-xl border border-border/80 bg-background p-3"
+              className="group rounded-xl border border-[#C6F432]/50 bg-background p-3 ring-1 ring-[#C6F432]/15"
             >
               <div className="flex items-start gap-2.5">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">{line.product.name}</p>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <p className="truncate text-sm font-semibold">{line.product.name}</p>
+                    <span className="inline-flex shrink-0 items-center rounded-md bg-[#C6F432] px-1.5 py-0.5 text-[10px] font-extrabold text-[#0E1116]">
+                      {line.quantity}×
+                    </span>
+                  </div>
                   {line.variant && (
                     <p className="mt-0.5 text-xs font-medium text-accent-ink">
                       {line.variant.size} / {line.variant.color}
@@ -781,23 +786,45 @@ function PosPage() {
                   ? "Search clothing by name or category"
                   : "Search products, name or barcode"
               }
-              className="h-11 rounded-xl border-border bg-background pl-10 shadow-none"
+              className="h-14 rounded-2xl border-border bg-background pl-10 text-base shadow-none"
             />
           </div>
-          <div className="mt-2.5 flex min-w-0 flex-wrap items-center gap-2">
-            <select
-              aria-label="Filter by category"
-              className="field h-9 min-h-0 max-w-full shrink-0 rounded-lg bg-background px-3 py-1.5 text-xs font-semibold"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+          <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2.5">
+            <div
+              className="-mx-1 flex w-full min-w-0 items-center gap-2 overflow-x-auto px-1 pb-1"
+              role="group"
+              aria-label="Filter products by category"
             >
-              <option value="all">All categories</option>
+              <button
+                type="button"
+                onClick={() => setCategory("all")}
+                aria-pressed={category === "all"}
+                className={cn(
+                  "shrink-0 rounded-full border px-3.5 py-2 text-xs font-bold transition",
+                  category === "all"
+                    ? "border-[#C6F432] bg-[#C6F432] text-[#0E1116] shadow-sm"
+                    : "border-border bg-background text-muted-foreground hover:border-[#C6F432]/60 hover:text-foreground",
+                )}
+              >
+                All
+              </button>
               {categories.map((c) => (
-                <option key={c} value={c}>
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setCategory(c)}
+                  aria-pressed={category === c}
+                  className={cn(
+                    "shrink-0 rounded-full border px-3.5 py-2 text-xs font-semibold transition",
+                    category === c
+                      ? "border-[#C6F432] bg-[#C6F432] text-[#0E1116] shadow-sm"
+                      : "border-border bg-background text-muted-foreground hover:border-[#C6F432]/60 hover:text-foreground",
+                  )}
+                >
                   {c}
-                </option>
+                </button>
               ))}
-            </select>
+            </div>
             <span className="mr-auto text-xs text-muted-foreground">
               {visible.length} {visible.length === 1 ? "product" : "products"}
             </span>
@@ -979,7 +1006,7 @@ function PosPage() {
         {cart.length > 0 && (
           <div className="fixed inset-x-3 bottom-[calc(84px+env(safe-area-inset-bottom))] z-40 mx-auto max-w-[430px] sm:inset-x-4 lg:hidden">
             <Button
-              className="h-14 w-full rounded-[22px] border border-black bg-black px-4 text-sm text-white shadow-[0_14px_32px_rgba(0,0,0,.30)] hover:bg-neutral-900 hover:text-white active:scale-[.99]"
+              className="h-[60px] w-full rounded-2xl border border-[#0E1116] bg-[#0E1116] px-5 text-sm text-white shadow-[0_14px_32px_rgba(0,0,0,.28)] hover:bg-[#242a33] hover:text-white active:scale-[.99]"
               onClick={() => setCartOpen(true)}
             >
               <span className="flex min-w-0 items-center gap-2">
@@ -989,7 +1016,7 @@ function PosPage() {
                   {cart.reduce((n, l) => n + l.quantity, 0) === 1 ? "item" : "items"}
                 </span>
               </span>
-              <span className="numeric ml-auto text-base">{formatMoney(total, currency)}</span>
+              <span className="numeric ml-auto text-base font-extrabold text-[#C6F432]">{formatMoney(total, currency)}</span>
             </Button>
           </div>
         )}

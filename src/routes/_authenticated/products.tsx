@@ -330,7 +330,7 @@ function ProductsPage() {
                   Import products
                 </Button>
                 <Button
-                  className="h-12"
+                  className="h-12 rounded-xl border border-[#C6F432] bg-[#C6F432] text-[#0E1116] shadow-sm transition hover:-translate-y-0.5 hover:border-[#b0dc20] hover:bg-[#b0dc20] hover:shadow-md"
                   onClick={() => {
                     setEditing(null);
                     setFormOpen(true);
