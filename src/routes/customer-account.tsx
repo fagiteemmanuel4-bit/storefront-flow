@@ -139,7 +139,15 @@ function CustomerAccountPage() {
             });
       const result = await rpc;
       if (result.error) throw new Error(result.error.message);
-      const token = String(result.data?.token ?? "");
+      const resultData = result.data;
+      const tokenValue =
+        resultData &&
+        typeof resultData === "object" &&
+        !Array.isArray(resultData) &&
+        "token" in resultData
+          ? resultData.token
+          : resultData;
+      const token = String(tokenValue ?? "");
       if (!token) throw new Error("Could not create a secure session");
       saveToken(store, token);
       setForm({ name: "", email: "", phone: "", password: "" });
