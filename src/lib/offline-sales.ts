@@ -15,7 +15,11 @@ const KEY = "kudi.offline-sales.v1";
 
 function readQueue(): OfflineSale[] {
   if (typeof window === "undefined") return [];
-  try { return JSON.parse(localStorage.getItem(KEY) || "[]") as OfflineSale[]; } catch { return []; }
+  try {
+    return JSON.parse(localStorage.getItem(KEY) || "[]") as OfflineSale[];
+  } catch {
+    return [];
+  }
 }
 
 function writeQueue(queue: OfflineSale[]) {
@@ -24,7 +28,9 @@ function writeQueue(queue: OfflineSale[]) {
   window.dispatchEvent(new Event("kudi-offline-queue-changed"));
 }
 
-export function getOfflineSales(): OfflineSale[] { return readQueue(); }
+export function getOfflineSales(): OfflineSale[] {
+  return readQueue();
+}
 
 export function enqueueOfflineSale(sale: OfflineSale) {
   const queue = readQueue();
@@ -35,4 +41,6 @@ export function removeOfflineSale(offlineId: string) {
   writeQueue(readQueue().filter((item) => item.offlineId !== offlineId));
 }
 
-export function offlineSaleCount() { return readQueue().length; }
+export function offlineSaleCount() {
+  return readQueue().length;
+}

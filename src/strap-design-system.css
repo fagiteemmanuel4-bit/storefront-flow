@@ -31,7 +31,7 @@
   --strap-shadow-sm: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.03);
   --strap-shadow-md: 0 8px 24px rgb(16 24 40 / 0.07);
   --strap-shadow-lg: 0 24px 64px rgb(16 24 40 / 0.12);
-  --strap-ease: cubic-bezier(.2,.7,.2,1);
+  --strap-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --strap-duration: 160ms;
 
   /* shadcn / app token bridge */
@@ -121,8 +121,12 @@
 /* Foundations                                                                 */
 /* -------------------------------------------------------------------------- */
 
-html { color-scheme: light; }
-html.dark { color-scheme: dark; }
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
 
 body {
   background: var(--strap-canvas) !important;
@@ -132,19 +136,44 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .font-display {
   font-family: "Bricolage Grotesque", Inter, ui-sans-serif, system-ui, sans-serif !important;
   font-weight: 650;
   letter-spacing: -0.03em;
 }
 
-button, input, textarea, select { font: inherit; }
-button, a { -webkit-tap-highlight-color: transparent; }
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
 
-.text-display-lg { font-size: clamp(2.75rem, 7vw, 5rem) !important; line-height: .98 !important; letter-spacing: -.055em !important; }
-.text-display-md { font-size: clamp(2rem, 4.5vw, 3.15rem) !important; line-height: 1.02 !important; letter-spacing: -.045em !important; }
-.text-title-lg { font-size: clamp(1.45rem, 2.4vw, 1.9rem) !important; line-height: 1.12 !important; letter-spacing: -.035em !important; }
+.text-display-lg {
+  font-size: clamp(2.75rem, 7vw, 5rem) !important;
+  line-height: 0.98 !important;
+  letter-spacing: -0.055em !important;
+}
+.text-display-md {
+  font-size: clamp(2rem, 4.5vw, 3.15rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.045em !important;
+}
+.text-title-lg {
+  font-size: clamp(1.45rem, 2.4vw, 1.9rem) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.035em !important;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Surfaces, fields, buttons                                                   */
@@ -170,8 +199,11 @@ select,
   border-color: var(--strap-line) !important;
   background: var(--strap-panel) !important;
   color: var(--strap-ink) !important;
-  box-shadow: inset 0 1px 1px rgb(16 24 40 / .025);
-  transition: border-color var(--strap-duration) var(--strap-ease), box-shadow var(--strap-duration) var(--strap-ease), background var(--strap-duration) var(--strap-ease);
+  box-shadow: inset 0 1px 1px rgb(16 24 40 / 0.025);
+  transition:
+    border-color var(--strap-duration) var(--strap-ease),
+    box-shadow var(--strap-duration) var(--strap-ease),
+    background var(--strap-duration) var(--strap-ease);
 }
 
 input:not([type="checkbox"]):not([type="radio"]):focus,
@@ -179,25 +211,32 @@ textarea:focus,
 select:focus,
 .field:focus {
   border-color: var(--strap-ink) !important;
-  box-shadow: 0 0 0 4px rgb(198 244 50 / .55) !important;
+  box-shadow: 0 0 0 4px rgb(198 244 50 / 0.55) !important;
   outline: none;
 }
 
 button[class*="bg-primary"],
 a[class*="bg-primary"] {
   border-radius: var(--strap-radius-md);
-  box-shadow: 0 1px 1px rgb(16 24 40 / .08);
-  transition: transform var(--strap-duration) var(--strap-ease), box-shadow var(--strap-duration) var(--strap-ease), background var(--strap-duration) var(--strap-ease);
+  box-shadow: 0 1px 1px rgb(16 24 40 / 0.08);
+  transition:
+    transform var(--strap-duration) var(--strap-ease),
+    box-shadow var(--strap-duration) var(--strap-ease),
+    background var(--strap-duration) var(--strap-ease);
 }
 
 button[class*="bg-primary"]:hover,
 a[class*="bg-primary"]:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgb(198 244 50 / .22);
+  box-shadow: 0 6px 18px rgb(198 244 50 / 0.22);
 }
 
 button:not([aria-hidden="true"]) {
-  transition: background var(--strap-duration) var(--strap-ease), border-color var(--strap-duration) var(--strap-ease), color var(--strap-duration) var(--strap-ease), transform var(--strap-duration) var(--strap-ease);
+  transition:
+    background var(--strap-duration) var(--strap-ease),
+    border-color var(--strap-duration) var(--strap-ease),
+    color var(--strap-duration) var(--strap-ease),
+    transform var(--strap-duration) var(--strap-ease);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -229,19 +268,29 @@ button:not([aria-hidden="true"]) {
 .kudi-app-shell > .lg\:pl-60 > header {
   background: color-mix(in srgb, var(--strap-panel) 92%, transparent) !important;
   border-color: var(--strap-line) !important;
-  box-shadow: 0 1px 0 rgb(16 24 40 / .02);
+  box-shadow: 0 1px 0 rgb(16 24 40 / 0.02);
 }
 
-.kudi-app-shell > .lg\:pl-60 > main { max-width: 1440px; }
+.kudi-app-shell > .lg\:pl-60 > main {
+  max-width: 1440px;
+}
 
 /* Legacy orange marks become the lime Strap accent. */
 .kudi-app-shell .bg-accent,
-.kudi-app-shell .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
+.kudi-app-shell .bg-\[\#f5c23e\] {
+  background: var(--strap-blue-500) !important;
+}
 .kudi-app-shell .text-accent,
-.kudi-app-shell .text-accent-ink { color: var(--strap-blue-800) !important; }
+.kudi-app-shell .text-accent-ink {
+  color: var(--strap-blue-800) !important;
+}
 .dark .kudi-app-shell .text-accent,
-.dark .kudi-app-shell .text-accent-ink { color: var(--strap-blue-500) !important; }
-.kudi-app-shell .bg-accent-soft { background: var(--strap-blue-50) !important; }
+.dark .kudi-app-shell .text-accent-ink {
+  color: var(--strap-blue-500) !important;
+}
+.kudi-app-shell .bg-accent-soft {
+  background: var(--strap-blue-50) !important;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Loading: one language, two primitives                                      */
@@ -268,9 +317,15 @@ button:not([aria-hidden="true"]) {
 }
 
 @keyframes strap-progress {
-  0% { transform: translateX(-115%); }
-  45% { transform: translateX(170%); }
-  100% { transform: translateX(315%); }
+  0% {
+    transform: translateX(-115%);
+  }
+  45% {
+    transform: translateX(170%);
+  }
+  100% {
+    transform: translateX(315%);
+  }
 }
 
 .strap-spinner {
@@ -282,7 +337,11 @@ button:not([aria-hidden="true"]) {
   animation: strap-spin 700ms linear infinite;
 }
 
-@keyframes strap-spin { to { transform: rotate(360deg); } }
+@keyframes strap-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .strap-loading-overlay,
 [data-strap-loading-overlay] {
@@ -294,15 +353,23 @@ button:not([aria-hidden="true"]) {
 }
 
 .strap-loading-overlay > *,
-[data-strap-loading-overlay] > * { display: none !important; }
+[data-strap-loading-overlay] > * {
+  display: none !important;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Tables, dialogs, notifications                                             */
 /* -------------------------------------------------------------------------- */
 
-table thead tr { border-bottom-color: var(--strap-line) !important; }
-table tbody tr { border-bottom-color: color-mix(in srgb, var(--strap-line) 75%, transparent) !important; }
-table tbody tr:hover { background: var(--strap-blue-50) !important; }
+table thead tr {
+  border-bottom-color: var(--strap-line) !important;
+}
+table tbody tr {
+  border-bottom-color: color-mix(in srgb, var(--strap-line) 75%, transparent) !important;
+}
+table tbody tr:hover {
+  background: var(--strap-blue-50) !important;
+}
 
 [data-slot="dialog-content"],
 [data-slot="sheet-content"] {
@@ -337,11 +404,18 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) {
 }
 
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#171715\],
-body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#f5c23e\] { background: var(--strap-blue-500) !important; }
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) .bg-\[\#f5c23e\] {
+  background: var(--strap-blue-500) !important;
+}
 body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-[#171715]"],
-body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-black"] { color: var(--strap-ink) !important; }
+body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="text-black"] {
+  color: var(--strap-ink) !important;
+}
 
-.rounded-\[28px\], .rounded-3xl { box-shadow: none; }
+.rounded-\[28px\],
+.rounded-3xl {
+  box-shadow: none;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Focus + motion                                                              */
@@ -353,15 +427,30 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
 }
 
 @media (max-width: 767px) {
-  .surface-card, .storefront-card { border-radius: 16px !important; }
-  [data-sidebar="sidebar"] { border-right: 0 !important; }
-  .kudi-app-shell > .lg\:pl-60 > main { padding-left: 16px; padding-right: 16px; }
+  .surface-card,
+  .storefront-card {
+    border-radius: 16px !important;
+  }
+  [data-sidebar="sidebar"] {
+    border-right: 0 !important;
+  }
+  .kudi-app-shell > .lg\:pl-60 > main {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .strap-route-progress::after,
-  .strap-spinner { animation: none; }
-  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+  .strap-spinner {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ========================================================================== */
@@ -412,7 +501,10 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   background: #0e1116;
   color: #ffffff;
 }
-.strap-auth-aside > * { position: relative; z-index: 1; }
+.strap-auth-aside > * {
+  position: relative;
+  z-index: 1;
+}
 .strap-auth-aside > .strap-auth-rings {
   position: absolute;
   z-index: 0;
@@ -430,7 +522,7 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   font-size: clamp(36px, 5vw, 64px);
   font-weight: 700;
   line-height: 1.04;
-  letter-spacing: -.03em;
+  letter-spacing: -0.03em;
 }
 .strap-auth-hero p {
   margin: 20px 0 0;
@@ -439,7 +531,10 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   font-size: 18px;
   line-height: 1.55;
 }
-.strap-auth-copy { color: #9aa1ae; font-size: 13px; }
+.strap-auth-copy {
+  color: #9aa1ae;
+  font-size: 13px;
+}
 
 /* Logo: ring + lime dot + wordmark */
 .strap-logo {
@@ -469,9 +564,12 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   font-family: "Bricolage Grotesque", Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 22px;
   font-weight: 700;
-  letter-spacing: -.01em;
+  letter-spacing: -0.01em;
 }
-.strap-auth-aside .strap-logo { --logo-ring: #c6f432; color: #ffffff; }
+.strap-auth-aside .strap-logo {
+  --logo-ring: #c6f432;
+  color: #ffffff;
+}
 
 /* Form panel */
 .strap-auth-form-panel {
@@ -481,7 +579,10 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   padding: 48px 24px;
   background: var(--a-bg);
 }
-.strap-auth-box { width: 100%; max-width: 400px; }
+.strap-auth-box {
+  width: 100%;
+  max-width: 400px;
+}
 .strap-auth-title {
   margin: 0 0 8px;
   color: var(--a-ink) !important;
@@ -489,13 +590,36 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   font-size: 34px;
   font-weight: 700;
   line-height: 1.1;
-  letter-spacing: -.02em;
+  letter-spacing: -0.02em;
 }
-.strap-auth-sub { margin: 0; color: var(--a-mut) !important; font-size: 16px; line-height: 1.55; }
-.strap-auth-form { display: flex; flex-direction: column; gap: 16px; margin: 24px 0; }
-.strap-auth-main .strap-field-wrap { display: flex; flex-direction: column; gap: 6px; }
-.strap-auth-main .strap-field-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.strap-auth-main .strap-label { color: var(--a-ink) !important; font-size: 14px !important; font-weight: 500 !important; }
+.strap-auth-sub {
+  margin: 0;
+  color: var(--a-mut) !important;
+  font-size: 16px;
+  line-height: 1.55;
+}
+.strap-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 24px 0;
+}
+.strap-auth-main .strap-field-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.strap-auth-main .strap-field-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.strap-auth-main .strap-label {
+  color: var(--a-ink) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
 
 .strap-auth-main .strap-field {
   width: 100%;
@@ -506,20 +630,30 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   border-radius: 12px !important;
   background: var(--a-field) !important;
   color: var(--a-ink) !important;
-  font: 400 16px Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font:
+    400 16px Inter,
+    ui-sans-serif,
+    system-ui,
+    sans-serif !important;
   box-shadow: none !important;
 }
-.strap-auth-main .strap-field::placeholder { color: #6b7280 !important; }
+.strap-auth-main .strap-field::placeholder {
+  color: #6b7280 !important;
+}
 .strap-auth-main .strap-field:focus,
 .strap-auth-main .strap-field:focus-visible {
   border-color: var(--a-ink) !important;
-  box-shadow: 0 0 0 4px rgb(198 244 50 / .55) !important;
+  box-shadow: 0 0 0 4px rgb(198 244 50 / 0.55) !important;
   outline: none !important;
 }
 
 /* Password show / hide */
-.strap-auth-main .strap-pw { position: relative; }
-.strap-auth-main .strap-pw .strap-field { padding-right: 56px !important; }
+.strap-auth-main .strap-pw {
+  position: relative;
+}
+.strap-auth-main .strap-pw .strap-field {
+  padding-right: 56px !important;
+}
 .strap-auth-main .strap-eye {
   position: absolute;
   top: 4px;
@@ -534,7 +668,9 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   color: var(--a-ink) !important;
   cursor: pointer;
 }
-.strap-auth-main .strap-eye:hover { background: var(--a-hover); }
+.strap-auth-main .strap-eye:hover {
+  background: var(--a-hover);
+}
 
 /* Text links and small buttons */
 .strap-auth-main .strap-link {
@@ -548,9 +684,23 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   text-decoration: underline;
   cursor: pointer;
 }
-.strap-auth-main .strap-auth-alt { margin: 0; text-align: center; color: var(--a-mut) !important; font-size: 16px; }
-.strap-auth-main .strap-auth-alt .strap-link { min-height: 44px; font-size: 16px; font-weight: 600; }
-.strap-auth-main .strap-auth-back { display: flex; justify-content: center; width: 100%; margin-top: 8px; }
+.strap-auth-main .strap-auth-alt {
+  margin: 0;
+  text-align: center;
+  color: var(--a-mut) !important;
+  font-size: 16px;
+}
+.strap-auth-main .strap-auth-alt .strap-link {
+  min-height: 44px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.strap-auth-main .strap-auth-back {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 8px;
+}
 
 /* Buttons */
 .strap-auth-main .strap-btn {
@@ -561,7 +711,11 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   width: 100%;
   height: 48px;
   border-radius: 12px !important;
-  font: 600 16px Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font:
+    600 16px Inter,
+    ui-sans-serif,
+    system-ui,
+    sans-serif !important;
   box-shadow: none !important;
   transform: none !important;
   cursor: pointer;
@@ -571,15 +725,25 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   background: #0e1116 !important;
   color: #ffffff !important;
 }
-.strap-auth-main .strap-btn-primary:hover { background: #262c38 !important; }
+.strap-auth-main .strap-btn-primary:hover {
+  background: #262c38 !important;
+}
 .dark .strap-auth-main .strap-btn-primary {
   border-color: #c6f432 !important;
   background: #c6f432 !important;
   color: #0e1116 !important;
 }
-.dark .strap-auth-main .strap-btn-primary:hover { background: #d8f18a !important; }
-.strap-auth-main .strap-btn svg { width: 20px; height: 20px; }
-.strap-auth-main .strap-btn:disabled { opacity: .55; cursor: not-allowed; }
+.dark .strap-auth-main .strap-btn-primary:hover {
+  background: #d8f18a !important;
+}
+.strap-auth-main .strap-btn svg {
+  width: 20px;
+  height: 20px;
+}
+.strap-auth-main .strap-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 .strap-auth-main .strap-btn-ghost {
   position: relative;
   height: 52px;
@@ -587,7 +751,9 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   background: var(--a-field) !important;
   color: var(--a-ink) !important;
 }
-.strap-auth-main .strap-btn-ghost:disabled { opacity: .9; }
+.strap-auth-main .strap-btn-ghost:disabled {
+  opacity: 0.9;
+}
 .strap-auth-main .strap-soon {
   position: absolute;
   top: -9px;
@@ -599,9 +765,13 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   color: #3d5209;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
 }
-.dark .strap-auth-main .strap-soon { border-color: #405616; background: #202a0d; color: #e8f7ae; }
+.dark .strap-auth-main .strap-soon {
+  border-color: #405616;
+  background: #202a0d;
+  color: #e8f7ae;
+}
 .strap-auth-main button:focus-visible,
 .strap-auth-main a:focus-visible {
   outline: 3px solid #c6f432 !important;
@@ -609,16 +779,41 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   box-shadow: 0 0 0 5px #0e1116;
 }
 .dark .strap-auth-main button:focus-visible,
-.dark .strap-auth-main a:focus-visible { box-shadow: none; }
+.dark .strap-auth-main a:focus-visible {
+  box-shadow: none;
+}
 
 /* Divider */
-.strap-auth-main .strap-or { display: flex; align-items: center; gap: 14px; margin: 20px 0 0; color: var(--a-mut); font-size: 14px; }
+.strap-auth-main .strap-or {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 20px 0 0;
+  color: var(--a-mut);
+  font-size: 14px;
+}
 .strap-auth-main .strap-or::before,
-.strap-auth-main .strap-or::after { content: ""; flex: 1; height: 1px; background: var(--a-line); }
+.strap-auth-main .strap-or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--a-line);
+}
 
 /* Terms checkbox */
-.strap-auth-main .strap-terms { display: flex; align-items: flex-start; gap: 10px; color: var(--a-mut) !important; font-size: 14px; line-height: 1.5; }
-.strap-auth-main .strap-terms a { color: var(--a-ink) !important; font-weight: 600; text-decoration: underline; }
+.strap-auth-main .strap-terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--a-mut) !important;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.strap-auth-main .strap-terms a {
+  color: var(--a-ink) !important;
+  font-weight: 600;
+  text-decoration: underline;
+}
 .strap-auth-main .strap-check {
   flex: none;
   width: 20px;
@@ -630,7 +825,9 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   color: var(--a-bg) !important;
   box-shadow: none !important;
 }
-.strap-auth-main .strap-check[data-state="checked"] { background: var(--a-ink) !important; }
+.strap-auth-main .strap-check[data-state="checked"] {
+  background: var(--a-ink) !important;
+}
 
 /* Success notice */
 .strap-auth-main .strap-notice {
@@ -642,17 +839,34 @@ body:has(img[alt="Shopkeeper serving a customer at a busy counter"]) [class*="te
   font-size: 14px;
   line-height: 1.5;
 }
-.dark .strap-auth-main .strap-notice { border-color: #405616; background: #202a0d; color: #e8f7ae; }
+.dark .strap-auth-main .strap-notice {
+  border-color: #405616;
+  background: #202a0d;
+  color: #e8f7ae;
+}
 
 /* Phones: the dark panel shrinks to a slim logo bar so the form fits the screen */
 @media (max-width: 860px) {
-  .strap-auth-card { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-  .strap-auth-aside { min-height: 0; padding: 18px 24px; }
+  .strap-auth-card {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .strap-auth-aside {
+    min-height: 0;
+    padding: 18px 24px;
+  }
   .strap-auth-aside .strap-auth-hero,
   .strap-auth-aside .strap-auth-copy,
-  .strap-auth-aside > .strap-auth-rings { display: none; }
-  .strap-auth-form-panel { align-items: flex-start; padding: 32px 24px 40px; }
-  .strap-auth-title { font-size: 30px; }
+  .strap-auth-aside > .strap-auth-rings {
+    display: none;
+  }
+  .strap-auth-form-panel {
+    align-items: flex-start;
+    padding: 32px 24px 40px;
+  }
+  .strap-auth-title {
+    font-size: 30px;
+  }
 }
 
 /* ========================================================================== */
@@ -682,7 +896,7 @@ body:has(main input#verification-code) input#verification-code {
   color: var(--strap-ink) !important;
   font-size: 24px;
   font-weight: 600;
-  letter-spacing: .3em;
+  letter-spacing: 0.3em;
   text-align: center;
 }
 body:has(main input#verification-code) button[type="submit"] {
@@ -695,8 +909,12 @@ body:has(main input#verification-code) button[type="submit"] {
   box-shadow: none !important;
   transform: none !important;
 }
-body:has(main input#verification-code) button[type="submit"]:hover { background: #262c38 !important; }
-body:has(main input#verification-code) button[type="submit"]:disabled { opacity: .4; }
+body:has(main input#verification-code) button[type="submit"]:hover {
+  background: #262c38 !important;
+}
+body:has(main input#verification-code) button[type="submit"]:disabled {
+  opacity: 0.4;
+}
 .dark body:has(main input#verification-code) button[type="submit"] {
   border-color: #c6f432 !important;
   background: #c6f432 !important;

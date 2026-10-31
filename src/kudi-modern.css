@@ -6,76 +6,206 @@
   --kudi-app-shadow: 0 10px 35px -24px oklch(0.2 0 0 / 0.32);
 }
 
-.kudi-route-progress { position: fixed; inset: 0 0 auto; z-index: 100; height: 3px; overflow: hidden; background: color-mix(in oklch, var(--color-accent) 18%, transparent); pointer-events: none; }
-.kudi-route-progress span { display: block; width: 38%; height: 100%; border-radius: 999px; background: var(--color-accent); animation: kudi-loading-sweep 1.05s ease-in-out infinite; }
-@keyframes kudi-loading-sweep { 0% { transform: translateX(-110%); } 50% { transform: translateX(170%); } 100% { transform: translateX(330%); } }
+.kudi-route-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  height: 3px;
+  overflow: hidden;
+  background: color-mix(in oklch, var(--color-accent) 18%, transparent);
+  pointer-events: none;
+}
+.kudi-route-progress span {
+  display: block;
+  width: 38%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-accent);
+  animation: kudi-loading-sweep 1.05s ease-in-out infinite;
+}
+@keyframes kudi-loading-sweep {
+  0% {
+    transform: translateX(-110%);
+  }
+  50% {
+    transform: translateX(170%);
+  }
+  100% {
+    transform: translateX(330%);
+  }
+}
 
-.kudi-import-option { min-height: 176px; transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease; }
-.kudi-import-option:hover { transform: translateY(-2px); box-shadow: var(--kudi-app-shadow); }
-.kudi-import-sheet { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+.kudi-import-option {
+  min-height: 176px;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+.kudi-import-option:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--kudi-app-shadow);
+}
+.kudi-import-sheet {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
 
-[data-slot="sheet-content"] form { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+[data-slot="sheet-content"] form {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
 [data-slot="sheet-content"] form input,
 [data-slot="sheet-content"] form button,
-[data-slot="sheet-content"] form [role="combobox"] { min-height: 48px; }
+[data-slot="sheet-content"] form [role="combobox"] {
+  min-height: 48px;
+}
 [data-slot="sheet-content"] form label > input:focus,
-[data-slot="sheet-content"] form label > div input:focus { outline: none; }
+[data-slot="sheet-content"] form label > div input:focus {
+  outline: none;
+}
 
 /* Mobile commerce UX: make sheets feel like task workspaces rather than
    generic dialogs. Keep the implementation CSS-only so existing mutations,
    validation and permissions are untouched. */
 @media (max-width: 767px) {
-  body { overflow-x: hidden; }
-  header.sticky { padding-top: env(safe-area-inset-top); }
-  header.sticky > div { min-height: 60px; padding-top: 0.55rem; padding-bottom: 0.55rem; }
-  header.sticky nav { display: none !important; }
-  header.sticky .touch-target { min-height: 46px; min-width: 46px; }
-  header.sticky [aria-label="Open menu"] { width: 46px; padding: 0; justify-content: center; }
-  header.sticky .ml-auto { gap: 0.4rem; }
-  main, [role="main"] { min-width: 0; }
-  .max-w-7xl { max-width: 100%; }
-  .pb-24 { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
-  nav.fixed.bottom-0 { padding-bottom: env(safe-area-inset-bottom); }
-  nav.fixed.bottom-0 > div { min-height: 66px; }
-  nav.fixed.bottom-0 a { min-height: 60px; padding-top: 0.45rem; }
-  nav.fixed.bottom-0 a span { height: 34px; width: 54px; }
+  body {
+    overflow-x: hidden;
+  }
+  header.sticky {
+    padding-top: env(safe-area-inset-top);
+  }
+  header.sticky > div {
+    min-height: 60px;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+  }
+  header.sticky nav {
+    display: none !important;
+  }
+  header.sticky .touch-target {
+    min-height: 46px;
+    min-width: 46px;
+  }
+  header.sticky [aria-label="Open menu"] {
+    width: 46px;
+    padding: 0;
+    justify-content: center;
+  }
+  header.sticky .ml-auto {
+    gap: 0.4rem;
+  }
+  main,
+  [role="main"] {
+    min-width: 0;
+  }
+  .max-w-7xl {
+    max-width: 100%;
+  }
+  .pb-24 {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+  nav.fixed.bottom-0 {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  nav.fixed.bottom-0 > div {
+    min-height: 66px;
+  }
+  nav.fixed.bottom-0 a {
+    min-height: 60px;
+    padding-top: 0.45rem;
+  }
+  nav.fixed.bottom-0 a span {
+    height: 34px;
+    width: 54px;
+  }
 
   [data-slot="sheet-content"] {
     max-height: calc(100dvh - env(safe-area-inset-top) - 0.5rem) !important;
     border-radius: 1.5rem 1.5rem 0 0 !important;
     box-shadow: 0 -20px 50px -35px oklch(0 0 0 / 0.45);
   }
-  [data-slot="sheet-content"] > div:first-child { margin-top: 0.35rem; }
-  [data-slot="sheet-content"] form { gap: 1rem; }
-  [data-slot="sheet-content"] form .grid { gap: 0.75rem; }
+  [data-slot="sheet-content"] > div:first-child {
+    margin-top: 0.35rem;
+  }
+  [data-slot="sheet-content"] form {
+    gap: 1rem;
+  }
+  [data-slot="sheet-content"] form .grid {
+    gap: 0.75rem;
+  }
   [data-slot="sheet-content"] form input,
   [data-slot="sheet-content"] form button,
-  [data-slot="sheet-content"] form [role="combobox"] { min-height: 50px; }
+  [data-slot="sheet-content"] form [role="combobox"] {
+    min-height: 50px;
+  }
 
   /* Product creation/editing: preserve the existing form while giving the
      phone layout clearer grouping and safer thumb-sized controls. */
-  [data-slot="sheet-content"] form > * { min-width: 0; }
-  [data-slot="sheet-content"] form > div.rounded-2xl { padding: 0.9rem; }
-  [data-slot="sheet-content"] form button { font-weight: 650; }
-  [data-slot="sheet-content"] form input::placeholder { opacity: 0.62; }
+  [data-slot="sheet-content"] form > * {
+    min-width: 0;
+  }
+  [data-slot="sheet-content"] form > div.rounded-2xl {
+    padding: 0.9rem;
+  }
+  [data-slot="sheet-content"] form button {
+    font-weight: 650;
+  }
+  [data-slot="sheet-content"] form input::placeholder {
+    opacity: 0.62;
+  }
 
-  .kudi-import-sheet { padding-left: 1rem; padding-right: 1rem; }
-  .kudi-import-sheet .grid.md\:grid-cols-3 { grid-template-columns: 1fr; }
-  .kudi-import-option { min-height: 0; padding: 1rem; border-radius: 1.15rem; }
-  .kudi-import-option:active { transform: scale(0.99); }
-  .kudi-import-sheet table { min-width: 520px; }
-  .kudi-import-sheet .max-h-64 { max-height: 45dvh; }
+  .kudi-import-sheet {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .kudi-import-sheet .grid.md\:grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+  .kudi-import-option {
+    min-height: 0;
+    padding: 1rem;
+    border-radius: 1.15rem;
+  }
+  .kudi-import-option:active {
+    transform: scale(0.99);
+  }
+  .kudi-import-sheet table {
+    min-width: 520px;
+  }
+  .kudi-import-sheet .max-h-64 {
+    max-height: 45dvh;
+  }
 
   /* Make important loading affordances visible even when a sheet is scrolled. */
-  [data-slot="sheet-content"] button[disabled] { opacity: 0.7; }
-  table { font-size: 0.8125rem; }
-  [data-slot="card"], .surface-card, .storefront-card { border-radius: 1.15rem; }
-  .text-display-md { font-size: clamp(1.85rem, 9vw, 2.5rem); }
-  .text-title-lg { font-size: 1.45rem; }
+  [data-slot="sheet-content"] button[disabled] {
+    opacity: 0.7;
+  }
+  table {
+    font-size: 0.8125rem;
+  }
+  [data-slot="card"],
+  .surface-card,
+  .storefront-card {
+    border-radius: 1.15rem;
+  }
+  .text-display-md {
+    font-size: clamp(1.85rem, 9vw, 2.5rem);
+  }
+  .text-title-lg {
+    font-size: 1.45rem;
+  }
 }
 
-button[disabled] { cursor: wait; }
+button[disabled] {
+  cursor: wait;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

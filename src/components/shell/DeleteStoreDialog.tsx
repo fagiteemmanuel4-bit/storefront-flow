@@ -10,7 +10,15 @@ import { Input } from "@/components/ui/input";
 import { SecurityModal } from "@/components/security/SecurityModal";
 import type { StoreRow } from "@/lib/pos-types";
 
-export function DeleteStoreDialog({ store, open, onOpenChange }: { store: StoreRow | null; open: boolean; onOpenChange: (open: boolean) => void }) {
+export function DeleteStoreDialog({
+  store,
+  open,
+  onOpenChange,
+}: {
+  store: StoreRow | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const [confirmText, setConfirmText] = useState("");
   const [busy, setBusy] = useState(false);
   const queryClient = useQueryClient();
@@ -53,17 +61,33 @@ export function DeleteStoreDialog({ store, open, onOpenChange }: { store: StoreR
       description={`This permanently removes ${store?.name ?? "this shop"}, its products, stock and sales history. This cannot be undone.`}
       footer={
         <>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>Keep my store</Button>
-          <Button variant="destructive" onClick={() => void handleDelete()} disabled={busy || confirmText.trim() !== store?.name}>
-            <Trash2 className="mr-2 size-4" />{busy ? "Deleting…" : "Delete forever"}
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>
+            Keep my store
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={() => void handleDelete()}
+            disabled={busy || confirmText.trim() !== store?.name}
+          >
+            <Trash2 className="mr-2 size-4" />
+            {busy ? "Deleting…" : "Delete forever"}
           </Button>
         </>
       }
     >
       <div className="space-y-3">
-        <p className="text-sm font-medium">Type <span className="font-bold">{store?.name}</span> exactly to confirm.</p>
-        <Input value={confirmText} onChange={(event) => setConfirmText(event.target.value)} placeholder={store?.name} autoComplete="off" />
-        <p className="text-xs leading-5 text-muted-foreground">This confirmation is intentionally strict so an accidental click cannot remove the store.</p>
+        <p className="text-sm font-medium">
+          Type <span className="font-bold">{store?.name}</span> exactly to confirm.
+        </p>
+        <Input
+          value={confirmText}
+          onChange={(event) => setConfirmText(event.target.value)}
+          placeholder={store?.name}
+          autoComplete="off"
+        />
+        <p className="text-xs leading-5 text-muted-foreground">
+          This confirmation is intentionally strict so an accidental click cannot remove the store.
+        </p>
       </div>
     </SecurityModal>
   );

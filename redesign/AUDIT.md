@@ -22,6 +22,7 @@
 The app already has a deliberate light/dark token system in `src/styles.css`, including semantic background/foreground/surface/card/popover/primary/secondary/muted/accent/success/warning/destructive/border/input/ring/sidebar variables. It currently uses Space Grotesk for display headings and Inter for body text. The current accent is a warm amber/yellow OKLCH value, not the redesign kit's electric lime.
 
 There are additional global overrides and app-specific layers:
+
 - `src/kudi-modern.css`
 - `src/mobile-native.css`
 - `src/mobile-nav.css`
@@ -38,6 +39,7 @@ This means Phase 1 must be a controlled token translation and cascade review, no
 The following route files exist on the audited `main` tree. Dynamic segments are shown literally.
 
 ### Auth, onboarding and account
+
 - `/auth` — sign-in and account-entry flow (the auth page contains the existing sign-in/sign-up mode handling).
 - `/signup` — account creation route.
 - `/verify-email` — eight-digit email OTP verification.
@@ -48,6 +50,7 @@ The following route files exist on the audited `main` tree. Dynamic segments are
 - `/staff-login/$slug` — staff PIN/login entry.
 
 ### Authenticated workspace
+
 - `/dashboard` — business overview.
 - `/pos` — point of sale/register.
 - `/unit-sale` — unit/pack sale workflow.
@@ -76,6 +79,7 @@ The following route files exist on the audited `main` tree. Dynamic segments are
 - `/grocery-inventory` — grocery/batch/expiry inventory workspace.
 
 ### Online store workspace
+
 - `/online-store` — online-store overview.
 - `/online-store/setup` — storefront setup.
 - `/online-store/builder` — storefront builder.
@@ -84,6 +88,7 @@ The following route files exist on the audited `main` tree. Dynamic segments are
 - `/online-store/orders` — online order management.
 
 ### Settings
+
 - `/settings` — settings shell/home.
 - `/settings/store-profile` — store identity/profile.
 - `/settings/appearance` — appearance.
@@ -100,6 +105,7 @@ The following route files exist on the audited `main` tree. Dynamic segments are
 - `/settings/staff` — staff and permissions.
 
 ### Public, legal, customer and storefront routes
+
 - `/` — public landing page.
 - `/about`, `/partners`, `/docs`, `/support` — public company/product/help pages.
 - `/privacy`, `/terms`, `/cookies` — legal pages.
@@ -115,12 +121,14 @@ The following route files exist on the audited `main` tree. Dynamic segments are
 ## 4. Shared components already present
 
 ### App shell and global workspace
+
 - `src/components/shell/AppShell.tsx` — desktop sidebar, workspace header, store/branch context, online/offline state, queued offline sales, app menu, updates/security overlays and calculator entry points.
 - `src/components/shell/MobileNav.tsx` — existing four-slot mobile dock (Sell, Products, Search, Menu).
 - `src/components/shell/AppMenuSheet.tsx` — role-aware app menu and secondary destinations.
 - `StoreProvider.tsx`, `ThemeProvider.tsx`, `QuickFind.tsx`, `RouteLoadingOverlay.tsx`, `NotFoundScreen.tsx`, `UpdatesSheet.tsx`, `WelcomeTour.tsx`, `FirstVisitTour.tsx`, `PreferencesDialog.tsx`, `StoreSettingsDialog.tsx`, `DeleteStoreDialog.tsx`, `ExportDataDialog.tsx`.
 
 ### Domain components
+
 - POS: `ProductFormDialog.tsx`, `ProductImportDialog.tsx`, `BarcodeScannerDialog.tsx`, `BusinessCalculatorFab.tsx`.
 - Expenses: `AddExpenseSheet.tsx`.
 - Security: `SecurityModal.tsx`.
@@ -130,11 +138,13 @@ The following route files exist on the audited `main` tree. Dynamic segments are
 - Public storefront/site: `SiteChrome.tsx`, `LandingHeader.tsx`, `LandingDetails.tsx`, `LandingMedia.tsx`, `LandingUpgrades.tsx`, `PricingSection.tsx`, `StoreCustomerAccess.tsx`, `StoreFeedbackFloating.tsx`, `StrapReviewPrompt.tsx`.
 
 ### Existing UI primitive library
+
 The `src/components/ui/` directory contains local shadcn/Radix wrappers for: accordion, alert-dialog, alert, aspect-ratio, avatar, badge, bottom-sheet, breadcrumb, button, calendar, card, carousel, chart, checkbox, collapsible, command, context-menu, dialog, drawer, dropdown-menu, form, hover-card, input-otp, input, label, menubar, navigation-menu, pagination, popover, progress, radio-group, resizable, scroll-area, select, separator, sheet, sidebar, skeleton, slider, sonner, switch, table, tabs, textarea, toggle-group, toggle and tooltip.
 
 ## 5. Modal, sheet, drawer and overlay inventory
 
 ### Shared overlays/components confirmed in the source tree
+
 - App menu: `AppMenuSheet` (Sheet).
 - App updates: `UpdatesSheet` (Sheet).
 - Product create/edit: `ProductFormDialog` (BottomSheet).
@@ -151,6 +161,7 @@ The `src/components/ui/` directory contains local shadcn/Radix wrappers for: acc
 - Toast/sonner notification viewport: globally mounted from the root route.
 
 ### Route-owned overlays confirmed or indicated by route imports/state
+
 - Branch creation/editing flow in `branches.tsx`.
 - Expense create/edit and delete confirmation in `expenses.tsx`.
 - Customer create/edit/detail actions in `customers.tsx`.
@@ -166,6 +177,7 @@ The `src/components/ui/` directory contains local shadcn/Radix wrappers for: acc
 ## 6. Navigation and access constraints
 
 The current app shell is more complex than the new reference:
+
 - Desktop `AppShell` builds primary and secondary navigation and changes the primary destinations by business mode (fashion, electronics, food service, grocery).
 - The existing mobile dock has four slots, but Search and Menu are buttons that activate existing header controls. It is not yet the exact reference implementation.
 - `AppMenuSheet` already contains role-aware destinations and actions.
@@ -185,6 +197,7 @@ No route component, data hook, API client, database migration, auth logic, permi
 ## 8. Phases 1–5 plan for this codebase
 
 ### Phase 1 — Tokens and base
+
 - Translate the kit tokens into the existing Tailwind v4/CSS-variable system.
 - Map semantic aliases used by shadcn/Radix primitives (background, foreground, card, popover, primary, secondary, muted, accent, destructive, success, warning, border, input, ring, sidebar) to the new palette.
 - Load Bricolage Grotesque for display and retain Inter for body/UI; verify font loading does not introduce layout/functional changes.
@@ -193,11 +206,13 @@ No route component, data hook, API client, database migration, auth logic, permi
 - Limit visual change to the agreed fonts and page background/base token layer. Capture before/after screenshots at 360/390/768/1280.
 
 ### Phase 2 — Shared components
+
 - Update local shadcn/Radix wrappers in place where possible: button, input/password affordance, badge/chip, card, table, bottom-sheet, toast and empty-state patterns.
 - Reuse existing `button.tsx`, `input.tsx`, `badge.tsx`, `card.tsx`, `table.tsx`, `bottom-sheet.tsx`, `sheet.tsx`, `sonner.tsx` and existing empty-state patterns before creating new primitives.
 - Add a non-production component preview route/story in a documented location; keep it outside normal customer navigation and ensure no production feature behavior changes.
 
 ### Phase 3 — Priority screens
+
 1. Auth: `auth.tsx`, `signup.tsx`, `verify-email.tsx` (plus confirmation routes if required). Preserve current Supabase auth, password validation, email OTP, resend cooldown, success/error states and redirect behavior.
 2. App shell: `AppShell.tsx`, `MobileNav.tsx`, `AppMenuSheet.tsx` and shell CSS. Preserve mode-dependent nav, role filtering, store/branch switching, offline queue, quick search, notifications, security, updates and all destinations. Map every old destination to a visible tab, Menu entry or desktop sidebar item.
 3. Dashboard: `dashboard.tsx`.
@@ -206,6 +221,7 @@ No route component, data hook, API client, database migration, auth logic, permi
 6. Search: existing `QuickFind` and its shell trigger; there is no standalone Search route in the current route inventory.
 
 ### Phase 4 — Remaining modules, one at a time
+
 - Orders: `online-store/orders.tsx`, order tracking/public order pages and order status actions.
 - Customers: `customers.tsx`, `customer-account.tsx`.
 - Expenses: `expenses.tsx`, `AddExpenseSheet.tsx`.
@@ -222,6 +238,7 @@ No route component, data hook, API client, database migration, auth logic, permi
 - Billing/help: `upgrade.tsx`, `help.tsx`, `support.tsx`, `docs.tsx`.
 
 ### Phase 5 — QA and cleanup
+
 - Run the existing production build, lint and TypeScript check (add a type-check script only if absent and only with approval).
 - Exercise 360, 390, 768 and 1280 px for each migrated screen; check safe-area insets, fixed nav/cart spacing, scroll containment and table overflow.
 - Check keyboard focus, labels, screen-reader announcements, WCAG AA contrast and 44px minimum touch targets.
@@ -232,20 +249,22 @@ No route component, data hook, API client, database migration, auth logic, permi
 ## 9. Assumptions and open questions
 
 ### Assumptions
+
 - The connected repository `fagiteemmanuel4-bit/storefront-flow` is the Strap source of truth; README confirms Strap by Kryonara and the package/deployment context matches the app.
 - The attached reference HTML is a visual specification only. Its sample content and implementation are not to be copied into production.
 - Existing route names and feature gates are canonical; the new navigation must adapt around them rather than rename or remove routes.
 - Phase 0 documentation may be committed separately without touching application code. To avoid changing the Lovable-connected `main` branch, this audit is being recorded on `redesign/phase-0-audit`.
 
 ### Questions (maximum 3)
+
 1. Please confirm that `fagiteemmanuel4-bit/storefront-flow` is the exact Strap repository you want redesigned (rather than another Strap-related repo).
 2. Should the new palette replace the existing dark theme too, or should the current dark-mode preference remain supported with a mapped dark palette?
 3. Should the 26 reference marketing/app HTML pages be treated as in-scope redesign targets, or are they visual guidance only while we restyle the actual production routes listed above?
 
-
 ## 10. Attached reference HTML review
 
 All three primary reference files and all 26 files under `reference/marketing-pages/` were opened and reviewed for page title, heading hierarchy and page intent. The primary approved app references are:
+
 - `reference/login.html` and `reference/verify.html` — split auth panel, login, eight-digit verification and verified state.
 - `reference/dashboard.html` — dashboard, Sell, Products, Search, Menu, cart bar, product form and sale sheet.
 

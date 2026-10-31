@@ -19,14 +19,17 @@ export default async function handler(_request: unknown, response: SitemapRespon
   const supabase = createClient(supabaseUrl, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  const [{ data: stores, error: storesError }, { data: products, error: productsError }] = await Promise.all([
-    supabase.rpc("get_public_sitemap_stores", { _limit: 5000 }),
-    supabase.rpc("get_public_sitemap_products", { _limit: 50000 }),
-  ]);
-  if (storesError || productsError) return response.status(502).type("text/plain").send("Unable to generate sitemap");
+  const [{ data: stores, error: storesError }, { data: products, error: productsError }] =
+    await Promise.all([
+      supabase.rpc("get_public_sitemap_stores", { _limit: 5000 }),
+      supabase.rpc("get_public_sitemap_products", { _limit: 50000 }),
+    ]);
+  if (storesError || productsError)
+    return response.status(502).type("text/plain").send("Unable to generate sitemap");
 
   const urls = new Map<string, string>();
-  for (const store of stores || []) urls.set(`/store/${encodeURIComponent(store.store_slug)}`, store.updated_at);
+  for (const store of stores || [])
+    urls.set(`/store/${encodeURIComponent(store.store_slug)}`, store.updated_at);
   for (const product of products || []) {
     urls.set(
       `/store/${encodeURIComponent(product.store_slug)}/products/${encodeURIComponent(product.product_slug)}`,
@@ -34,7 +37,9 @@ export default async function handler(_request: unknown, response: SitemapRespon
     );
   }
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...urls.entries()]
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[
+    ...urls.entries(),
+  ]
     .map(
       ([path, updated]) =>
         `  <url><loc>${escapeXml(publicSiteUrl + path)}</loc><lastmod>${new Date(updated).toISOString()}</lastmod></url>`,
@@ -46,5 +51,8 @@ export default async function handler(_request: unknown, response: SitemapRespon
 }
 
 function escapeXml(value: string) {
-  return value.replace(/[<>&'\"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '\"': "&quot;" })[c] || c);
+  return value.replace(
+    /[<>&'\"]/g,
+    (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '\"': "&quot;" })[c] || c,
+  );
 }

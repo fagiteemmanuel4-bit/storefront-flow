@@ -31,6 +31,20 @@ export const APP_UPDATES: AppUpdate[] = [
 
 export const LATEST_UPDATE: AppUpdate = APP_UPDATES[0]!;
 const STORAGE_KEY = "kudi.last-seen-update";
-export function getLastSeenUpdate(): string | null { if (typeof window === "undefined") return null; try { return window.localStorage.getItem(STORAGE_KEY); } catch { return null; } }
-export function markUpdateSeen(version: string): void { if (typeof window === "undefined") return; try { window.localStorage.setItem(STORAGE_KEY, version); } catch {} }
-export function hasUnseenUpdate(): boolean { return getLastSeenUpdate() !== LATEST_UPDATE.version; }
+export function getLastSeenUpdate(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+export function markUpdateSeen(version: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, version);
+  } catch {}
+}
+export function hasUnseenUpdate(): boolean {
+  return getLastSeenUpdate() !== LATEST_UPDATE.version;
+}
