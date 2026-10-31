@@ -90,10 +90,11 @@ function getErrorVariant(error: Error) {
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
-  const variant = getErrorVariant(error);
+  const safeError = error instanceof Error ? error : new Error(String(error));
+  const variant = getErrorVariant(safeError);
   useEffect(() => {
-    reportLovableError(error, { boundary: `tanstack_root_${variant}_error` });
-  }, [error, variant]);
+    reportLovableError(safeError, { boundary: `tanstack_root_${variant}_error` });
+  }, [safeError, variant]);
   const content = {
     offline: {
       eyebrow: "You're offline",
