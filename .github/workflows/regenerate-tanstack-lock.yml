@@ -22,7 +22,7 @@ jobs:
         with:
           bun-version: latest
       - name: Resolve patched dependency graph
-        run: bun install
+        run: bun audit fix
       - name: Commit regenerated lockfile
         run: |
           if git diff --quiet -- bun.lock; then
