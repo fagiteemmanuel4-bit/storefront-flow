@@ -1,7 +1,6 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { SettingsHome } from "@/components/settings/SettingsCenter";
 
 export const Route = createFileRoute("/_authenticated/settings/")({
-  beforeLoad: () => {
-    throw redirect({ to: "/dashboard" });
-  },
+  component: SettingsHome,
 });
