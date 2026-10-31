@@ -25,6 +25,7 @@ jobs:
         run: |
           bun audit fix --latest || true
           bun run format
+          bunx eslint . --fix
           bun audit || true
       - name: Commit dependency and formatting fixes
         run: |
