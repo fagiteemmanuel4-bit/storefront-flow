@@ -129,8 +129,7 @@ function StaffPage() {
   });
   const staff = sq.data ?? [];
   const branches = bq.data ?? [];
-  const tier =
-    subscriptionQuery.data?.status === "active" ? subscriptionQuery.data.plan : "free";
+  const tier = subscriptionQuery.data?.status === "active" ? subscriptionQuery.data.plan : "free";
   const staffLimit = getLimit(tier, "staff");
   const staffLimitReached = staffLimit !== -1 && staff.length >= staffLimit;
   const origin = typeof window !== "undefined" ? window.location.origin : "";
@@ -270,12 +269,9 @@ function StaffPage() {
                 sign-in link.
               </p>
             </div>
-            {canManage && (
-              staffLimitReached ? (
-                <Button
-                  variant="outline"
-                  onClick={() => void nav({ to: "/upgrade" })}
-                >
+            {canManage &&
+              (staffLimitReached ? (
+                <Button variant="outline" onClick={() => void nav({ to: "/upgrade" })}>
                   <LockKeyhole className="mr-2 size-4" />
                   Unlock more staff
                 </Button>
@@ -284,8 +280,7 @@ function StaffPage() {
                   <Plus className="mr-2 size-4" />
                   Add staff
                 </Button>
-              )
-            )}
+              ))}
           </div>
         </section>
         {session && (
