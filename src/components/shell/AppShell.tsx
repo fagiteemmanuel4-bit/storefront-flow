@@ -380,7 +380,8 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
         <div
           className={cn(
             "relative flex h-16 shrink-0 items-center border-b border-border/70",
-            sidebarCollapsed ? "justify-center px-2" : "justify-between px-4",
+            "justify-between",
+            sidebarCollapsed ? "px-2" : "px-4",
           )}
         >
           <Link to="/pos" className="flex min-w-0 items-center gap-2" aria-label="Strap home">
@@ -400,7 +401,6 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
             onClick={toggleSidebar}
             className={cn(
               "flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-              sidebarCollapsed && "absolute right-2 top-2",
             )}
           >
             {sidebarCollapsed ? (
