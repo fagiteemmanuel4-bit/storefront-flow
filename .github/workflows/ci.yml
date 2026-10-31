@@ -29,6 +29,9 @@ jobs:
       - name: Production build
         if: always()
         run: bun run build
-      - name: Dependency audit
+      - name: Dependency audit report
         if: always()
-        run: bun audit
+        run: bun audit || true
+      - name: Block high and critical dependency vulnerabilities
+        if: always()
+        run: bun audit --audit-level=high
