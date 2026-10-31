@@ -196,6 +196,10 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
   const subscriptionTier: StrapTier =
     subscriptionQuery.data?.status === "active" ? subscriptionQuery.data.plan : "free";
   const canExport = hasEntitlement(subscriptionTier, "storeExport");
+  const canOnlineStore = hasEntitlement(subscriptionTier, "onlineStore");
+  const canAnalytics = hasEntitlement(subscriptionTier, "advancedAnalytics");
+  const canTeam = subscriptionTier !== "free";
+  const canStockSense = hasEntitlement(subscriptionTier, "stockSense");
   const storefrontQuery = useQuery({
     queryKey: ["online-store-menu", store?.id],
     enabled: Boolean(store?.id),
@@ -309,7 +313,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
       pathname.startsWith("/settings");
     if (!allowed)
       void navigate({ to: STAFF_ROLE_META[staffSession!.role].defaultRoute as any, replace: true });
-  }, [navigate, pathname, staffActive, staffSession]);
+  }, [navigate, pathname, staffActive, staffSession, primaryNav, secondaryNav]);
   useEffect(() => {
     const activeStoreId = store?.id;
     if (!online || !activeStoreId || staffActive) return;
@@ -819,6 +823,10 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
         branchName={branch?.name ?? null}
         role={effectiveRole as any}
         canExport={canExport}
+        canOnlineStore={canOnlineStore}
+        canAnalytics={canAnalytics}
+        canTeam={canTeam}
+        canStockSense={canStockSense}
         onSignOut={() => {
           setMenuOpen(false);
           setLogoutOpen(true);
