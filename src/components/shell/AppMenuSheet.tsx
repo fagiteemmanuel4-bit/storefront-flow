@@ -133,7 +133,12 @@ function ActionLink({
     >
       <span className="relative flex size-9 items-center justify-center rounded-xl bg-background">
         <Icon className="size-[17px]" />
-        {locked && <LockKeyhole className="absolute -right-1 -top-1 size-3.5 text-accent-ink" aria-label="Business plan required" />}
+        {locked && (
+          <LockKeyhole
+            className="absolute -right-1 -top-1 size-3.5 text-accent-ink"
+            aria-label="Business plan required"
+          />
+        )}
       </span>
       <span className="text-[11px] font-semibold leading-tight">{label}</span>
     </Link>
@@ -628,7 +633,12 @@ export function AppMenuSheet({
           </div>
         </SheetContent>
       </Sheet>
-      <ExportDataDialog store={store} open={exportOpen} onOpenChange={setExportOpen} canExport={canExport} />
+      <ExportDataDialog
+        store={store}
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        canExport={canExport}
+      />
       <DeleteStoreDialog store={store} open={deleteOpen} onOpenChange={setDeleteOpen} />
     </>
   );
