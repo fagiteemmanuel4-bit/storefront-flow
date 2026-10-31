@@ -23,12 +23,12 @@ jobs:
         run: bun install --no-save
       - name: Lint
         run: bun run lint
-      - name: Type check
-        if: always()
-        run: bunx tsc --noEmit
       - name: Production build
         if: always()
         run: bun run build
+      - name: Type check
+        if: always()
+        run: bunx tsc --noEmit
       - name: Dependency audit report
         if: always()
         run: bun audit || true
