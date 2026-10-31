@@ -54,6 +54,8 @@ body:has(.kudi-hero) .text-accent-ink {
 body:has(.kudi-hero) .text-border {
   color: #b5b1a5;
 }
+/* Keep secondary copy readable on the light public surfaces. */
+body:has(.kudi-hero) main>section:not(.kudi-hero):not(.bg-foreground):not(.bg-neutral-950) .text-background{color:#151513}.kudi-hero .text-background{color:#fff}
 /* Public link readability. */
 body:has(.kudi-hero) main a {
   color: #765000;
