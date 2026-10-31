@@ -373,7 +373,7 @@ function StoreBuilder() {
             >
               {published ? "Published" : "Draft"}
             </span>
-            <Link to="/online-store/customize" className="hidden sm:inline-flex">
+            <Link to="/settings/online-store" className="hidden sm:inline-flex">
               <Button variant="outline">Legacy settings</Button>
             </Link>
             <Button
