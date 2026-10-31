@@ -42,7 +42,11 @@ const STEPS: TourStep[] = [
   {
     title: "Store and branch switcher",
     body: "When you manage more than one store or branch, switch your active workspace here. The rest of the page follows that selection.",
-    selectors: ['[data-tour="store-switcher"]', '[data-tour="mobile-store-switcher"]', '[data-tour="main-content"]'],
+    selectors: [
+      '[data-tour="store-switcher"]',
+      '[data-tour="mobile-store-switcher"]',
+      '[data-tour="main-content"]',
+    ],
   },
   {
     title: "Page title and workspace details",
@@ -121,10 +125,7 @@ export function WelcomeTour() {
 
     if (bounds.left < 340 && bounds.right + cardWidth + gap < window.innerWidth) {
       left = bounds.right + gap;
-      top = Math.min(
-        Math.max(bounds.top - 20, 16),
-        window.innerHeight - 240,
-      );
+      top = Math.min(Math.max(bounds.top - 20, 16), window.innerHeight - 240);
     } else if (top + 220 > window.innerHeight) {
       top = Math.max(16, bounds.top - 220);
     }
