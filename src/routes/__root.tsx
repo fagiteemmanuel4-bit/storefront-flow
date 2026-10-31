@@ -4,6 +4,7 @@ import {
   createRootRouteWithContext,
   useRouter,
   useRouterState,
+  type ErrorComponentProps,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -86,7 +87,7 @@ function getErrorVariant(error: Error) {
   if (/not found|404|does not exist|missing/.test(message)) return "missing" as const;
   return "server" as const;
 }
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   const variant = getErrorVariant(error);
