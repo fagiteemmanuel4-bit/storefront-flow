@@ -138,7 +138,9 @@ function OnlineCatalogPage() {
     values: { enabled?: boolean; featured?: boolean },
   ) {
     if (!storeId || !canManage) return;
-    const current = rows.find((r) => r.product.id === productId)?.online;
+    const currentRow = rows.find((r) => r.product.id === productId);
+    const current = currentRow?.online;
+    const productName = currentRow?.product.name ?? productId;
     const payload = {
       store_id: storeId,
       product_id: productId,
@@ -147,7 +149,7 @@ function OnlineCatalogPage() {
       description: current?.description ?? "",
       slug:
         current?.slug ??
-        product.name
+        productName
           .toLowerCase()
           .trim()
           .replace(/[^a-z0-9]+/g, "-")
