@@ -457,10 +457,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
               {canManageStaff && storefront?.setup_completed && storefrontPath && (
                 <Link
                   to={(canOnlineStore ? storefrontPath : "/upgrade") as any}
-                  title={
-                    canOnlineStore ? "Open live storefront"
-                      : "Live storefront · Business plan"
-                  }
+                  title={canOnlineStore ? "Open live storefront" : "Live storefront · Business plan"}
                   aria-label={sidebarCollapsed ? "Open live storefront" : undefined}
                   className={cn(
                     "flex min-h-10 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition hover:bg-secondary",
