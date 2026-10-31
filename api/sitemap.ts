@@ -52,7 +52,7 @@ export default async function handler(_request: unknown, response: SitemapRespon
 
 function escapeXml(value: string) {
   return value.replace(
-    /[<>&'\"]/g,
-    (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '\"': "&quot;" })[c] || c,
+    /[<>&'"]/g,
+    (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" })[c] || c,
   );
 }
