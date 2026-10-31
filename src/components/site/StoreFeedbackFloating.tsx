@@ -18,7 +18,8 @@ export function StoreFeedbackFloating() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
-  if (!slug) return null;
+  const storeSlug = slug;
+  if (!storeSlug) return null;
 
   function openFeedback(nextMode: "rating" | "report") {
     setMode(nextMode);
@@ -43,7 +44,7 @@ export function StoreFeedbackFloating() {
       const { data: store, error: storeError } = await onlineSupabase
         .from("online_stores")
         .select("store_id")
-        .eq("slug", slug)
+        .eq("slug", storeSlug)
         .maybeSingle();
       if (storeError) throw new Error(storeError.message);
       if (!store?.store_id) throw new Error("This storefront could not be found.");
