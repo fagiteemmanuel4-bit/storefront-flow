@@ -76,10 +76,13 @@ function ReportsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sale_items")
-        .select("*, products(cost)")
+        .select("*, unit_cost_at_sale, products(cost)")
         .eq("store_id", storeId!);
       if (error) throw new Error(error.message);
-      return (data ?? []) as (SaleItemRow & { products?: { cost?: number } | null })[];
+      return (data ?? []) as (SaleItemRow & {
+        unit_cost_at_sale?: number | null;
+        products?: { cost?: number } | null;
+      })[];
     },
   });
   const expenses = useQuery({
@@ -132,7 +135,11 @@ function ReportsPage() {
     const revenue = grossSales - refunds;
     const expense = filtered.e.reduce((n, x) => n + Number(x.amount), 0);
     const cogs = filtered.i.reduce(
-      (n, x) => n + Number(x.products?.cost ?? 0) * Number(x.quantity),
+      (n, x) =>
+        n +
+        Number(x.unit_cost_at_sale ?? x.products?.cost ?? 0) *
+          Number(x.quantity) *
+          Number(x.units_per_sale ?? 1),
       0,
     );
     const gross = revenue - cogs;
@@ -219,7 +226,7 @@ function ReportsPage() {
       ["Returns / refunds", metrics.refunds],
       ["Net revenue", metrics.revenue],
       ["Expenses", metrics.expense],
-      ["COGS", metrics.cogs],
+      ["Estimated COGS", metrics.cogs],
       ["Gross Profit", metrics.gross],
       ["Net Profit", metrics.net],
       ["Sales Count", metrics.count],
@@ -310,7 +317,7 @@ function ReportsPage() {
                 sub={`${metrics.count} sales · ${formatMoney(metrics.refunds, currency)} returned`}
               />
               <Metric
-                label="Estimated gross profit"
+                label="Gross profit (estimated)"
                 icon={<DollarSign className="size-4" />}
                 value={loading ? null : formatMoney(metrics.gross, currency)}
                 sub={`${metrics.margin.toFixed(1)}% margin`}
@@ -379,7 +386,7 @@ function ReportsPage() {
               <div className="border-b border-border px-5 py-4">
                 <h2 className="font-display font-semibold">Top products</h2>
                 <p className="text-xs text-muted-foreground">
-                  Ranked by recorded line revenue for the selected period. Gross profit uses the product's current cost, not a historical cost snapshot.
+                  Ranked by recorded line revenue for the selected period. New sales use the cost captured at checkout. Older sales without a snapshot fall back to current product cost.
                 </p>
               </div>
               {loading ? (
