@@ -100,13 +100,13 @@ export function SiteHeader() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <Link to="/" className="group flex shrink-0 items-center gap-2" onClick={closeMenu}>
             <span
-              className="flex size-8 items-center justify-center rounded-full bg-accent shadow-sm transition-transform duration-300 group-hover:scale-110"
+              className="flex size-8 items-center justify-center rounded-full border-2 border-[#c6f432] bg-[#0e1116] transition-transform duration-300 group-hover:scale-110"
               style={{ animation: "kudi-brand-pop .75s .1s cubic-bezier(.22,1,.36,1) both" }}
             >
-              <span className="size-3 rotate-45 rounded-[3px] bg-foreground" />
+              <span className="size-3 rounded-full bg-[#c6f432]" />
             </span>
             <span className="font-display text-xl font-bold tracking-tight transition-transform duration-300 group-hover:translate-x-0.5">
-              STRAP.
+              Strap
             </span>
           </Link>
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
@@ -211,10 +211,10 @@ export function SiteFooter() {
         <section className="grid gap-12 border-b border-background/10 py-14 lg:grid-cols-[1fr_2.1fr]">
           <div className="max-w-md">
             <Link to="/" className="inline-flex items-center gap-2">
-              <span className="flex size-9 items-center justify-center rounded-full bg-accent">
-                <span className="size-3.5 rotate-45 rounded-[3px] bg-foreground" />
+              <span className="flex size-9 items-center justify-center rounded-full border-2 border-[#c6f432] bg-[#0e1116]">
+                <span className="size-3.5 rounded-full bg-[#c6f432]" />
               </span>
-              <span className="font-display text-2xl font-bold tracking-tight">STRAP.</span>
+              <span className="font-display text-2xl font-bold tracking-tight">Strap</span>
             </Link>
             <p className="mt-5 text-base leading-7 text-background/60">
               Strap by Kryonara is a practical retail operating system for shops that want one clear
