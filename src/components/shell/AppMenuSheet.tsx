@@ -568,6 +568,22 @@ export function AppMenuSheet({
                   onClick={close}
                 />
                 <Link
+                  to="/notifications"
+                  onClick={close}
+                  className="group flex w-full items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-left transition hover:border-border hover:bg-secondary/70"
+                >
+                  <span className="flex size-10 items-center justify-center rounded-xl bg-secondary group-hover:bg-accent-soft">
+                    <Bell className="size-[18px]" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold">Notifications</span>
+                    <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                      Store alerts and activity
+                    </span>
+                  </span>
+                  <ChevronRight className="size-4 text-muted-foreground" />
+                </Link>
+                <Link
                   to="/settings"
                   onClick={close}
                   className="group flex w-full items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-left transition hover:border-border hover:bg-secondary/70"
