@@ -1,384 +1,273 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+  ArrowDownRight,
   ArrowRight,
   BarChart3,
   Check,
-  ChevronRight,
+  ChevronDown,
   Globe2,
-  PackageCheck,
-  Receipt,
+  Menu,
+  Package,
   ScanLine,
   ShieldCheck,
-  ShoppingBag,
-  Sparkles,
-  Store,
-  Users,
+  ShoppingCart,
   Wallet,
-  Zap,
+  X,
 } from "lucide-react";
-import { LandingMedia } from "@/components/site/LandingMedia";
-import { LandingDetails } from "@/components/site/LandingDetails";
-import { LandingUpgrades } from "@/components/site/LandingUpgrades";
-import { LandingHeader } from "@/components/site/LandingHeader";
-import { SiteFooter } from "@/components/site/SiteChrome";
-import "@/landing-hero.css";
+import "./../landing-hero.css";
 
 const SITE_URL = "https://storefront-flow.vercel.app";
-const HERO_VIDEO = "https://cdn.pixabay.com/video/2019/02/01/21117-315137086_tiny.mp4";
 
-const ILLUSTRATIONS = {
-  retail: "https://unpkg.com/undraw-svg@1.0.0/svgs/shopping-bags.svg",
-  mobile: "https://unpkg.com/undraw-svg@1.0.0/svgs/mobile-site.svg",
-  growth: "https://unpkg.com/undraw-svg@1.0.0/svgs/growth-analytics.svg",
-  receipt: "https://unpkg.com/undraw-svg@1.0.0/svgs/printing-invoices.svg",
-} as const;
-
-const FEATURES = [
-  [
-    ScanLine,
-    "Sell in seconds",
-    "Build carts, scan products, take payments and keep the queue moving.",
-  ],
-  [
-    PackageCheck,
-    "Know your stock",
-    "See available, low and out-of-stock products and keep inventory accurate.",
-  ],
-  [
-    Wallet,
-    "Track your money",
-    "Keep sales, expenses and payment records together so the numbers tell one story.",
-  ],
-  [
-    Globe2,
-    "Sell beyond the counter",
-    "Create a shareable storefront and let customers browse and order online.",
-  ],
+const navigation = [
+  ["Product", "#product"],
+  ["How it works", "#how-it-works"],
+  ["Online store", "#online-store"],
+  ["FAQs", "#faq"],
 ] as const;
 
-const CAPABILITIES = [
-  [
-    ScanLine,
-    "Barcode & QR scanning",
-    "Use your camera or compatible USB/Bluetooth keyboard-wedge scanners.",
-  ],
-  [
-    Receipt,
-    "Receipts & printing",
-    "Preview receipts, design your own layout and prepare compatible printer workflows.",
-  ],
-  [
-    BarChart3,
-    "Reports & insights",
-    "Understand sales, expenses, stock value and the signals behind your business.",
-  ],
-  [
-    Users,
-    "Shop teams",
-    "Keep day-to-day selling organised for the people working behind the counter.",
-  ],
-  [
-    Store,
-    "Store management",
-    "Manage shop information, branches, preferences and operating details.",
-  ],
-  [
-    ShoppingBag,
-    "Online catalogue",
-    "Publish products, organise the catalogue and manage online orders.",
-  ],
-  [
-    ShieldCheck,
-    "Protected workspace",
-    "Keep business activity inside an authenticated workspace with controlled access.",
-  ],
-  [Zap, "Fast daily workflows", "Move from product to sale to stock update with fewer steps."],
-] as const;
+const features = [
+  {
+    icon: ShoppingCart,
+    number: "01",
+    title: "Sell without the slowdown",
+    description:
+      "Search or scan products, build a cart, record a sale and keep the checkout moving.",
+  },
+  {
+    icon: Package,
+    number: "02",
+    title: "Know what is in your shop",
+    description:
+      "Keep product quantities, stock movements and low-stock items visible in one place.",
+  },
+  {
+    icon: Wallet,
+    number: "03",
+    title: "Understand the numbers",
+    description:
+      "Bring sales, expenses and business reports together to make clearer daily decisions.",
+  },
+];
 
-const STEPS = [
+const steps = [
   [
-    "01",
-    "Bring your products in",
-    "Add products manually, import a catalogue or build your inventory as you sell.",
+    "Set up your shop",
+    "Add your products, organise your stock and invite the people who help you run the business.",
   ],
   [
-    "02",
-    "Sell at the counter",
-    "Search, scan, build a cart and complete a sale without slowing down the queue.",
+    "Run your daily sales",
+    "Use the register to search, scan, build carts and record transactions.",
   ],
   [
-    "03",
-    "Stay in control",
-    "Strap keeps sales, stock, expenses and orders connected as the day changes.",
+    "Keep everything connected",
+    "Review stock, expenses and reports, then publish a catalogue when you are ready to sell online.",
   ],
-  [
-    "04",
-    "Open your store",
-    "Publish your catalogue, share your store and manage online orders from the same workspace.",
-  ],
-] as const;
+];
 
-function Illustration({
-  src,
-  alt,
-  className = "",
-}: {
-  src: string;
-  alt: string;
-  className?: string;
-}) {
+const faqs = [
+  [
+    "What is Strap?",
+    "Strap is a retail workspace that brings point of sale, inventory, expenses, reporting and online catalogue tools together.",
+  ],
+  [
+    "Can I use Strap on a phone and a computer?",
+    "Yes. Strap is designed to work across modern mobile and desktop browsers. Hardware support depends on your device and browser.",
+  ],
+  [
+    "Can my staff use it?",
+    "Yes. Store access supports owner, manager and cashier roles, with permissions for everyday work.",
+  ],
+  [
+    "Can I sell online?",
+    "You can publish a shareable product catalogue and manage customer orders from the same workspace. Online-store availability depends on your plan.",
+  ],
+];
+
+function BrandMark({ inverse = false }: { inverse?: boolean }) {
   return (
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      decoding="async"
-      width={640}
-      height={520}
-      className={`h-auto w-full object-contain ${className}`}
-    />
+    <Link to="/" className="strap-brand" aria-label="Strap home">
+      <span
+        className={`strap-brand-mark ${inverse ? "strap-brand-mark-inverse" : ""}`}
+        aria-hidden="true"
+      >
+        <span />
+      </span>
+      <span>
+        STRAP<span className="strap-brand-period">.</span>
+      </span>
+    </Link>
   );
 }
 
 function Landing() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const closeMenu = () => setMenuOpen(false);
+
   return (
-    <div className="min-h-screen overflow-x-hidden bg-surface text-foreground">
-      <LandingHeader />
+    <div className="strap-landing">
+      <header className="strap-header">
+        <div className="strap-header-inner">
+          <BrandMark />
+          <nav className="strap-nav" aria-label="Main navigation">
+            {navigation.map(([label, href]) => (
+              <a key={label} href={href}>
+                {label}
+              </a>
+            ))}
+          </nav>
+          <div className="strap-header-actions">
+            <Link to="/auth" className="strap-login">
+              Sign in
+            </Link>
+            <Link to="/auth" className="strap-button strap-button-dark strap-button-small">
+              Get started <ArrowRight size={16} />
+            </Link>
+            <button
+              type="button"
+              className="strap-menu-toggle"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              {menuOpen ? <X size={21} /> : <Menu size={21} />}
+            </button>
+          </div>
+        </div>
+        {menuOpen && (
+          <nav className="strap-mobile-nav" aria-label="Mobile navigation">
+            {navigation.map(([label, href]) => (
+              <a key={label} href={href} onClick={closeMenu}>
+                {label}
+              </a>
+            ))}
+            <Link to="/auth" onClick={closeMenu}>
+              Sign in / Get started <ArrowRight size={16} />
+            </Link>
+          </nav>
+        )}
+      </header>
+
       <main>
-        <section className="kudi-hero relative isolate flex min-h-[100svh] overflow-hidden bg-foreground text-background">
-          <video
-            className="absolute inset-0 h-full w-full object-cover"
-            src={HERO_VIDEO}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            aria-hidden="true"
-          />
-          <div className="kudi-hero-video-fade absolute inset-0" aria-hidden="true" />
-          <div className="kudi-hero-vignette absolute inset-0" aria-hidden="true" />
-          <div className="relative mx-auto flex min-h-[100svh] w-full max-w-7xl items-end px-4 pb-16 pt-24 sm:px-6 sm:pb-20 lg:items-center lg:pb-0">
-            <div className="max-w-3xl animate-[fade-in-up_.75s_ease-out_both]">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/35 px-3 py-1.5 text-xs font-semibold backdrop-blur-md">
-                <span className="flex size-5 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                  <Sparkles className="size-3" />
-                </span>
-                Built for busy retail
-              </div>
-              <h1 className="mt-6 max-w-4xl font-display text-5xl font-bold tracking-[-.05em] sm:text-[5.4rem] sm:leading-[.9]">
-                Your shop moves fast. <span className="text-accent">Strap keeps up.</span>
-              </h1>
-              <p className="mt-7 max-w-2xl text-lg leading-8 text-white/78 sm:text-xl">
-                Sales, stock, expenses, payments, reports and your online store — brought into one
-                clear workspace built around how real shops operate.
+        <section className="strap-hero">
+          <div className="strap-hero-orbit strap-hero-orbit-one" aria-hidden="true" />
+          <div className="strap-hero-orbit strap-hero-orbit-two" aria-hidden="true" />
+          <div className="strap-container strap-hero-grid">
+            <div className="strap-hero-copy">
+              <p className="strap-eyebrow strap-eyebrow-light">
+                <span /> RETAIL, IN ONE PLACE
               </p>
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  to="/auth"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-7 py-3.5 font-semibold text-accent-foreground shadow-float transition hover:-translate-y-0.5"
-                >
-                  Start selling free
-                  <ArrowRight className="size-4" />
+              <h1>
+                Run your shop.
+                <br />
+                <span>Not around it.</span>
+              </h1>
+              <p className="strap-hero-description">
+                Sales, stock, expenses and online orders — connected in one clear workspace, so you
+                can focus on the business in front of you.
+              </p>
+              <div className="strap-hero-actions">
+                <Link to="/auth" className="strap-button strap-button-yellow">
+                  Start with Strap <ArrowRight size={18} />
                 </Link>
-                <a
-                  href="#features"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-7 py-3.5 font-semibold backdrop-blur-md transition hover:bg-white/15"
-                >
-                  Explore Strap
-                  <ChevronRight className="size-4" />
+                <a href="#product" className="strap-text-link strap-text-link-light">
+                  See what you can do <ArrowDownRight size={17} />
                 </a>
               </div>
-              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs text-white/68">
-                {["Quick setup", "Built for everyday retail", "Your data, your shop"].map(
-                  (item) => (
-                    <span key={item} className="inline-flex items-center gap-2">
-                      <Check className="size-4 text-accent" />
-                      {item}
-                    </span>
-                  ),
-                )}
+              <div className="strap-hero-note">
+                <Check size={15} /> Built for the everyday work of retail
+              </div>
+            </div>
+            <div
+              className="strap-hero-art"
+              aria-label="Strap connects the essential parts of a retail business"
+            >
+              <div className="strap-art-ring strap-art-ring-outer" />
+              <div className="strap-art-ring strap-art-ring-inner" />
+              <div className="strap-art-core">
+                <BrandMark inverse />
+                <span className="strap-art-caption">YOUR RETAIL WORKSPACE</span>
+              </div>
+              <div className="strap-art-chip strap-art-chip-sales">
+                <ShoppingCart size={18} />
+                <span>Sales</span>
+              </div>
+              <div className="strap-art-chip strap-art-chip-stock">
+                <Package size={18} />
+                <span>Stock</span>
+              </div>
+              <div className="strap-art-chip strap-art-chip-money">
+                <Wallet size={18} />
+                <span>Money</span>
+              </div>
+              <div className="strap-art-chip strap-art-chip-online">
+                <Globe2 size={18} />
+                <span>Online</span>
               </div>
             </div>
           </div>
-          <div className="absolute bottom-7 right-6 hidden max-w-xs rounded-2xl border border-white/15 bg-black/40 p-4 text-sm text-white/80 shadow-float backdrop-blur-md lg:block">
-            <p className="text-xs font-bold uppercase tracking-[.16em] text-accent">Strap live</p>
-            <p className="mt-1 font-semibold text-white">
-              One operation. Every important detail connected.
-            </p>
+          <div className="strap-container strap-hero-bottom">
+            <span>ONE WORKSPACE</span>
+            <span className="strap-bottom-line" />
+            <span>MORE CONTROL OVER EVERYDAY RETAIL</span>
           </div>
         </section>
 
-        <section className="border-b border-border px-4 py-10 sm:px-6 sm:py-14">
-          <div className="mx-auto grid max-w-7xl items-center gap-10 md:grid-cols-[1fr_auto]">
+        <section id="product" className="strap-section strap-intro">
+          <div className="strap-container strap-intro-grid">
+            <p className="strap-eyebrow">THE STRAP APPROACH</p>
             <div>
-              <p className="text-label-caps text-accent-ink">The Strap idea</p>
-              <h2 className="text-display-sm mt-3">Run the shop. Don't run after the paperwork.</h2>
-            </div>
-            <Illustration
-              src={ILLUSTRATIONS.retail}
-              alt="Illustration of retail shopping bags and commerce"
-              className="max-w-[18rem] justify-self-center md:max-w-[22rem]"
-            />
-          </div>
-        </section>
-
-        <LandingMedia />
-        <section id="features" className="overflow-hidden px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto max-w-7xl">
-            <div className="grid items-end gap-10 lg:grid-cols-[1fr_.65fr]">
-              <div>
-                <p className="text-label-caps text-accent-ink">One system. Less guesswork.</p>
-                <h2 className="text-display-md mt-4">
-                  Everything you need to keep the counter moving.
-                </h2>
-              </div>
-              <p className="leading-7 text-muted-foreground">
-                Strap turns the everyday jobs of a shop into connected workflows, so you spend less
-                time copying information between tools.
+              <h2>Good business starts with a clearer view.</h2>
+              <p className="strap-lead">
+                No scattered records. No switching between disconnected tools just to understand
+                your day. Strap brings the essentials together and keeps the work moving.
               </p>
             </div>
-            <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {FEATURES.map(([Icon, title, body], index) => (
-                <article
-                  key={title}
-                  className="group border-b border-border pb-7 transition hover:-translate-y-1"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="flex size-12 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink">
-                      <Icon className="size-5" />
-                    </span>
-                    <span className="font-display text-5xl font-bold text-border transition group-hover:text-accent/30">
-                      0{index + 1}
-                    </span>
+          </div>
+        </section>
+
+        <section className="strap-section strap-features">
+          <div className="strap-container">
+            <div className="strap-section-heading">
+              <div>
+                <p className="strap-eyebrow">THE ESSENTIALS, CONNECTED</p>
+                <h2>Everything has its place.</h2>
+              </div>
+              <p>One practical system for the work that keeps your shop running.</p>
+            </div>
+            <div className="strap-feature-grid">
+              {features.map(({ icon: Icon, number, title, description }) => (
+                <article className="strap-feature" key={number}>
+                  <div className="strap-feature-top">
+                    <span>{number}</span>
+                    <Icon size={22} strokeWidth={1.7} />
                   </div>
-                  <h3 className="mt-6 font-display text-xl font-bold">{title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-muted-foreground">{body}</p>
+                  <h3>{title}</h3>
+                  <p>{description}</p>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="overflow-hidden border-y border-border bg-background px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1fr_.9fr]">
-            <div>
-              <p className="text-label-caps text-accent-ink">Mobile + desktop</p>
-              <h2 className="text-display-md mt-4">
-                Your business doesn't stay in one place. Strap doesn't either.
-              </h2>
-              <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
-                Move between the counter, stockroom and phone without losing the context of what
-                happened.
-              </p>
-              <div className="mt-9 grid gap-4 sm:grid-cols-3">
-                <div>
-                  <p className="font-display text-xl font-bold">Counter</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Fast checkout and scanning.</p>
-                </div>
-                <div>
-                  <p className="font-display text-xl font-bold">Stockroom</p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Accurate inventory and alerts.
-                  </p>
-                </div>
-                <div>
-                  <p className="font-display text-xl font-bold">Online</p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Catalogue and customer orders.
-                  </p>
-                </div>
-              </div>
+        <section id="how-it-works" className="strap-section strap-process">
+          <div className="strap-container strap-process-grid">
+            <div className="strap-process-heading">
+              <p className="strap-eyebrow strap-eyebrow-light">A SIMPLE WAY TO WORK</p>
+              <h2>From first setup to everyday flow.</h2>
+              <p>Start with what you need today. Add more as your business grows.</p>
+              <Link to="/auth" className="strap-button strap-button-yellow">
+                Open your workspace <ArrowRight size={17} />
+              </Link>
             </div>
-            <Illustration
-              src={ILLUSTRATIONS.mobile}
-              alt="Illustration of a mobile retail website experience"
-              className="mx-auto max-w-[34rem]"
-            />
-          </div>
-        </section>
-
-        <section className="px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto max-w-7xl">
-            <div className="grid items-center gap-12 lg:grid-cols-[.8fr_1.2fr]">
-              <Illustration
-                src={ILLUSTRATIONS.growth}
-                alt="Illustration of business growth analytics"
-                className="mx-auto max-w-[34rem]"
-              />
-              <div>
-                <p className="text-label-caps text-accent-ink">Business intelligence</p>
-                <h2 className="text-display-md mt-4">
-                  See what happened. Know what needs attention.
-                </h2>
-                <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
-                  Reports should not just show numbers. They should help you decide what to restock,
-                  where sales are moving and what needs your attention today.
-                </p>
-                <Link
-                  to="/auth"
-                  className="mt-8 inline-flex items-center gap-2 font-semibold text-accent-ink hover:underline"
-                >
-                  Explore Strap reports
-                  <ArrowRight className="size-4" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="border-y border-border bg-foreground px-4 py-20 text-background sm:px-6 sm:py-28">
-          <div className="mx-auto max-w-7xl">
-            <div className="grid items-end gap-8 lg:grid-cols-[1fr_.7fr]">
-              <div>
-                <p className="text-label-caps text-accent">The full toolkit</p>
-                <h2 className="mt-4 font-display text-4xl font-bold tracking-tight sm:text-5xl">
-                  More than a cash register.
-                </h2>
-              </div>
-              <p className="max-w-xl leading-7 text-background/65">
-                The same workspace that records a sale should help you understand stock, serve
-                customers, manage orders and grow online.
-              </p>
-            </div>
-            <div className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-              {CAPABILITIES.map(([Icon, title, body]) => (
-                <article key={title} className="border-t border-background/15 pt-5">
-                  <Icon className="size-5 text-accent" />
-                  <h3 className="mt-4 font-display text-lg font-bold">{title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-background/60">{body}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="how-it-works" className="overflow-hidden px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto grid max-w-7xl items-start gap-12 lg:grid-cols-[.7fr_1.3fr]">
-            <div className="lg:sticky lg:top-28">
-              <p className="text-label-caps text-accent-ink">How Strap works</p>
-              <h2 className="text-display-md mt-4">
-                Simple enough for today. Powerful enough for tomorrow.
-              </h2>
-              <p className="mt-5 leading-7 text-muted-foreground">
-                Start with the essentials and grow into the tools your shop actually needs.
-              </p>
-              <Illustration
-                src={ILLUSTRATIONS.receipt}
-                alt="Illustration of receipts and invoice printing"
-                className="mt-8 hidden max-w-[18rem] lg:block"
-              />
-            </div>
-            <div className="space-y-12">
-              {STEPS.map(([number, title, body]) => (
-                <article
-                  key={number}
-                  className="grid gap-4 border-b border-border pb-10 sm:grid-cols-[80px_1fr]"
-                >
-                  <span className="font-display text-5xl font-bold text-accent/50">{number}</span>
+            <div className="strap-steps">
+              {steps.map(([title, description], index) => (
+                <article className="strap-step" key={title}>
+                  <span className="strap-step-number">0{index + 1}</span>
                   <div>
-                    <h3 className="font-display text-2xl font-bold">{title}</h3>
-                    <p className="mt-3 max-w-xl leading-7 text-muted-foreground">{body}</p>
+                    <h3>{title}</h3>
+                    <p>{description}</p>
                   </div>
                 </article>
               ))}
@@ -386,116 +275,137 @@ function Landing() {
           </div>
         </section>
 
-        <LandingUpgrades />
-        <LandingDetails />
-        <section id="security" className="px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto max-w-5xl text-center">
-            <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink">
-              <ShieldCheck className="size-7" />
+        <section id="online-store" className="strap-section strap-online">
+          <div className="strap-container strap-online-grid">
+            <div>
+              <p className="strap-eyebrow">YOUR SHOP, BEYOND THE COUNTER</p>
+              <h2>Give customers another way to find you.</h2>
+              <p className="strap-lead">
+                Turn your product catalogue into a shareable online storefront. Keep products
+                organised and manage incoming orders from the same place you run your shop.
+              </p>
+              <Link to="/auth" className="strap-text-link">
+                Explore Strap <ArrowRight size={17} />
+              </Link>
             </div>
-            <h2 className="text-display-sm mt-6">Your business deserves a system you can trust.</h2>
-            <p className="mx-auto mt-4 max-w-2xl leading-7 text-muted-foreground">
-              Keep shop records organised, control access and build your operation on a system
-              designed to grow with you.
-            </p>
-            <div className="mt-10 grid gap-8 text-left sm:grid-cols-3">
-              {[
-                [
-                  ShieldCheck,
-                  "Protected workspace",
-                  "Authentication and controlled shop access are built into the experience.",
-                ],
-                [
-                  Zap,
-                  "Built for busy days",
-                  "Fast flows and clear information help you spend less time on admin.",
-                ],
-                [
-                  Globe2,
-                  "Ready to grow online",
-                  "Connect your physical operation with a simple shareable storefront.",
-                ],
-              ].map(([Icon, title, body]) => (
-                <div key={title as string}>
-                  <Icon className="size-5 text-accent-ink" />
-                  <h3 className="mt-4 font-display font-bold">{title as string}</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{body as string}</p>
+            <div className="strap-online-panel">
+              <div className="strap-online-window">
+                <div className="strap-window-bar">
+                  <i />
+                  <i />
+                  <i />
+                  <span>YOUR STORE</span>
                 </div>
-              ))}
+                <div className="strap-window-content">
+                  <div className="strap-window-heading">
+                    <span>Discover the collection</span>
+                    <Globe2 size={19} />
+                  </div>
+                  <div className="strap-window-products">
+                    <span className="strap-product-block strap-product-one" />
+                    <span className="strap-product-block strap-product-two" />
+                    <span className="strap-product-block strap-product-three" />
+                  </div>
+                  <div className="strap-window-lines">
+                    <i />
+                    <i />
+                  </div>
+                </div>
+              </div>
+              <span className="strap-online-label">
+                <Globe2 size={15} /> A storefront you can share
+              </span>
             </div>
           </div>
         </section>
 
-        <section id="faq" className="px-4 py-20 sm:px-6 sm:py-28">
-          <div className="mx-auto max-w-4xl">
-            <div className="text-center">
-              <p className="text-label-caps text-accent-ink">Questions</p>
-              <h2 className="text-display-md mt-4">A clearer answer before you start.</h2>
+        <section className="strap-section strap-control">
+          <div className="strap-container strap-control-grid">
+            <div className="strap-control-mark">
+              <BarChart3 size={38} strokeWidth={1.4} />
             </div>
-            <div className="mt-10 grid gap-3">
-              {[
-                [
-                  "Is Strap built for mobile and desktop?",
-                  "Yes. The experience is responsive, with workflows designed for both counter computers and mobile devices.",
-                ],
-                [
-                  "Can I use external scanners and printers?",
-                  "Yes. Compatible camera, USB, Bluetooth and serial hardware workflows are supported where the browser and device allow them.",
-                ],
-                [
-                  "Can I sell online?",
-                  "Yes. You can publish products to an online catalogue and manage online orders from the same workspace.",
-                ],
-                [
-                  "Can my team use the store?",
-                  "Yes. Store roles help owners, managers and cashiers work with appropriate access.",
-                ],
-              ].map(([question, answer]) => (
-                <details key={question} className="group border-b border-border py-5">
-                  <summary className="cursor-pointer list-none font-semibold">
+            <div>
+              <p className="strap-eyebrow">CLARITY THAT ADDS UP</p>
+              <h2>Make the next decision with better information.</h2>
+              <p className="strap-lead">
+                See sales, expenses and stock information together. Understand what is happening
+                today and what deserves your attention next.
+              </p>
+            </div>
+            <div className="strap-control-points">
+              <span>
+                <ScanLine size={17} /> Checkout and scanning
+              </span>
+              <span>
+                <ShieldCheck size={17} /> Team access controls
+              </span>
+              <span>
+                <BarChart3 size={17} /> Business reports
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <section id="faq" className="strap-section strap-faq">
+          <div className="strap-container strap-faq-grid">
+            <div>
+              <p className="strap-eyebrow">GOOD TO KNOW</p>
+              <h2>Questions, answered.</h2>
+              <p className="strap-lead">A little more detail before you get started.</p>
+              <Link to="/support" className="strap-text-link">
+                Visit the Help Centre <ArrowRight size={17} />
+              </Link>
+            </div>
+            <div className="strap-faq-list">
+              {faqs.map(([question, answer]) => (
+                <details key={question}>
+                  <summary>
                     {question}
-                    <span className="float-right text-muted-foreground">+</span>
+                    <ChevronDown size={18} />
                   </summary>
-                  <p className="max-w-2xl pt-3 text-sm leading-6 text-muted-foreground">{answer}</p>
+                  <p>{answer}</p>
                 </details>
               ))}
             </div>
-            <div className="mt-8 flex justify-center">
-              <Link
-                to="/support"
-                className="inline-flex items-center gap-2 font-semibold text-accent-ink hover:underline"
-              >
-                Visit Help Centre
-                <ArrowRight className="size-4" />
-              </Link>
-            </div>
           </div>
         </section>
 
-        <section className="px-4 pb-20 sm:px-6 sm:pb-28">
-          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-accent p-8 text-accent-foreground shadow-float sm:p-12 lg:p-16">
-            <div className="absolute -right-16 -top-16 size-64 rounded-full border-[30px] border-accent-foreground/10" />
-            <div className="relative grid items-end gap-8 lg:grid-cols-[1fr_auto]">
-              <div className="max-w-2xl">
-                <p className="text-label-caps opacity-70">Ready when you are</p>
-                <h2 className="text-display-md mt-4">Less counting. More knowing.</h2>
-                <p className="mt-4 max-w-xl text-base leading-7 opacity-75">
-                  Open your Strap register and give your shop one clear place to sell, track,
-                  understand and grow.
-                </p>
-              </div>
-              <Link
-                to="/auth"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-foreground px-7 py-3.5 font-semibold text-background transition hover:-translate-y-0.5"
-              >
-                Start with Strap
-                <ArrowRight className="size-4" />
-              </Link>
+        <section className="strap-final-cta">
+          <div className="strap-container strap-final-cta-inner">
+            <div>
+              <p className="strap-eyebrow strap-eyebrow-light">MAKE ROOM FOR WHAT'S NEXT</p>
+              <h2>Bring your shop together with Strap.</h2>
             </div>
+            <Link to="/auth" className="strap-button strap-button-yellow">
+              Get started <ArrowRight size={18} />
+            </Link>
           </div>
         </section>
       </main>
-      <SiteFooter />
+
+      <footer className="strap-footer">
+        <div className="strap-container strap-footer-main">
+          <div>
+            <BrandMark inverse />
+            <p>Retail operations, made clearer.</p>
+          </div>
+          <nav aria-label="Footer navigation">
+            <a href="#product">Product</a>
+            <a href="#how-it-works">How it works</a>
+            <a href="#online-store">Online store</a>
+            <Link to="/support">Help Centre</Link>
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/terms">Terms</Link>
+          </nav>
+          <Link to="/auth" className="strap-footer-cta">
+            Open Strap <ArrowRight size={16} />
+          </Link>
+        </div>
+        <div className="strap-container strap-footer-bottom">
+          <span>© {new Date().getFullYear()} Strap by Kryonara.</span>
+          <span>Built for everyday retail.</span>
+        </div>
+      </footer>
     </div>
   );
 }
@@ -503,43 +413,38 @@ function Landing() {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Strap — Point of Sale, Inventory & Online Store for Nigerian Businesses" },
+      { title: "Strap — Retail, in one place" },
       {
         name: "description",
         content:
-          "Strap is a modern POS and retail management platform for Nigerian businesses. Sell faster, manage inventory, track expenses, publish an online catalogue and receive customer orders in one workspace.",
+          "Strap brings point of sale, inventory, expenses, reporting and online catalogue tools together for everyday retail businesses.",
       },
       {
         name: "keywords",
         content:
-          "Strap POS Nigeria, point of sale Nigeria, inventory management Nigeria, retail software Nigeria, stock management, online store Nigeria, catalogue management, barcode scanner POS, small business POS",
+          "Strap POS Nigeria, point of sale Nigeria, inventory management, retail software Nigeria, stock management, online store Nigeria",
       },
       {
         name: "robots",
         content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
       },
       { property: "og:type", content: "website" },
-      { property: "og:title", content: "Strap — Point of Sale, Inventory & Online Store" },
+      { property: "og:title", content: "Strap — Retail, in one place" },
       {
         property: "og:description",
         content:
-          "Sell, manage stock, track your business and take orders online from one practical retail workspace.",
+          "Sell, manage stock, track your business and take orders online from one workspace.",
       },
       { property: "og:url", content: SITE_URL },
       { property: "og:locale", content: "en_NG" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Strap — Point of Sale, Inventory & Online Store" },
+      { name: "twitter:title", content: "Strap — Retail, in one place" },
       {
         name: "twitter:description",
         content: "A practical retail workspace for sales, inventory, customers and online selling.",
       },
     ],
-    links: [
-      { rel: "canonical", href: SITE_URL },
-      { rel: "preconnect", href: "https://cdn.pixabay.com" },
-      { rel: "preconnect", href: "https://unpkg.com" },
-      { rel: "preload", as: "video", href: HERO_VIDEO, crossOrigin: "anonymous" },
-    ],
+    links: [{ rel: "canonical", href: SITE_URL }],
   }),
   component: Landing,
 });
