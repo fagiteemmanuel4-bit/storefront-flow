@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier -- JSX is intentionally grouped into readable landing sections. */
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
