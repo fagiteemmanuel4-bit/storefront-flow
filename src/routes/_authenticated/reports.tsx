@@ -58,21 +58,19 @@ function ReportsPage() {
   const isFashion = businessMode.key === "fashion";
   const [range, setRange] = useState<Range>("7d");
   const sales = useQuery({
-    queryKey: ["reports-sales", storeId],
+    queryKey: ["reports-sales", storeId, branch?.id ?? null],
     enabled: !!storeId,
     retry: 2,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("sales")
-        .select("*")
-        .eq("store_id", storeId!)
-        .order("created_at", { ascending: false });
+      let query = supabase.from("sales").select("*").eq("store_id", storeId!);
+      if (branch?.id) query = query.eq("branch_id", branch.id);
+      const { data, error } = await query.order("created_at", { ascending: false });
       if (error) throw new Error(error.message);
       return (data ?? []) as SaleRow[];
     },
   });
   const items = useQuery({
-    queryKey: ["reports-items", storeId],
+    queryKey: ["reports-items", storeId, branch?.id ?? null],
     enabled: !!storeId,
     retry: 2,
     queryFn: async () => {
@@ -85,22 +83,37 @@ function ReportsPage() {
     },
   });
   const expenses = useQuery({
-    queryKey: ["reports-expenses", storeId],
+    queryKey: ["reports-expenses", storeId, branch?.id ?? null],
     enabled: !!storeId,
     retry: 2,
     queryFn: async () => {
-      const { data, error } = await supabase.from("expenses").select("*").eq("store_id", storeId!);
+      let query = supabase.from("expenses").select("*").eq("store_id", storeId!);
+      if (branch?.id) query = query.eq("branch_id", branch.id);
+      const { data, error } = await query;
       if (error) throw new Error(error.message);
       return (data ?? []) as ExpenseRow[];
     },
   });
-  const failed = sales.error || items.error || expenses.error;
-  const loading = sales.isLoading || items.isLoading || expenses.isLoading;
+  const returns = useQuery({
+    queryKey: ["reports-returns", storeId, branch?.id ?? null],
+    enabled: !!storeId,
+    retry: 2,
+    queryFn: async () => {
+      let query = (supabase as any).from("sale_returns").select("id,sale_id,total_amount,created_at").eq("store_id", storeId!);
+      if (branch?.id) query = query.eq("branch_id", branch.id);
+      const { data, error } = await query;
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+  });
+  const failed = sales.error || items.error || expenses.error || returns.error;
+  const loading = sales.isLoading || items.isLoading || expenses.isLoading || returns.isLoading;
   const filtered = useMemo(() => {
     const s = sales.data ?? [],
       e = expenses.data ?? [],
-      i = items.data ?? [];
-    if (range === "all") return { s, e, i };
+      i = items.data ?? [],
+      r = returns.data ?? [];
+    if (range === "all") return { s, e, i, r };
     const start = new Date();
     if (range === "today") start.setHours(0, 0, 0, 0);
     else start.setDate(start.getDate() - (range === "7d" ? 7 : 30));
@@ -110,10 +123,13 @@ function ReportsPage() {
       s: fs,
       e: e.filter((x) => new Date(x.expense_date) >= start),
       i: i.filter((x) => ids.has(x.sale_id)),
+      r: r.filter((x) => new Date(x.created_at) >= start),
     };
-  }, [sales.data, expenses.data, items.data, range]);
+  }, [sales.data, expenses.data, items.data, returns.data, range]);
   const metrics = useMemo(() => {
-    const revenue = filtered.s.reduce((n, x) => n + Number(x.total), 0);
+    const grossSales = filtered.s.reduce((n, x) => n + Number(x.total), 0);
+    const refunds = filtered.r.reduce((n, x) => n + Number(x.total_amount), 0);
+    const revenue = grossSales - refunds;
     const expense = filtered.e.reduce((n, x) => n + Number(x.amount), 0);
     const cogs = filtered.i.reduce(
       (n, x) => n + Number(x.products?.cost ?? 0) * Number(x.quantity),
@@ -122,6 +138,8 @@ function ReportsPage() {
     const gross = revenue - cogs;
     return {
       revenue,
+      grossSales,
+      refunds,
       expense,
       cogs,
       gross,
@@ -197,7 +215,9 @@ function ReportsPage() {
   function exportCsv() {
     const rows = [
       ["Metric", "Value"],
-      ["Revenue", metrics.revenue],
+      ["Gross sales", metrics.grossSales],
+      ["Returns / refunds", metrics.refunds],
+      ["Net revenue", metrics.revenue],
       ["Expenses", metrics.expense],
       ["COGS", metrics.cogs],
       ["Gross Profit", metrics.gross],
@@ -215,7 +235,7 @@ function ReportsPage() {
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = `kudi-report-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `strap-report-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
     toast.success("Report exported.");
@@ -230,7 +250,7 @@ function ReportsPage() {
             </p>
             <h1 className="font-display text-2xl font-bold">Business reports</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Understand revenue, profit, expenses and your best products.
+              Understand net sales after recorded returns, estimated product costs, expenses and your best products.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -273,6 +293,7 @@ function ReportsPage() {
                 void sales.refetch();
                 void items.refetch();
                 void expenses.refetch();
+                void returns.refetch();
               }}
             >
               <RefreshCw className="mr-2 size-4" />
@@ -283,13 +304,13 @@ function ReportsPage() {
           <>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Metric
-                label="Revenue"
+                label="Net revenue"
                 icon={<TrendingUp className="size-4" />}
                 value={loading ? null : formatMoney(metrics.revenue, currency)}
-                sub={`${metrics.count} sales`}
+                sub={`${metrics.count} sales · ${formatMoney(metrics.refunds, currency)} returned`}
               />
               <Metric
-                label="Gross profit"
+                label="Estimated gross profit"
                 icon={<DollarSign className="size-4" />}
                 value={loading ? null : formatMoney(metrics.gross, currency)}
                 sub={`${metrics.margin.toFixed(1)}% margin`}
@@ -358,7 +379,7 @@ function ReportsPage() {
               <div className="border-b border-border px-5 py-4">
                 <h2 className="font-display font-semibold">Top products</h2>
                 <p className="text-xs text-muted-foreground">
-                  Ranked by revenue for the selected period.
+                  Ranked by recorded line revenue for the selected period. Gross profit uses the product's current cost, not a historical cost snapshot.
                 </p>
               </div>
               {loading ? (
