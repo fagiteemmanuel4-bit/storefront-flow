@@ -1,0 +1,31 @@
+name: Format landing page (temporary)
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/routes/index.tsx"
+permissions:
+  contents: write
+jobs:
+  format:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --no-save
+      - run: bunx prettier --write src/routes/index.tsx
+      - name: Commit formatting
+        run: |
+          if git diff --quiet; then
+            echo "Landing page is already formatted"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/routes/index.tsx
+          git commit -m "Format redesigned landing page"
+          git push
