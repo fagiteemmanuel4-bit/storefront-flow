@@ -313,3 +313,111 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* Mobile-only POS simplification and narrow-screen safeguards. */
+@media (max-width: 767px) {
+  .kudi-app-shell:has(.pos-sell-page) > div > main,
+  .kudi-app-shell > div:has(.pos-sell-page) main {
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    padding: 12px var(--mobile-gutter) 18px !important;
+  }
+
+  .pos-sell-page,
+  .pos-sell-page > *,
+  .pos-sell-page section,
+  .pos-sell-page .grid,
+  .pos-sell-page button {
+    min-width: 0;
+  }
+
+  .pos-sell-page .pos-search-panel {
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .pos-sell-page .pos-search-panel > .relative input {
+    width: 100%;
+    min-width: 0;
+    height: 48px !important;
+    min-height: 48px !important;
+    border-radius: 13px !important;
+    font-size: 16px !important;
+  }
+
+  .pos-sell-page .pos-category-filters,
+  .pos-sell-page .pos-product-count,
+  .pos-sell-page .pos-offline-count,
+  .pos-sell-page .pos-hold-action,
+  .pos-sell-page .pos-held-action {
+    display: none !important;
+  }
+
+  .pos-sell-page .pos-search-panel > .mt-3 {
+    margin-top: 8px !important;
+    justify-content: flex-end;
+  }
+
+  .pos-sell-page .pos-search-panel > .mt-3 > button[aria-label="Scan barcode"] {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    font-size: 0;
+  }
+
+  .pos-sell-page .pos-search-panel > .mt-3 > button[aria-label="Scan barcode"] svg {
+    width: 19px;
+    height: 19px;
+    margin: 0;
+  }
+
+  .pos-sell-page > .mt-5 {
+    margin-top: 14px !important;
+  }
+
+  .pos-sell-page > .mt-5 > section > .mb-3 h2 {
+    font-size: 18px !important;
+  }
+
+  .pos-sell-page > .mt-5 > section > .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .pos-sell-page .pos-product-card,
+  .pos-sell-page button.group {
+    padding: 12px !important;
+    min-height: 124px;
+  }
+
+  .pos-sell-page button.group .text-lg {
+    font-size: 16px !important;
+  }
+
+  .kudi-app-shell:has(.pos-sell-page) > div {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .pos-sell-page > .mt-5 > section > .grid {
+    gap: 7px !important;
+  }
+  .pos-sell-page button.group {
+    padding: 10px !important;
+  }
+  .pos-sell-page button.group .text-sm {
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+  }
+}
