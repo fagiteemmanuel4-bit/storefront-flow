@@ -190,6 +190,11 @@ function PosPage() {
   const foodModifiers = foodModifiersQuery.data ?? [];
   const selectedCustomer = customers.find((c) => c.id === customerId);
   useEffect(() => {
+    const openScanner = () => setScanning(true);
+    window.addEventListener("strap-open-barcode-scanner", openScanner);
+    return () => window.removeEventListener("strap-open-barcode-scanner", openScanner);
+  }, []);
+  useEffect(() => {
     setOfflineCount(getOfflineSales().length);
     const refresh = () => setOfflineCount(getOfflineSales().length);
     window.addEventListener("kudi-offline-queue-changed", refresh);
@@ -832,17 +837,6 @@ function PosPage() {
               <span className="pos-offline-count text-xs font-medium text-amber-700">
                 {offlineCount} waiting to sync
               </span>
-            )}
-            {!isFashion && (
-              <Button
-                variant="outline"
-                aria-label="Scan barcode"
-                className="h-9 shrink-0 rounded-lg px-3 text-xs font-semibold"
-                onClick={() => setScanning(true)}
-              >
-                <ScanLine className="mr-1.5 size-3.5" />
-                Scan
-              </Button>
             )}
             <Button
               variant="outline"
