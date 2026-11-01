@@ -46,6 +46,12 @@ export const Route = createFileRoute("/_authenticated/reports")({
 });
 
 type Range = "today" | "7d" | "30d" | "all";
+type ReportReturnRow = {
+  id: string;
+  sale_id: string;
+  total_amount: number | string;
+  created_at: string;
+};
 const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
 
 function ReportsPage() {
@@ -94,12 +100,15 @@ function ReportsPage() {
       return (data ?? []) as ExpenseRow[];
     },
   });
-  const returns = useQuery({
+  const returns = useQuery<ReportReturnRow[]>({
     queryKey: ["reports-returns", storeId, branch?.id ?? null],
     enabled: !!storeId,
     retry: 2,
     queryFn: async () => {
-      let query = (supabase as any).from("sale_returns").select("id,sale_id,total_amount,created_at").eq("store_id", storeId!);
+      let query = (supabase as any)
+        .from("sale_returns")
+        .select("id,sale_id,total_amount,created_at")
+        .eq("store_id", storeId!);
       if (branch?.id) query = query.eq("branch_id", branch.id);
       const { data, error } = await query;
       if (error) throw new Error(error.message);
@@ -250,7 +259,8 @@ function ReportsPage() {
             </p>
             <h1 className="font-display text-2xl font-bold">Business reports</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Understand net sales after recorded returns, estimated product costs, expenses and your best products.
+              Understand net sales after recorded returns, estimated product costs, expenses and
+              your best products.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -379,7 +389,8 @@ function ReportsPage() {
               <div className="border-b border-border px-5 py-4">
                 <h2 className="font-display font-semibold">Top products</h2>
                 <p className="text-xs text-muted-foreground">
-                  Ranked by recorded line revenue for the selected period. Gross profit uses the product's current cost, not a historical cost snapshot.
+                  Ranked by recorded line revenue for the selected period. Gross profit uses the
+                  product's current cost, not a historical cost snapshot.
                 </p>
               </div>
               {loading ? (
