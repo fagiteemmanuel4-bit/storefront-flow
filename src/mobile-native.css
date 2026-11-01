@@ -421,3 +421,10 @@
     line-height: 1.35 !important;
   }
 }
+
+
+@media (max-width: 767px) {
+  .mobile-hide-layout-customization {
+    display: none !important;
+  }
+}
