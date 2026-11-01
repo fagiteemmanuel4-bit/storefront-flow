@@ -319,25 +319,39 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
     const activeStoreId = store?.id;
     if (!online || !activeStoreId || staffActive) return;
     let cancelled = false;
+    let syncing = false;
     async function sync() {
-      const queue = getOfflineSales().filter((sale) => sale.storeId === activeStoreId);
-      for (const sale of queue) {
-        if (cancelled) return;
-        const { error } = await supabase.rpc("create_sale", {
-          _store_id: sale.storeId,
-          _branch_id: sale.branchId,
-          _payment_method: sale.paymentMethod,
-          _items: sale.items,
-          _note: sale.note,
-          _customer_id: sale.customerId ?? undefined,
-          _offline_id: sale.offlineId,
-        });
-        if (error) continue;
-        removeOfflineSale(sale.offlineId);
-        await queryClient.invalidateQueries({
-          queryKey: ["products", sale.storeId, sale.branchId],
-        });
-        await queryClient.invalidateQueries({ queryKey: ["customers", sale.storeId] });
+      if (cancelled || syncing) return;
+      syncing = true;
+      try {
+        const queue = getOfflineSales().filter((sale) => sale.storeId === activeStoreId);
+        for (const sale of queue) {
+          if (cancelled) return;
+          try {
+            const { error } = await supabase.rpc("create_sale", {
+              _store_id: sale.storeId,
+              _branch_id: sale.branchId,
+              _payment_method: sale.paymentMethod,
+              _items: sale.items,
+              _note: sale.note,
+              _customer_id: sale.customerId ?? undefined,
+              _offline_id: sale.offlineId,
+            });
+            if (error) continue;
+            removeOfflineSale(sale.offlineId);
+            await queryClient.invalidateQueries({
+              queryKey: ["products", sale.storeId, sale.branchId],
+            });
+            await queryClient.invalidateQueries({
+              queryKey: ["customers", sale.storeId],
+            });
+          } catch {
+            // Keep the sale queued so a later online event can retry it.
+            continue;
+          }
+        }
+      } finally {
+        syncing = false;
       }
     }
     void sync();
@@ -788,7 +802,11 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 </h1>
               </div>
               <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
-                {pathname === "/pos" && <div className="hidden lg:block"><BusinessCalculatorFab className="shrink-0" /></div>}
+                {pathname === "/pos" && (
+                  <div className="hidden lg:block">
+                    <BusinessCalculatorFab className="shrink-0" />
+                  </div>
+                )}
                 {pathname === "/pos" && (
                   <button
                     type="button"
