@@ -259,8 +259,8 @@ function ReportsPage() {
             </p>
             <h1 className="font-display text-2xl font-bold">Business reports</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Understand net sales after recorded returns, estimated product costs,
-              expenses and your best products.
+              Understand net sales after recorded returns, estimated product costs, expenses and
+              your best products.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -389,8 +389,8 @@ function ReportsPage() {
               <div className="border-b border-border px-5 py-4">
                 <h2 className="font-display font-semibold">Top products</h2>
                 <p className="text-xs text-muted-foreground">
-                  Ranked by recorded line revenue for the selected period. Gross profit
-                  uses the product's current cost, not a historical cost snapshot.
+                  Ranked by recorded line revenue for the selected period. Gross profit uses the
+                  product's current cost, not a historical cost snapshot.
                 </p>
               </div>
               {loading ? (
