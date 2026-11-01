@@ -68,7 +68,7 @@ BEGIN
            AND i.indpred IS NULL
            AND (
              SELECT array_agg(index_col.attnum ORDER BY index_col.ord)
-               FROM unnest(i.indkey) WITH ORDINALITY AS index_col(attnum, ord)
+               FROM unnest(i.indkey::smallint[]) WITH ORDINALITY AS index_col(attnum, ord)
               WHERE index_col.ord <= cardinality(c.conkey)
            ) = c.conkey
       )
