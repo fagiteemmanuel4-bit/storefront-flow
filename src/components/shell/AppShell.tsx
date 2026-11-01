@@ -788,7 +788,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 </h1>
               </div>
               <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
-                {pathname === "/pos" && <BusinessCalculatorFab className="shrink-0" />}
+                {pathname === "/pos" && <div className="hidden lg:block"><BusinessCalculatorFab className="shrink-0" /></div>}
                 <button
                   type="button"
                   data-tour="quick-find"
@@ -799,7 +799,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                   <Search className="size-4" aria-hidden />
                   <span className="sr-only">Search Strap</span>
                 </button>
-                <div data-tour="updates" className="flex shrink-0">
+                <div data-tour="updates" className="hidden shrink-0 lg:flex">
                   <UpdatesSheet />
                 </div>
                 <div
