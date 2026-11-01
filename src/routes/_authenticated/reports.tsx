@@ -201,7 +201,10 @@ function ReportsPage() {
       const v = map.get(key) ?? { name: key, quantity: 0, revenue: 0, cogs: 0 };
       v.quantity += Number(x.quantity);
       v.revenue += Number(x.line_total);
-      v.cogs += Number(x.products?.cost ?? 0) * Number(x.quantity);
+      v.cogs +=
+        Number(x.unit_cost_at_sale ?? x.products?.cost ?? 0) *
+        Number(x.quantity) *
+        Number(x.units_per_sale ?? 1);
       map.set(key, v);
     });
     return [...map.values()].sort((a, b) => b.revenue - a.revenue).slice(0, 10);
