@@ -51,25 +51,51 @@ const features = [
 ];
 
 const steps = [
-  ["Set up your shop", "Add your products, organise your stock and invite the people who help you run the business."],
-  ["Run your daily sales", "Use the register to search, scan, build carts and record transactions."],
-  ["Keep everything connected", "Review stock, expenses and reports, then publish a catalogue when you are ready to sell online."],
+  [
+    "Set up your shop",
+    "Add your products, organise your stock and invite the people who help you run the business.",
+  ],
+  [
+    "Run your daily sales",
+    "Use the register to search, scan, build carts and record transactions.",
+  ],
+  [
+    "Keep everything connected",
+    "Review stock, expenses and reports, then publish a catalogue when you are ready to sell online.",
+  ],
 ];
 
 const faqs = [
-  ["What is Strap?", "Strap is a retail workspace that brings point of sale, inventory, expenses, reporting and online catalogue tools together."],
-  ["Can I use Strap on a phone and a computer?", "Yes. Strap is designed to work across modern mobile and desktop browsers. Hardware support depends on your device and browser."],
-  ["Can my staff use it?", "Yes. Store access supports owner, manager and cashier roles, with permissions for everyday work."],
-  ["Can I sell online?", "You can publish a shareable product catalogue and manage customer orders from the same workspace. Online-store availability depends on your plan."],
+  [
+    "What is Strap?",
+    "Strap is a retail workspace that brings point of sale, inventory, expenses, reporting and online catalogue tools together.",
+  ],
+  [
+    "Can I use Strap on a phone and a computer?",
+    "Yes. Strap is designed to work across modern mobile and desktop browsers. Hardware support depends on your device and browser.",
+  ],
+  [
+    "Can my staff use it?",
+    "Yes. Store access supports owner, manager and cashier roles, with permissions for everyday work.",
+  ],
+  [
+    "Can I sell online?",
+    "You can publish a shareable product catalogue and manage customer orders from the same workspace. Online-store availability depends on your plan.",
+  ],
 ];
 
 function BrandMark({ inverse = false }: { inverse?: boolean }) {
   return (
     <Link to="/" className="strap-brand" aria-label="Strap home">
-      <span className={`strap-brand-mark ${inverse ? "strap-brand-mark-inverse" : ""}`} aria-hidden="true">
+      <span
+        className={`strap-brand-mark ${inverse ? "strap-brand-mark-inverse" : ""}`}
+        aria-hidden="true"
+      >
         <span />
       </span>
-      <span>STRAP<span className="strap-brand-period">.</span></span>
+      <span>
+        STRAP<span className="strap-brand-period">.</span>
+      </span>
     </Link>
   );
 }
@@ -86,11 +112,15 @@ function Landing() {
           <BrandMark />
           <nav className="strap-nav" aria-label="Main navigation">
             {navigation.map(([label, href]) => (
-              <a key={label} href={href}>{label}</a>
+              <a key={label} href={href}>
+                {label}
+              </a>
             ))}
           </nav>
           <div className="strap-header-actions">
-            <Link to="/auth" className="strap-login">Sign in</Link>
+            <Link to="/auth" className="strap-login">
+              Sign in
+            </Link>
             <Link to="/auth" className="strap-button strap-button-dark strap-button-small">
               Get started <ArrowRight size={16} />
             </Link>
@@ -108,9 +138,13 @@ function Landing() {
         {menuOpen && (
           <nav className="strap-mobile-nav" aria-label="Mobile navigation">
             {navigation.map(([label, href]) => (
-              <a key={label} href={href} onClick={closeMenu}>{label}</a>
+              <a key={label} href={href} onClick={closeMenu}>
+                {label}
+              </a>
             ))}
-            <Link to="/auth" onClick={closeMenu}>Sign in / Get started <ArrowRight size={16} /></Link>
+            <Link to="/auth" onClick={closeMenu}>
+              Sign in / Get started <ArrowRight size={16} />
+            </Link>
           </nav>
         )}
       </header>
@@ -121,10 +155,17 @@ function Landing() {
           <div className="strap-hero-orbit strap-hero-orbit-two" aria-hidden="true" />
           <div className="strap-container strap-hero-grid">
             <div className="strap-hero-copy">
-              <p className="strap-eyebrow strap-eyebrow-light"><span /> RETAIL, IN ONE PLACE</p>
-              <h1>Run your shop.<br /><span>Not around it.</span></h1>
+              <p className="strap-eyebrow strap-eyebrow-light">
+                <span /> RETAIL, IN ONE PLACE
+              </p>
+              <h1>
+                Run your shop.
+                <br />
+                <span>Not around it.</span>
+              </h1>
               <p className="strap-hero-description">
-                Sales, stock, expenses and online orders — connected in one clear workspace, so you can focus on the business in front of you.
+                Sales, stock, expenses and online orders — connected in one clear workspace, so you
+                can focus on the business in front of you.
               </p>
               <div className="strap-hero-actions">
                 <Link to="/auth" className="strap-button strap-button-yellow">
@@ -138,21 +179,38 @@ function Landing() {
                 <Check size={15} /> Built for the everyday work of retail
               </div>
             </div>
-            <div className="strap-hero-art" aria-label="Strap connects the essential parts of a retail business">
+            <div
+              className="strap-hero-art"
+              aria-label="Strap connects the essential parts of a retail business"
+            >
               <div className="strap-art-ring strap-art-ring-outer" />
               <div className="strap-art-ring strap-art-ring-inner" />
               <div className="strap-art-core">
                 <BrandMark inverse />
                 <span className="strap-art-caption">YOUR RETAIL WORKSPACE</span>
               </div>
-              <div className="strap-art-chip strap-art-chip-sales"><ShoppingCart size={18} /><span>Sales</span></div>
-              <div className="strap-art-chip strap-art-chip-stock"><Package size={18} /><span>Stock</span></div>
-              <div className="strap-art-chip strap-art-chip-money"><Wallet size={18} /><span>Money</span></div>
-              <div className="strap-art-chip strap-art-chip-online"><Globe2 size={18} /><span>Online</span></div>
+              <div className="strap-art-chip strap-art-chip-sales">
+                <ShoppingCart size={18} />
+                <span>Sales</span>
+              </div>
+              <div className="strap-art-chip strap-art-chip-stock">
+                <Package size={18} />
+                <span>Stock</span>
+              </div>
+              <div className="strap-art-chip strap-art-chip-money">
+                <Wallet size={18} />
+                <span>Money</span>
+              </div>
+              <div className="strap-art-chip strap-art-chip-online">
+                <Globe2 size={18} />
+                <span>Online</span>
+              </div>
             </div>
           </div>
           <div className="strap-container strap-hero-bottom">
-            <span>ONE WORKSPACE</span><span className="strap-bottom-line" /><span>MORE CONTROL OVER EVERYDAY RETAIL</span>
+            <span>ONE WORKSPACE</span>
+            <span className="strap-bottom-line" />
+            <span>MORE CONTROL OVER EVERYDAY RETAIL</span>
           </div>
         </section>
 
@@ -162,7 +220,8 @@ function Landing() {
             <div>
               <h2>Good business starts with a clearer view.</h2>
               <p className="strap-lead">
-                No scattered records. No switching between disconnected tools just to understand your day. Strap brings the essentials together and keeps the work moving.
+                No scattered records. No switching between disconnected tools just to understand
+                your day. Strap brings the essentials together and keeps the work moving.
               </p>
             </div>
           </div>
@@ -180,7 +239,10 @@ function Landing() {
             <div className="strap-feature-grid">
               {features.map(({ icon: Icon, number, title, description }) => (
                 <article className="strap-feature" key={number}>
-                  <div className="strap-feature-top"><span>{number}</span><Icon size={22} strokeWidth={1.7} /></div>
+                  <div className="strap-feature-top">
+                    <span>{number}</span>
+                    <Icon size={22} strokeWidth={1.7} />
+                  </div>
                   <h3>{title}</h3>
                   <p>{description}</p>
                 </article>
@@ -203,7 +265,10 @@ function Landing() {
               {steps.map(([title, description], index) => (
                 <article className="strap-step" key={title}>
                   <span className="strap-step-number">0{index + 1}</span>
-                  <div><h3>{title}</h3><p>{description}</p></div>
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{description}</p>
+                  </div>
                 </article>
               ))}
             </div>
@@ -216,7 +281,8 @@ function Landing() {
               <p className="strap-eyebrow">YOUR SHOP, BEYOND THE COUNTER</p>
               <h2>Give customers another way to find you.</h2>
               <p className="strap-lead">
-                Turn your product catalogue into a shareable online storefront. Keep products organised and manage incoming orders from the same place you run your shop.
+                Turn your product catalogue into a shareable online storefront. Keep products
+                organised and manage incoming orders from the same place you run your shop.
               </p>
               <Link to="/auth" className="strap-text-link">
                 Explore Strap <ArrowRight size={17} />
@@ -224,36 +290,58 @@ function Landing() {
             </div>
             <div className="strap-online-panel">
               <div className="strap-online-window">
-                <div className="strap-window-bar"><i /><i /><i /><span>YOUR STORE</span></div>
+                <div className="strap-window-bar">
+                  <i />
+                  <i />
+                  <i />
+                  <span>YOUR STORE</span>
+                </div>
                 <div className="strap-window-content">
-                  <div className="strap-window-heading"><span>Discover the collection</span><Globe2 size={19} /></div>
+                  <div className="strap-window-heading">
+                    <span>Discover the collection</span>
+                    <Globe2 size={19} />
+                  </div>
                   <div className="strap-window-products">
                     <span className="strap-product-block strap-product-one" />
                     <span className="strap-product-block strap-product-two" />
                     <span className="strap-product-block strap-product-three" />
                   </div>
-                  <div className="strap-window-lines"><i /><i /></div>
+                  <div className="strap-window-lines">
+                    <i />
+                    <i />
+                  </div>
                 </div>
               </div>
-              <span className="strap-online-label"><Globe2 size={15} /> A storefront you can share</span>
+              <span className="strap-online-label">
+                <Globe2 size={15} /> A storefront you can share
+              </span>
             </div>
           </div>
         </section>
 
         <section className="strap-section strap-control">
           <div className="strap-container strap-control-grid">
-            <div className="strap-control-mark"><BarChart3 size={38} strokeWidth={1.4} /></div>
+            <div className="strap-control-mark">
+              <BarChart3 size={38} strokeWidth={1.4} />
+            </div>
             <div>
               <p className="strap-eyebrow">CLARITY THAT ADDS UP</p>
               <h2>Make the next decision with better information.</h2>
               <p className="strap-lead">
-                See sales, expenses and stock information together. Understand what is happening today and what deserves your attention next.
+                See sales, expenses and stock information together. Understand what is happening
+                today and what deserves your attention next.
               </p>
             </div>
             <div className="strap-control-points">
-              <span><ScanLine size={17} /> Checkout and scanning</span>
-              <span><ShieldCheck size={17} /> Team access controls</span>
-              <span><BarChart3 size={17} /> Business reports</span>
+              <span>
+                <ScanLine size={17} /> Checkout and scanning
+              </span>
+              <span>
+                <ShieldCheck size={17} /> Team access controls
+              </span>
+              <span>
+                <BarChart3 size={17} /> Business reports
+              </span>
             </div>
           </div>
         </section>
@@ -264,12 +352,17 @@ function Landing() {
               <p className="strap-eyebrow">GOOD TO KNOW</p>
               <h2>Questions, answered.</h2>
               <p className="strap-lead">A little more detail before you get started.</p>
-              <Link to="/support" className="strap-text-link">Visit the Help Centre <ArrowRight size={17} /></Link>
+              <Link to="/support" className="strap-text-link">
+                Visit the Help Centre <ArrowRight size={17} />
+              </Link>
             </div>
             <div className="strap-faq-list">
               {faqs.map(([question, answer]) => (
                 <details key={question}>
-                  <summary>{question}<ChevronDown size={18} /></summary>
+                  <summary>
+                    {question}
+                    <ChevronDown size={18} />
+                  </summary>
                   <p>{answer}</p>
                 </details>
               ))}
@@ -304,7 +397,9 @@ function Landing() {
             <Link to="/privacy">Privacy</Link>
             <Link to="/terms">Terms</Link>
           </nav>
-          <Link to="/auth" className="strap-footer-cta">Open Strap <ArrowRight size={16} /></Link>
+          <Link to="/auth" className="strap-footer-cta">
+            Open Strap <ArrowRight size={16} />
+          </Link>
         </div>
         <div className="strap-container strap-footer-bottom">
           <span>© {new Date().getFullYear()} Strap by Kryonara.</span>
@@ -337,7 +432,8 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Strap — Retail, in one place" },
       {
         property: "og:description",
-        content: "Sell, manage stock, track your business and take orders online from one workspace.",
+        content:
+          "Sell, manage stock, track your business and take orders online from one workspace.",
       },
       { property: "og:url", content: SITE_URL },
       { property: "og:locale", content: "en_NG" },
