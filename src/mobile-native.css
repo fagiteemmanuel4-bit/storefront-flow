@@ -488,3 +488,68 @@
     border-radius: 16px !important;
   }
 }
+
+
+/* Compact, app-like settings and cards on small screens. */
+@media (max-width: 767px) {
+  .settings-workspace {
+    gap: 12px !important;
+  }
+  .settings-workspace > header {
+    padding-bottom: 10px !important;
+  }
+  .settings-workspace .settings-detail {
+    min-width: 0;
+  }
+  .settings-detail > div {
+    gap: 12px !important;
+  }
+  .settings-detail section.rounded-2xl,
+  .settings-detail .rounded-2xl.border {
+    border-radius: 14px !important;
+  }
+  .settings-detail section.rounded-2xl {
+    padding: 12px !important;
+  }
+  .settings-detail section.rounded-2xl > div:first-child {
+    margin-bottom: 12px !important;
+  }
+  .settings-detail .rounded-xl.border {
+    border-radius: 11px !important;
+  }
+  .settings-detail .rounded-xl.border.p-4,
+  .settings-detail .rounded-xl.border.p-3 {
+    padding: 10px !important;
+  }
+  .settings-detail label {
+    min-width: 0;
+  }
+  .settings-detail .grid {
+    gap: 10px !important;
+  }
+  .settings-detail button,
+  .settings-detail a {
+    min-height: 40px;
+  }
+  .settings-detail input,
+  .settings-detail select,
+  .settings-detail textarea {
+    min-height: 42px;
+  }
+  .settings-detail .sticky.bottom-4 {
+    bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom) + 8px) !important;
+    padding: 10px !important;
+  }
+  .kudi-app-shell main[data-tour="main-content"] .surface-card.p-6 {
+    padding: 12px !important;
+  }
+  .kudi-app-shell main[data-tour="main-content"] .surface-card.p-5 {
+    padding: 11px !important;
+  }
+  .kudi-app-shell main[data-tour="main-content"] .surface-card.p-4 {
+    padding: 10px !important;
+  }
+  .kudi-app-shell main[data-tour="main-content"] .surface-card {
+    border-radius: 14px !important;
+  }
+}
