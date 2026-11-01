@@ -17,6 +17,7 @@ import {
   Save,
   ShieldCheck,
   SlidersHorizontal,
+  Menu,
   Store,
   Users,
   WalletCards,
@@ -26,6 +27,7 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/shell/AppShell";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -224,60 +226,67 @@ function groupedNav() {
 
 export function SettingsLayout() {
   const location = useLocation();
+  const [navOpen, setNavOpen] = useState(false);
+  const activeItem = SETTINGS_NAV.find((item) => item.path === location.pathname) ?? SETTINGS_NAV[0];
+  const SettingsLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
+    <nav aria-label="Settings navigation" className="space-y-3">
+      {groupedNav().map(([group, items]) => (
+        <div key={group}>
+          <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+            {group}
+          </p>
+          <div className="grid gap-1">
+            {items.map((item) => {
+              const Icon = item.icon;
+              const active = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={onNavigate}
+                  className={`group flex min-h-11 items-center gap-2.5 rounded-xl px-3 py-2 transition ${active ? "bg-accent-soft text-accent-ink" : "text-muted-foreground hover:bg-secondary hover:text-foreground"}`}
+                >
+                  <Icon className="size-4 shrink-0" />
+                  <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">{item.title}</span>
+                  <ChevronRight className={`size-3.5 ${active ? "opacity-100" : "opacity-0 group-hover:opacity-60"}`} />
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </nav>
+  );
   return (
     <AppShell title="Settings">
-      <div className="mx-auto max-w-7xl space-y-6">
-        <header className="border-b border-border pb-5">
-          <p className="text-label-caps text-accent-ink">Strap settings</p>
-          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-                Settings
-              </h1>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-                Manage your account, store and commerce preferences from one consistent workspace.
-              </p>
-            </div>
-            <Link
-              to="/settings"
-              className="hidden items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline-flex"
-            >
-              Advanced controls <ArrowRight className="size-4" />
-            </Link>
+      <div className="settings-workspace mx-auto max-w-7xl space-y-4">
+        <header className="flex items-center justify-between gap-3 border-b border-border pb-3">
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent-ink">Strap settings</p>
+            <h1 className="mt-1 truncate font-display text-2xl font-bold tracking-tight">{activeItem.title === "Settings home" ? "Settings" : activeItem.title}</h1>
+            <p className="mt-1 hidden text-sm text-muted-foreground sm:block">{activeItem.description}</p>
           </div>
+          <Sheet open={navOpen} onOpenChange={setNavOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="shrink-0 gap-2 rounded-xl px-3">
+                <Menu className="size-4" />
+                All settings
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[min(88vw,340px)] overflow-y-auto p-4">
+              <SheetHeader className="mb-4 text-left">
+                <SheetTitle className="font-display text-xl">Settings</SheetTitle>
+                <p className="text-xs text-muted-foreground">Choose a section to manage</p>
+              </SheetHeader>
+              <SettingsLinks onNavigate={() => setNavOpen(false)} />
+            </SheetContent>
+          </Sheet>
         </header>
-        <div className="grid gap-6 lg:grid-cols-[248px_minmax(0,1fr)]">
-          <aside className="h-fit rounded-2xl border border-border bg-surface p-2 lg:sticky lg:top-24">
-            <nav aria-label="Settings navigation">
-              {groupedNav().map(([group, items]) => (
-                <div key={group} className="mb-2">
-                  <p className="px-3 pb-1 pt-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                    {group}
-                  </p>
-                  {items.map((item) => {
-                    const Icon = item.icon;
-                    const active = location.pathname === item.path;
-                    return (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        className={`group flex items-center gap-2.5 rounded-xl px-3 py-2.5 transition ${active ? "bg-accent-soft text-accent-ink" : "hover:bg-secondary"}`}
-                      >
-                        <Icon className="size-4 shrink-0" />
-                        <span className="min-w-0 flex-1 truncate text-sm font-semibold">
-                          {item.title}
-                        </span>
-                        <ChevronRight
-                          className={`size-3.5 ${active ? "opacity-100" : "opacity-0 group-hover:opacity-60"}`}
-                        />
-                      </Link>
-                    );
-                  })}
-                </div>
-              ))}
-            </nav>
+        <div className="grid min-w-0 gap-5 lg:grid-cols-[220px_minmax(0,1fr)]">
+          <aside className="hidden h-fit rounded-2xl border border-border/70 bg-surface/60 p-2 lg:sticky lg:top-24 lg:block">
+            <SettingsLinks />
           </aside>
-          <main className="min-w-0">
+          <main className="settings-detail min-w-0">
             <Outlet />
           </main>
         </div>
