@@ -68,37 +68,32 @@ function NotificationsPage() {
         };
       }
 
-      const [
-        { data: notices, error: noticesError },
-        { data: announcements },
-        { data: reads },
-      ] = await Promise.all([
-        supabase
-          .from("notifications")
-          .select("id,type,title,body,read_at,created_at")
-          .eq("store_id", storeId)
-          .eq("user_id", userId)
-          .order("created_at", { ascending: false })
-          .limit(50),
-        (supabase as any)
-          .from("platform_announcements")
-          .select("id,title,body,kind,created_at")
-          .order("created_at", { ascending: false })
-          .limit(30),
-        (supabase as any)
-          .from("platform_announcement_reads")
-          .select("announcement_id")
-          .eq("user_id", userId),
-      ]);
+      const [{ data: notices, error: noticesError }, { data: announcements }, { data: reads }] =
+        await Promise.all([
+          supabase
+            .from("notifications")
+            .select("id,type,title,body,read_at,created_at")
+            .eq("store_id", storeId)
+            .eq("user_id", userId)
+            .order("created_at", { ascending: false })
+            .limit(50),
+          (supabase as any)
+            .from("platform_announcements")
+            .select("id,title,body,kind,created_at")
+            .order("created_at", { ascending: false })
+            .limit(30),
+          (supabase as any)
+            .from("platform_announcement_reads")
+            .select("announcement_id")
+            .eq("user_id", userId),
+        ]);
 
       if (noticesError) throw new Error(noticesError.message);
 
       return {
         notices: (notices ?? []) as Notice[],
         announcements: (announcements ?? []) as Announcement[],
-        readIds: (reads ?? []).map(
-          (row: { announcement_id: string }) => row.announcement_id,
-        ),
+        readIds: (reads ?? []).map((row: { announcement_id: string }) => row.announcement_id),
       };
     },
   });
@@ -180,12 +175,8 @@ function NotificationsPage() {
     if (!userId) return;
 
     const now = new Date().toISOString();
-    const unreadIds = notices
-      .filter((item) => !item.read_at)
-      .map((item) => item.id);
-    const unreadAnnouncements = announcements.filter(
-      (item) => !readIds.includes(item.id),
-    );
+    const unreadIds = notices.filter((item) => !item.read_at).map((item) => item.id);
+    const unreadAnnouncements = announcements.filter((item) => !readIds.includes(item.id));
 
     await Promise.all([
       unreadIds.length
@@ -196,18 +187,16 @@ function NotificationsPage() {
             .eq("user_id", userId)
         : Promise.resolve(),
       unreadAnnouncements.length
-        ? (supabase as any)
-            .from("platform_announcement_reads")
-            .upsert(
-              unreadAnnouncements.map((item) => ({
-                announcement_id: item.id,
-                user_id: userId,
-              })),
-              {
-                onConflict: "announcement_id,user_id",
-                ignoreDuplicates: true,
-              },
-            )
+        ? (supabase as any).from("platform_announcement_reads").upsert(
+            unreadAnnouncements.map((item) => ({
+              announcement_id: item.id,
+              user_id: userId,
+            })),
+            {
+              onConflict: "announcement_id,user_id",
+              ignoreDuplicates: true,
+            },
+          )
         : Promise.resolve(),
     ]);
 
@@ -221,9 +210,7 @@ function NotificationsPage() {
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-5 sm:px-6">
             <div className="min-w-0">
               <p className="text-label-caps text-muted-foreground">Live activity</p>
-              <h2 className="mt-1 font-display text-xl font-semibold">
-                Notifications
-              </h2>
+              <h2 className="mt-1 font-display text-xl font-semibold">Notifications</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Store alerts and important Strap updates.
               </p>
@@ -247,9 +234,7 @@ function NotificationsPage() {
           ) : notices.length === 0 && announcements.length === 0 ? (
             <div className="p-12 text-center">
               <Bell className="mx-auto size-8 text-muted-foreground" />
-              <p className="mt-4 text-sm font-semibold">
-                You're all caught up
-              </p>
+              <p className="mt-4 text-sm font-semibold">You're all caught up</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 Important Strap updates and store activity will appear here.
               </p>
