@@ -788,7 +788,11 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 </h1>
               </div>
               <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
-                {pathname === "/pos" && <div className="hidden lg:block"><BusinessCalculatorFab className="shrink-0" /></div>}
+                {pathname === "/pos" && (
+                  <div className="hidden lg:block">
+                    <BusinessCalculatorFab className="shrink-0" />
+                  </div>
+                )}
                 {pathname === "/pos" && (
                   <button
                     type="button"
