@@ -1,0 +1,41 @@
+.strap-auth-main{--auth-ink:#10130e;--auth-muted:#687064;--auth-lemon:#c6f432;min-height:100dvh;display:grid;place-items:center;padding:clamp(16px,3vw,42px);color:var(--auth-ink);background:radial-gradient(circle at 12% 10%,rgb(198 244 50 / 13%),transparent 27rem),radial-gradient(circle at 92% 90%,rgb(198 244 50 / 10%),transparent 25rem),#f5f6f0}
+.strap-auth-card{width:min(1120px,100%);min-height:min(720px,calc(100dvh - 48px));display:grid;grid-template-columns:.94fr 1.06fr;overflow:hidden;border:1px solid #e5e9df;border-radius:30px;background:#fff;box-shadow:0 34px 100px rgb(16 19 14 / 12%),0 5px 18px rgb(16 19 14 / 5%)}
+.strap-auth-aside{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:space-between;gap:36px;overflow:hidden;padding:clamp(30px,5vw,64px);background:#10130e;color:#fff}
+.strap-auth-aside:before{content:"";position:absolute;z-index:-1;width:440px;height:440px;right:-180px;bottom:-190px;border:1px solid rgb(198 244 50 / 22%);border-radius:50%;box-shadow:0 0 0 42px rgb(198 244 50 / 3%),0 0 0 88px rgb(198 244 50 / 2%)}
+.strap-auth-rings{position:absolute;z-index:-1;width:min(90%,620px);height:auto;right:-28%;bottom:-16%;opacity:.82}
+.strap-logo{display:inline-flex;align-items:center;gap:11px;width:fit-content;color:#fff;text-decoration:none;font-size:25px;font-weight:800;letter-spacing:-.06em}
+.strap-logo-mark{position:relative;width:32px;height:32px;display:inline-block;border:2px solid var(--auth-lemon);border-radius:50%}
+.strap-logo-mark:after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--auth-lemon)}
+.strap-auth-hero{max-width:480px;margin-block:auto;padding-block:50px}
+.strap-auth-hero h2{max-width:11ch;margin:0;color:#fff;font-size:clamp(38px,4.3vw,58px);font-weight:750;line-height:1.02;letter-spacing:-.065em}
+.strap-auth-hero p{margin:22px 0 0;color:#c2c9b9;font-size:16px;line-height:1.75}
+.strap-auth-copy{color:#929b89;font-size:12px}
+.strap-auth-form-panel{display:flex;align-items:center;justify-content:center;min-width:0;padding:clamp(28px,6vw,82px);background:#fff}
+.strap-auth-box{width:100%;max-width:410px}
+.strap-auth-title{margin:0;color:var(--auth-ink);font-size:clamp(32px,3.5vw,42px);line-height:1.08;letter-spacing:-.055em;font-weight:760}
+.strap-auth-sub{margin:12px 0 0;color:var(--auth-muted);font-size:14px;line-height:1.7}
+.strap-auth-form{display:grid;gap:20px;margin-top:34px}
+.strap-field-wrap{display:grid;gap:8px;min-width:0}
+.strap-label{color:#262d21!important;font-size:13px!important;font-weight:700!important}
+.strap-field{width:100%;min-height:54px;border:1px solid #dce3d4!important;border-radius:13px!important;background:#fbfcf9!important;color:#10130e!important;box-shadow:none!important;font-size:15px!important;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
+.strap-field::placeholder{color:#92998d!important;opacity:1}
+.strap-field:focus,.strap-field:focus-visible{border-color:#9fc51f!important;background:#fff!important;box-shadow:0 0 0 4px rgb(198 244 50 / 25%)!important;outline:none!important}
+.strap-field-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.strap-pw{position:relative}.strap-pw .strap-field{padding-right:54px}
+.strap-eye{position:absolute;top:5px;right:5px;width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:10px;background:transparent;color:#697361;cursor:pointer}
+.strap-eye:hover{background:#f0f5e5;color:#263216}
+.strap-link{min-height:32px;padding:0;border:0;background:transparent;color:#607e0a;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
+.strap-link:hover{color:#354907;text-decoration:underline}
+.strap-terms{display:flex;align-items:flex-start;gap:10px;color:#697163;font-size:12px;line-height:1.6}.strap-terms a{color:#526d09;font-weight:700}
+.strap-check{margin-top:2px;border-color:#aeb99e!important}.strap-check[data-state=checked]{border-color:#10130e!important;background:#10130e!important}
+.strap-notice{padding:13px 15px;border:1px solid #d9e9a7;border-radius:12px;background:#f4f9e8;color:#35451b;font-size:13px;line-height:1.6}
+.strap-btn{width:100%;min-height:54px;border-radius:999px!important;font-size:14px!important;font-weight:750!important;transition:transform .18s ease,box-shadow .18s ease,background .18s ease!important}
+.strap-btn-primary{border:1px solid #10130e!important;background:#10130e!important;color:#fff!important;box-shadow:0 10px 24px rgb(16 19 14 / 12%)}
+.strap-btn-primary:hover:not(:disabled){transform:translateY(-2px);border-color:#26351a!important;background:#26351a!important;box-shadow:0 14px 28px rgb(16 19 14 / 18%)}
+.strap-btn:focus-visible,.strap-link:focus-visible,.strap-eye:focus-visible{outline:3px solid #9fc51f!important;outline-offset:3px}
+.strap-btn-ghost{border:1px solid #e0e6d8!important;border-radius:999px!important;background:#fff!important;color:#687064!important}.strap-btn-ghost:disabled{opacity:.72!important}
+.strap-soon{margin-left:8px;padding:3px 8px;border-radius:999px;background:#f0f5e5;color:#607e0a;font-size:10px;font-weight:750}
+.strap-or{display:flex;align-items:center;gap:14px;margin:25px 0 0;color:#92998d;font-size:12px}.strap-or:before,.strap-or:after{content:"";flex:1;height:1px;background:#e8ece3}
+.strap-auth-alt{color:#727a6b;text-align:center;font-size:13px}.strap-auth-alt .strap-link{display:inline}.strap-auth-back{display:block;margin:22px auto 0}
+@media(max-width:760px){.strap-auth-main{display:block;padding:12px}.strap-auth-card{min-height:calc(100dvh - 24px);grid-template-columns:1fr;grid-template-rows:auto 1fr;border-radius:23px}.strap-auth-aside{min-height:190px;gap:18px;padding:22px 24px}.strap-auth-rings{width:300px;right:-60px;bottom:-170px}.strap-auth-hero{padding-block:18px 4px}.strap-auth-hero h2{max-width:17ch;font-size:clamp(27px,7vw,36px)}.strap-auth-hero p{margin-top:9px;font-size:13px}.strap-auth-copy{display:none}.strap-auth-form-panel{align-items:flex-start;padding:30px 24px 38px}.strap-auth-form{gap:17px;margin-top:26px}}
+@media(prefers-reduced-motion:reduce){.strap-auth-main *,.strap-auth-main *:before,.strap-auth-main *:after{transition-duration:.01ms!important;animation-duration:.01ms!important}}

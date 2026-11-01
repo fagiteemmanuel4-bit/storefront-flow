@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import "@/strap-auth-page.css";
 
 /* Strap favicon: lime ring and dot on ink. Inlined so no extra file is needed. */
 const FAVICON_SVG =
