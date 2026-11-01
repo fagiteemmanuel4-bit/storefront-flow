@@ -28,6 +28,7 @@ async function fetchMemberships(userId: string): Promise<Membership[]> {
       supabase
         .from("store_members")
         .select("role, stores!inner(*)")
+        .eq("user_id", userId)
         .order("created_at", { ascending: true }),
       supabase
         .from("stores")
