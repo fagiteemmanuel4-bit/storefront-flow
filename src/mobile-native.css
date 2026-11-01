@@ -428,3 +428,63 @@
     display: none !important;
   }
 }
+
+
+/* Shared mobile canvas: remove the desktop-style outer page card on every route. */
+@media (max-width: 767px) {
+  .kudi-app-shell > div > div {
+    padding: 14px var(--mobile-gutter) calc(var(--mobile-nav-height) + env(safe-area-inset-bottom) + 18px) !important;
+  }
+
+  .kudi-app-shell > div > div > main[data-tour="main-content"] {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: calc(100dvh - var(--mobile-nav-height) - 32px) !important;
+    margin: 0 !important;
+    padding: 14px 0 22px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .kudi-app-shell > div > div > main[data-tour="main-content"] > header {
+    margin-bottom: 18px !important;
+    padding-bottom: 14px !important;
+  }
+
+  /* Keep the Sell search field visible and compact on narrow screens. */
+  .pos-sell-page .pos-search-panel {
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  .pos-sell-page .pos-search-panel > div:first-child {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .pos-sell-page .pos-search-panel input {
+    display: block !important;
+    width: 100% !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding-left: 42px !important;
+    border-radius: 13px !important;
+    background: var(--color-surface) !important;
+    color: var(--color-foreground) !important;
+    font-size: 16px !important;
+  }
+
+  .pos-sell-page > .mt-5 > section > .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .pos-sell-page button.group {
+    min-height: 116px !important;
+    padding: 12px !important;
+    border-radius: 16px !important;
+  }
+}
