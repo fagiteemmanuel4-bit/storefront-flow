@@ -117,7 +117,7 @@ export function AppearanceSettingsPage() {
           ))}
         </div>
       </section>
-      <section className="rounded-2xl border border-border bg-background p-5 sm:p-6">
+      <section className="mobile-hide-layout-customization rounded-2xl border border-border bg-background p-5 sm:p-6">
         <div className="flex items-center justify-between gap-4">
           <div>
             <h3 className="font-semibold">Compact workspace</h3>
