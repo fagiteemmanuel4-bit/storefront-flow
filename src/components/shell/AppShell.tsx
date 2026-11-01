@@ -789,6 +789,17 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
               </div>
               <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
                 {pathname === "/pos" && <div className="hidden lg:block"><BusinessCalculatorFab className="shrink-0" /></div>}
+                {pathname === "/pos" && (
+                  <button
+                    type="button"
+                    aria-label="Scan barcode"
+                    title="Scan barcode"
+                    onClick={() => window.dispatchEvent(new Event("strap-open-barcode-scanner"))}
+                    className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-background text-foreground transition hover:bg-secondary lg:hidden"
+                  >
+                    <ScanLine className="size-[18px]" aria-hidden />
+                  </button>
+                )}
                 <button
                   type="button"
                   data-tour="quick-find"
