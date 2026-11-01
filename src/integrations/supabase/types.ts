@@ -3347,6 +3347,7 @@ export type Database = {
           quantity: number;
           sale_id: string;
           store_id: string;
+          unit_cost_at_sale: number | null;
           unit_price: number;
           unit_type: string;
           units_per_sale: number;
@@ -3367,6 +3368,7 @@ export type Database = {
           quantity: number;
           sale_id: string;
           store_id: string;
+          unit_cost_at_sale?: number | null;
           unit_price: number;
           unit_type?: string;
           units_per_sale?: number;
@@ -3387,6 +3389,7 @@ export type Database = {
           quantity?: number;
           sale_id?: string;
           store_id?: string;
+          unit_cost_at_sale?: number | null;
           unit_price?: number;
           unit_type?: string;
           units_per_sale?: number;
