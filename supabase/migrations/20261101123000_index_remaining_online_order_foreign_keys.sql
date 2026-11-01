@@ -3,9 +3,6 @@
 CREATE INDEX IF NOT EXISTS online_order_batch_allocations_branch_id_idx
   ON public.online_order_batch_allocations (branch_id);
 
-CREATE INDEX IF NOT EXISTS online_order_variant_allocations_branch_id_idx
-  ON public.online_order_variant_allocations (branch_id);
-
 CREATE INDEX IF NOT EXISTS online_order_variant_allocations_fashion_variant_stock_id_idx
   ON public.online_order_variant_allocations (fashion_variant_stock_id);
 
