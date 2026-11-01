@@ -8,7 +8,7 @@ function AboutPage() {
       <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8 lg:px-10">
         <header className="flex items-center justify-between">
           <Link to="/" className="font-display text-xl font-bold tracking-tight">
-            STRAP.
+            Strap
           </Link>
           <Link
             to="/auth"
