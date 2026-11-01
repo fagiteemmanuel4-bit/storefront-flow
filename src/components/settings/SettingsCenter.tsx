@@ -227,7 +227,8 @@ function groupedNav() {
 export function SettingsLayout() {
   const location = useLocation();
   const [navOpen, setNavOpen] = useState(false);
-  const activeItem = SETTINGS_NAV.find((item) => item.path === location.pathname) ?? SETTINGS_NAV[0];
+  const activeItem =
+    SETTINGS_NAV.find((item) => item.path === location.pathname) ?? SETTINGS_NAV[0];
   const SettingsLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
     <nav aria-label="Settings navigation" className="space-y-3">
       {groupedNav().map(([group, items]) => (
