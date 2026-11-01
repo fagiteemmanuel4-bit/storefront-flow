@@ -227,7 +227,8 @@ function groupedNav() {
 export function SettingsLayout() {
   const location = useLocation();
   const [navOpen, setNavOpen] = useState(false);
-  const activeItem = SETTINGS_NAV.find((item) => item.path === location.pathname) ?? SETTINGS_NAV[0];
+  const activeItem =
+    SETTINGS_NAV.find((item) => item.path === location.pathname) ?? SETTINGS_NAV[0];
   const SettingsLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
     <nav aria-label="Settings navigation" className="space-y-3">
       {groupedNav().map(([group, items]) => (
@@ -247,8 +248,12 @@ export function SettingsLayout() {
                   className={`group flex min-h-11 items-center gap-2.5 rounded-xl px-3 py-2 transition ${active ? "bg-accent-soft text-accent-ink" : "text-muted-foreground hover:bg-secondary hover:text-foreground"}`}
                 >
                   <Icon className="size-4 shrink-0" />
-                  <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">{item.title}</span>
-                  <ChevronRight className={`size-3.5 ${active ? "opacity-100" : "opacity-0 group-hover:opacity-60"}`} />
+                  <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">
+                    {item.title}
+                  </span>
+                  <ChevronRight
+                    className={`size-3.5 ${active ? "opacity-100" : "opacity-0 group-hover:opacity-60"}`}
+                  />
                 </Link>
               );
             })}
@@ -262,9 +267,15 @@ export function SettingsLayout() {
       <div className="settings-workspace mx-auto max-w-7xl space-y-4">
         <header className="flex items-center justify-between gap-3 border-b border-border pb-3">
           <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent-ink">Strap settings</p>
-            <h1 className="mt-1 truncate font-display text-2xl font-bold tracking-tight">{activeItem.title === "Settings home" ? "Settings" : activeItem.title}</h1>
-            <p className="mt-1 hidden text-sm text-muted-foreground sm:block">{activeItem.description}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent-ink">
+              Strap settings
+            </p>
+            <h1 className="mt-1 truncate font-display text-2xl font-bold tracking-tight">
+              {activeItem.title === "Settings home" ? "Settings" : activeItem.title}
+            </h1>
+            <p className="mt-1 hidden text-sm text-muted-foreground sm:block">
+              {activeItem.description}
+            </p>
           </div>
           <Sheet open={navOpen} onOpenChange={setNavOpen}>
             <SheetTrigger asChild>
