@@ -775,7 +775,7 @@ function PosPage() {
   return (
     <AppShell title={isFashion ? "Fashion sales" : "Sell"}>
       <div data-tour="sell" className="pos-sell-page min-w-0">
-        <section className="rounded-2xl border border-border bg-surface p-3 shadow-[0_1px_2px_rgba(0,0,0,.03)]">
+        <section className="pos-search-panel rounded-2xl border border-border bg-surface p-3 shadow-[0_1px_2px_rgba(0,0,0,.03)]">
           <div className="relative min-w-0">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -791,7 +791,7 @@ function PosPage() {
           </div>
           <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2.5">
             <div
-              className="-mx-1 flex w-full min-w-0 items-center gap-2 overflow-x-auto px-1 pb-1"
+              className="pos-category-filters -mx-1 flex w-full min-w-0 items-center gap-2 overflow-x-auto px-1 pb-1"
               role="group"
               aria-label="Filter products by category"
             >
@@ -825,11 +825,11 @@ function PosPage() {
                 </button>
               ))}
             </div>
-            <span className="mr-auto text-xs text-muted-foreground">
+            <span className="pos-product-count mr-auto text-xs text-muted-foreground">
               {visible.length} {visible.length === 1 ? "product" : "products"}
             </span>
             {online && offlineCount > 0 && (
-              <span className="text-xs font-medium text-amber-700">
+              <span className="pos-offline-count text-xs font-medium text-amber-700">
                 {offlineCount} waiting to sync
               </span>
             )}
@@ -846,7 +846,7 @@ function PosPage() {
             )}
             <Button
               variant="outline"
-              className="h-9 shrink-0 rounded-lg px-3 text-xs font-semibold"
+              className="pos-hold-action h-9 shrink-0 rounded-lg px-3 text-xs font-semibold"
               onClick={holdSale}
               disabled={!cart.length}
             >
@@ -854,7 +854,7 @@ function PosPage() {
               Hold
             </Button>
             {Object.keys(holds).length > 0 && (
-              <details className="relative shrink-0">
+              <details className="pos-held-action relative shrink-0">
                 <summary className="flex h-9 cursor-pointer list-none items-center rounded-lg border border-border bg-background px-3 text-xs font-semibold">
                   Held ({Object.keys(holds).length})
                 </summary>
