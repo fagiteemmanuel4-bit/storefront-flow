@@ -46,7 +46,7 @@ const READ_OPTIONS: { key: keyof Settings; title: string; description: string }[
 ];
 
 const WRITE_OPTIONS: { key: keyof Settings; title: string; description: string }[] = [
-  { key: "allow_product_writes", title: "Create and update products", description: "Allow an AI assistant to add products or update catalogue fields such as name, SKU, price, cost and category." },
+  { key: "allow_product_writes", title: "Create and update products", description: "Allow an AI assistant to add products or update store-wide catalogue fields such as name, SKU, price, cost and category." },
   { key: "allow_stock_writes", title: "Set branch stock quantities", description: "Allow an AI assistant to set the exact on-hand quantity for a product at an authorised branch. Every change is recorded in the activity log." },
 ];
 
@@ -194,7 +194,7 @@ export function StrapMcpSettingsPage() {
 
         <section className="rounded-3xl border border-border bg-background p-5 sm:p-7">
           <div className="flex flex-wrap items-start justify-between gap-4">
-            <div><h3 className="text-xl font-bold">Branch access</h3><p className="mt-1 text-sm text-muted-foreground">Choose which branches an AI agent can inspect or update.</p></div>
+            <div><h3 className="text-xl font-bold">Branch access</h3><p className="mt-1 text-sm text-muted-foreground">Choose which branches AI agents can inspect or update. This scope applies to inventory, sales, expenses and stock quantities; product catalogue edits are store-wide.</p></div>
             <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold">{selectedCount} of {branches.length} branches</span>
           </div>
           {loading ? <p className="py-6 text-sm text-muted-foreground">Loading branches…</p> : branches.length === 0 ? <p className="py-6 text-sm text-muted-foreground">This store has no branches yet.</p> : (
