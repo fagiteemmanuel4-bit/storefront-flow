@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bot, Check, Copy, ExternalLink, GitBranch, Info, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { AppShell } from "@/components/shell/AppShell";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -155,11 +154,10 @@ export function StrapMcpSettingsPage() {
     }
   };
 
-  if (!store) return <AppShell title="AI agents"><div className="p-6 text-sm text-muted-foreground">Choose a store to manage its AI connections.</div></AppShell>;
+  if (!store) return <div className="rounded-2xl border border-border p-6 text-sm text-muted-foreground">Choose a store to manage its AI connections.</div>;
 
   return (
-    <AppShell title="AI agents & MCP">
-      <div className="mx-auto max-w-5xl space-y-6 pb-12">
+    <div className="mx-auto max-w-5xl space-y-6 pb-12">
         <section className="overflow-hidden rounded-3xl border border-border bg-background">
           <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:p-7">
             <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[#c6f432] text-[#0e1116]">
@@ -245,7 +243,6 @@ export function StrapMcpSettingsPage() {
         {canManage && <section className="rounded-3xl border border-border bg-background p-5 sm:p-7"><div className="flex items-start gap-3"><Info className="mt-0.5 size-5" /><div><h3 className="text-lg font-bold">Recent AI activity</h3><p className="mt-1 text-sm text-muted-foreground">A record of product and stock changes made through STRAP MCP.</p></div></div>{auditLoading ? <p className="py-5 text-sm text-muted-foreground">Loading activity…</p> : audit.length === 0 ? <p className="py-5 text-sm text-muted-foreground">No AI write actions have been recorded yet.</p> : <div className="mt-4 divide-y divide-border">{audit.map((item) => <div key={item.id} className="py-3"><p className="text-sm font-semibold">{item.summary}</p><p className="mt-1 text-xs text-muted-foreground">{item.action.replaceAll(".", " · ")} · {new Date(item.created_at).toLocaleString()}</p></div>)}</div>}</section>}
 
         {canManage && <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-2xl border border-border bg-background/95 p-3 shadow-xl backdrop-blur sm:flex-row sm:items-center sm:justify-between"><p className="text-sm text-muted-foreground">Changes apply to future MCP requests for this store.</p><Button onClick={() => void save()} disabled={saving || loading} className="gap-2"><Check className="size-4" />{saving ? "Saving…" : "Save AI permissions"}</Button></div>}
-      </div>
-    </AppShell>
+    </div>
   );
 }
