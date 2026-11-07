@@ -62,11 +62,13 @@ function DashboardPage() {
     queryKey: ["dashboard-today-sales", storeId, branch?.id ?? null, startOfToday.toISOString()],
     enabled: Boolean(storeId),
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("sales")
         .select("total, created_at")
-        .eq("store_id", storeId as string)
-         .gte("created_at", startOfToday.toISOString())
+        .eq("store_id", storeId as string);
+      if (branch?.id) query = query.eq("branch_id", branch.id);
+      const { data, error } = await query
+        .gte("created_at", startOfToday.toISOString())
         .order("created_at", { ascending: false });
       if (error) throw new Error(error.message);
       return data ?? [];
