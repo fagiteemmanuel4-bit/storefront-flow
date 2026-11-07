@@ -39,7 +39,8 @@ export function ThemeProvider({ children, forceLight = false }: { children: Reac
   useEffect(() => {
     let cancelled = false;
     void supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) { if (!cancelled) setTheme("light"); return; }\n      if (cancelled) return;
+      if (!data.user) { if (!cancelled) setTheme("light"); return; }
+      if (cancelled) return;
       const { data: profile } = await supabase
         .from("profiles")
         .select("theme_preference")
