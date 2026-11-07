@@ -7,7 +7,7 @@ import { WebStandardStreamableHTTPServerTransport } from "npm:@modelcontextproto
 import { z } from "npm:zod@4";
 
 type UserSupabase = {
-  auth: { getUser: () => Promise<{ data: { user: { id: string; email?: string } | null }; error: Error | null }> };
+  auth: { getUser: () => Promise<{ data: { user: { id: string; email?: string } | null }; error: Error | null }>; getSession: () => Promise<{ data: { session: { access_token: string } | null }; error: Error | null }> };
   from: (table: string) => any;
 };
 
@@ -66,14 +66,37 @@ const DEFAULT_MCP_SETTINGS: McpAccessSettings = {
   allow_stock_writes: false,
 };
 
+async function getOAuthClientIdentity(supabase: UserSupabase) {
+  const [{ data: auth, error: authError }, { data: session, error: sessionError }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.auth.getSession(),
+  ]);
+  if (authError) throw authError;
+  if (sessionError) throw sessionError;
+  if (!auth.user || !session?.session?.access_token) throw new Error("Your STRAP login could not be verified.");
+  const token = session.session.access_token;
+  const payloadPart = token.split(".")[1];
+  if (!payloadPart) throw new Error("The OAuth access token is malformed.");
+  const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+  const claims = JSON.parse(atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "=")));
+  if (typeof claims.client_id !== "string" || !claims.client_id) {
+    throw new Error("This connection does not include an OAuth client identity. Reconnect the AI application through STRAP to approve its access.");
+  }
+  return { userId: auth.user.id, clientId: claims.client_id };
+}
+
 async function getMcpSettings(supabase: UserSupabase, storeId: string): Promise<McpAccessSettings> {
+  const identity = await getOAuthClientIdentity(supabase);
   const { data, error } = await supabase
-    .from("mcp_access_settings")
-    .select("enabled,allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
+    .from("mcp_client_access_settings")
+    .select("allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
     .eq("store_id", storeId)
+    .eq("user_id", identity.userId)
+    .eq("client_id", identity.clientId)
     .maybeSingle();
   if (error) throw error;
-  return data ? { ...DEFAULT_MCP_SETTINGS, ...data } : DEFAULT_MCP_SETTINGS;
+  if (!data) throw new Error("This AI application has not been authorised for this store. Connect it again and approve its STRAP access permissions.");
+  return { ...DEFAULT_MCP_SETTINGS, ...data };
 }
 
 async function requireMcpPermission(
@@ -158,8 +181,12 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
           .limit(50);
         if (error) throw error;
         const visibleStores = await Promise.all((data ?? []).map(async (store: any) => {
-          const settings = await getMcpSettings(supabase, store.id);
-          return settings.enabled && settings.allow_store_read ? store : null;
+          try {
+            const settings = await getMcpSettings(supabase, store.id);
+            return settings.allow_store_read ? store : null;
+          } catch {
+            return null;
+          }
         }));
         return result(visibleStores.filter(Boolean));
       } catch (error) {
