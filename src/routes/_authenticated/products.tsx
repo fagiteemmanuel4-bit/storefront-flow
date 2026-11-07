@@ -33,6 +33,7 @@ import {
 import { cn } from "@/lib/utils";
 import { getBusinessMode } from "@/lib/business-modes";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
+import { fetchAllRows } from "@/lib/supabase-pagination";
 
 export const Route = createFileRoute("/_authenticated/products")({ component: ProductsPage });
 
@@ -42,23 +43,17 @@ export async function fetchProductsWithStock(
   storeId: string,
   branchId: string,
 ): Promise<ProductWithPublishState[]> {
-  const [
-    { data: products, error: pe },
-    { data: stock, error: se },
-    { data: onlineProducts, error: oe },
-  ] = await Promise.all([
-    supabase
-      .from("products")
-      .select("*")
-      .eq("store_id", storeId)
-      .eq("is_active", true)
-      .order("name"),
-    supabase.from("branch_stock").select("product_id,quantity").eq("branch_id", branchId),
-    onlineSupabase.from("online_products").select("product_id,enabled").eq("store_id", storeId),
+  const [products, stock, onlineProducts] = await Promise.all([
+    fetchAllRows<any>(
+      supabase.from("products").select("*").eq("store_id", storeId).eq("is_active", true).order("name"),
+    ),
+    fetchAllRows<{ product_id: string; quantity: number }>(
+      supabase.from("branch_stock").select("product_id,quantity").eq("branch_id", branchId),
+    ),
+    fetchAllRows<{ product_id: string; enabled: boolean }>(
+      onlineSupabase.from("online_products").select("product_id,enabled").eq("store_id", storeId),
+    ),
   ]);
-  if (pe) throw new Error(pe.message);
-  if (se) throw new Error(se.message);
-  if (oe) throw new Error(oe.message);
   const stockByProduct = new Map((stock ?? []).map((row) => [row.product_id, row.quantity]));
   const publishedByProduct = new Map(
     (onlineProducts ?? []).map((row) => [row.product_id, row.enabled]),
