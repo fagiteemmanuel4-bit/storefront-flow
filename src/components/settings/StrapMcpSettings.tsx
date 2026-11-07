@@ -153,8 +153,8 @@ export function StrapMcpSettingsPage() {
     try {
       const { error } = await supabase.auth.oauth.revokeGrant(grant.client_id);
       if (error) throw error;
-      if (store?.id) await db.from("mcp_client_access_settings").delete()
-        .eq("store_id", store.id).eq("user_id", userId).eq("client_id", grant.client_id);
+      await db.from("mcp_client_access_settings").delete()
+        .eq("user_id", userId).eq("client_id", grant.client_id);
       toast.success(`${grant.client_name} has been disconnected.`);
       await load();
     } catch (error) {
