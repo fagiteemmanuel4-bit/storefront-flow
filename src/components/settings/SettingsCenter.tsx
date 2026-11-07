@@ -644,11 +644,11 @@ function ThemePreferences() {
   ] as const;
   const choose = async (value: "light" | "dark" | "system") => {
     if (saving || value === theme) return;
-    setTheme(value);
     setSaving(true);
     try {
       const { error } = await db.from("profiles").update({ theme_preference: value }).eq("id", userId);
       if (error) throw new Error(error.message);
+      setTheme(value);
       toast.success("Theme preference saved.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not save your theme preference.");
