@@ -156,14 +156,15 @@ function FoodServicePage() {
     queryKey: ["food-waste", storeId, branchId],
     enabled: Boolean(storeId && branchId),
     queryFn: async () => {
-      return await fetchAllRows<Waste>(
-        db.from("food_waste_records")
-          .select("id,ingredient_product_id,quantity,reason,created_at")
-          .eq("store_id", storeId!)
-          .eq("branch_id", branchId!)
-          .order("created_at", { ascending: false })
-          .order("id"),
-      );
+      const { data, error } = await db
+        .from("food_waste_records")
+        .select("id,ingredient_product_id,quantity,reason,created_at")
+        .eq("store_id", storeId!)
+        .eq("branch_id", branchId!)
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (error) throw new Error(error.message);
+      return (data ?? []) as Waste[];
     },
   });
   const products = (productsQuery.data ?? []) as Product[];
