@@ -244,7 +244,15 @@ function UnitSalePage() {
               })
             )}
           </div>
-          <div className="border-t border-border pt-4">
+          <div className="space-y-2 border-t border-border pt-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Subtotal</span>
+              <span className="numeric">{formatMoney(subtotal, currency)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Tax</span>
+              <span className="numeric">{formatMoney(tax, currency)}</span>
+            </div>
             <div className="flex items-center justify-between">
               <span className="font-semibold">Total</span>
               <span className="text-2xl font-bold">{formatMoney(total, currency)}</span>
