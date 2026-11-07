@@ -23,8 +23,9 @@ function AboutPage() {
             The calm operating system for everyday commerce.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Strap brings selling, inventory, customers, online storefronts and business signals into
-            one focused workspace built for real shops.
+            Strap brings point of sale, products, multi-branch inventory, customers, expenses, online orders
+            and business reporting into one connected workspace. Compatible AI assistants can also
+            work with approved store data through STRAP MCP.
           </p>
         </section>
         <section className="strap-video-placeholder overflow-hidden rounded-[28px] border border-border bg-secondary/50">
@@ -51,6 +52,11 @@ function AboutPage() {
             icon={Zap}
             title="Fast by default"
             text="Focused screens and useful feedback keep busy counters moving."
+          />
+          <Value
+            icon={Bot}
+            title="AI, on your terms"
+            text="Connect compatible assistants, choose their branch and action permissions, and revoke access whenever you want."
           />
           <Value
             icon={ShieldCheck}
