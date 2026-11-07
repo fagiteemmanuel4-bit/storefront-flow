@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -261,6 +261,11 @@ function NotificationsPage() {
                       <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-5 text-muted-foreground">
                         {item.body}
                       </p>
+                      {item.title === "STRAP MCP is live" && (
+                        <Link to="/mcp" className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-accent-ink hover:underline">
+                          Learn more about STRAP MCP <span aria-hidden="true">→</span>
+                        </Link>
+                      )}
                       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
                         <time className="text-[11px] text-muted-foreground">
                           {formatDateTime(item.created_at)}
