@@ -142,8 +142,8 @@ export const SETTINGS_NAV: NavItem[] = [
   },
   {
     path: "/settings/ai-agents",
-    title: "AI agents & MCP",
-    description: "Connect AI assistants and control their store access",
+    title: "Connected applications",
+    description: "Manage authorised third-party apps, permissions and revocation",
     icon: Bot,
     group: "Integrations",
   },
