@@ -31,6 +31,7 @@ import type { ExpenseRow, SaleItemRow, SaleRow } from "@/lib/pos-types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { fetchAllRows } from "@/lib/supabase-pagination";
 
 export const Route = createFileRoute("/_authenticated/reports")({
   head: () => ({
@@ -70,9 +71,7 @@ function ReportsPage() {
     queryFn: async () => {
       let query = supabase.from("sales").select("*").eq("store_id", storeId!);
       if (branch?.id) query = query.eq("branch_id", branch.id);
-      const { data, error } = await query.order("created_at", { ascending: false });
-      if (error) throw new Error(error.message);
-      return (data ?? []) as SaleRow[];
+      return await fetchAllRows<SaleRow>(query.order("created_at", { ascending: false }).order("id"));
     },
   });
   const items = useQuery({
@@ -80,15 +79,12 @@ function ReportsPage() {
     enabled: !!storeId,
     retry: 2,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("sale_items")
-        .select("*, unit_cost_at_sale, products(cost)")
-        .eq("store_id", storeId!);
-      if (error) throw new Error(error.message);
-      return (data ?? []) as (SaleItemRow & {
+      return await fetchAllRows<SaleItemRow & {
         unit_cost_at_sale?: number | null;
         products?: { cost?: number } | null;
-      })[];
+      }>(
+        supabase.from("sale_items").select("*, unit_cost_at_sale, products(cost)").eq("store_id", storeId!).order("id"),
+      );
     },
   });
   const expenses = useQuery({
@@ -98,9 +94,7 @@ function ReportsPage() {
     queryFn: async () => {
       let query = supabase.from("expenses").select("*").eq("store_id", storeId!);
       if (branch?.id) query = query.eq("branch_id", branch.id);
-      const { data, error } = await query;
-      if (error) throw new Error(error.message);
-      return (data ?? []) as ExpenseRow[];
+      return await fetchAllRows<ExpenseRow>(query.order("expense_date", { ascending: false }).order("id"));
     },
   });
   const returns = useQuery<ReportReturnRow[]>({
@@ -113,9 +107,7 @@ function ReportsPage() {
         .select("id,sale_id,total_amount,created_at")
         .eq("store_id", storeId!);
       if (branch?.id) query = query.eq("branch_id", branch.id);
-      const { data, error } = await query;
-      if (error) throw new Error(error.message);
-      return data ?? [];
+      return await fetchAllRows<ReportReturnRow>(query.order("created_at", { ascending: false }).order("id"));
     },
   });
   const failed = sales.error || items.error || expenses.error || returns.error;

@@ -30,6 +30,7 @@ function UnitSalePage() {
   const storeId = store?.id ?? null;
   const branchId = branch?.id ?? null;
   const currency = store?.currency ?? "NGN";
+  const taxRate = Number(store?.tax_rate ?? 0);
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<Line[]>([]);
   const [saving, setSaving] = useState(false);
@@ -82,10 +83,12 @@ function UnitSalePage() {
         .filter((l) => l.quantity > 0),
     );
   }
-  const total = cart.reduce((sum, l) => {
+  const subtotal = cart.reduce((sum, l) => {
     const m = meta(l.product);
     return sum + (l.unit === "pack" ? m.packPrice : m.piecePrice) * l.quantity;
   }, 0);
+  const tax = Math.round(subtotal * taxRate) / 100;
+  const total = subtotal + tax;
   async function checkout() {
     if (!storeId || !branchId || !cart.length) return toast.error("Add at least one item.");
     setSaving(true);
@@ -241,7 +244,15 @@ function UnitSalePage() {
               })
             )}
           </div>
-          <div className="border-t border-border pt-4">
+          <div className="space-y-2 border-t border-border pt-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Subtotal</span>
+              <span className="numeric">{formatMoney(subtotal, currency)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Tax</span>
+              <span className="numeric">{formatMoney(tax, currency)}</span>
+            </div>
             <div className="flex items-center justify-between">
               <span className="font-semibold">Total</span>
               <span className="text-2xl font-bold">{formatMoney(total, currency)}</span>

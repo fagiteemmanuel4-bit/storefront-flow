@@ -1,4 +1,6 @@
-export type OfflineSaleItem = { product_id: string; quantity: number };
+import type { Json } from "@/integrations/supabase/types";
+
+export type OfflineSaleItem = { product_id: string; quantity: number; [key: string]: Json | undefined };
 
 export type OfflineSale = {
   offlineId: string;
