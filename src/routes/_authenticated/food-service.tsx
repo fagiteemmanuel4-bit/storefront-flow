@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { fetchProductsWithStock } from "@/routes/_authenticated/products";
 import { formatMoney } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
+import { fetchAllRows } from "@/lib/supabase-pagination";
 
 export const Route = createFileRoute("/_authenticated/food-service")({
   component: FoodServicePage,
@@ -92,44 +93,44 @@ function FoodServicePage() {
     queryKey: ["food-menu-modifiers", storeId],
     enabled: Boolean(storeId),
     queryFn: async () => {
-      const { data, error } = await db
-        .from("food_menu_modifiers")
-        .select("id,product_id,name,options,is_required,is_active")
-        .eq("store_id", storeId!)
-        .order("sort_order")
-        .order("name");
-      if (error) throw new Error(error.message);
-      return (data ?? []) as Modifier[];
+      return await fetchAllRows<Modifier>(
+        db.from("food_menu_modifiers")
+          .select("id,product_id,name,options,is_required,is_active")
+          .eq("store_id", storeId!)
+          .order("sort_order")
+          .order("name")
+          .order("id"),
+      );
     },
   });
   const recipesQuery = useQuery({
     queryKey: ["food-recipes", storeId, branchId],
     enabled: Boolean(storeId && branchId),
     queryFn: async () => {
-      const { data, error } = await db
-        .from("food_recipe_ingredients")
-        .select("id,menu_product_id,ingredient_product_id,quantity_per_serving")
-        .eq("store_id", storeId!)
-        .eq("branch_id", branchId!)
-        .order("menu_product_id");
-      if (error) throw new Error(error.message);
-      return (data ?? []) as Recipe[];
+      return await fetchAllRows<Recipe>(
+        db.from("food_recipe_ingredients")
+          .select("id,menu_product_id,ingredient_product_id,quantity_per_serving")
+          .eq("store_id", storeId!)
+          .eq("branch_id", branchId!)
+          .order("menu_product_id")
+          .order("id"),
+      );
     },
   });
   const ticketsQuery = useQuery({
     queryKey: ["food-kitchen-tickets", storeId, branchId],
     enabled: Boolean(storeId && branchId),
     queryFn: async () => {
-      const { data, error } = await db
-        .from("food_kitchen_tickets")
-        .select("id,ticket_number,status,notes,created_at,sale_id")
-        .eq("store_id", storeId!)
-        .eq("branch_id", branchId!)
-        .neq("status", "served")
-        .neq("status", "cancelled")
-        .order("created_at");
-      if (error) throw new Error(error.message);
-      return (data ?? []) as Ticket[];
+      return await fetchAllRows<Ticket>(
+        db.from("food_kitchen_tickets")
+          .select("id,ticket_number,status,notes,created_at,sale_id")
+          .eq("store_id", storeId!)
+          .eq("branch_id", branchId!)
+          .neq("status", "served")
+          .neq("status", "cancelled")
+          .order("created_at")
+          .order("id"),
+      );
     },
   });
   const tickets = ticketsQuery.data ?? [];
@@ -137,30 +138,32 @@ function FoodServicePage() {
     queryKey: ["food-kitchen-ticket-items", tickets.map((t) => t.id).join(",")],
     enabled: tickets.length > 0,
     queryFn: async () => {
-      const { data, error } = await db
-        .from("food_kitchen_ticket_items")
-        .select("ticket_id,product_name,quantity,modifiers,order_notes")
-        .in(
-          "ticket_id",
-          tickets.map((t) => t.id),
-        );
-      if (error) throw new Error(error.message);
-      return (data ?? []) as TicketItem[];
+      const ticketIds = tickets.map((ticket) => ticket.id);
+      const batches: TicketItem[][] = [];
+      for (let index = 0; index < ticketIds.length; index += 200) {
+        const batch = ticketIds.slice(index, index + 200);
+        batches.push(await fetchAllRows<TicketItem>(
+          db.from("food_kitchen_ticket_items")
+            .select("ticket_id,product_name,quantity,modifiers,order_notes")
+            .in("ticket_id", batch)
+            .order("ticket_id"),
+        ));
+      }
+      return batches.flat();
     },
   });
   const wasteQuery = useQuery({
     queryKey: ["food-waste", storeId, branchId],
     enabled: Boolean(storeId && branchId),
     queryFn: async () => {
-      const { data, error } = await db
-        .from("food_waste_records")
-        .select("id,ingredient_product_id,quantity,reason,created_at")
-        .eq("store_id", storeId!)
-        .eq("branch_id", branchId!)
-        .order("created_at", { ascending: false })
-        .limit(100);
-      if (error) throw new Error(error.message);
-      return (data ?? []) as Waste[];
+      return await fetchAllRows<Waste>(
+        db.from("food_waste_records")
+          .select("id,ingredient_product_id,quantity,reason,created_at")
+          .eq("store_id", storeId!)
+          .eq("branch_id", branchId!)
+          .order("created_at", { ascending: false })
+          .order("id"),
+      );
     },
   });
   const products = (productsQuery.data ?? []) as Product[];
