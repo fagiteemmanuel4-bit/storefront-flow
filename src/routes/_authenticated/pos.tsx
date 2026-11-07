@@ -25,7 +25,7 @@ import { fetchProductsWithStock } from "@/routes/_authenticated/products";
 import { formatMoney } from "@/lib/currency";
 import { errorMessage, formatDateTime } from "@/lib/format";
 import { PAYMENT_METHODS, type PaymentMethod, type ProductWithStock } from "@/lib/pos-types";
-import { enqueueOfflineSale, getOfflineSales } from "@/lib/offline-sales";
+import { enqueueOfflineSale, getOfflineSales, removeOfflineSale } from "@/lib/offline-sales";
 import { playSaleCompleteSound } from "@/lib/sound";
 import { startKeyboardScanner } from "@/lib/hardware";
 import { Button } from "@/components/ui/button";
@@ -41,6 +41,8 @@ import { cn } from "@/lib/utils";
 import { getBusinessMode } from "@/lib/business-modes";
 
 export const Route = createFileRoute("/_authenticated/pos")({ ssr: false, component: PosPage });
+
+let offlineSaleSyncInFlight = false;
 type FashionVariant = {
   id: string;
   product_id: string;
@@ -210,6 +212,62 @@ function PosPage() {
       window.removeEventListener("offline", off);
     };
   }, []);
+  useEffect(() => {
+    let cancelled = false;
+    const syncQueuedSales = async () => {
+      if (!navigator.onLine || offlineSaleSyncInFlight) return;
+      offlineSaleSyncInFlight = true;
+      let syncedAny = false;
+      try {
+        for (const sale of getOfflineSales()) {
+          if (!navigator.onLine || cancelled) break;
+          // A previous request may have reached the server even if its response was lost.
+          // Check the stable offline ID first so retries never create a second sale.
+          const existing = await supabase
+            .from("sales")
+            .select("id")
+            .eq("store_id", sale.storeId)
+            .eq("offline_id", sale.offlineId)
+            .maybeSingle();
+          if (existing.error) break;
+          if (!existing.data) {
+            const { error } = await supabase.rpc("create_sale", {
+              _store_id: sale.storeId,
+              _branch_id: sale.branchId,
+              _payment_method: sale.paymentMethod,
+              _items: sale.items,
+              _note: sale.note,
+              _customer_id: sale.customerId ?? undefined,
+              _offline_id: sale.offlineId,
+            });
+            if (error) {
+              // Handle a concurrent/previous successful replay by verifying the ID once more.
+              const retryCheck = await supabase
+                .from("sales")
+                .select("id")
+                .eq("store_id", sale.storeId)
+                .eq("offline_id", sale.offlineId)
+                .maybeSingle();
+              if (retryCheck.error || !retryCheck.data) break;
+            }
+          }
+          removeOfflineSale(sale.offlineId);
+          syncedAny = true;
+        }
+        if (syncedAny && !cancelled) await queryClient.invalidateQueries();
+      } catch {
+        // Keep the unsynced sale in local storage; the next online event retries it.
+      } finally {
+        offlineSaleSyncInFlight = false;
+      }
+    };
+    void syncQueuedSales();
+    window.addEventListener("online", syncQueuedSales);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("online", syncQueuedSales);
+    };
+  }, [queryClient]);
   useEffect(() => {
     if (!holdStorageKey) {
       setHolds({});
