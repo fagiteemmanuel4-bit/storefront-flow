@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/bottom-sheet";
 import { cn } from "@/lib/utils";
 import { getBusinessMode } from "@/lib/business-modes";
+import { fetchAllRows } from "@/lib/supabase-pagination";
 
 export const Route = createFileRoute("/_authenticated/pos")({ ssr: false, component: PosPage });
 
@@ -131,14 +132,9 @@ function PosPage() {
     queryKey: ["customers", storeId, "picker"],
     enabled: Boolean(storeId),
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("customers")
-        .select("id,name,phone")
-        .eq("store_id", storeId!)
-        .order("name")
-        .limit(500);
-      if (error) throw new Error(error.message);
-      return (data ?? []) as Customer[];
+      return await fetchAllRows<Customer>(
+        supabase.from("customers").select("id,name,phone").eq("store_id", storeId!).order("name").order("id"),
+      );
     },
   });
   const fashionVariantsQuery = useQuery({
@@ -146,13 +142,9 @@ function PosPage() {
     enabled: Boolean(isFashion && storeId && branchId),
     queryFn: async () => {
       const db = supabase as any;
-      const { data, error } = await db
-        .from("fashion_variant_stock")
-        .select("id,product_id,size,color,quantity")
-        .eq("store_id", storeId!)
-        .eq("branch_id", branchId!);
-      if (error) throw new Error(error.message);
-      return (data ?? []) as FashionVariant[];
+      return await fetchAllRows<FashionVariant>(
+        db.from("fashion_variant_stock").select("id,product_id,size,color,quantity").eq("store_id", storeId!).eq("branch_id", branchId!).order("id"),
+      );
     },
   });
   const electronicsDevicesQuery = useQuery({
@@ -160,14 +152,9 @@ function PosPage() {
     enabled: Boolean(businessMode.key === "electronics" && storeId && branchId),
     queryFn: async () => {
       const db = supabase as any;
-      const { data, error } = await db
-        .from("electronics_devices")
-        .select("id,product_id,serial_number,imei,status")
-        .eq("store_id", storeId!)
-        .eq("branch_id", branchId!)
-        .eq("status", "in_stock");
-      if (error) throw new Error(error.message);
-      return (data ?? []) as ElectronicsDevice[];
+      return await fetchAllRows<ElectronicsDevice>(
+        db.from("electronics_devices").select("id,product_id,serial_number,imei,status").eq("store_id", storeId!).eq("branch_id", branchId!).eq("status", "in_stock").order("id"),
+      );
     },
   });
   const foodModifiersQuery = useQuery({
