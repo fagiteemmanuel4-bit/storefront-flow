@@ -13,6 +13,7 @@ const MCP_URL = "https://lhizunrljottkhemdfei.supabase.co/functions/v1/mcp";
 type Settings = {
   enabled: boolean;
   allowed_branch_ids: string[] | null;
+  allow_store_read: boolean;
   allow_products_read: boolean;
   allow_inventory_read: boolean;
   allow_sales_read: boolean;
@@ -25,6 +26,7 @@ type Settings = {
 const DEFAULTS: Settings = {
   enabled: true,
   allowed_branch_ids: null,
+  allow_store_read: true,
   allow_products_read: true,
   allow_inventory_read: true,
   allow_sales_read: true,
@@ -35,6 +37,7 @@ const DEFAULTS: Settings = {
 };
 
 const READ_OPTIONS: { key: keyof Settings; title: string; description: string }[] = [
+  { key: "allow_store_read", title: "Store profile", description: "Let AI assistants read the store name, business details and general profile." },
   { key: "allow_products_read", title: "Product catalogue", description: "Let AI assistants search product names, SKUs, prices and catalogue details." },
   { key: "allow_inventory_read", title: "Inventory and branches", description: "Read stock quantities, branch details and low-stock information." },
   { key: "allow_sales_read", title: "Sales", description: "Read sales totals, payment methods and transaction summaries for authorised branches." },
@@ -68,7 +71,7 @@ export function StrapMcpSettingsPage() {
     setLoading(true);
     void (async () => {
       const { data, error } = await db.from("mcp_access_settings")
-        .select("enabled,allowed_branch_ids,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
+        .select("enabled,allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
         .eq("store_id", store.id).maybeSingle();
       if (!active) return;
       if (error) {
@@ -119,6 +122,7 @@ export function StrapMcpSettingsPage() {
       store_id: store.id,
       enabled: settings.enabled,
       allowed_branch_ids: allSelected ? null : selectedBranches,
+      allow_store_read: settings.allow_store_read,
       allow_products_read: settings.allow_products_read,
       allow_inventory_read: settings.allow_inventory_read,
       allow_sales_read: settings.allow_sales_read,
