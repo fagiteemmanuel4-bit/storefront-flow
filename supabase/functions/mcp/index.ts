@@ -7,7 +7,7 @@ import { WebStandardStreamableHTTPServerTransport } from "npm:@modelcontextproto
 import { z } from "npm:zod@4";
 
 type UserSupabase = {
-  auth: { getUser: () => Promise<{ data: { user: { id: string; email?: string } | null }; error: Error | null }>; getSession: () => Promise<{ data: { session: { access_token: string } | null }; error: Error | null }> };
+  auth: { getUser: () => Promise<{ data: { user: { id: string; email?: string } | null }; error: Error | null }> };
   from: (table: string) => any;
 };
 
@@ -65,25 +65,6 @@ const DEFAULT_MCP_SETTINGS: McpAccessSettings = {
   allow_product_writes: false,
   allow_stock_writes: false,
 };
-
-async function getOAuthClientIdentity(supabase: UserSupabase) {
-  const [{ data: auth, error: authError }, { data: session, error: sessionError }] = await Promise.all([
-    supabase.auth.getUser(),
-    supabase.auth.getSession(),
-  ]);
-  if (authError) throw authError;
-  if (sessionError) throw sessionError;
-  if (!auth.user || !session?.session?.access_token) throw new Error("Your STRAP login could not be verified.");
-  const token = session.session.access_token;
-  const payloadPart = token.split(".")[1];
-  if (!payloadPart) throw new Error("The OAuth access token is malformed.");
-  const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
-  const claims = JSON.parse(atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "=")));
-  if (typeof claims.client_id !== "string" || !claims.client_id) {
-    throw new Error("This connection does not include an OAuth client identity. Reconnect the AI application through STRAP to approve its access.");
-  }
-  return { userId: auth.user.id, clientId: claims.client_id };
-}
 
 async function getMcpSettings(supabase: UserSupabase, storeId: string): Promise<McpAccessSettings> {
   const identity = await getOAuthClientIdentity(supabase);
@@ -145,7 +126,7 @@ async function recordMcpAction(
   if (error) throw new Error("The change was applied, but its audit record could not be saved: " + error.message);
 }
 
-function registerTools(server: McpServer, supabase: UserSupabase) {
+function registerTools(server: McpServer, supabase: UserSupabase, clientId: string) {\n  const getSettings = (storeId: string) => getMcpSettings(supabase, storeId, clientId);\n  const requirePermission = (storeId: string, permission: keyof McpAccessSettings, branchId?: string) =>\n    requireMcpPermission(supabase, storeId, permission, branchId, clientId);
   server.registerTool(
     "strap_whoami",
     {
@@ -182,7 +163,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
         if (error) throw error;
         const visibleStores = await Promise.all((data ?? []).map(async (store: any) => {
           try {
-            const settings = await getMcpSettings(supabase, store.id);
+            const settings = await getSettings(store.id);
             return settings.allow_store_read ? store : null;
           } catch {
             return null;
@@ -204,7 +185,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id }) => {
       try {
-        await requireMcpPermission(supabase, store_id, "allow_store_read");
+        await requirePermission(store_id, "allow_store_read");
         const { data, error } = await supabase
           .from("stores")
           .select("id,name,currency,tax_rate,low_stock_threshold,business_type,team_size,phone,address,logo_url,created_at")
@@ -433,7 +414,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     async ({ store_id }) => {
       try {
         await requireStoreAccess(supabase, store_id);
-        const settings = await getMcpSettings(supabase, store_id);
+        const settings = await getSettings(store_id);
         let branches: unknown[] = [];
         if (settings.allowed_branch_ids === null) {
           const { data, error } = await supabase.from("branches").select("id,name,is_default").eq("store_id", store_id).order("name").limit(100);
@@ -581,13 +562,28 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
 
 }
 
+function getOAuthClientIdFromRequest(req: Request) {
+  const authorization = req.headers.get("authorization") ?? "";
+  const match = authorization.match(/^Bearer\\s+(.+)$/i);
+  if (!match?.[1]) throw new Error("The OAuth bearer token is missing.");
+  const token = match[1];
+  const payloadPart = token.split(".")[1];
+  if (!payloadPart) throw new Error("The OAuth access token is malformed.");
+  const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+  const claims = JSON.parse(atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "=")));
+  if (typeof claims.client_id !== "string" || !claims.client_id) {
+    throw new Error("This connection does not include an OAuth client identity. Reconnect the AI application through STRAP.");
+  }
+  return claims.client_id as string;
+}
+
 async function handleMcpRequest(req: Request, context: { supabase: UserSupabase }) {
   const server = new McpServer({
     name: "strap",
     version: "0.2.0",
     icons: [{ src: "https://storefront-flow.vercel.app/favicon.svg", mimeType: "image/svg+xml", sizes: ["any"] }],
   });
-  registerTools(server, context.supabase);
+  const clientId = getOAuthClientIdFromRequest(req);\n  registerTools(server, context.supabase, clientId);
 
   const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined });
   await server.connect(transport);
