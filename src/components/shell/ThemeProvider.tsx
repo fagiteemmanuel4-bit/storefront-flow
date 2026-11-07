@@ -47,8 +47,7 @@ export function ThemeProvider({ children, forceLight = false }: { children: Reac
         .eq("id", data.user.id)
         .maybeSingle();
       const value = profile?.theme_preference as Theme | undefined;
-      if (!cancelled && (value === "light" || value === "dark" || value === "system"))
-        setTheme(value);
+      if (!cancelled) setTheme(value === "light" || value === "dark" || value === "system" ? value : "light");
     });
     return () => {
       cancelled = true;
