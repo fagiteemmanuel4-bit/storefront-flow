@@ -274,7 +274,7 @@ function OnlineOrdersPage() {
                     Complete
                   </Button>
                 )}
-                {["pending", "confirmed", "processing", "ready", "shipped"].includes(selected.status) && (
+                {["pending", "confirmed", "processing", "ready"].includes(selected.status) && (
                   <Button
                     variant="outline"
                     onClick={() => void status(selected, "cancelled")}
