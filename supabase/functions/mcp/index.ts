@@ -76,8 +76,21 @@ async function getMcpSettings(supabase: UserSupabase, storeId: string, clientId:
     .eq("client_id", clientId)
     .maybeSingle();
   if (error) throw error;
-  if (!data) throw new Error("This AI application has not been authorised for this store. Connect it again and approve its STRAP access permissions.");
-  return { ...DEFAULT_MCP_SETTINGS, ...data };
+  if (data) return { ...DEFAULT_MCP_SETTINGS, ...data };
+
+  // Compatibility for OAuth grants created before per-application permissions existed.
+  // The Settings page lets these users save an app-specific record; new OAuth consent
+  // requests always create that record before approval.
+  const { data: legacy, error: legacyError } = await supabase
+    .from("mcp_access_settings")
+    .select("enabled,allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
+    .eq("store_id", storeId)
+    .maybeSingle();
+  if (legacyError) throw legacyError;
+  if (!legacy || legacy.enabled === false) {
+    throw new Error("This AI application has not been authorised for this store. Configure its access in Settings → Connected applications.");
+  }
+  return { ...DEFAULT_MCP_SETTINGS, ...legacy };
 }
 
 async function requireMcpPermission(
