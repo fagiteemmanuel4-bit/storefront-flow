@@ -432,7 +432,7 @@ function PosPage() {
     setCustomerId(null);
   }
   const lineUnitPrice = (line: CartLine) =>
-    Number(line.product.price) +
+    Number((line.product as any).piece_price ?? line.product.price) +
     (line.foodModifiers ?? []).reduce((sum, m) => sum + Number(m.price_delta), 0);
   const subtotal = cart.reduce((sum, l) => sum + lineUnitPrice(l) * l.quantity, 0);
   const tax = Math.round(subtotal * taxRate) / 100;
@@ -497,6 +497,7 @@ function PosPage() {
     const items = cart.map((l) => ({
       product_id: l.product.id,
       quantity: l.quantity,
+      unit_type: "piece",
       ...(l.variant ? { fashion_variant_stock_id: l.variant.id } : {}),
       ...(l.device ? { electronics_device_id: l.device.id } : {}),
       ...(l.foodModifiers?.length ? { modifiers: l.foodModifiers } : {}),
