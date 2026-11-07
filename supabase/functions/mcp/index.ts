@@ -172,6 +172,8 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     async ({ store_id }) => {
       try {
         const store = await requireStoreAccess(supabase, store_id);
+        const settings = await getMcpSettings(supabase, store_id);
+        if (!settings.enabled) throw new Error("STRAP AI access is currently disabled for this store.");
         const { data, error } = await supabase
           .from("stores")
           .select("id,name,currency,tax_rate,low_stock_threshold,business_type,team_size,phone,address,logo_url,created_at")
@@ -386,6 +388,47 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
       } catch (error) {
         return toolError(error);
       }
+    },
+  );
+
+
+  server.registerTool(
+    "strap_get_ai_access",
+    {
+      title: "Inspect STRAP AI access permissions",
+      description: "Show the effective branch scope and read/write permissions configured by the store owner or manager. Use this before attempting a write action.",
+      inputSchema: { store_id: z.string().uuid() },
+    },
+    async ({ store_id }) => {
+      try {
+        await requireStoreAccess(supabase, store_id);
+        const settings = await getMcpSettings(supabase, store_id);
+        let branches: unknown[] = [];
+        if (settings.allowed_branch_ids === null) {
+          const { data, error } = await supabase.from("branches").select("id,name,is_default").eq("store_id", store_id).order("name").limit(100);
+          if (error) throw error;
+          branches = data ?? [];
+        } else if (settings.allowed_branch_ids.length) {
+          const { data, error } = await supabase.from("branches").select("id,name,is_default").eq("store_id", store_id).in("id", settings.allowed_branch_ids).order("name").limit(100);
+          if (error) throw error;
+          branches = data ?? [];
+        }
+        return result({
+          enabled: settings.enabled,
+          branch_scope: settings.allowed_branch_ids === null ? "all_branches" : "selected_branches",
+          allowed_branches: branches,
+          permissions: {
+            products_read: settings.allow_products_read,
+            inventory_read: settings.allow_inventory_read,
+            sales_read: settings.allow_sales_read,
+            expenses_read: settings.allow_expenses_read,
+            customers_read: settings.allow_customers_read,
+            products_write: settings.allow_product_writes,
+            stock_write: settings.allow_stock_writes,
+          },
+          note: "Write tools also require the connected STRAP user to have owner or manager permissions.",
+        });
+      } catch (error) { return toolError(error); }
     },
   );
 
