@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Bot, Boxes, Branch, CheckCircle2, LockKeyhole, ShieldCheck, Workflow } from "lucide-react";
+import { Boxes, CheckCircle2, LockKeyhole, ShieldCheck, Workflow } from "lucide-react";
 
 export const Route = createFileRoute("/mcp")({
   head: () => ({
