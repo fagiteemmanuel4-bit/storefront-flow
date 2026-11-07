@@ -41,6 +41,8 @@ function DashboardPage() {
   const storeId = store?.id ?? null;
   const currency = store?.currency ?? "NGN";
   const [storeNudgeDismissed, setStoreNudgeDismissed] = useState(false);
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
   const salesQuery = useQuery({
     queryKey: ["sales", storeId],
     enabled: Boolean(storeId),
@@ -51,6 +53,21 @@ function DashboardPage() {
         .eq("store_id", storeId as string)
         .order("created_at", { ascending: false })
         .limit(25);
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+  });
+  // Keep recent sales bounded; fetch every sale today for accurate metrics.
+  const todaySalesQuery = useQuery({
+    queryKey: ["dashboard-today-sales", storeId, startOfToday.toISOString()],
+    enabled: Boolean(storeId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sales")
+        .select("total, created_at")
+        .eq("store_id", storeId as string)
+        .gte("created_at", startOfToday.toISOString())
+        .order("created_at", { ascending: false });
       if (error) throw new Error(error.message);
       return data ?? [];
     },
@@ -97,10 +114,11 @@ function DashboardPage() {
     },
   });
   const sales = salesQuery.data ?? [];
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-  const todaySales = sales.filter((s) => new Date(s.created_at) >= startOfToday);
-  const todayRevenue = todaySales.reduce((sum, s) => sum + Number(s.total), 0);
+  const todaySales = todaySalesQuery.data ?? [];
+  const todayRevenue = todaySales.reduce((sum, s) => {
+    const amount = Number(s.total);
+    return sum + (Number.isFinite(amount) ? amount : 0);
+  }, 0);
   const online = onlineStoreQuery.data;
   const lowStockCount = lowStockQuery.data?.length ?? 0;
   const pendingOrders = onlineOrdersQuery.data ?? 0;
@@ -136,13 +154,13 @@ function DashboardPage() {
           <MetricCard
             icon={<TrendingUp className="size-4" />}
             label="Revenue today"
-            value={salesQuery.isLoading ? null : formatMoney(todayRevenue, currency)}
+            value={todaySalesQuery.isLoading ? null : formatMoney(todayRevenue, currency)}
             hint={`${todaySales.length} sale${todaySales.length === 1 ? "" : "s"} completed`}
           />
           <MetricCard
             icon={<Receipt className="size-4" />}
             label="Sales today"
-            value={salesQuery.isLoading ? null : String(todaySales.length)}
+            value={todaySalesQuery.isLoading ? null : String(todaySales.length)}
             hint="Counter activity"
           />
           <MetricCard
