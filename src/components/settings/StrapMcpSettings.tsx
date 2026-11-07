@@ -181,7 +181,7 @@ export function StrapMcpSettingsPage() {
         </div>
       </section>
 
-      {!canManage && <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm">Only a store owner or manager can edit or revoke connected app access.</div>}
+      {!canManage && <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm">Only a store owner or manager can edit permissions. Any user can revoke an application they personally authorised.</div>}
 
       <section className="space-y-3">
         <div className="flex items-end justify-between gap-3"><div><h3 className="text-xl font-bold">Authorised third-party apps</h3><p className="mt-1 text-sm text-muted-foreground">Connections authorised through STRAP's secure sign-in and consent flow.</p></div><span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold">{grants.length} connected</span></div>
@@ -203,7 +203,7 @@ export function StrapMcpSettingsPage() {
                 </div>
                 <div className="flex shrink-0 flex-wrap gap-2">
                   <Button variant="outline" size="sm" disabled={!canManage} onClick={() => { setEditing(isEditing ? null : grant.client_id); setDrafts((current) => ({ ...current, [grant.client_id]: current[grant.client_id] ?? savedConfig ?? DEFAULT_ACCESS })); }}>{isEditing ? "Close editor" : "Edit access"}</Button>
-                  <Button variant="destructive" size="sm" disabled={!canManage || revokingId === grant.client_id} onClick={() => void revoke(grant)}><Trash2 className="mr-1 size-4" />{revokingId === grant.client_id ? "Revoking…" : "Revoke"}</Button>
+                  <Button variant="destructive" size="sm" disabled={revokingId === grant.client_id} onClick={() => void revoke(grant)}><Trash2 className="mr-1 size-4" />{revokingId === grant.client_id ? "Revoking…" : "Revoke"}</Button>
                 </div>
               </div>
               {isEditing && <div className="mt-5 space-y-5 border-t border-border pt-5">
