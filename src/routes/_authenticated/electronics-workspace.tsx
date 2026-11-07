@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { fetchProductsWithStock } from "@/routes/_authenticated/products";
 import { formatMoney } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
+import { fetchAllRows } from "@/lib/supabase-pagination";
 
 export const Route = createFileRoute("/_authenticated/electronics-workspace")({
   component: ElectronicsWorkspacePage,
@@ -82,32 +83,28 @@ function ElectronicsWorkspacePage() {
     queryKey: ["electronics-devices", storeId, branchId],
     enabled: Boolean(storeId && branchId),
     queryFn: async () => {
-      const { data, error } = await db
-        .from("electronics_devices")
-        .select(
-          "id,product_id,branch_id,serial_number,imei,status,warranty_months,warranty_started_at,warranty_expires_at,notes,created_at,products(name,price)",
-        )
-        .eq("store_id", storeId!)
-        .eq("branch_id", branchId!)
-        .order("created_at", { ascending: false });
-      if (error) throw new Error(error.message);
-      return (data ?? []) as Device[];
+      return await fetchAllRows<Device>(
+        db.from("electronics_devices")
+          .select("id,product_id,branch_id,serial_number,imei,status,warranty_months,warranty_started_at,warranty_expires_at,notes,created_at,products(name,price)")
+          .eq("store_id", storeId!)
+          .eq("branch_id", branchId!)
+          .order("created_at", { ascending: false })
+          .order("id"),
+      );
     },
   });
   const repairsQuery = useQuery({
     queryKey: ["electronics-repairs", storeId, branchId],
     enabled: Boolean(storeId && branchId),
     queryFn: async () => {
-      const { data, error } = await db
-        .from("electronics_repairs")
-        .select(
-          "id,device_id,device_previous_status,customer_name,customer_phone,device_label,issue_description,diagnosis,status,warranty_claim,estimated_cost,final_cost,received_at,due_at,completed_at",
-        )
-        .eq("store_id", storeId!)
-        .eq("branch_id", branchId!)
-        .order("received_at", { ascending: false });
-      if (error) throw new Error(error.message);
-      return (data ?? []) as Repair[];
+      return await fetchAllRows<Repair>(
+        db.from("electronics_repairs")
+          .select("id,device_id,device_previous_status,customer_name,customer_phone,device_label,issue_description,diagnosis,status,warranty_claim,estimated_cost,final_cost,received_at,due_at,completed_at")
+          .eq("store_id", storeId!)
+          .eq("branch_id", branchId!)
+          .order("received_at", { ascending: false })
+          .order("id"),
+      );
     },
   });
   const products = productsQuery.data ?? [];
