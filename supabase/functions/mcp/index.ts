@@ -45,7 +45,7 @@ type McpAccessSettings = {
   allowed_branch_ids: string[] | null;
   allow_store_read: boolean;
   allow_products_read: boolean;
-  allow_inventory_read:
+  allow_inventory_read: boolean;
   allow_sales_read: boolean;
   allow_expenses_read: boolean;
   allow_customers_read: boolean;
