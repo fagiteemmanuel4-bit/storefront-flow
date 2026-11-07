@@ -68,7 +68,7 @@ const BottomSheetContent = React.forwardRef<
       {...props}
     >
       <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full bg-border" aria-hidden />
-      <div className="flex flex-col gap-4 overflow-y-auto px-5 pt-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:px-7 sm:pb-7">
+      <div className="min-h-0 flex-1 touch-pan-y overscroll-contain overflow-y-auto px-5 pt-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:px-7 sm:pb-7">
         {children}
       </div>
     </DrawerPrimitive.Content>
