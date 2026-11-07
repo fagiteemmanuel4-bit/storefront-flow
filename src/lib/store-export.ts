@@ -54,11 +54,18 @@ export async function downloadStoreWorkbook(store: StoreInfo, range: ExportRange
     line_total: number;
   }[] = [];
   if (saleIds.length > 0) {
-    items = await fetchAllRows<any>(
-      supabase.from("sale_items")
-        .select("sale_id, product_name, quantity, unit_price, line_total")
-        .in("sale_id", saleIds),
+    const batches: string[][] = [];
+    for (let i = 0; i < saleIds.length; i += 500) batches.push(saleIds.slice(i, i + 500));
+    const itemPages = await Promise.all(
+      batches.map((ids) =>
+        fetchAllRows<any>(
+          supabase.from("sale_items")
+            .select("sale_id, product_name, quantity, unit_price, line_total")
+            .in("sale_id", ids),
+        ),
+      ),
     );
+    items = itemPages.flat();
   }
 
   // All source datasets are fetched in pages to avoid silent PostgREST row caps.
