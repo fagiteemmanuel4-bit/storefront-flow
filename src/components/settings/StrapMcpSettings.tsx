@@ -162,7 +162,7 @@ export function StrapMcpSettingsPage() {
                 <h2 className="text-2xl font-bold tracking-tight">STRAP MCP server</h2>
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300"><span className="size-1.5 rounded-full bg-emerald-500" /> Live</span>
               </div>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Connect AI assistants such as Claude and other MCP-compatible agents to your STRAP workspace. You control which branches and actions each connected assistant can access.</p>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Connect AI assistants such as Claude and other MCP-compatible agents to your STRAP workspace. These branch and action permissions are shared by the AI clients connected to this store.</p>
             </div>
             <Link to="/mcp" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold hover:bg-secondary">Learn more <ExternalLink className="size-4" /></Link>
           </div>
