@@ -22,6 +22,7 @@ import { formatMoney } from "@/lib/currency";
 import { formatDateTime } from "@/lib/format";
 import { getBusinessMode } from "@/lib/business-modes";
 import { Skeleton } from "@/components/ui/skeleton";
+import { fetchAllRows } from "@/lib/supabase-pagination";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -67,11 +68,9 @@ function DashboardPage() {
         .select("total, created_at")
         .eq("store_id", storeId as string);
       if (branch?.id) query = query.eq("branch_id", branch.id);
-      const { data, error } = await query
-        .gte("created_at", startOfToday.toISOString())
-        .order("created_at", { ascending: false });
-      if (error) throw new Error(error.message);
-      return data ?? [];
+      return await fetchAllRows<{ total: number | string; created_at: string }>(
+        query.gte("created_at", startOfToday.toISOString()).order("created_at", { ascending: false }).order("id"),
+      );
     },
   });
   const lowStockQuery = useQuery({
