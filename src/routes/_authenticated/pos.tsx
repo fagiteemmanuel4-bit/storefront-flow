@@ -214,10 +214,19 @@ function PosPage() {
   }, []);
   useEffect(() => {
     let cancelled = false;
+    let retryTimer: ReturnType<typeof window.setTimeout> | undefined;
+    const scheduleRetry = () => {
+      if (cancelled || !navigator.onLine || retryTimer !== undefined) return;
+      retryTimer = window.setTimeout(() => {
+        retryTimer = undefined;
+        void syncQueuedSales();
+      }, 5000);
+    };
     const syncQueuedSales = async () => {
       if (!navigator.onLine || offlineSaleSyncInFlight) return;
       offlineSaleSyncInFlight = true;
       let syncedAny = false;
+      let failed = false;
       try {
         for (const sale of getOfflineSales()) {
           if (!navigator.onLine || cancelled) break;
@@ -229,7 +238,10 @@ function PosPage() {
             .eq("store_id", sale.storeId)
             .eq("offline_id", sale.offlineId)
             .maybeSingle();
-          if (existing.error) break;
+          if (existing.error) {
+            failed = true;
+            break;
+          }
           if (!existing.data) {
             const { error } = await supabase.rpc("create_sale", {
               _store_id: sale.storeId,
@@ -248,15 +260,20 @@ function PosPage() {
                 .eq("store_id", sale.storeId)
                 .eq("offline_id", sale.offlineId)
                 .maybeSingle();
-              if (retryCheck.error || !retryCheck.data) break;
+              if (retryCheck.error || !retryCheck.data) {
+                failed = true;
+                break;
+              }
             }
           }
           removeOfflineSale(sale.offlineId);
           syncedAny = true;
         }
         if (syncedAny && !cancelled) await queryClient.invalidateQueries();
+        if (failed || getOfflineSales().length > 0) scheduleRetry();
       } catch {
-        // Keep the unsynced sale in local storage; the next online event retries it.
+        // Keep the unsynced sale in local storage and retry automatically.
+        scheduleRetry();
       } finally {
         offlineSaleSyncInFlight = false;
       }
@@ -265,6 +282,7 @@ function PosPage() {
     window.addEventListener("online", syncQueuedSales);
     return () => {
       cancelled = true;
+      if (retryTimer !== undefined) window.clearTimeout(retryTimer);
       window.removeEventListener("online", syncQueuedSales);
     };
   }, [queryClient]);
