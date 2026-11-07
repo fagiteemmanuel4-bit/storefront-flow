@@ -83,7 +83,7 @@ function ReportsPage() {
         unit_cost_at_sale?: number | null;
         products?: { cost?: number } | null;
       }>(
-        supabase.from("sale_items").select("*, unit_cost_at_sale, products(cost)").eq("store_id", storeId!),
+        supabase.from("sale_items").select("*, unit_cost_at_sale, products(cost)").eq("store_id", storeId!).order("id"),
       );
     },
   });
@@ -94,7 +94,7 @@ function ReportsPage() {
     queryFn: async () => {
       let query = supabase.from("expenses").select("*").eq("store_id", storeId!);
       if (branch?.id) query = query.eq("branch_id", branch.id);
-      return await fetchAllRows<ExpenseRow>(query);
+      return await fetchAllRows<ExpenseRow>(query.order("expense_date", { ascending: false }));
     },
   });
   const returns = useQuery<ReportReturnRow[]>({
@@ -107,7 +107,7 @@ function ReportsPage() {
         .select("id,sale_id,total_amount,created_at")
         .eq("store_id", storeId!);
       if (branch?.id) query = query.eq("branch_id", branch.id);
-      return await fetchAllRows<ReportReturnRow>(query);
+      return await fetchAllRows<ReportReturnRow>(query.order("created_at", { ascending: false }));
     },
   });
   const failed = sales.error || items.error || expenses.error || returns.error;
