@@ -41,7 +41,6 @@ async function requireStoreAccess(supabase: UserSupabase, storeId: string) {
 
 
 type McpAccessSettings = {
-  enabled: boolean;
   allowed_branch_ids: string[] | null;
   allow_store_read: boolean;
   allow_products_read: boolean;
@@ -54,7 +53,6 @@ type McpAccessSettings = {
 };
 
 const DEFAULT_MCP_SETTINGS: McpAccessSettings = {
-  enabled: true,
   allowed_branch_ids: null,
   allow_store_read: true,
   allow_products_read: true,
@@ -243,7 +241,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     },
     async ({ store_id, query, limit }) => {
       try {
-        const settings = await requireMcpPermission(supabase, store_id, "allow_products_read");
+        const settings = await requirePermission(store_id, "allow_products_read");
         let request = supabase
           .from("products")
           .select("id,store_id,name,sku,barcode,category,price,cost,is_active,low_stock_threshold,units_per_pack,pack_price,piece_price")
@@ -277,7 +275,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     },
     async ({ store_id, branch_id, limit }) => {
       try {
-        const settings = await requireMcpPermission(supabase, store_id, "allow_inventory_read", branch_id);
+        const settings = await requirePermission(store_id, "allow_inventory_read", branch_id);
         const [productsResult, stockResult, branchesResult] = await Promise.all([
           supabase.from("products").select("id,name,sku,low_stock_threshold").eq("store_id", store_id).eq("is_active", true).limit(1000),
           branchFilter(settings, supabase.from("branch_stock").select("branch_id,product_id,quantity").eq("store_id", store_id)).limit(5000),
@@ -329,7 +327,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     },
     async ({ store_id, from, to, limit }) => {
       try {
-        const settings = await requireMcpPermission(supabase, store_id, "allow_sales_read");
+        const settings = await requirePermission(store_id, "allow_sales_read");
         let request = branchFilter(settings, supabase
           .from("sales")
           .select("id,store_id,branch_id,cashier_id,reference,subtotal,tax,total,payment_method,note,created_at,customer_id")
@@ -361,7 +359,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     },
     async ({ store_id, from, to, limit }) => {
       try {
-        const settings = await requireMcpPermission(supabase, store_id, "allow_expenses_read");
+        const settings = await requirePermission(store_id, "allow_expenses_read");
         let request = branchFilter(settings, supabase
           .from("expenses")
           .select("id,store_id,branch_id,amount,category,description,expense_date,created_at")
@@ -392,7 +390,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     },
     async ({ store_id, query, limit }) => {
       try {
-        await requireMcpPermission(supabase, store_id, "allow_customers_read");
+        await requirePermission(store_id, "allow_customers_read");
         const { data, error } = await supabase
           .from("customers")
           .select("id,name,phone,email,total_spent,visit_count,last_visit_at")
@@ -431,7 +429,6 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           branches = data ?? [];
         }
         return result({
-          enabled: settings.enabled,
           branch_scope: settings.allowed_branch_ids === null ? "all_branches" : "selected_branches",
           allowed_branches: branches,
           permissions: {
@@ -472,7 +469,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     },
     async ({ store_id, ...input }) => {
       try {
-        await requireMcpPermission(supabase, store_id, "allow_product_writes");
+        await requirePermission(store_id, "allow_product_writes");
         const { data, error } = await supabase.from("products").insert({
           store_id,
           name: input.name,
@@ -517,7 +514,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     },
     async ({ store_id, product_id, ...input }) => {
       try {
-        await requireMcpPermission(supabase, store_id, "allow_product_writes");
+        await requirePermission(store_id, "allow_product_writes");
         const changes = Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined));
         if (Object.keys(changes).length === 0) throw new Error("Provide at least one product field to update.");
         const { data, error } = await supabase.from("products").update(changes)
@@ -545,7 +542,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     },
     async ({ store_id, branch_id, product_id, quantity }) => {
       try {
-        await requireMcpPermission(supabase, store_id, "allow_stock_writes", branch_id);
+        await requirePermission(store_id, "allow_stock_writes", branch_id);
         const [{ data: branch, error: branchError }, { data: product, error: productError }] = await Promise.all([
           supabase.from("branches").select("id").eq("id", branch_id).eq("store_id", store_id).maybeSingle(),
           supabase.from("products").select("id,name").eq("id", product_id).eq("store_id", store_id).maybeSingle(),
@@ -565,21 +562,6 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     },
   );
 
-}
-
-function getOAuthClientIdFromRequest(req: Request) {
-  const authorization = req.headers.get("authorization") ?? "";
-  const match = authorization.match(/^Bearer\\s+(.+)$/i);
-  if (!match?.[1]) throw new Error("The OAuth bearer token is missing.");
-  const token = match[1];
-  const payloadPart = token.split(".")[1];
-  if (!payloadPart) throw new Error("The OAuth access token is malformed.");
-  const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
-  const claims = JSON.parse(atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "=")));
-  if (typeof claims.client_id !== "string" || !claims.client_id) {
-    throw new Error("This connection does not include an OAuth client identity. Reconnect the AI application through STRAP.");
-  }
-  return claims.client_id as string;
 }
 
 function getOAuthClientIdFromRequest(req: Request) {
