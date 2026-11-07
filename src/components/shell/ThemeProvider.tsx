@@ -7,9 +7,9 @@ const KEY = "strap-theme";
 function readLocal(): Theme {
   try {
     const value = localStorage.getItem(KEY);
-    return value === "light" || value === "dark" || value === "system" ? value : "system";
+    return value === "light" || value === "dark" || value === "system" ? value : "light";
   } catch {
-    return "system";
+    return "light";
   }
 }
 function apply(theme: Theme) {
@@ -20,14 +20,14 @@ function apply(theme: Theme) {
   document.documentElement.style.colorScheme = dark ? "dark" : "light";
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({ children, forceLight = false }: { children: ReactNode; forceLight?: boolean }) {
   const [theme, setTheme] = useState<Theme>(() => readLocal());
   useEffect(() => {
-    apply(theme);
+    apply(forceLight ? "light" : theme);
     try {
       localStorage.setItem(KEY, theme);
     } catch {}
-  }, [theme]);
+  }, [theme, forceLight]);
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = () => {
@@ -39,15 +39,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     void supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user || cancelled) return;
+      if (!data.user) { if (!cancelled) setTheme("light"); return; }
+      if (cancelled) return;
       const { data: profile } = await supabase
         .from("profiles")
         .select("theme_preference")
         .eq("id", data.user.id)
         .maybeSingle();
       const value = profile?.theme_preference as Theme | undefined;
-      if (!cancelled && (value === "light" || value === "dark" || value === "system"))
-        setTheme(value);
+      if (!cancelled) setTheme(value === "light" || value === "dark" || value === "system" ? value : "light");
     });
     return () => {
       cancelled = true;
@@ -55,7 +55,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") setTheme("system");
+      if (event === "SIGNED_OUT") setTheme("light");
     });
     return () => data.subscription.unsubscribe();
   }, []);

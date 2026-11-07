@@ -41,7 +41,6 @@ async function requireStoreAccess(supabase: UserSupabase, storeId: string) {
 
 
 type McpAccessSettings = {
-  enabled: boolean;
   allowed_branch_ids: string[] | null;
   allow_store_read: boolean;
   allow_products_read: boolean;
@@ -54,7 +53,6 @@ type McpAccessSettings = {
 };
 
 const DEFAULT_MCP_SETTINGS: McpAccessSettings = {
-  enabled: true,
   allowed_branch_ids: null,
   allow_store_read: true,
   allow_products_read: true,
@@ -66,28 +64,47 @@ const DEFAULT_MCP_SETTINGS: McpAccessSettings = {
   allow_stock_writes: false,
 };
 
-async function getMcpSettings(supabase: UserSupabase, storeId: string): Promise<McpAccessSettings> {
+async function getMcpSettings(supabase: UserSupabase, storeId: string, clientId: string): Promise<McpAccessSettings> {
+  const { data: auth, error: authError } = await supabase.auth.getUser();
+  if (authError) throw authError;
+  if (!auth.user) throw new Error("Your STRAP login could not be verified.");
   const { data, error } = await supabase
+    .from("mcp_client_access_settings")
+    .select("allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
+    .eq("store_id", storeId)
+    .eq("user_id", auth.user.id)
+    .eq("client_id", clientId)
+    .maybeSingle();
+  if (error) throw error;
+  if (data) return { ...DEFAULT_MCP_SETTINGS, ...data };
+
+  // Compatibility for OAuth grants created before per-application permissions existed.
+  // The Settings page lets these users save an app-specific record; new OAuth consent
+  // requests always create that record before approval.
+  const { data: legacy, error: legacyError } = await supabase
     .from("mcp_access_settings")
     .select("enabled,allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
     .eq("store_id", storeId)
     .maybeSingle();
-  if (error) throw error;
-  return data ? { ...DEFAULT_MCP_SETTINGS, ...data } : DEFAULT_MCP_SETTINGS;
+  if (legacyError) throw legacyError;
+  if (!legacy || legacy.enabled === false) {
+    throw new Error("This AI application has not been authorised for this store. Configure its access in Settings → Connected applications.");
+  }
+  return { ...DEFAULT_MCP_SETTINGS, ...legacy };
 }
 
 async function requireMcpPermission(
   supabase: UserSupabase,
   storeId: string,
   permission: keyof McpAccessSettings,
-  branchId?: string,
+  branchId: string | undefined,
+  clientId: string,
 ) {
   await requireStoreAccess(supabase, storeId);
-  const settings = await getMcpSettings(supabase, storeId);
-  if (!settings.enabled) throw new Error("STRAP AI access is currently disabled for this store. Ask the store owner to enable it in Settings → AI agents.");
-  if (settings[permission] !== true) throw new Error("This action is disabled in the store's STRAP AI permissions.");
+  const settings = await getMcpSettings(supabase, storeId, clientId);
+  if (settings[permission] !== true) throw new Error("This action is disabled for this connected application.");
   if (branchId && settings.allowed_branch_ids && !settings.allowed_branch_ids.includes(branchId)) {
-    throw new Error("This branch is outside the branches authorised for AI access.");
+    throw new Error("This branch is outside the branches authorised for this AI application.");
   }
   return settings;
 }
@@ -122,7 +139,10 @@ async function recordMcpAction(
   if (error) throw new Error("The change was applied, but its audit record could not be saved: " + error.message);
 }
 
-function registerTools(server: McpServer, supabase: UserSupabase) {
+function registerTools(server: McpServer, supabase: UserSupabase, clientId: string) {
+  const getSettings = (storeId: string) => getMcpSettings(supabase, storeId, clientId);
+  const requirePermission = (storeId: string, permission: keyof McpAccessSettings, branchId?: string) =>
+    requireMcpPermission(supabase, storeId, permission, branchId, clientId);
   server.registerTool(
     "strap_whoami",
     {
@@ -158,8 +178,12 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
           .limit(50);
         if (error) throw error;
         const visibleStores = await Promise.all((data ?? []).map(async (store: any) => {
-          const settings = await getMcpSettings(supabase, store.id);
-          return settings.enabled && settings.allow_store_read ? store : null;
+          try {
+            const settings = await getSettings(store.id);
+            return settings.allow_store_read ? store : null;
+          } catch {
+            return null;
+          }
         }));
         return result(visibleStores.filter(Boolean));
       } catch (error) {
@@ -177,7 +201,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id }) => {
       try {
-        await requireMcpPermission(supabase, store_id, "allow_store_read");
+        await requirePermission(store_id, "allow_store_read");
         const { data, error } = await supabase
           .from("stores")
           .select("id,name,currency,tax_rate,low_stock_threshold,business_type,team_size,phone,address,logo_url,created_at")
@@ -200,7 +224,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id }) => {
       try {
-        const settings = await requireMcpPermission(supabase, store_id, "allow_inventory_read");
+        const settings = await requirePermission(store_id, "allow_inventory_read");
         let branchQuery = supabase
           .from("branches")
           .select("id,store_id,name,address,is_default,created_at")
@@ -230,7 +254,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id, query, limit }) => {
       try {
-        const settings = await requireMcpPermission(supabase, store_id, "allow_products_read");
+        const settings = await requirePermission(store_id, "allow_products_read");
         let request = supabase
           .from("products")
           .select("id,store_id,name,sku,barcode,category,price,cost,is_active,low_stock_threshold,units_per_pack,pack_price,piece_price")
@@ -264,7 +288,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id, branch_id, limit }) => {
       try {
-        const settings = await requireMcpPermission(supabase, store_id, "allow_inventory_read", branch_id);
+        const settings = await requirePermission(store_id, "allow_inventory_read", branch_id);
         const [productsResult, stockResult, branchesResult] = await Promise.all([
           supabase.from("products").select("id,name,sku,low_stock_threshold").eq("store_id", store_id).eq("is_active", true).limit(1000),
           branchFilter(settings, supabase.from("branch_stock").select("branch_id,product_id,quantity").eq("store_id", store_id)).limit(5000),
@@ -316,7 +340,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id, from, to, limit }) => {
       try {
-        const settings = await requireMcpPermission(supabase, store_id, "allow_sales_read");
+        const settings = await requirePermission(store_id, "allow_sales_read");
         let request = branchFilter(settings, supabase
           .from("sales")
           .select("id,store_id,branch_id,cashier_id,reference,subtotal,tax,total,payment_method,note,created_at,customer_id")
@@ -348,7 +372,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id, from, to, limit }) => {
       try {
-        const settings = await requireMcpPermission(supabase, store_id, "allow_expenses_read");
+        const settings = await requirePermission(store_id, "allow_expenses_read");
         let request = branchFilter(settings, supabase
           .from("expenses")
           .select("id,store_id,branch_id,amount,category,description,expense_date,created_at")
@@ -379,7 +403,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id, query, limit }) => {
       try {
-        await requireMcpPermission(supabase, store_id, "allow_customers_read");
+        await requirePermission(store_id, "allow_customers_read");
         const { data, error } = await supabase
           .from("customers")
           .select("id,name,phone,email,total_spent,visit_count,last_visit_at")
@@ -406,7 +430,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     async ({ store_id }) => {
       try {
         await requireStoreAccess(supabase, store_id);
-        const settings = await getMcpSettings(supabase, store_id);
+        const settings = await getSettings(store_id);
         let branches: unknown[] = [];
         if (settings.allowed_branch_ids === null) {
           const { data, error } = await supabase.from("branches").select("id,name,is_default").eq("store_id", store_id).order("name").limit(100);
@@ -418,7 +442,6 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
           branches = data ?? [];
         }
         return result({
-          enabled: settings.enabled,
           branch_scope: settings.allowed_branch_ids === null ? "all_branches" : "selected_branches",
           allowed_branches: branches,
           permissions: {
@@ -459,7 +482,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id, ...input }) => {
       try {
-        await requireMcpPermission(supabase, store_id, "allow_product_writes");
+        await requirePermission(store_id, "allow_product_writes");
         const { data, error } = await supabase.from("products").insert({
           store_id,
           name: input.name,
@@ -504,7 +527,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id, product_id, ...input }) => {
       try {
-        await requireMcpPermission(supabase, store_id, "allow_product_writes");
+        await requirePermission(store_id, "allow_product_writes");
         const changes = Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined));
         if (Object.keys(changes).length === 0) throw new Error("Provide at least one product field to update.");
         const { data, error } = await supabase.from("products").update(changes)
@@ -532,7 +555,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id, branch_id, product_id, quantity }) => {
       try {
-        await requireMcpPermission(supabase, store_id, "allow_stock_writes", branch_id);
+        await requirePermission(store_id, "allow_stock_writes", branch_id);
         const [{ data: branch, error: branchError }, { data: product, error: productError }] = await Promise.all([
           supabase.from("branches").select("id").eq("id", branch_id).eq("store_id", store_id).maybeSingle(),
           supabase.from("products").select("id,name").eq("id", product_id).eq("store_id", store_id).maybeSingle(),
@@ -554,13 +577,29 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
 
 }
 
+function getOAuthClientIdFromRequest(req: Request) {
+  const authorization = req.headers.get("authorization") ?? "";
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+  if (!match?.[1]) throw new Error("The OAuth bearer token is missing.");
+  const token = match[1];
+  const payloadPart = token.split(".")[1];
+  if (!payloadPart) throw new Error("The OAuth access token is malformed.");
+  const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+  const claims = JSON.parse(atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "=")));
+  if (typeof claims.client_id !== "string" || !claims.client_id) {
+    throw new Error("This connection does not include an OAuth client identity. Reconnect the AI application through STRAP.");
+  }
+  return claims.client_id as string;
+}
+
 async function handleMcpRequest(req: Request, context: { supabase: UserSupabase }) {
   const server = new McpServer({
     name: "strap",
     version: "0.2.0",
     icons: [{ src: "https://storefront-flow.vercel.app/favicon.svg", mimeType: "image/svg+xml", sizes: ["any"] }],
   });
-  registerTools(server, context.supabase);
+  const clientId = getOAuthClientIdFromRequest(req);
+  registerTools(server, context.supabase, clientId);
 
   const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined });
   await server.connect(transport);

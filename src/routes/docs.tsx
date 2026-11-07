@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   BarChart3,
+  Bot,
   BookOpen,
   Boxes,
   CheckCircle2,
@@ -10,6 +11,7 @@ import {
   Globe2,
   KeyRound,
   Package,
+  Palette,
   Receipt,
   Rocket,
   Search,
@@ -90,11 +92,13 @@ const sections: Array<{ group: string; items: Array<{ id: string; label: string 
       { id: "account", label: "Account & sign in" },
       { id: "security", label: "Security" },
       { id: "privacy", label: "Privacy & data" },
+      { id: "theme", label: "Theme & display" },
     ],
   },
   {
     group: "Developers",
     items: [
+      { id: "ai-agents", label: "AI agents & MCP" },
       { id: "source", label: "Source code access" },
       { id: "architecture", label: "Technical architecture" },
     ],
@@ -456,6 +460,53 @@ function DocsPage() {
               follow the account and security controls provided by Strap. Do not place secrets,
               passwords or private credentials into product descriptions, support requests or other
               public fields.
+            </p>
+          </DocSection>
+          <DocSection id="theme" icon={Palette} title="Theme & display" eyebrow="Make Strap comfortable to use">
+            <p>
+              Strap uses light mode by default. Open Settings → Theme & display to choose Light,
+              Dark or System. Your preference is saved to your account and restored when you sign in.
+              Authentication and connection-approval screens stay in light mode for a consistent,
+              readable security experience.
+            </p>
+          </DocSection>
+
+          <DocSection
+            id="ai-agents"
+            icon={Bot}
+            title="AI agents & MCP"
+            eyebrow="Connect an assistant with explicit permission"
+          >
+            <p>
+              STRAP MCP lets compatible AI assistants, including Claude, connect to your workspace
+              through OAuth 2.1. The connection is tied to the signed-in STRAP user and the OAuth
+              application, rather than a shared database password or service-role key.
+            </p>
+            <CodeBlock>{`https://lhizunrljottkhemdfei.supabase.co/functions/v1/mcp`}</CodeBlock>
+            <h3 className="mt-6 font-semibold">Approve access on first connection</h3>
+            <p className="mt-2">
+              The STRAP approval screen lets an owner or manager choose a store, select all branches
+              or specific locations, and decide which information the assistant may read. Expense
+              and customer access start disabled. Product creation, product updates and stock changes
+              are also disabled until explicitly enabled.
+            </p>
+            <h3 className="mt-6 font-semibold">Manage or revoke a connection</h3>
+            <p className="mt-2">
+              Open Settings → Connected applications to review authorised AI apps, edit each app's
+              branch and action permissions, or revoke its OAuth grant. Revoking a grant invalidates
+              that app's active OAuth tokens. Changes to a connection's access apply to its future
+              MCP requests.
+            </p>
+            <h3 className="mt-6 font-semibold">Available capabilities</h3>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
+              <li>Identify the connected STRAP user and list authorised stores.</li>
+              <li>Search products, review stock, branches, sales, expenses and customer records when permitted.</li>
+              <li>Create products, update catalogue details and set exact stock quantities when write access is enabled.</li>
+            </ul>
+            <p className="mt-4 text-sm leading-6 text-muted-foreground">
+              Branch selection applies to branch-level inventory, sales, expenses and stock updates.
+              Product catalogue edits are store-wide. STRAP does not currently expose AI write tools
+              for payments, refunds, staff permissions or store deletion.
             </p>
           </DocSection>
 

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Bot, Check, Copy, ExternalLink, GitBranch, Info, ShieldCheck, Sparkles } from "lucide-react";
+import { Bot, Check, Copy, ExternalLink, GitBranch, ShieldCheck, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
@@ -10,8 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 const db = supabase as any;
 const MCP_URL = "https://lhizunrljottkhemdfei.supabase.co/functions/v1/mcp";
 
-type Settings = {
-  enabled: boolean;
+type AccessConfig = {
   allowed_branch_ids: string[] | null;
   allow_store_read: boolean;
   allow_products_read: boolean;
@@ -22,225 +21,208 @@ type Settings = {
   allow_product_writes: boolean;
   allow_stock_writes: boolean;
 };
+type OAuthGrant = {
+  id: string;
+  client_id: string;
+  client_name: string;
+  scopes: string[];
+  created_at: string;
+  updated_at: string;
+};
+type AuditRow = { id: string; action: string; summary: string; created_at: string };
 
-const DEFAULTS: Settings = {
-  enabled: true,
+const DEFAULT_ACCESS: AccessConfig = {
   allowed_branch_ids: null,
   allow_store_read: true,
   allow_products_read: true,
   allow_inventory_read: true,
   allow_sales_read: true,
-  allow_expenses_read: true,
-  allow_customers_read: true,
+  allow_expenses_read: false,
+  allow_customers_read: false,
   allow_product_writes: false,
   allow_stock_writes: false,
 };
-
-const READ_OPTIONS: { key: keyof Settings; title: string; description: string }[] = [
-  { key: "allow_store_read", title: "Store profile", description: "Let AI assistants read the store name, business details and general profile." },
-  { key: "allow_products_read", title: "Product catalogue", description: "Let AI assistants search product names, SKUs, prices and catalogue details." },
-  { key: "allow_inventory_read", title: "Inventory and branches", description: "Read stock quantities, branch details and low-stock information." },
-  { key: "allow_sales_read", title: "Sales", description: "Read sales totals, payment methods and transaction summaries for authorised branches." },
-  { key: "allow_expenses_read", title: "Expenses", description: "Read expense amounts, categories and descriptions for authorised branches." },
-  { key: "allow_customers_read", title: "Customers", description: "Search customer records and view limited contact and loyalty information." },
+const READ_OPTIONS: Array<{ key: keyof AccessConfig; title: string; description: string }> = [
+  { key: "allow_store_read", title: "Store profile", description: "Read the store name and general business details." },
+  { key: "allow_products_read", title: "Products", description: "Search product names, SKUs, prices and catalogue details." },
+  { key: "allow_inventory_read", title: "Inventory and branches", description: "Read stock quantities and authorised branch details." },
+  { key: "allow_sales_read", title: "Sales", description: "Read sales totals and transaction summaries." },
+  { key: "allow_expenses_read", title: "Expenses", description: "Read expense amounts, categories and descriptions." },
+  { key: "allow_customers_read", title: "Customers", description: "Search customer records and limited contact information." },
 ];
-
-const WRITE_OPTIONS: { key: keyof Settings; title: string; description: string }[] = [
-  { key: "allow_product_writes", title: "Create and update products", description: "Allow an AI assistant to add products or update store-wide catalogue fields such as name, SKU, price, cost and category." },
-  { key: "allow_stock_writes", title: "Set branch stock quantities", description: "Allow an AI assistant to set the exact on-hand quantity for a product at an authorised branch. Every change is recorded in the activity log." },
+const WRITE_OPTIONS: Array<{ key: keyof AccessConfig; title: string; description: string }> = [
+  { key: "allow_product_writes", title: "Create and update products", description: "Add products or edit catalogue details and pricing." },
+  { key: "allow_stock_writes", title: "Update branch stock", description: "Set exact stock quantities at the selected branches." },
 ];
-
-type AuditRow = { id: string; action: string; resource_type: string; summary: string; created_at: string };
 
 export function StrapMcpSettingsPage() {
   const { store, branches, role, userId } = useStoreContext();
   const canManage = role === "owner" || role === "manager";
-  const [settings, setSettings] = useState<Settings>(DEFAULTS);
-  const [selectedBranches, setSelectedBranches] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [grants, setGrants] = useState<OAuthGrant[]>([]);
+  const [saved, setSaved] = useState<Record<string, AccessConfig>>({});
+  const [drafts, setDrafts] = useState<Record<string, AccessConfig>>({});
+  const [editing, setEditing] = useState<string | null>(null);
   const [audit, setAudit] = useState<AuditRow[]>([]);
-  const [auditLoading, setAuditLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [revokingId, setRevokingId] = useState<string | null>(null);
 
-  const allBranchesSelected = settings.allowed_branch_ids === null;
-  const selectedCount = allBranchesSelected ? branches.length : selectedBranches.length;
-
-  useEffect(() => {
-    if (!store?.id) return;
-    let active = true;
+  const load = useCallback(async () => {
+    if (!store?.id || !userId) return;
     setLoading(true);
-    void (async () => {
-      const { data, error } = await db.from("mcp_access_settings")
-        .select("enabled,allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
-        .eq("store_id", store.id).maybeSingle();
-      if (!active) return;
-      if (error) {
-        toast.error("Couldn't load AI access settings: " + error.message);
+    try {
+      const { data: grantData, error: grantError } = await supabase.auth.oauth.listGrants();
+      if (grantError) throw grantError;
+      const nextGrants = (grantData ?? []) as OAuthGrant[];
+      setGrants(nextGrants);
+      const clientIds = nextGrants.map((grant) => grant.client_id).filter(Boolean);
+      if (clientIds.length) {
+        const { data, error } = await db.from("mcp_client_access_settings")
+          .select("client_id,allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
+          .eq("store_id", store.id).eq("user_id", userId).in("client_id", clientIds);
+        if (error) throw error;
+        const map: Record<string, AccessConfig> = {};
+        for (const row of data ?? []) map[row.client_id] = { ...DEFAULT_ACCESS, ...row };
+        setSaved(map);
+        setDrafts(map);
       } else {
-        const next = data ? { ...DEFAULTS, ...data } : DEFAULTS;
-        setSettings(next);
-        setSelectedBranches(next.allowed_branch_ids ?? branches.map((item: any) => item.id));
+        setSaved({});
+        setDrafts({});
       }
+      const { data: activity } = await db.from("mcp_action_audit")
+        .select("id,action,summary,created_at").eq("store_id", store.id)
+        .order("created_at", { ascending: false }).limit(10);
+      setAudit(activity ?? []);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not load connected applications.");
+    } finally {
       setLoading(false);
-    })();
-    return () => { active = false; };
-  }, [store?.id, branches]);
+    }
+  }, [store?.id, userId]);
 
-  useEffect(() => {
-    if (!store?.id || !canManage) return;
-    let active = true;
-    setAuditLoading(true);
-    void db.from("mcp_action_audit")
-      .select("id,action,resource_type,summary,created_at")
-      .eq("store_id", store.id).order("created_at", { ascending: false }).limit(12)
-      .then(({ data, error }: any) => {
-        if (!active) return;
-        if (error) setAudit([]);
-        else setAudit(data ?? []);
-        setAuditLoading(false);
-      });
-    return () => { active = false; };
-  }, [store?.id, canManage]);
-
-  const setFlag = (key: keyof Settings, value: boolean) =>
-    setSettings((current) => ({ ...current, [key]: value }));
+  useEffect(() => { void load(); }, [load]);
 
   const copyEndpoint = async () => {
+    try { await navigator.clipboard.writeText(MCP_URL); toast.success("MCP endpoint copied"); }
+    catch { toast.error("Copy failed. Select and copy the endpoint manually."); }
+  };
+
+  const updateDraft = (clientId: string, patch: Partial<AccessConfig>) => {
+    setDrafts((current) => ({
+      ...current,
+      [clientId]: { ...(current[clientId] ?? DEFAULT_ACCESS), ...patch },
+    }));
+  };
+
+  const saveAccess = async (grant: OAuthGrant) => {
+    const config = drafts[grant.client_id] ?? DEFAULT_ACCESS;
+    if (!store?.id || !userId || !canManage) return;
+    setSavingId(grant.client_id);
     try {
-      await navigator.clipboard.writeText(MCP_URL);
-      toast.success("MCP endpoint copied");
-    } catch {
-      toast.error("Copy failed. Select and copy the endpoint manually.");
-    }
+      const allSelected = config.allowed_branch_ids === null ||
+        (branches.length > 0 && config.allowed_branch_ids.length === branches.length);
+      const payload = {
+        store_id: store.id, user_id: userId, client_id: grant.client_id,
+        client_name: grant.client_name || "Connected AI application",
+        allowed_branch_ids: allSelected ? null : config.allowed_branch_ids,
+        allow_store_read: config.allow_store_read,
+        allow_products_read: config.allow_products_read,
+        allow_inventory_read: config.allow_inventory_read,
+        allow_sales_read: config.allow_sales_read,
+        allow_expenses_read: config.allow_expenses_read,
+        allow_customers_read: config.allow_customers_read,
+        allow_product_writes: config.allow_product_writes,
+        allow_stock_writes: config.allow_stock_writes,
+        updated_at: new Date().toISOString(),
+      };
+      const { error } = await db.from("mcp_client_access_settings").upsert(payload, { onConflict: "store_id,user_id,client_id" });
+      if (error) throw error;
+      const next = { ...DEFAULT_ACCESS, ...config, allowed_branch_ids: allSelected ? null : config.allowed_branch_ids };
+      setSaved((current) => ({ ...current, [grant.client_id]: next }));
+      setDrafts((current) => ({ ...current, [grant.client_id]: next }));
+      setEditing(null);
+      toast.success(`Access for ${grant.client_name} saved.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save app permissions.");
+    } finally { setSavingId(null); }
   };
 
-  const save = async () => {
-    if (!store?.id || !canManage || saving) return;
-    setSaving(true);
-    const allSelected = branches.length > 0 && selectedBranches.length === branches.length;
-    const payload = {
-      store_id: store.id,
-      enabled: settings.enabled,
-      allowed_branch_ids: allSelected ? null : selectedBranches,
-      allow_store_read: settings.allow_store_read,
-      allow_products_read: settings.allow_products_read,
-      allow_inventory_read: settings.allow_inventory_read,
-      allow_sales_read: settings.allow_sales_read,
-      allow_expenses_read: settings.allow_expenses_read,
-      allow_customers_read: settings.allow_customers_read,
-      allow_product_writes: settings.allow_product_writes,
-      allow_stock_writes: settings.allow_stock_writes,
-      updated_by: userId,
-      updated_at: new Date().toISOString(),
-    };
-    const { error } = await db.from("mcp_access_settings").upsert(payload, { onConflict: "store_id" });
-    if (error) toast.error("Couldn't save AI permissions: " + error.message);
-    else {
-      setSettings((current) => ({ ...current, allowed_branch_ids: allSelected ? null : selectedBranches }));
-      toast.success("STRAP AI permissions saved");
-    }
-    setSaving(false);
+  const revoke = async (grant: OAuthGrant) => {
+    if (!window.confirm(`Revoke ${grant.client_name}'s access to your STRAP account? Its active tokens will stop working.`)) return;
+    setRevokingId(grant.client_id);
+    try {
+      const { error } = await supabase.auth.oauth.revokeGrant(grant.client_id);
+      if (error) throw error;
+      await db.from("mcp_client_access_settings").delete()
+        .eq("user_id", userId).eq("client_id", grant.client_id);
+      toast.success(`${grant.client_name} has been disconnected.`);
+      await load();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not revoke this connection.");
+    } finally { setRevokingId(null); }
   };
 
-  const selectAllBranches = (checked: boolean) => {
-    if (checked) {
-      setSelectedBranches(branches.map((b: any) => b.id));
-      setSettings((current) => ({ ...current, allowed_branch_ids: null }));
-    } else {
-      setSelectedBranches([]);
-      setSettings((current) => ({ ...current, allowed_branch_ids: [] }));
-    }
-  };
-
-  if (!store) return <div className="rounded-2xl border border-border p-6 text-sm text-muted-foreground">Choose a store to manage its AI connections.</div>;
+  if (!store) return <div className="rounded-2xl border border-border p-6 text-sm text-muted-foreground">Choose a store to manage its connected applications.</div>;
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 pb-12">
-        <section className="overflow-hidden rounded-3xl border border-border bg-background">
-          <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:p-7">
-            <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[#c6f432] text-[#0e1116]">
-              <Bot className="size-7" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-2xl font-bold tracking-tight">STRAP MCP server</h2>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300"><span className="size-1.5 rounded-full bg-emerald-500" /> Live</span>
+      <section className="rounded-3xl border border-border bg-background">
+        <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:p-7">
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink"><Bot className="size-6" /></div>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2"><h2 className="text-2xl font-bold tracking-tight">Connected applications</h2><span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300">OAuth protected</span></div>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Review third-party apps that have been authorised to connect to your STRAP account. Edit their branch and action permissions, or revoke access whenever you need to.</p>
+          </div>
+          <Link to="/mcp" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold hover:bg-secondary">Learn more <ExternalLink className="size-4" /></Link>
+        </div>
+        <div className="border-t border-border bg-secondary/30 p-4 sm:p-5">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">STRAP remote MCP endpoint</p>
+          <div className="flex flex-col gap-2 sm:flex-row"><code className="min-w-0 flex-1 break-all rounded-xl border border-border bg-background px-3 py-3 text-xs sm:text-sm">{MCP_URL}</code><Button variant="outline" onClick={() => void copyEndpoint()} className="gap-2"><Copy className="size-4" /> Copy endpoint</Button></div>
+        </div>
+      </section>
+
+      {!canManage && <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm">Only a store owner or manager can edit permissions. Any user can revoke an application they personally authorised.</div>}
+
+      <section className="space-y-3">
+        <div className="flex items-end justify-between gap-3"><div><h3 className="text-xl font-bold">Authorised third-party apps</h3><p className="mt-1 text-sm text-muted-foreground">Connections authorised through STRAP's secure sign-in and consent flow.</p></div><span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold">{grants.length} connected</span></div>
+        {loading ? <div className="rounded-2xl border border-border p-8 text-sm text-muted-foreground">Loading connected apps…</div> :
+          grants.length === 0 ? <div className="rounded-2xl border border-dashed border-border p-8 text-center"><Bot className="mx-auto size-8 text-muted-foreground" /><h4 className="mt-3 font-semibold">No third-party apps connected</h4><p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">When you connect Claude or another compatible AI assistant, it will appear here.</p><Link to="/mcp" className="mt-4 inline-flex text-sm font-semibold text-accent-ink hover:underline">How to connect an AI assistant</Link></div> :
+          grants.map((grant) => {
+            const config = drafts[grant.client_id] ?? DEFAULT_ACCESS;
+            const savedConfig = saved[grant.client_id];
+            const isEditing = editing === grant.client_id;
+            const allBranches = config.allowed_branch_ids === null;
+            return <article key={grant.client_id} className="rounded-2xl border border-border bg-background p-5 sm:p-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-secondary"><Bot className="size-5" /></div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2"><h4 className="text-lg font-bold">{grant.client_name || "Connected application"}</h4><span className="rounded-full bg-emerald-500/10 px-2 py-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-300">Connected</span></div>
+                  <p className="mt-1 break-all text-xs text-muted-foreground">Client ID: {grant.client_id}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Authorised {new Date(grant.created_at).toLocaleDateString()} · Scopes: {(grant.scopes ?? []).join(", ") || "standard OAuth"}</p>
+                  <p className="mt-3 text-sm text-muted-foreground">{savedConfig ? `${savedConfig.allowed_branch_ids === null ? "All branches" : savedConfig.allowed_branch_ids.length + " selected branches"} · ${[savedConfig.allow_products_read, savedConfig.allow_inventory_read, savedConfig.allow_sales_read, savedConfig.allow_expenses_read, savedConfig.allow_customers_read].filter(Boolean).length} data categories enabled` : "App-specific permissions have not been saved for this store yet. Previous permissions remain in effect until you save this application’s settings."}</p>
+                </div>
+                <div className="flex shrink-0 flex-wrap gap-2">
+                  <Button variant="outline" size="sm" disabled={!canManage} onClick={() => { setEditing(isEditing ? null : grant.client_id); setDrafts((current) => ({ ...current, [grant.client_id]: current[grant.client_id] ?? savedConfig ?? DEFAULT_ACCESS })); }}>{isEditing ? "Close editor" : "Edit access"}</Button>
+                  <Button variant="destructive" size="sm" disabled={revokingId === grant.client_id} onClick={() => void revoke(grant)}><Trash2 className="mr-1 size-4" />{revokingId === grant.client_id ? "Revoking…" : "Revoke"}</Button>
+                </div>
               </div>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Connect AI assistants such as Claude and other MCP-compatible agents to your STRAP workspace. These branch and action permissions are shared by the AI clients connected to this store.</p>
-            </div>
-            <Link to="/mcp" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold hover:bg-secondary">Learn more <ExternalLink className="size-4" /></Link>
-          </div>
-          <div className="border-t border-border bg-secondary/30 p-4 sm:p-5">
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">Remote MCP endpoint</p>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <code className="min-w-0 flex-1 break-all rounded-xl border border-border bg-background px-3 py-3 text-xs sm:text-sm">{MCP_URL}</code>
-              <Button variant="outline" onClick={() => void copyEndpoint()} className="gap-2"><Copy className="size-4" /> Copy endpoint</Button>
-            </div>
-          </div>
-        </section>
+              {isEditing && <div className="mt-5 space-y-5 border-t border-border pt-5">
+                <div><h5 className="font-semibold">Branch access</h5><p className="mt-1 text-xs text-muted-foreground">Choose where this application can read branch-level information and change stock.</p>
+                  <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-border p-3"><input type="checkbox" checked={allBranches} disabled={!canManage} onChange={(e) => updateDraft(grant.client_id, { allowed_branch_ids: e.target.checked ? null : [] })} className="size-4 accent-accent" /><span className="text-sm font-semibold">All branches</span></label>
+                  <div className="mt-2 grid gap-2 sm:grid-cols-2">{branches.map((branch: any) => <label key={branch.id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-border p-3"><input type="checkbox" checked={allBranches || (config.allowed_branch_ids ?? []).includes(branch.id)} disabled={!canManage || allBranches} onChange={(e) => { const current = config.allowed_branch_ids ?? []; const next = e.target.checked ? [...current, branch.id] : current.filter((id) => id !== branch.id); updateDraft(grant.client_id, { allowed_branch_ids: next }); }} className="size-4 accent-accent" /><GitBranch className="size-4 text-muted-foreground" /><span className="text-sm">{branch.name}</span></label>)}</div>
+                </div>
+                <div><h5 className="font-semibold">Read permissions</h5><div className="mt-2 divide-y divide-border">{READ_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-muted-foreground">{option.description}</p></div><Switch checked={Boolean(config[option.key])} disabled={!canManage} onCheckedChange={(value) => updateDraft(grant.client_id, { [option.key]: value })} /></div>)}</div></div>
+                <div><h5 className="font-semibold">Write permissions</h5><div className="mt-2 divide-y divide-border">{WRITE_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-muted-foreground">{option.description}</p></div><Switch checked={Boolean(config[option.key])} disabled={!canManage} onCheckedChange={(value) => updateDraft(grant.client_id, { [option.key]: value })} /></div>)}</div></div>
+                <div className="flex justify-end"><Button onClick={() => void saveAccess(grant)} disabled={!canManage || savingId === grant.client_id} className="gap-2"><Check className="size-4" />{savingId === grant.client_id ? "Saving…" : "Save permissions"}</Button></div>
+              </div>}
+            </article>;
+          })}
+      </section>
 
-        {!canManage && <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm">Only a store owner or manager can change AI access permissions. You can still review the connection status.</div>}
-
-        <section className="rounded-3xl border border-border bg-background p-5 sm:p-7">
-          <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
-            <div><h3 className="text-xl font-bold">Connection access</h3><p className="mt-1 text-sm text-muted-foreground">Control whether AI agents can access this store at all.</p></div>
-            <Switch checked={settings.enabled} disabled={!canManage || loading} onCheckedChange={(value) => setFlag("enabled", value)} />
-          </div>
-          <div className="mt-5 flex items-start gap-3 rounded-xl bg-secondary/50 p-4">
-            <ShieldCheck className="mt-0.5 size-5 shrink-0" />
-            <div><p className="text-sm font-semibold">Your STRAP account remains in control</p><p className="mt-1 text-sm leading-5 text-muted-foreground">Agents use the connected user's identity and STRAP permissions. They cannot access another merchant's store by changing a store ID. Write actions are also subject to STRAP owner/manager database policies.</p></div>
-          </div>
-        </section>
-
-        <section className="rounded-3xl border border-border bg-background p-5 sm:p-7">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div><h3 className="text-xl font-bold">Branch access</h3><p className="mt-1 text-sm text-muted-foreground">Choose which branches AI agents can inspect or update. This scope applies to inventory, sales, expenses and stock quantities; product catalogue edits are store-wide.</p></div>
-            <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold">{selectedCount} of {branches.length} branches</span>
-          </div>
-          {loading ? <p className="py-6 text-sm text-muted-foreground">Loading branches…</p> : branches.length === 0 ? <p className="py-6 text-sm text-muted-foreground">This store has no branches yet.</p> : (
-            <div className="mt-5 space-y-2">
-              <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border p-3">
-                <input type="checkbox" checked={allBranchesSelected} disabled={!canManage} onChange={(e) => selectAllBranches(e.target.checked)} className="size-4 accent-[#c6f432]" />
-                <span className="text-sm font-semibold">All branches</span>
-                <span className="ml-auto text-xs text-muted-foreground">Full branch coverage</span>
-              </label>
-              <div className="grid gap-2 sm:grid-cols-2">
-                {branches.map((item: any) => {
-                  const checked = allBranchesSelected || selectedBranches.includes(item.id);
-                  return <label key={item.id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-border p-3">
-                    <input type="checkbox" checked={checked} disabled={!canManage || allBranchesSelected} onChange={(e) => {
-                      const next = e.target.checked ? [...new Set([...selectedBranches, item.id])] : selectedBranches.filter((id) => id !== item.id);
-                      setSelectedBranches(next);
-                      setSettings((current) => ({ ...current, allowed_branch_ids: next }));
-                    }} className="size-4 accent-[#c6f432]" />
-                    <GitBranch className="size-4 text-muted-foreground" />
-                    <span className="min-w-0 flex-1 text-sm font-medium">{item.name}</span>
-                    {item.is_default && <span className="text-[10px] font-semibold text-muted-foreground">DEFAULT</span>}
-                  </label>;
-                })}
-              </div>
-            </div>
-          )}
-        </section>
-
-        <section className="rounded-3xl border border-border bg-background p-5 sm:p-7">
-          <div className="border-b border-border pb-4"><h3 className="text-xl font-bold">Read permissions</h3><p className="mt-1 text-sm text-muted-foreground">Choose the business information AI agents can retrieve.</p></div>
-          <div className="mt-4 divide-y divide-border">
-            {READ_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-5 py-4"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">{option.description}</p></div><Switch checked={Boolean(settings[option.key])} disabled={!canManage || loading} onCheckedChange={(value) => setFlag(option.key, value)} /></div>)}
-          </div>
-        </section>
-
-        <section className="rounded-3xl border border-border bg-background p-5 sm:p-7">
-          <div className="flex items-start gap-3 border-b border-border pb-4"><div className="flex size-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-700"><Sparkles className="size-5" /></div><div><h3 className="text-xl font-bold">Write permissions</h3><p className="mt-1 text-sm text-muted-foreground">Writing is off by default. Enable only the actions you want AI agents to perform.</p></div></div>
-          <div className="mt-3 divide-y divide-border">
-            {WRITE_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-5 py-4"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">{option.description}</p></div><Switch checked={Boolean(settings[option.key])} disabled={!canManage || loading || !settings.enabled} onCheckedChange={(value) => setFlag(option.key, value)} /></div>)}
-          </div>
-          <p className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 text-xs leading-5 text-muted-foreground">AI write actions are restricted to owners and managers by STRAP's existing row-level security rules. Sales, payments, refunds, staff permissions and store deletion are not exposed as write tools.</p>
-        </section>
-
-        {canManage && <section className="rounded-3xl border border-border bg-background p-5 sm:p-7"><div className="flex items-start gap-3"><Info className="mt-0.5 size-5" /><div><h3 className="text-lg font-bold">Recent AI activity</h3><p className="mt-1 text-sm text-muted-foreground">A record of product and stock changes made through STRAP MCP.</p></div></div>{auditLoading ? <p className="py-5 text-sm text-muted-foreground">Loading activity…</p> : audit.length === 0 ? <p className="py-5 text-sm text-muted-foreground">No AI write actions have been recorded yet.</p> : <div className="mt-4 divide-y divide-border">{audit.map((item) => <div key={item.id} className="py-3"><p className="text-sm font-semibold">{item.summary}</p><p className="mt-1 text-xs text-muted-foreground">{item.action.replaceAll(".", " · ")} · {new Date(item.created_at).toLocaleString()}</p></div>)}</div>}</section>}
-
-        {canManage && <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-2xl border border-border bg-background/95 p-3 shadow-xl backdrop-blur sm:flex-row sm:items-center sm:justify-between"><p className="text-sm text-muted-foreground">Changes apply to future MCP requests for this store.</p><Button onClick={() => void save()} disabled={saving || loading} className="gap-2"><Check className="size-4" />{saving ? "Saving…" : "Save AI permissions"}</Button></div>}
+      <section className="rounded-2xl border border-border bg-background p-5 sm:p-6">
+        <div className="flex items-center justify-between"><div><h3 className="text-lg font-bold">Recent AI activity</h3><p className="mt-1 text-sm text-muted-foreground">Product and inventory changes made by connected assistants in this store.</p></div><ShieldCheck className="size-5 text-muted-foreground" /></div>
+        {audit.length ? <div className="mt-4 divide-y divide-border">{audit.map((item) => <div key={item.id} className="py-3"><p className="text-sm font-semibold">{item.summary}</p><p className="mt-1 text-xs text-muted-foreground">{item.action.replaceAll(".", " · ")} · {new Date(item.created_at).toLocaleString()}</p></div>)}</div> : <p className="mt-4 text-sm text-muted-foreground">No AI write activity recorded for this store yet.</p>}
+      </section>
     </div>
   );
 }

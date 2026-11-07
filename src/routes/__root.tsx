@@ -280,6 +280,8 @@ function RouteProgress() {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const forceLight = pathname === "/auth" || pathname === "/oauth/consent" || pathname === "/verify-email";
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
@@ -289,7 +291,7 @@ function RootComponent() {
     return () => data.subscription.unsubscribe();
   }, [router, queryClient]);
   return (
-    <ThemeProvider>
+    <ThemeProvider forceLight={forceLight}>
       <QueryClientProvider client={queryClient}>
         <RouteProgress />
         <DomainMoveNotice />
