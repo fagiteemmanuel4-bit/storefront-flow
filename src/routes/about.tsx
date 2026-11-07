@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, PlayCircle, ShieldCheck, Store, Zap } from "lucide-react";
+import { ArrowRight, Bot, PlayCircle, ShieldCheck, Store, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/about")({ component: AboutPage });
 function AboutPage() {
@@ -41,7 +41,7 @@ function AboutPage() {
             </p>
           </div>
         </section>
-        <section className="grid gap-4 py-16 md:grid-cols-3">
+        <section className="grid gap-4 py-16 md:grid-cols-2 xl:grid-cols-4">
           <Value
             icon={Store}
             title="One workspace"
