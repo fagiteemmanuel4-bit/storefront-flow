@@ -1,89 +1,84 @@
 # STRAP MCP integration
 
-Status: implementation branch created; deployment is intentionally blocked pending account and project configuration.
+Status: implementation scaffold committed on `feat/strap-mcp-integration`. Production OAuth settings and Edge Function deployment remain gated on verification and ChatGPT plan eligibility.
 
-## Decisions
+## Confirmed target
 
-- ChatGPT target: Free tier.
-- Authorization UX: a dedicated STRAP OAuth consent screen.
-- Data plane: Supabase Auth OAuth 2.1 + user-scoped Supabase access tokens + existing RLS.
-- MCP transport: Streamable HTTP.
-- Initial capability set: read-only. Write tools are a later, separately approved phase.
+- STRAP production Supabase project: `Kudi` / `lhizunrljottkhemdfei`.
+- The app's browser configuration in `src/integrations/supabase/config.ts` already points to this project.
+- The earlier `supabase/config.toml` project reference was stale; this branch now aligns it to Kudi.
+- Production frontend: `https://storefront-flow.vercel.app`.
 
-## Important product constraint
-
-As of 7 November 2026, OpenAI's published requirements say custom MCP server connections are available on ChatGPT Business and Enterprise/Edu. Pro supports custom MCP with read/fetch-only permissions. Free is not listed as supported. Custom MCP setup is web-only, not available in the Android app. Therefore, deploying the server does not make it connectable from this Free account. Re-check OpenAI's plan support before attempting connection.
-
-## Repository and deployment findings
-
-- Repository: `fagiteemmanuel4-bit/storefront-flow`
-- Production site: `https://storefront-flow.vercel.app`
-- Application stack: TanStack Start, React, TypeScript, Supabase JS.
-- The existing browser client uses a Supabase publishable key; no service-role key belongs in the browser.
-- Supabase schema includes `stores`, `store_members`, `products`, `sales`, `sale_items`, `customers`, `branches`, `branch_stock`, and `expenses`.
-- The repository's `supabase/config.toml` currently says project ref `fwcfmlqxozysksrrdfto`, while the previously inspected STRAP/Kudi Supabase project was `lhizunrljottkhemdfei`. This mismatch must be resolved by the owner before any deployment or Auth configuration. Do not deploy to either project until confirmed.
-- Existing application sign-in is Supabase Auth. The requested separate auth means a dedicated MCP consent/authorization experience, not a second password database.
-
-## Planned architecture
+## Architecture
 
 ChatGPT (supported plan, web)
-→ `https://storefront-flow.vercel.app/api/mcp` (or a dedicated API domain)
-→ OAuth 2.1 resource validation
-→ Supabase Auth-issued user access token
-→ Supabase queries under that user's JWT
-→ existing RLS and store-membership policies.
+→ Supabase Edge Function: `https://lhizunrljottkhemdfei.supabase.co/functions/v1/mcp`
+→ Supabase OAuth 2.1 authorization server
+→ authenticated MCP request pipeline
+→ Supabase client scoped to the caller's JWT
+→ existing Postgres RLS policies.
 
-The MCP server must never use the Supabase service-role key for merchant data queries. Every query must run with the authenticated user's token so RLS remains active. A tool must never accept an arbitrary `store_id` as authority: derive or validate accessible stores through membership policies.
+The MCP endpoint uses `@supabase/server`'s `withOAuthProtectedResource()` and `withSupabase({ auth: 'user' })` middleware. OAuth discovery runs before the auth gate; all tool queries use the authenticated user's client. The Edge Function gateway must have `verify_jwt = false` so unauthenticated OAuth metadata requests can reach the middleware. This does NOT make the tools public: `withSupabase({ auth: 'user' })` enforces user-token validation before the handler runs.
 
-## Initial read-only tool catalogue
+The consent UI is a separate STRAP route at `/oauth/consent`, but it uses the existing STRAP account and Supabase Auth. It is not a second password database. The login/OTP flow preserves the OAuth authorization request and returns the merchant to the consent screen.
 
-- `strap_get_store_profile`
-- `strap_list_branches`
-- `strap_search_products`
-- `strap_get_product`
-- `strap_get_inventory_summary`
-- `strap_get_low_stock`
-- `strap_get_sales`
-- `strap_get_sales_summary`
-- `strap_get_daily_revenue`
-- `strap_get_top_products`
-- `strap_get_expenses`
-- `strap_search_customers`
-- `strap_get_customer_purchase_history`
-- `strap_get_branch_inventory`
+## Implemented on the branch
 
-Every tool will validate inputs, cap result sizes, return only necessary fields, and scope results to stores the authenticated user can access.
+- `supabase/functions/mcp/index.ts`: authenticated, stateless Streamable HTTP MCP endpoint.
+- `supabase/functions/mcp/deno.json`: pinned Deno npm imports.
+- `src/routes/oauth.consent.tsx`: separate OAuth approval/denial screen.
+- `src/routes/auth.tsx` and `src/routes/verify-email.tsx`: preserve MCP consent return path through STRAP's email OTP login.
+- `supabase/config.toml`: points to Kudi, sets Auth Site URL and OAuth consent path, enables OAuth server and dynamic registration, and sets the MCP Edge Function gateway to defer JWT validation to the Supabase middleware.
 
-## Write phase (not enabled in v1)
+## Initial read-only tools
 
-Potential later tools: create/update product, stock adjustment, create sale, and create customer. They require explicit role checks, confirmation semantics, idempotency, audit logging, and careful use of the existing `create_sale` RPC. No write operation should be exposed in the first release.
+1. `strap_whoami`
+2. `strap_list_stores`
+3. `strap_get_store_profile`
+4. `strap_list_branches`
+5. `strap_search_products`
+6. `strap_get_low_stock`
+7. `strap_get_sales`
+8. `strap_get_expenses`
+9. `strap_search_customers`
 
-## Required setup before implementation can be safely completed
+All store-specific tools first verify that the caller can see the requested store through RLS. Query sizes are capped. Customer search is name-only and returns only limited contact and loyalty fields. The initial version has no write tools.
 
-1. Confirm the authoritative Supabase project ref: `fwcfmlqxozysksrrdfto` or `lhizunrljottkhemdfei`.
-2. In that project's Supabase dashboard, enable Auth → OAuth Server and Dynamic Client Registration.
-3. Switch JWT signing to an asymmetric key (ES256 or RS256) if it is still using legacy HS256; the Supabase MCP auth integration requires asymmetric JWT verification.
-4. Set the OAuth authorization path to `/oauth/consent`.
-5. Implement and deploy a consent screen that authenticates the STRAP user, displays the requesting MCP client and scopes, and lets the user approve or deny. The UI must be served from the configured Supabase Auth Site URL.
-6. Verify that the project's existing RLS policies correctly enforce store membership for every table used by the MCP tools. Review security advisors before release.
-7. Configure the deployed MCP endpoint and its protected-resource metadata to use that exact Supabase project as issuer.
-8. Add the custom MCP app from ChatGPT on the web, but only after using a ChatGPT plan that supports custom MCP. Free currently does not.
+## Database security inspection
+
+The following tables have RLS enabled and member-scoped SELECT policies in Kudi: `stores`, `store_members`, `products`, `sales`, `sale_items`, `customers`, `branches`, `branch_stock`, and `expenses`. The inspected policies use `auth.uid()` and membership/role helper functions such as `private.is_store_member` and `private.has_store_role`.
+
+The security advisor also reports existing project-wide findings: 20 SECURITY DEFINER functions executable by `anon`, 45 executable by `authenticated`, and 9 RLS-enabled tables without policies. These are pre-existing database findings, not introduced by this MCP branch. The MCP tools do not call these SECURITY DEFINER RPCs; they use direct, read-only table queries under the caller's JWT. Review the findings before broader release.
+
+## Important ChatGPT access limitation
+
+OpenAI's current help documentation says custom MCP connections and full MCP support are available on ChatGPT Business and Enterprise/Edu. Pro supports custom MCP with read/fetch permissions. Free is not listed as eligible. Custom MCP setup is web-only, not Android mobile. Therefore, this endpoint can be built and independently tested, but this user's Free ChatGPT account cannot currently attach it. Re-check plan eligibility before the connection step.
+
+## Remaining production setup
+
+1. Confirm the Auth Site URL is `https://storefront-flow.vercel.app` in Kudi's Authentication → URL Configuration.
+2. In Kudi's Authentication → OAuth Server, enable OAuth 2.1 and dynamic client registration, and set Authorization Path to `/oauth/consent`.
+3. Ensure JWT signing uses ES256 or RS256. The MCP middleware rejects legacy HS256 tokens.
+4. Review OAuth client registrations and grants; dynamic registration is convenient but should be monitored and revocable.
+5. Deploy the frontend branch to a preview and test the consent/login/OTP return flow.
+6. Run the repository build, lint, type checks, and MCP Inspector handshake tests.
+7. Deploy the Edge Function with gateway JWT verification disabled only because the function itself enforces OAuth middleware.
+8. Verify unauthenticated requests receive a 401 OAuth challenge and protected-resource metadata, then verify valid tokens only see stores allowed by RLS.
+9. Connect from ChatGPT web only after using an eligible plan.
 
 ## Security requirements
 
-- No anonymous access to merchant data.
-- No service-role key in MCP request handlers.
-- Verify bearer tokens on every request and reject expired, malformed, wrong-issuer, or wrong-audience tokens.
-- Apply the caller's JWT to every Supabase data request; rely on RLS as the final row-level boundary.
-- Require explicit consent and offer revocation.
-- Limit tool output and avoid returning customer PII unless the specific tool requires it.
-- Log security-relevant events without logging access tokens or sensitive customer data.
-- Keep MCP tool names and schemas stable; ChatGPT snapshots tool definitions when the app is installed, so refresh/recreate the app after incompatible changes.
+- Never use the service-role key for merchant queries.
+- Never accept a client-supplied store ID as proof of access; check it through the caller-scoped client.
+- Keep tools read-only in v1.
+- Keep tool output bounded and avoid exposing unnecessary customer PII.
+- Do not log bearer tokens, refresh tokens, or sensitive customer data.
+- Test with at least two users from different stores to prove cross-store isolation.
+- Add write tools only after role checks, explicit confirmation, idempotency, audit logging, and review of the relevant business RPCs.
 
 ## References
 
-- OpenAI: https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt
-- OpenAI MCP auth: https://developers.openai.com/plugins/build/auth
+- OpenAI custom MCP connection requirements: https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt
+- Supabase MCP deployment and authenticated Edge Function pipeline: https://supabase.com/docs/guides/ai-tools/byo-mcp
 - Supabase OAuth 2.1 setup: https://supabase.com/docs/guides/auth/oauth-server/getting-started
-- Supabase MCP auth: https://supabase.com/docs/guides/auth/oauth-server/mcp-authentication
-- Supabase MCP deployment: https://supabase.com/docs/guides/ai-tools/byo-mcp
+- Supabase MCP authentication: https://supabase.com/docs/guides/auth/oauth-server/mcp-authentication
