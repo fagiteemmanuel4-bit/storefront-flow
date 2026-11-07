@@ -71,7 +71,7 @@ function ReportsPage() {
     queryFn: async () => {
       let query = supabase.from("sales").select("*").eq("store_id", storeId!);
       if (branch?.id) query = query.eq("branch_id", branch.id);
-      return await fetchAllRows<SaleRow>(query.order("created_at", { ascending: false }).order("id").order("id"));
+      return await fetchAllRows<SaleRow>(query.order("created_at", { ascending: false }).order("id"));
     },
   });
   const items = useQuery({
@@ -107,7 +107,7 @@ function ReportsPage() {
         .select("id,sale_id,total_amount,created_at")
         .eq("store_id", storeId!);
       if (branch?.id) query = query.eq("branch_id", branch.id);
-      return await fetchAllRows<ReportReturnRow>(query.order("created_at", { ascending: false }));
+      return await fetchAllRows<ReportReturnRow>(query.order("created_at", { ascending: false }).order("id"));
     },
   });
   const failed = sales.error || items.error || expenses.error || returns.error;
