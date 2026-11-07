@@ -181,7 +181,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
         const { data, error } = await supabase
           .from("stores")
           .select("id,name,currency,tax_rate,low_stock_threshold,business_type,team_size,phone,address,logo_url,created_at")
-          .eq("id", store.id)
+          .eq("id", store_id)
           .maybeSingle();
         if (error) throw error;
         return result(data);
