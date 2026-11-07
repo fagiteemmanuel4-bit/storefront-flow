@@ -151,7 +151,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
           .limit(clampLimit(limit));
         if (query) {
           const pattern = `%${query.replace(/[\\%_]/g, "")}%`;
-          request = request.or(`name.ilike.${pattern},sku.ilike.${pattern},barcode.ilike.${pattern}`);
+          request = request.ilike("name", pattern);
         }
         const { data, error } = await request;
         if (error) throw error;
@@ -314,7 +314,7 @@ async function handleMcpRequest(req: Request, context: { supabase: UserSupabase 
   });
   registerTools(server, context.supabase);
 
-  const transport = new WebStandardStreamableHTTPServerTransport();
+  const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined });
   await server.connect(transport);
   return transport.handleRequest(req);
 }
