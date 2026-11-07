@@ -91,13 +91,15 @@ const sections: Array<{ group: string; items: Array<{ id: string; label: string 
     items: [
       { id: "account", label: "Account & sign in" },
       { id: "security", label: "Security" },
-      { id: "privacy", label: "Privacy & data" },\n      { id: "theme", label: "Theme & display" },
+      { id: "privacy", label: "Privacy & data" },
+      { id: "theme", label: "Theme & display" },
     ],
   },
   {
     group: "Developers",
     items: [
-      { id: "ai-agents", label: "AI agents & MCP" },\n      { id: "source", label: "Source code access" },
+      { id: "ai-agents", label: "AI agents & MCP" },
+      { id: "source", label: "Source code access" },
       { id: "architecture", label: "Technical architecture" },
     ],
   },
