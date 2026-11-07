@@ -436,7 +436,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     "strap_create_product",
     {
       title: "Create a product",
-      description: "Create a product in an accessible STRAP store. Requires the store owner to enable product write access. Use only when the user explicitly asks to add a product.",
+      description: "Create a product in an accessible STRAP store. Requires the store owner or manager to enable product write access. Use only when the user explicitly asks to add a product.",
       inputSchema: {
         store_id: z.string().uuid(),
         name: z.string().trim().min(1).max(160),
