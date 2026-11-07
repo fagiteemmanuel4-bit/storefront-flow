@@ -8,6 +8,7 @@ import { AppShell } from "@/components/shell/AppShell";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { fetchAllRows } from "@/lib/supabase-pagination";
 
 export const Route = createFileRoute("/_authenticated/customers")({
   ssr: false,
@@ -49,14 +50,15 @@ function CustomersPage() {
     queryKey: ["customers", store?.id],
     enabled: Boolean(store?.id),
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from("customers")
-        .select("id,name,phone,email,notes,total_spent,visit_count,last_visit_at")
-        .eq("store_id", store!.id)
-        .order("last_visit_at", { ascending: false, nullsFirst: false })
-        .order("name");
-      if (error) throw new Error(error.message);
-      return (data ?? []) as Customer[];
+      return await fetchAllRows<Customer>(
+        (supabase as any)
+          .from("customers")
+          .select("id,name,phone,email,notes,total_spent,visit_count,last_visit_at")
+          .eq("store_id", store!.id)
+          .order("last_visit_at", { ascending: false, nullsFirst: false })
+          .order("name")
+          .order("id"),
+      );
     },
     retry: 2,
   });
