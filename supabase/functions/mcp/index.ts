@@ -177,7 +177,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id }) => {
       try {
-        const store = await requireMcpPermission(supabase, store_id, "allow_store_read");
+        await requireMcpPermission(supabase, store_id, "allow_store_read");
         const { data, error } = await supabase
           .from("stores")
           .select("id,name,currency,tax_rate,low_stock_threshold,business_type,team_size,phone,address,logo_url,created_at")
