@@ -71,7 +71,7 @@ export function StrapMcpSettingsPage() {
     if (!store?.id || !userId) return;
     setLoading(true);
     try {
-      const { data: grantData, error: grantError } = await supabase.auth.oauth.getUserGrants();
+      const { data: grantData, error: grantError } = await supabase.auth.oauth.listGrants();
       if (grantError) throw grantError;
       const nextGrants = (grantData ?? []) as OAuthGrant[];
       setGrants(nextGrants);
