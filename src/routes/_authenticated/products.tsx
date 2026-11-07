@@ -45,13 +45,13 @@ export async function fetchProductsWithStock(
 ): Promise<ProductWithPublishState[]> {
   const [products, stock, onlineProducts] = await Promise.all([
     fetchAllRows<any>(
-      supabase.from("products").select("*").eq("store_id", storeId).eq("is_active", true).order("name"),
+      supabase.from("products").select("*").eq("store_id", storeId).eq("is_active", true).order("name").order("id"),
     ),
     fetchAllRows<{ product_id: string; quantity: number }>(
-      supabase.from("branch_stock").select("product_id,quantity").eq("branch_id", branchId),
+      supabase.from("branch_stock").select("product_id,quantity").eq("branch_id", branchId).order("product_id"),
     ),
     fetchAllRows<{ product_id: string; enabled: boolean }>(
-      onlineSupabase.from("online_products").select("product_id,enabled").eq("store_id", storeId),
+      onlineSupabase.from("online_products").select("product_id,enabled").eq("store_id", storeId).order("product_id"),
     ),
   ]);
   const stockByProduct = new Map((stock ?? []).map((row) => [row.product_id, row.quantity]));
