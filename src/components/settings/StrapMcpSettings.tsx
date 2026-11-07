@@ -102,12 +102,6 @@ export function StrapMcpSettingsPage() {
   const setFlag = (key: keyof Settings, value: boolean) =>
     setSettings((current) => ({ ...current, [key]: value }));
 
-  const toggleBranch = (id: string, checked: boolean) => {
-    setSettings((current) => ({ ...current, allowed_branch_ids: current.allowed_branch_ids ?? branches.map((b: any) => b.id) }));
-    setSelectedBranches((current) => checked ? [...new Set([...current, id])] : current.filter((value) => value !== id));
-    setSettings((current) => ({ ...current, allowed_branch_ids: [] }));
-  };
-
   const copyEndpoint = async () => {
     try {
       await navigator.clipboard.writeText(MCP_URL);
