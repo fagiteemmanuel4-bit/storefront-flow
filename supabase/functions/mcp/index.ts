@@ -43,8 +43,9 @@ async function requireStoreAccess(supabase: UserSupabase, storeId: string) {
 type McpAccessSettings = {
   enabled: boolean;
   allowed_branch_ids: string[] | null;
+  allow_store_read: boolean;
   allow_products_read: boolean;
-  allow_inventory_read: boolean;
+  allow_inventory_read:
   allow_sales_read: boolean;
   allow_expenses_read: boolean;
   allow_customers_read: boolean;
@@ -55,6 +56,7 @@ type McpAccessSettings = {
 const DEFAULT_MCP_SETTINGS: McpAccessSettings = {
   enabled: true,
   allowed_branch_ids: null,
+  allow_store_read: true,
   allow_products_read: true,
   allow_inventory_read: true,
   allow_sales_read: true,
@@ -67,7 +69,7 @@ const DEFAULT_MCP_SETTINGS: McpAccessSettings = {
 async function getMcpSettings(supabase: UserSupabase, storeId: string): Promise<McpAccessSettings> {
   const { data, error } = await supabase
     .from("mcp_access_settings")
-    .select("enabled,allowed_branch_ids,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
+    .select("enabled,allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
     .eq("store_id", storeId)
     .maybeSingle();
   if (error) throw error;
@@ -155,7 +157,11 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
           .order("created_at", { ascending: false })
           .limit(50);
         if (error) throw error;
-        return result(data ?? []);
+        const visibleStores = await Promise.all((data ?? []).map(async (store: any) => {
+          const settings = await getMcpSettings(supabase, store.id);
+          return settings.enabled && settings.allow_store_read ? store : null;
+        }));
+        return result(visibleStores.filter(Boolean));
       } catch (error) {
         return toolError(error);
       }
@@ -171,9 +177,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
     },
     async ({ store_id }) => {
       try {
-        const store = await requireStoreAccess(supabase, store_id);
-        const settings = await getMcpSettings(supabase, store_id);
-        if (!settings.enabled) throw new Error("STRAP AI access is currently disabled for this store.");
+        const store = await requireMcpPermission(supabase, store_id, "allow_store_read");
         const { data, error } = await supabase
           .from("stores")
           .select("id,name,currency,tax_rate,low_stock_threshold,business_type,team_size,phone,address,logo_url,created_at")
@@ -418,6 +422,7 @@ function registerTools(server: McpServer, supabase: UserSupabase) {
           branch_scope: settings.allowed_branch_ids === null ? "all_branches" : "selected_branches",
           allowed_branches: branches,
           permissions: {
+            store_read: settings.allow_store_read,
             products_read: settings.allow_products_read,
             inventory_read: settings.allow_inventory_read,
             sales_read: settings.allow_sales_read,
