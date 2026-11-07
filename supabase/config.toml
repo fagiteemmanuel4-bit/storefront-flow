@@ -1,1 +1,13 @@
-project_id = "fwcfmlqxozysksrrdfto"
+project_id = "lhizunrljottkhemdfei"
+
+[auth]
+site_url = "https://storefront-flow.vercel.app"
+additional_redirect_urls = ["https://storefront-flow.vercel.app/**"]
+
+[auth.oauth_server]
+enabled = true
+authorization_url_path = "/oauth/consent"
+allow_dynamic_registration = true
+
+[functions.mcp]
+verify_jwt = false

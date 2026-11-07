@@ -92,7 +92,13 @@ function AuthPage() {
     }
     let cancelled = false;
     void supabase.auth.getUser().then(({ data }) => {
-      if (!cancelled && data.user) void navigate({ to: "/pos", replace: true });
+      if (cancelled || !data.user) return;
+      const oauthReturn = sessionStorage.getItem("strap_oauth_return");
+      if (oauthReturn?.startsWith("/oauth/consent?authorization_id=")) {
+        void navigate({ to: oauthReturn as never, replace: true });
+      } else {
+        void navigate({ to: "/pos", replace: true });
+      }
     });
     return () => {
       cancelled = true;

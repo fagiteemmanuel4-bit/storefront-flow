@@ -76,7 +76,15 @@ function VerifyEmailPage() {
             : "Your sign-in is verified. Opening Strap…",
         );
         if (flow === "signin") {
-          window.setTimeout(() => void navigate({ to: "/pos", replace: true }), 450);
+          const oauthReturn = sessionStorage.getItem("strap_oauth_return");
+          if (oauthReturn?.startsWith("/oauth/consent?authorization_id=")) {
+            window.setTimeout(() => {
+              sessionStorage.removeItem("strap_oauth_return");
+              void navigate({ to: oauthReturn as never, replace: true });
+            }, 450);
+          } else {
+            window.setTimeout(() => void navigate({ to: "/pos", replace: true }), 450);
+          }
         } else {
           await supabase.auth.signOut();
         }
@@ -145,7 +153,13 @@ function VerifyEmailPage() {
       );
 
       if (flow === "signin") {
-        await navigate({ to: "/pos", replace: true });
+        const oauthReturn = sessionStorage.getItem("strap_oauth_return");
+        if (oauthReturn?.startsWith("/oauth/consent?authorization_id=")) {
+          sessionStorage.removeItem("strap_oauth_return");
+          await navigate({ to: oauthReturn as never, replace: true });
+        } else {
+          await navigate({ to: "/pos", replace: true });
+        }
       } else {
         await supabase.auth.signOut();
       }
