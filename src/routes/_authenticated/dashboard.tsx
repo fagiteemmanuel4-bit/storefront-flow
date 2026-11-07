@@ -44,29 +44,29 @@ function DashboardPage() {
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
   const salesQuery = useQuery({
-    queryKey: ["sales", storeId],
+    queryKey: ["sales", storeId, branch?.id ?? null],
     enabled: Boolean(storeId),
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("sales")
         .select("id, reference, total, payment_method, created_at, branch_id")
-        .eq("store_id", storeId as string)
-        .order("created_at", { ascending: false })
-        .limit(25);
+        .eq("store_id", storeId as string);
+      if (branch?.id) query = query.eq("branch_id", branch.id);
+      const { data, error } = await query.order("created_at", { ascending: false }).limit(25);
       if (error) throw new Error(error.message);
       return data ?? [];
     },
   });
   // Keep recent sales bounded; fetch every sale today for accurate metrics.
   const todaySalesQuery = useQuery({
-    queryKey: ["dashboard-today-sales", storeId, startOfToday.toISOString()],
+    queryKey: ["dashboard-today-sales", storeId, branch?.id ?? null, startOfToday.toISOString()],
     enabled: Boolean(storeId),
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sales")
         .select("total, created_at")
         .eq("store_id", storeId as string)
-        .gte("created_at", startOfToday.toISOString())
+         .gte("created_at", startOfToday.toISOString())
         .order("created_at", { ascending: false });
       if (error) throw new Error(error.message);
       return data ?? [];
