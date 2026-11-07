@@ -9,7 +9,7 @@ function readLocal(): Theme {
     const value = localStorage.getItem(KEY);
     return value === "light" || value === "dark" || value === "system" ? value : "light";
   } catch {
-    return "system";
+    return "light";
   }
 }
 function apply(theme: Theme) {
