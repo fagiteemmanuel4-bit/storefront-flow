@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Bot, Check, GitBranch, LockKeyhole, ShieldCheck } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
@@ -204,7 +203,7 @@ function OAuthConsentPage() {
 
               <div className="mt-7 border-t border-[#e9ebe5] pt-6">
                 <div className="flex items-start justify-between gap-4"><div><h2 className="text-base font-bold">Branch access</h2><p className="mt-1 text-sm text-[#697064]">Limit branch-level information and stock updates to selected locations.</p></div><GitBranch className="size-5 text-[#727a67]" /></div>
-                <label className="mt-4 flex cursor-pointer items-center gap-3 rounded-xl border border-[#dfe3d7] p-3.5"><input type="checkbox" checked={allBranches} onChange={(event) => { setAllBranches(event.target.checked); if (event.target.checked) setSelectedBranches(branches.map((branch) => branch.id)); }} className="size-4 accent-[#536344]" /><span className="text-sm font-semibold">All branches</span></label>
+                <label className="mt-4 flex cursor-pointer items-center gap-3 rounded-xl border border-[#dfe3d7] p-3.5"><input type="checkbox" checked={allBranches} onChange={(event) => { setAllBranches(event.target.checked); setSelectedBranches(event.target.checked ? branches.map((branch) => branch.id) : []); }} className="size-4 accent-[#536344]" /><span className="text-sm font-semibold">All branches</span></label>
                 {!allBranches && <div className="mt-2 grid gap-2 sm:grid-cols-2">{branches.map((branch) => <label key={branch.id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dfe3d7] p-3"><input type="checkbox" checked={selectedBranches.includes(branch.id)} onChange={(event) => setSelectedBranches((current) => event.target.checked ? [...current, branch.id] : current.filter((id) => id !== branch.id))} className="size-4 accent-[#536344]" /><span className="text-sm">{branch.name}</span>{branch.is_default && <span className="ml-auto text-[10px] font-bold text-[#7b826f]">DEFAULT</span>}</label>)}</div>}
                 {branches.length === 0 && <p className="mt-3 text-sm text-[#697064]">No branches have been created for this store yet.</p>}
               </div>
