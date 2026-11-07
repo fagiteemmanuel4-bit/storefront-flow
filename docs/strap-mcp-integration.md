@@ -1,6 +1,6 @@
 # STRAP MCP integration
 
-Status: implementation scaffold committed on `feat/strap-mcp-integration`. Production OAuth settings and Edge Function deployment remain gated on verification and ChatGPT plan eligibility.
+Status: implementation scaffold committed on `feat/strap-mcp-integration`; the authenticated MCP Edge Function is deployed to Kudi (version 1, ACTIVE). OAuth provider configuration and end-to-end authorization testing remain pending.
 
 ## Confirmed target
 
@@ -29,6 +29,7 @@ The consent UI is a separate STRAP route at `/oauth/consent`, but it uses the ex
 - `src/routes/oauth.consent.tsx`: separate OAuth approval/denial screen.
 - `src/routes/auth.tsx` and `src/routes/verify-email.tsx`: preserve MCP consent return path through STRAP's email OTP login.
 - `supabase/config.toml`: points to Kudi, sets Auth Site URL and OAuth consent path, enables OAuth server and dynamic registration, and sets the MCP Edge Function gateway to defer JWT validation to the Supabase middleware.
+- Supabase Edge Function `mcp`: deployed to Kudi as version 1, ACTIVE, with `verify_jwt = false`; the function's own Supabase OAuth middleware validates every protected request.
 
 ## Initial read-only tools
 
@@ -62,8 +63,8 @@ OpenAI's current help documentation says custom MCP connections and full MCP sup
 4. Review OAuth client registrations and grants; dynamic registration is convenient but should be monitored and revocable.
 5. Deploy the frontend branch to a preview and test the consent/login/OTP return flow.
 6. Run the repository build, lint, type checks, and MCP Inspector handshake tests.
-7. Deploy the Edge Function with gateway JWT verification disabled only because the function itself enforces OAuth middleware.
-8. Verify unauthenticated requests receive a 401 OAuth challenge and protected-resource metadata, then verify valid tokens only see stores allowed by RLS.
+7. The `mcp` Edge Function is already deployed (version 1, ACTIVE) with gateway JWT verification disabled only because the function itself enforces OAuth middleware.
+8. Still to test: verify unauthenticated requests receive a 401 OAuth challenge and protected-resource metadata, then verify valid tokens only see stores allowed by RLS.
 9. Connect from ChatGPT web only after using an eligible plan.
 
 ## Security requirements
