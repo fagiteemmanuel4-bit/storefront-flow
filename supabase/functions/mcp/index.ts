@@ -66,14 +66,16 @@ const DEFAULT_MCP_SETTINGS: McpAccessSettings = {
   allow_stock_writes: false,
 };
 
-async function getMcpSettings(supabase: UserSupabase, storeId: string): Promise<McpAccessSettings> {
-  const identity = await getOAuthClientIdentity(supabase);
+async function getMcpSettings(supabase: UserSupabase, storeId: string, clientId: string): Promise<McpAccessSettings> {
+  const { data: auth, error: authError } = await supabase.auth.getUser();
+  if (authError) throw authError;
+  if (!auth.user) throw new Error("Your STRAP login could not be verified.");
   const { data, error } = await supabase
     .from("mcp_client_access_settings")
     .select("allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
     .eq("store_id", storeId)
-    .eq("user_id", identity.userId)
-    .eq("client_id", identity.clientId)
+    .eq("user_id", auth.user.id)
+    .eq("client_id", clientId)
     .maybeSingle();
   if (error) throw error;
   if (!data) throw new Error("This AI application has not been authorised for this store. Connect it again and approve its STRAP access permissions.");
@@ -84,14 +86,14 @@ async function requireMcpPermission(
   supabase: UserSupabase,
   storeId: string,
   permission: keyof McpAccessSettings,
-  branchId?: string,
+  branchId: string | undefined,
+  clientId: string,
 ) {
   await requireStoreAccess(supabase, storeId);
-  const settings = await getMcpSettings(supabase, storeId);
-  if (!settings.enabled) throw new Error("STRAP AI access is currently disabled for this store. Ask the store owner to enable it in Settings → AI agents.");
-  if (settings[permission] !== true) throw new Error("This action is disabled in the store's STRAP AI permissions.");
+  const settings = await getMcpSettings(supabase, storeId, clientId);
+  if (settings[permission] !== true) throw new Error("This action is disabled for this connected application.");
   if (branchId && settings.allowed_branch_ids && !settings.allowed_branch_ids.includes(branchId)) {
-    throw new Error("This branch is outside the branches authorised for AI access.");
+    throw new Error("This branch is outside the branches authorised for this AI application.");
   }
   return settings;
 }
@@ -126,7 +128,10 @@ async function recordMcpAction(
   if (error) throw new Error("The change was applied, but its audit record could not be saved: " + error.message);
 }
 
-function registerTools(server: McpServer, supabase: UserSupabase, clientId: string) {\n  const getSettings = (storeId: string) => getMcpSettings(supabase, storeId, clientId);\n  const requirePermission = (storeId: string, permission: keyof McpAccessSettings, branchId?: string) =>\n    requireMcpPermission(supabase, storeId, permission, branchId, clientId);
+function registerTools(server: McpServer, supabase: UserSupabase, clientId: string) {
+  const getSettings = (storeId: string) => getMcpSettings(supabase, storeId, clientId);
+  const requirePermission = (storeId: string, permission: keyof McpAccessSettings, branchId?: string) =>
+    requireMcpPermission(supabase, storeId, permission, branchId, clientId);
   server.registerTool(
     "strap_whoami",
     {
@@ -208,7 +213,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     },
     async ({ store_id }) => {
       try {
-        const settings = await requireMcpPermission(supabase, store_id, "allow_inventory_read");
+        const settings = await requirePermission(store_id, "allow_inventory_read");
         let branchQuery = supabase
           .from("branches")
           .select("id,store_id,name,address,is_default,created_at")
@@ -577,13 +582,29 @@ function getOAuthClientIdFromRequest(req: Request) {
   return claims.client_id as string;
 }
 
+function getOAuthClientIdFromRequest(req: Request) {
+  const authorization = req.headers.get("authorization") ?? "";
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+  if (!match?.[1]) throw new Error("The OAuth bearer token is missing.");
+  const token = match[1];
+  const payloadPart = token.split(".")[1];
+  if (!payloadPart) throw new Error("The OAuth access token is malformed.");
+  const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+  const claims = JSON.parse(atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "=")));
+  if (typeof claims.client_id !== "string" || !claims.client_id) {
+    throw new Error("This connection does not include an OAuth client identity. Reconnect the AI application through STRAP.");
+  }
+  return claims.client_id as string;
+}
+
 async function handleMcpRequest(req: Request, context: { supabase: UserSupabase }) {
   const server = new McpServer({
     name: "strap",
     version: "0.2.0",
     icons: [{ src: "https://storefront-flow.vercel.app/favicon.svg", mimeType: "image/svg+xml", sizes: ["any"] }],
   });
-  const clientId = getOAuthClientIdFromRequest(req);\n  registerTools(server, context.supabase, clientId);
+  const clientId = getOAuthClientIdFromRequest(req);
+  registerTools(server, context.supabase, clientId);
 
   const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined });
   await server.connect(transport);
