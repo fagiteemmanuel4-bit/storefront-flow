@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/bottom-sheet";
 import { formatMoney } from "@/lib/currency";
 import type { OnlineOrderItemRow, OnlineOrderRow } from "@/integrations/supabase/online-types";
+import { fetchAllRows } from "@/lib/supabase-pagination";
 
 export const Route = createFileRoute("/_authenticated/online-store/orders")({
   ssr: false,
@@ -43,20 +44,26 @@ function OnlineOrdersPage() {
     queryKey: ["online-orders", store?.id],
     enabled: Boolean(store?.id),
     queryFn: async () => {
-      const [{ data: orders, error: oe }, { data: items, error: ie }] = await Promise.all([
-        onlineSupabase
-          .from("online_orders")
-          .select("*")
-          .eq("store_id", store!.id)
-          .order("created_at", { ascending: false }),
-        onlineSupabase.from("online_order_items").select("*").eq("store_id", store!.id),
+      const [orders, items] = await Promise.all([
+        fetchAllRows<OnlineOrderRow>(
+          onlineSupabase.from("online_orders")
+            .select("*")
+            .eq("store_id", store!.id)
+            .order("created_at", { ascending: false })
+            .order("id"),
+        ),
+        fetchAllRows<OnlineOrderItemRow>(
+          onlineSupabase.from("online_order_items")
+            .select("*")
+            .eq("store_id", store!.id)
+            .order("order_id")
+            .order("id"),
+        ),
       ]);
-      if (oe) throw new Error(oe.message);
-      if (ie) throw new Error(ie.message);
       const map = new Map<string, OnlineOrderItemRow[]>();
       for (const item of items ?? [])
         map.set(item.order_id, [...(map.get(item.order_id) ?? []), item]);
-      return (orders ?? []).map((o) => ({ ...o, items: map.get(o.id) ?? [] })) as Order[];
+      return orders.map((o) => ({ ...o, items: map.get(o.id) ?? [] })) as Order[];
     },
   });
   const orders = q.data ?? [];
@@ -74,6 +81,17 @@ function OnlineOrdersPage() {
   );
   async function status(order: Order, next: string) {
     if (!canManage) return;
+    const allowed: Record<string, string[]> = {
+      pending: ["confirmed", "cancelled"],
+      confirmed: ["shipped", "cancelled"],
+      processing: ["shipped", "cancelled"],
+      ready: ["completed", "cancelled"],
+      shipped: ["completed"],
+    };
+    if (!allowed[order.status]?.includes(next)) {
+      toast.error("This order cannot make that status change. Shipped orders must be returned, not cancelled.");
+      return;
+    }
     const { error } = await onlineSupabase
       .from("online_orders")
       .update({ status: next })
@@ -256,7 +274,7 @@ function OnlineOrdersPage() {
                     Complete
                   </Button>
                 )}
-                {!["completed", "cancelled"].includes(selected.status) && (
+                {["pending", "confirmed", "processing", "ready"].includes(selected.status) && (
                   <Button
                     variant="outline"
                     onClick={() => void status(selected, "cancelled")}
