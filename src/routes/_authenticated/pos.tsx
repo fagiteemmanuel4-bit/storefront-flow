@@ -480,11 +480,19 @@ function PosPage() {
       if (readError) throw new Error(readError.message);
       if (!saved) throw new Error("Sale confirmation failed.");
       playSaleCompleteSound();
+      const savedSubtotal = Number(saved.subtotal ?? 0);
+      const savedTax = Number(saved.tax ?? 0);
+      const savedTotal = Number(saved.total ?? 0);
+      // Fall back to the saved breakdown if an older row has a zero grand total.
+      const receiptTotal =
+        Number.isFinite(savedTotal) && savedTotal > 0
+          ? savedTotal
+          : savedSubtotal + savedTax;
       setReceipt({
         reference: saved.reference,
-        subtotal: Number(saved.subtotal),
-        tax: Number(saved.tax),
-        total: Number(saved.total),
+        subtotal: savedSubtotal,
+        tax: savedTax,
+        total: receiptTotal,
         method: saved.payment_method,
         at: saved.created_at,
         ...(selectedCustomer?.name ? { customerName: selectedCustomer.name } : {}),
@@ -1022,7 +1030,7 @@ function PosPage() {
             if (!open) setFoodPicker(null);
           }}
         >
-          <BottomSheetContent className="mx-auto max-h-[88dvh] w-full max-w-lg overflow-y-auto">
+          <BottomSheetContent className="mx-auto w-full max-w-lg">
             <BottomSheetHeader className="border-b border-border pb-3">
               <BottomSheetTitle>Customize menu item</BottomSheetTitle>
               <p className="text-sm text-muted-foreground">
@@ -1127,7 +1135,7 @@ function PosPage() {
             if (!open) setDevicePicker(null);
           }}
         >
-          <BottomSheetContent className="mx-auto max-h-[82dvh] w-full max-w-lg overflow-y-auto">
+          <BottomSheetContent className="mx-auto w-full max-w-lg">
             <BottomSheetHeader className="border-b border-border pb-3">
               <BottomSheetTitle>Choose serial number / IMEI</BottomSheetTitle>
               <p className="text-sm text-muted-foreground">
@@ -1214,7 +1222,7 @@ function PosPage() {
           </BottomSheetContent>
         </BottomSheet>
         <BottomSheet open={cartOpen} onOpenChange={setCartOpen}>
-          <BottomSheetContent className="mx-auto max-h-[90dvh] w-full max-w-lg overflow-y-auto">
+          <BottomSheetContent className="mx-auto w-full max-w-lg">
             <BottomSheetHeader className="border-b border-border pb-4">
               <BottomSheetTitle>Current sale</BottomSheetTitle>
             </BottomSheetHeader>
@@ -1222,8 +1230,8 @@ function PosPage() {
           </BottomSheetContent>
         </BottomSheet>
         {receipt && (
-          <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/60 p-3 sm:items-center sm:p-4">
-            <div className="w-full max-w-md rounded-3xl border border-border bg-surface p-5 shadow-2xl sm:p-6">
+          <div className="fixed inset-0 z-[80] flex items-end justify-center overflow-y-auto overscroll-contain bg-black/60 p-3 sm:items-center sm:p-4">
+            <div className="my-auto max-h-[92dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-3xl border border-border bg-surface p-5 shadow-2xl sm:p-6">
               <div className="flex items-start gap-3">
                 <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent-soft">
                   <Check className="size-5" />
