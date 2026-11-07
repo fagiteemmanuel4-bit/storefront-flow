@@ -47,9 +47,10 @@ with check (
 );
 
 drop policy if exists mcp_client_access_delete_manager on public.mcp_client_access_settings;
-create policy mcp_client_access_delete_manager
+drop policy if exists mcp_client_access_delete_own on public.mcp_client_access_settings;
+create policy mcp_client_access_delete_own
 on public.mcp_client_access_settings for delete to authenticated
-using (private.has_store_role(store_id, (select auth.uid()), array['owner'::store_role, 'manager'::store_role]));
+using (user_id = (select auth.uid()));
 
 -- Make light mode the default for new and existing profiles without an explicit theme choice.
 alter table public.profiles alter column theme_preference set default 'light';
