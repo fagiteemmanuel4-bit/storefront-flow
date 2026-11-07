@@ -1,4 +1,4 @@
-export type OfflineSaleItem = { product_id: string; quantity: number };
+export type OfflineSaleItem = { product_id: string; quantity: number; [key: string]: unknown };
 
 export type OfflineSale = {
   offlineId: string;
