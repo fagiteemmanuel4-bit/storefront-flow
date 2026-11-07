@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import {
   ArrowRight,
   Bell,
+  Bot,
   Check,
   ChevronRight,
   CircleHelp,
@@ -129,6 +130,13 @@ export const SETTINGS_NAV: NavItem[] = [
     description: "Operational notification preferences",
     icon: Bell,
     group: "Team",
+  },
+  {
+    path: "/settings/ai-agents",
+    title: "AI agents & MCP",
+    description: "Connect AI assistants and control their store access",
+    icon: Bot,
+    group: "Integrations",
   },
   {
     path: "/settings/security",
