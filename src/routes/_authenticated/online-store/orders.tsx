@@ -86,7 +86,7 @@ function OnlineOrdersPage() {
       confirmed: ["shipped", "cancelled"],
       processing: ["shipped", "cancelled"],
       ready: ["completed", "cancelled"],
-      shipped: ["completed"],
+      shipped: ["completed", "cancelled"],
     };
     if (!allowed[order.status]?.includes(next)) {
       toast.error("This order cannot make that status change. Shipped orders must be returned, not cancelled.");
@@ -274,7 +274,7 @@ function OnlineOrdersPage() {
                     Complete
                   </Button>
                 )}
-                {["pending", "confirmed", "processing", "ready"].includes(selected.status) && (
+                {["pending", "confirmed", "processing", "ready", "shipped"].includes(selected.status) && (
                   <Button
                     variant="outline"
                     onClick={() => void status(selected, "cancelled")}
