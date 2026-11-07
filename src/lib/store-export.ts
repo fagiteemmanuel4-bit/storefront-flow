@@ -1,6 +1,7 @@
 import ExcelJS from "exceljs";
 import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/lib/currency";
+import { fetchAllRows } from "@/lib/supabase-pagination";
 
 export type ExportRange = { from: Date | null; to: Date | null; label: string };
 
@@ -29,14 +30,11 @@ function finish(sheet: ExcelJS.Worksheet, headerRowNumber = 1) {
 
 /** Builds and triggers download of a multi-sheet workbook for the store. */
 export async function downloadStoreWorkbook(store: StoreInfo, range: ExportRange): Promise<void> {
-  const [productsRes, stockRes, branchesRes] = await Promise.all([
-    supabase.from("products").select("*").eq("store_id", store.id).order("name"),
-    supabase.from("branch_stock").select("*").eq("store_id", store.id),
-    supabase.from("branches").select("*").eq("store_id", store.id).order("created_at"),
+  const [products, stock, branches] = await Promise.all([
+    fetchAllRows<any>(supabase.from("products").select("*").eq("store_id", store.id).order("name")),
+    fetchAllRows<any>(supabase.from("branch_stock").select("*").eq("store_id", store.id)),
+    fetchAllRows<any>(supabase.from("branches").select("*").eq("store_id", store.id).order("created_at")),
   ]);
-  for (const res of [productsRes, stockRes, branchesRes]) {
-    if (res.error) throw new Error(res.error.message);
-  }
 
   let salesQuery = supabase
     .from("sales")
@@ -45,9 +43,7 @@ export async function downloadStoreWorkbook(store: StoreInfo, range: ExportRange
     .order("created_at", { ascending: false });
   if (range.from) salesQuery = salesQuery.gte("created_at", range.from.toISOString());
   if (range.to) salesQuery = salesQuery.lte("created_at", range.to.toISOString());
-  const salesRes = await salesQuery;
-  if (salesRes.error) throw new Error(salesRes.error.message);
-  const sales = salesRes.data ?? [];
+  const sales = await fetchAllRows<any>(salesQuery);
 
   const saleIds = sales.map((s) => s.id);
   let items: {
@@ -58,17 +54,14 @@ export async function downloadStoreWorkbook(store: StoreInfo, range: ExportRange
     line_total: number;
   }[] = [];
   if (saleIds.length > 0) {
-    const itemsRes = await supabase
-      .from("sale_items")
-      .select("sale_id, product_name, quantity, unit_price, line_total")
-      .in("sale_id", saleIds);
-    if (itemsRes.error) throw new Error(itemsRes.error.message);
-    items = itemsRes.data ?? [];
+    items = await fetchAllRows<any>(
+      supabase.from("sale_items")
+        .select("sale_id, product_name, quantity, unit_price, line_total")
+        .in("sale_id", saleIds),
+    );
   }
 
-  const products = productsRes.data ?? [];
-  const stock = stockRes.data ?? [];
-  const branches = branchesRes.data ?? [];
+  // All source datasets are fetched in pages to avoid silent PostgREST row caps.
   const branchName = new Map(branches.map((b) => [b.id, b.name]));
 
   const stockByProduct = new Map<string, number>();
