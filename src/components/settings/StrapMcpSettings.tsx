@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bot, Check, Copy, ExternalLink, GitBranch, Info, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
