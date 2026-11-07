@@ -21,6 +21,7 @@ create table if not exists public.mcp_client_access_settings (
 alter table public.mcp_client_access_settings enable row level security;
 grant select, insert, update, delete on public.mcp_client_access_settings to authenticated;
 
+drop policy if exists mcp_client_access_select_member on public.mcp_client_access_settings;
 create policy mcp_client_access_select_member
 on public.mcp_client_access_settings for select to authenticated
 using (
@@ -28,6 +29,7 @@ using (
   or exists (select 1 from public.stores s where s.id = store_id and s.owner_id = (select auth.uid()))
 );
 
+drop policy if exists mcp_client_access_insert_manager on public.mcp_client_access_settings;
 create policy mcp_client_access_insert_manager
 on public.mcp_client_access_settings for insert to authenticated
 with check (
@@ -35,6 +37,7 @@ with check (
   and private.has_store_role(store_id, (select auth.uid()), array['owner'::store_role, 'manager'::store_role])
 );
 
+drop policy if exists mcp_client_access_update_manager on public.mcp_client_access_settings;
 create policy mcp_client_access_update_manager
 on public.mcp_client_access_settings for update to authenticated
 using (private.has_store_role(store_id, (select auth.uid()), array['owner'::store_role, 'manager'::store_role]))
@@ -43,6 +46,7 @@ with check (
   and private.has_store_role(store_id, (select auth.uid()), array['owner'::store_role, 'manager'::store_role])
 );
 
+drop policy if exists mcp_client_access_delete_manager on public.mcp_client_access_settings;
 create policy mcp_client_access_delete_manager
 on public.mcp_client_access_settings for delete to authenticated
 using (private.has_store_role(store_id, (select auth.uid()), array['owner'::store_role, 'manager'::store_role]));
