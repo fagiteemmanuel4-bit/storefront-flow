@@ -162,14 +162,14 @@ function PosPage() {
     enabled: Boolean(businessMode.key === "food-service" && storeId),
     queryFn: async () => {
       const db = supabase as any;
-      const { data, error } = await db
-        .from("food_menu_modifiers")
-        .select("id,product_id,name,options,is_required")
-        .eq("store_id", storeId!)
-        .eq("is_active", true)
-        .order("sort_order");
-      if (error) throw new Error(error.message);
-      return (data ?? []) as FoodModifier[];
+      return await fetchAllRows<FoodModifier>(
+        db.from("food_menu_modifiers")
+          .select("id,product_id,name,options,is_required")
+          .eq("store_id", storeId!)
+          .eq("is_active", true)
+          .order("sort_order")
+          .order("id"),
+      );
     },
   });
   const products = productsQuery.data ?? [];
