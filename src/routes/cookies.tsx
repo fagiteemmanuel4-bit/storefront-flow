@@ -22,7 +22,7 @@ function Cookies() {
           Strap uses cookies and browser storage primarily to keep the application secure and
           functional. This page explains the categories and the choices available to users.
         </p>
-        <p className="mt-3 text-sm text-muted-foreground">Effective date: 19 August 2026</p>
+        <p className="mt-3 text-sm text-muted-foreground">Effective date: 8 November 2026</p>
         <div className="mt-10 space-y-8 text-[15px] leading-7 text-muted-foreground">
           <section>
             <h2 className="font-display text-xl font-bold text-foreground">
@@ -64,7 +64,7 @@ function Cookies() {
           <section>
             <h2 className="font-display text-xl font-bold text-foreground">Managing cookies</h2>
             <p className="mt-3">
-              You can control cookies through your browser settings. Blocking necessary cookies or
+              You can control cookies through your browser settings. Strap also remembers interface preferences such as the selected theme and receipt preview preferences where applicable. Blocking necessary cookies or
               clearing site storage can sign you out, remove preferences or affect offline queues.
               For privacy requests, contact{" "}
               <strong className="text-foreground">[PRIVACY/DPO EMAIL]</strong>.
