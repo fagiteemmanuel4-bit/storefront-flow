@@ -33,14 +33,9 @@ type AccessConfig = {
   allow_product_writes: boolean;
   allow_stock_writes: boolean;
 };
-type OAuthGrant = {
-  id: string;
-  client_id: string;
-  client_name: string;
-  scopes: string[];
-  created_at: string;
-  updated_at: string;
-};
+type OAuthGrant = NonNullable<
+  Awaited<ReturnType<typeof supabase.auth.oauth.listGrants>>["data"]
+>[number];
 type AuditRow = { id: string; action: string; summary: string; created_at: string };
 
 const DEFAULT_ACCESS: AccessConfig = {
@@ -106,7 +101,7 @@ export function StrapMcpSettingsPage() {
     try {
       const { data: grantData, error: grantError } = await supabase.auth.oauth.listGrants();
       if (grantError) throw grantError;
-      const nextGrants = (grantData ?? []) as OAuthGrant[];
+      const nextGrants: OAuthGrant[] = grantData ?? [];
       setGrants(nextGrants);
       const clientIds = nextGrants.map((grant) => grant.client_id).filter(Boolean);
       const [appSettingsResult, legacyResult] = await Promise.all([
@@ -204,7 +199,7 @@ export function StrapMcpSettingsPage() {
     setRevokingId(grant.client_id);
     setConfirmingGrant(null);
     try {
-      const { error } = await supabase.auth.oauth.revokeGrant(grant.client_id);
+      const { error } = await supabase.auth.oauth.revokeGrant({ clientId: grant.client_id });
       if (error) throw error;
       const { error: cleanupError } = await db.from("mcp_client_access_settings").delete()
         .eq("user_id", userId).eq("client_id", grant.client_id);
