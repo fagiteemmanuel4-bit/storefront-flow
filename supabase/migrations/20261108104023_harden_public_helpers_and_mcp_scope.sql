@@ -842,3 +842,38 @@ begin
 end;
 $function$
 
+
+
+-- Staff account metadata (including lock state and last login) is manager-only.
+-- The SECURITY DEFINER RPC must enforce the same boundary as the table's RLS policy.
+create or replace function public.list_staff_accounts(_store_id uuid)
+returns table(
+  id uuid,
+  name text,
+  role text,
+  is_active boolean,
+  last_login_at timestamp with time zone,
+  locked_until timestamp with time zone,
+  created_at timestamp with time zone
+)
+language sql
+security definer
+set search_path to 'public'
+as $function$
+  select
+    s.id,
+    s.name,
+    s.role,
+    s.is_active,
+    s.last_login_at,
+    s.locked_until,
+    s.created_at
+  from public.staff_accounts s
+  where s.store_id = _store_id
+    and private.has_store_role(
+      _store_id,
+      auth.uid(),
+      array['owner'::public.store_role, 'manager'::public.store_role]
+    )
+  order by s.is_active desc, lower(s.name);
+$function$;
