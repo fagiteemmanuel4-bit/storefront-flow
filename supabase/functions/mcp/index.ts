@@ -161,31 +161,35 @@ async function recordMcpAction(
   resourceType: string,
   resourceId: string,
   summary: string,
-) {
-  const { data: auth, error: authError } = await supabase.auth.getUser();
-  if (authError) throw authError;
-  if (!auth.user) throw new Error("The authenticated STRAP user could not be verified.");
-  await requireManagerAccess(supabase, storeId);
-  const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error("The server-side audit logger is not configured.");
+): Promise<string | null> {
+  try {
+    const { data: auth, error: authError } = await supabase.auth.getUser();
+    if (authError) throw authError;
+    if (!auth.user) throw new Error("The authenticated STRAP user could not be verified.");
+    await requireManagerAccess(supabase, storeId);
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error("The server-side audit logger is not configured.");
+    }
+    const auditClient = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { error } = await auditClient.from("mcp_action_audit").insert({
+      store_id: storeId,
+      user_id: auth.user.id,
+      action,
+      resource_type: resourceType,
+      resource_id: resourceId,
+      summary,
+    });
+    if (error) throw error;
+    return null;
+  } catch {
+    // The product or stock mutation has already committed. Report it as saved so
+    // an MCP client does not retry and accidentally repeat a successful write.
+    return "The change was saved, but its audit record could not be written. Do not repeat this action; ask a store owner to check audit logging.";
   }
-  const auditClient = createClient(supabaseUrl, serviceRoleKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-  const { error } = await auditClient.from("mcp_action_audit").insert({
-    store_id: storeId,
-    user_id: auth.user.id,
-    action,
-    resource_type: resourceType,
-    resource_id: resourceId,
-    summary,
-  });
-  if (error)
-    throw new Error(
-      "The change was applied, but its audit record could not be saved: " + error.message,
-    );
 }
 
 function registerTools(server: McpServer, supabase: UserSupabase, clientId: string) {
@@ -628,7 +632,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           .select("id,name,sku,barcode,category,price,cost,is_active,created_at")
           .single();
         if (error) throw error;
-        await recordMcpAction(
+        const auditWarning = await recordMcpAction(
           supabase,
           store_id,
           "product.created",
@@ -636,7 +640,11 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           data.id,
           "Created product: " + data.name,
         );
-        return result({ success: true, product: data });
+        return result({
+          success: true,
+          product: data,
+          ...(auditWarning ? { audit_warning: auditWarning } : {}),
+        });
       } catch (error) {
         return toolError(error);
       }
@@ -682,7 +690,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           .maybeSingle();
         if (error) throw error;
         if (!data) throw new Error("Product not found or you do not have permission to update it.");
-        await recordMcpAction(
+        const auditWarning = await recordMcpAction(
           supabase,
           store_id,
           "product.updated",
@@ -690,7 +698,12 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           data.id,
           "Updated product: " + data.name + "; fields: " + Object.keys(changes).join(", "),
         );
-        return result({ success: true, product: data, updated_fields: Object.keys(changes) });
+        return result({
+          success: true,
+          product: data,
+          updated_fields: Object.keys(changes),
+          ...(auditWarning ? { audit_warning: auditWarning } : {}),
+        });
       } catch (error) {
         return toolError(error);
       }
@@ -747,7 +760,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           .select("branch_id,product_id,quantity,updated_at")
           .single();
         if (error) throw error;
-        await recordMcpAction(
+        const auditWarning = await recordMcpAction(
           supabase,
           store_id,
           "stock.quantity_set",
@@ -759,6 +772,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           success: true,
           stock: data,
           note: "The quantity was set to the exact value supplied.",
+          ...(auditWarning ? { audit_warning: auditWarning } : {}),
         });
       } catch (error) {
         return toolError(error);
