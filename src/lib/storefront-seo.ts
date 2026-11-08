@@ -1,5 +1,5 @@
 export function serializeJsonLd(value: unknown): string {
-  return JSON.stringify(value).replace(/[<>&\u2028\u2029]/g, (character) => {
+  return JSON.stringify(value).replace(/[<>&\u2028\u2029]/gu, (character) => {
     const escaped: Record<string, string> = {
       "<": "\\u003c",
       ">": "\\u003e",
