@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Validate migration timestamps
+        run: node scripts/check-migration-versions.mjs
       - name: Setup Bun
         run: |
           npm install --global bun@1.3.14 --no-audit --no-fund
