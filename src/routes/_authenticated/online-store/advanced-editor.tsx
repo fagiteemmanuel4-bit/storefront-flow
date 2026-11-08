@@ -97,9 +97,6 @@ function AdvancedEditor() {
     () => blocks.find((x) => x.id === selected) ?? null,
     [blocks, selected],
   );
-  useEffect(() => {
-    void load();
-  }, [load]);
   const load = useCallback(async () => {
     if (!store) return;
     setLoading(true);
@@ -133,7 +130,10 @@ function AdvancedEditor() {
           ),
     );
     setLoading(false);
-  }, [store?.id]);
+  }, [store]);
+  useEffect(() => {
+    void load();
+  }, [load]);
   function commit(next: Block[]) {
     setHistory((h) => [...h, blocks].slice(-30));
     setFuture([]);
