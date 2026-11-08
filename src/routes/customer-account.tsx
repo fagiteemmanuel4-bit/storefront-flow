@@ -355,6 +355,7 @@ function CustomerAccountPage() {
                   <Input
                     type="password"
                     value={form.password}
+                    maxLength={72}
                     onChange={(e) => setForm({ ...form, password: e.target.value })}
                     placeholder="At least 8 characters"
                     autoComplete={mode === "register" ? "new-password" : "current-password"}
