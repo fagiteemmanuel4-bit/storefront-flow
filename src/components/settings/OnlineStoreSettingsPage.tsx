@@ -27,9 +27,6 @@ export function OnlineStoreSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [plan, setPlan] = useState("free");
   const canManage = role === "owner" || role === "manager";
-  useEffect(() => {
-    void load();
-  }, [load]);
   const load = useCallback(async () => {
     if (!store?.id) return;
     setLoading(true);
@@ -67,6 +64,9 @@ export function OnlineStoreSettingsPage() {
     setInitial(next);
     setLoading(false);
   }, [store?.id]);
+  useEffect(() => {
+    void load();
+  }, [load]);
   if (loading || !form) return <Loading />;
   const dirty = JSON.stringify(form) !== JSON.stringify(initial);
   const update = (key: string, value: unknown) =>
