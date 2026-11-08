@@ -17,6 +17,8 @@ import {
 import { formatMoney } from "@/lib/currency";
 import type { OnlineOrderItemRow, OnlineOrderRow } from "@/integrations/supabase/online-types";
 
+const EMPTY_ARRAY: never[] = [];
+
 export const Route = createFileRoute("/_authenticated/online-store/orders")({
   ssr: false,
   component: OnlineOrdersPage,
@@ -59,7 +61,7 @@ function OnlineOrdersPage() {
       return (orders ?? []).map((o) => ({ ...o, items: map.get(o.id) ?? [] })) as Order[];
     },
   });
-  const orders = q.data ?? [];
+  const orders = q.data ?? EMPTY_ARRAY;
   const visible = useMemo(
     () =>
       orders.filter((o) => {
