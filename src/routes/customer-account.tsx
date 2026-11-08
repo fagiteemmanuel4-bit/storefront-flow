@@ -107,7 +107,7 @@ function CustomerAccountPage() {
 
   useEffect(() => {
     void refresh(readToken(store));
-  }, [refresh]);
+  }, [refresh, store]);
 
   async function resolveOrderToken(orderNumber: string, phone: string) {
     if (!orderNumber.trim() || !phone.trim()) return "";
