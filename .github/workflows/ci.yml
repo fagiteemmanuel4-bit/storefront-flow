@@ -21,6 +21,12 @@ jobs:
           bun --version
       - name: Install dependencies
         run: bun install --no-save
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check Supabase MCP Edge Function
+        run: deno check --no-lock --node-modules-dir=auto supabase/functions/mcp/index.ts
       - name: Lint
         run: bun run lint
       - name: Production build

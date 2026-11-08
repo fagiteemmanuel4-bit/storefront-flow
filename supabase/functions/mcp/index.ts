@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 import { pipeline } from "npm:@supabase/middleware@1";
 import { withOAuthProtectedResource, withSupabase } from "npm:@supabase/server@1";
+import { createClient } from "npm:@supabase/supabase-js@2";
 import { McpServer } from "npm:@modelcontextprotocol/sdk@1.25.3/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "npm:@modelcontextprotocol/sdk@1.25.3/server/webStandardStreamableHttp.js";
 import { z } from "npm:zod@4";
@@ -91,23 +92,11 @@ async function getMcpSettings(
   if (error) throw error;
   if (data) return { ...DEFAULT_MCP_SETTINGS, ...data };
 
-  // Compatibility for OAuth grants created before per-application permissions existed.
-  // The Settings page lets these users save an app-specific record; new OAuth consent
-  // requests always create that record before approval.
-  const { data: legacy, error: legacyError } = await supabase
-    .from("mcp_access_settings")
-    .select(
-      "enabled,allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes",
-    )
-    .eq("store_id", storeId)
-    .maybeSingle();
-  if (legacyError) throw legacyError;
-  if (!legacy || legacy.enabled === false) {
-    throw new Error(
-      "This AI application has not been authorised for this store. Configure its access in Settings → Connected applications.",
-    );
-  }
-  return { ...DEFAULT_MCP_SETTINGS, ...legacy };
+  // Fail closed when this OAuth client has no individual consent record.
+  // Store-wide legacy grants must never be inherited by a different application.
+  throw new Error(
+    "This AI application has not been authorised for this store. Reconnect it and approve its individual permissions in STRAP.",
+  );
 }
 
 async function requireManagerAccess(supabase: UserSupabase, storeId: string) {
@@ -172,22 +161,35 @@ async function recordMcpAction(
   resourceType: string,
   resourceId: string,
   summary: string,
-) {
-  const { data: auth, error: authError } = await supabase.auth.getUser();
-  if (authError) throw authError;
-  if (!auth.user) throw new Error("The authenticated STRAP user could not be verified.");
-  const { error } = await supabase.from("mcp_action_audit").insert({
-    store_id: storeId,
-    user_id: auth.user.id,
-    action,
-    resource_type: resourceType,
-    resource_id: resourceId,
-    summary,
-  });
-  if (error)
-    throw new Error(
-      "The change was applied, but its audit record could not be saved: " + error.message,
-    );
+): Promise<string | null> {
+  try {
+    const { data: auth, error: authError } = await supabase.auth.getUser();
+    if (authError) throw authError;
+    if (!auth.user) throw new Error("The authenticated STRAP user could not be verified.");
+    await requireManagerAccess(supabase, storeId);
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error("The server-side audit logger is not configured.");
+    }
+    const auditClient = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { error } = await auditClient.from("mcp_action_audit").insert({
+      store_id: storeId,
+      user_id: auth.user.id,
+      action,
+      resource_type: resourceType,
+      resource_id: resourceId,
+      summary,
+    });
+    if (error) throw error;
+    return null;
+  } catch {
+    // The product or stock mutation has already committed. Report it as saved so
+    // an MCP client does not retry and accidentally repeat a successful write.
+    return "The change was saved, but its audit record could not be written. Do not repeat this action; ask a store owner to check audit logging.";
+  }
 }
 
 function registerTools(server: McpServer, supabase: UserSupabase, clientId: string) {
@@ -312,7 +314,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     {
       title: "Search store products",
       description:
-        "Search active products by name, SKU, or barcode within an accessible store. Use this when the user asks about a product, its price, or its catalogue details.",
+        "Search active products by name, SKU, or barcode within an accessible store. Returns customer-facing selling prices and catalogue details, never internal cost prices or margins.",
       inputSchema: {
         store_id: z.string().uuid(),
         query: z.string().trim().max(120).optional(),
@@ -322,20 +324,35 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     async ({ store_id, query, limit }) => {
       try {
         const settings = await requirePermission(store_id, "allow_products_read");
-        let request = supabase
-          .from("products")
-          .select(
-            "id,store_id,name,sku,barcode,category,price,cost,is_active,low_stock_threshold,units_per_pack,pack_price,piece_price",
-          )
-          .eq("store_id", store_id)
-          .eq("is_active", true)
-          .order("name")
-          .limit(clampLimit(limit));
+        const selectProducts = () =>
+          supabase
+            .from("products")
+            .select(
+              "id,store_id,name,sku,barcode,category,price,is_active,low_stock_threshold,units_per_pack,pack_price,piece_price",
+            )
+            .eq("store_id", store_id)
+            .eq("is_active", true);
         if (query) {
           const pattern = `%${query.replace(/[\\%_]/g, "")}%`;
-          request = request.ilike("name", pattern);
+          const matches = await Promise.all([
+            selectProducts().ilike("name", pattern).limit(clampLimit(limit)),
+            selectProducts().ilike("sku", pattern).limit(clampLimit(limit)),
+            selectProducts().ilike("barcode", pattern).limit(clampLimit(limit)),
+          ]);
+          const byId = new Map<string, Record<string, unknown>>();
+          for (const match of matches) {
+            if (match.error) throw match.error;
+            for (const product of match.data ?? []) {
+              const row = product as Record<string, unknown>;
+              byId.set(String(row.id), row);
+            }
+          }
+          const products = [...byId.values()].sort((a, b) =>
+            String(a.name ?? "").localeCompare(String(b.name ?? "")),
+          );
+          return result(products.slice(0, clampLimit(limit)));
         }
-        const { data, error } = await request;
+        const { data, error } = await selectProducts().order("name").limit(clampLimit(limit));
         if (error) throw error;
         return result(data ?? []);
       } catch (error) {
@@ -373,7 +390,22 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
               .select("branch_id,product_id,quantity")
               .eq("store_id", store_id),
           ).limit(5000),
-          supabase.from("branches").select("id,name").eq("store_id", store_id).limit(100),
+          (() => {
+            let branchQuery = supabase
+              .from("branches")
+              .select("id,name")
+              .eq("store_id", store_id)
+              .limit(100);
+            if (settings.allowed_branch_ids) {
+              branchQuery = branchQuery.in(
+                "id",
+                settings.allowed_branch_ids.length
+                  ? settings.allowed_branch_ids
+                  : ["00000000-0000-0000-0000-000000000000"],
+              );
+            }
+            return branchQuery;
+          })(),
         ]);
         if (productsResult.error) throw productsResult.error;
         if (stockResult.error) throw stockResult.error;
@@ -432,9 +464,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           settings,
           supabase
             .from("sales")
-            .select(
-              "id,store_id,branch_id,cashier_id,reference,subtotal,tax,total,payment_method,note,created_at,customer_id",
-            )
+            .select("id,branch_id,reference,subtotal,tax,total,payment_method,created_at")
             .eq("store_id", store_id)
             .order("created_at", { ascending: false })
             .limit(clampLimit(limit)),
@@ -538,7 +568,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
             .limit(100);
           if (error) throw error;
           branches = data ?? [];
-        } else if (settings.enabled && settings.allowed_branch_ids.length) {
+        } else if (settings.enabled && settings.allowed_branch_ids?.length) {
           const { data, error } = await supabase
             .from("branches")
             .select("id,name,is_default")
@@ -577,12 +607,11 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     {
       title: "Create a product",
       description:
-        "Create a product in an accessible STRAP store. Requires the store owner or manager to enable product write access. Use only when the user explicitly asks to add a product.",
+        "Create a product in an accessible STRAP store using customer-facing catalogue fields. Internal cost and margin fields stay private.",
       inputSchema: {
         store_id: z.string().uuid(),
         name: z.string().trim().min(1).max(160),
         price: z.number().min(0),
-        cost: z.number().min(0).optional(),
         sku: z.string().trim().max(80).optional(),
         barcode: z.string().trim().max(100).optional(),
         category: z.string().trim().max(100).optional(),
@@ -602,7 +631,6 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
             store_id,
             name: input.name,
             price: input.price,
-            cost: input.cost ?? 0,
             sku: input.sku ?? "",
             barcode: input.barcode ?? "",
             category: input.category ?? "",
@@ -612,10 +640,10 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
             piece_price: input.piece_price ?? 0,
             is_active: input.is_active ?? true,
           })
-          .select("id,name,sku,barcode,category,price,cost,is_active,created_at")
+          .select("id,name,sku,barcode,category,price,is_active,created_at")
           .single();
         if (error) throw error;
-        await recordMcpAction(
+        const auditWarning = await recordMcpAction(
           supabase,
           store_id,
           "product.created",
@@ -623,7 +651,11 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           data.id,
           "Created product: " + data.name,
         );
-        return result({ success: true, product: data });
+        return result({
+          success: true,
+          product: data,
+          ...(auditWarning ? { audit_warning: auditWarning } : {}),
+        });
       } catch (error) {
         return toolError(error);
       }
@@ -635,13 +667,12 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     {
       title: "Update a product",
       description:
-        "Update editable catalogue fields for an existing product in an accessible STRAP store. Requires product write access and owner/manager permissions.",
+        "Update catalogue details and customer-facing prices for an existing product. Internal cost and margin fields stay private.",
       inputSchema: {
         store_id: z.string().uuid(),
         product_id: z.string().uuid(),
         name: z.string().trim().min(1).max(160).optional(),
         price: z.number().min(0).optional(),
-        cost: z.number().min(0).optional(),
         sku: z.string().trim().max(80).optional(),
         barcode: z.string().trim().max(100).optional(),
         category: z.string().trim().max(100).optional(),
@@ -665,11 +696,11 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           .update(changes)
           .eq("id", product_id)
           .eq("store_id", store_id)
-          .select("id,name,sku,barcode,category,price,cost,is_active,updated_at")
+          .select("id,name,sku,barcode,category,price,is_active,updated_at")
           .maybeSingle();
         if (error) throw error;
         if (!data) throw new Error("Product not found or you do not have permission to update it.");
-        await recordMcpAction(
+        const auditWarning = await recordMcpAction(
           supabase,
           store_id,
           "product.updated",
@@ -677,7 +708,12 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           data.id,
           "Updated product: " + data.name + "; fields: " + Object.keys(changes).join(", "),
         );
-        return result({ success: true, product: data, updated_fields: Object.keys(changes) });
+        return result({
+          success: true,
+          product: data,
+          updated_fields: Object.keys(changes),
+          ...(auditWarning ? { audit_warning: auditWarning } : {}),
+        });
       } catch (error) {
         return toolError(error);
       }
@@ -734,7 +770,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           .select("branch_id,product_id,quantity,updated_at")
           .single();
         if (error) throw error;
-        await recordMcpAction(
+        const auditWarning = await recordMcpAction(
           supabase,
           store_id,
           "stock.quantity_set",
@@ -746,6 +782,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           success: true,
           stock: data,
           note: "The quantity was set to the exact value supplied.",
+          ...(auditWarning ? { audit_warning: auditWarning } : {}),
         });
       } catch (error) {
         return toolError(error);
@@ -771,7 +808,8 @@ function getOAuthClientIdFromRequest(req: Request) {
   return claims.client_id as string;
 }
 
-async function handleMcpRequest(req: Request, context: { supabase: UserSupabase }) {
+async function handleMcpRequest(req: Request, context: object) {
+  const { supabase } = context as { supabase: UserSupabase };
   const server = new McpServer({
     name: "strap",
     version: "0.2.0",
@@ -784,7 +822,7 @@ async function handleMcpRequest(req: Request, context: { supabase: UserSupabase 
     ],
   });
   const clientId = getOAuthClientIdFromRequest(req);
-  registerTools(server, context.supabase, clientId);
+  registerTools(server, supabase, clientId);
 
   const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined });
   await server.connect(transport);

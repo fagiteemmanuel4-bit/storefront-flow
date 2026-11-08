@@ -5,14 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/staff-login/$slug")({ component: StaffLoginPage });
 type Profile = {
-  id: string;
-  store_id: string;
   name: string;
   role: string;
-  is_active: boolean;
-  login_slug: string;
   store_name: string;
-  primary_branch_id: string | null;
 };
 function StaffLoginPage() {
   const { slug } = Route.useParams();
@@ -21,7 +16,7 @@ function StaffLoginPage() {
     queryFn: async () => {
       const { data, error } = await (supabase as any).rpc("staff_login_profile", { _slug: slug });
       if (error) throw error;
-      return (data && data.id ? data : null) as Profile | null;
+      return (data && data.name ? data : null) as Profile | null;
     },
   });
   const p = q.data;

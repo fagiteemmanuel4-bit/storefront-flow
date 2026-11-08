@@ -114,7 +114,7 @@ function StaffPage() {
   const [permissions, setPermissions] = useState<Record<string, boolean>>({});
   const sq = useQuery({
     queryKey: ["staff-accounts", store?.id],
-    enabled: !!store?.id,
+    enabled: Boolean(store?.id && canManage),
     queryFn: () => staffList(store!.id),
   });
   const bq = useQuery({
