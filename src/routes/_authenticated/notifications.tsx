@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Bell,
@@ -51,7 +51,7 @@ function NotificationsPage() {
   const { store } = useStoreContext();
   const queryClient = useQueryClient();
   const storeId = store?.id;
-  const queryKey = ["mobile-notifications", storeId] as const;
+  const queryKey = useMemo(() => ["mobile-notifications", storeId] as const, [storeId]);
 
   const query = useQuery({
     queryKey,
@@ -131,7 +131,7 @@ function NotificationsPage() {
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [storeId, queryClient]);
+  }, [storeId, queryClient, queryKey]);
 
   const notices = query.data?.notices ?? [];
   const announcements = query.data?.announcements ?? [];
