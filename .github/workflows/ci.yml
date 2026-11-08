@@ -29,6 +29,8 @@ jobs:
           deno-version: v2.x
       - name: Type-check Supabase MCP Edge Function
         run: deno check --no-lock --node-modules-dir=auto supabase/functions/mcp/index.ts
+      - name: Verify patched dependency lockfiles
+        run: node scripts/check-dependency-patches.mjs
       - name: Lint
         run: bun run lint
       - name: Production build
