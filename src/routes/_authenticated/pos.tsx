@@ -187,6 +187,21 @@ function PosPage() {
       return (data ?? []) as FoodModifier[];
     },
   });
+  const receiptPrefsQuery = useQuery({
+    queryKey: ["receipt-preferences", storeId],
+    enabled: Boolean(storeId),
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("store_advanced_settings")
+        .select("settings")
+        .eq("store_id", storeId!)
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      return ((data?.settings as any)?.receipts ?? {}) as Record<string, any>;
+    },
+    staleTime: 60_000,
+  });
+  const receiptPrefs = receiptPrefsQuery.data ?? {};
   const products = productsQuery.data ?? EMPTY_ARRAY;
   const customers = customersQuery.data ?? EMPTY_ARRAY;
   const fashionVariants = fashionVariantsQuery.data ?? EMPTY_ARRAY;
@@ -643,22 +658,50 @@ function PosPage() {
   }
   function printReceipt() {
     if (!receipt) return;
-    const popup = window.open("", "kudi-receipt", "width=420,height=720");
-    if (!popup) {
-      toast.error("Allow pop-ups for Strap to print receipts.");
-      return;
-    }
-    const rows = receipt.lines
-      .map(
-        (l) =>
-          `<div style="display:flex;justify-content:space-between;gap:12px;margin:6px 0"><span>${escapeHtml(l.name)} × ${l.quantity}</span><span>${escapeHtml(formatMoney(l.lineTotal, currency))}</span></div>`,
-      )
-      .join("");
-    popup.document.write(
-      `<html><head><title>${escapeHtml(receipt.reference)}</title><style>body{font-family:Arial,sans-serif;padding:24px;max-width:340px;margin:auto;color:#111}h1{text-align:center;font-size:20px}.line{border-top:1px dashed #999;margin:16px 0}@media print{body{padding:8px}}</style></head><body><h1>${escapeHtml(store?.name ?? "STRAP STORE")}</h1><p style="text-align:center;font-size:11px">${escapeHtml(receipt.reference)}<br/>${escapeHtml(formatDateTime(receipt.at))}${receipt.customerName ? `<br/>Customer: ${escapeHtml(receipt.customerName)}` : ""}</p><div class="line"></div>${rows}<div class="line"></div><div style="display:flex;justify-content:space-between;font-weight:700;font-size:18px"><span>Total</span><span>${escapeHtml(formatMoney(receipt.total, currency))}</span></div><p style="text-align:center;font-size:11px;margin-top:28px">Thank you for shopping with us.</p><script>window.onload=()=>window.print()</script></body></html>`,
-    );
-    popup.document.close();
-    popup.focus();
+    const prefs = receiptPrefs;
+    const paper = prefs.paperSize === "58mm" ? "58mm" : prefs.paperSize === "A4" ? "A4" : "80mm";
+    const width = paper === "A4" ? "190mm" : paper;
+    const align = prefs.alignment === "left" ? "left" : "center";
+    const fontSize = prefs.fontSize === "compact" ? "10px" : prefs.fontSize === "large" ? "14px" : "12px";
+    const rows = prefs.showItemDetails === false ? "" : receipt.lines.map((l) =>
+      `<div class="row"><span>${escapeHtml(l.name)} × ${l.quantity}</span><span>${escapeHtml(formatMoney(l.lineTotal, currency))}</span></div>`
+    ).join("");
+    const logo = prefs.showLogo !== false && prefs.logoUrl ? `<img class="logo" src="${escapeHtml(prefs.logoUrl)}" alt="" />` : "";
+    const businessName = prefs.businessName || store?.name || "STRAP STORE";
+    const details = [
+      prefs.showAddress !== false && prefs.address ? escapeHtml(prefs.address) : "",
+      prefs.showPhone !== false && prefs.phone ? escapeHtml(prefs.phone) : "",
+      prefs.showEmail === true && prefs.email ? escapeHtml(prefs.email) : "",
+      prefs.showTaxId === true && prefs.taxId ? `Tax ID: ${escapeHtml(prefs.taxId)}` : "",
+    ].filter(Boolean).map((x) => `<div>${x}</div>`).join("");
+    const metadata = [
+      prefs.showReference !== false ? `<div>Receipt: ${escapeHtml(prefs.prefix || "STRAP")}-${escapeHtml(receipt.reference)}</div>` : "",
+      prefs.showDate !== false ? `<div>${escapeHtml(formatDateTime(receipt.at))}</div>` : "",
+      prefs.showCustomer !== false && receipt.customerName ? `<div>Customer: ${escapeHtml(receipt.customerName)}</div>` : "",
+      prefs.showBranch === true && branch?.name ? `<div>Branch: ${escapeHtml(branch.name)}</div>` : "",
+    ].join("");
+    const totals = [
+      prefs.showSubtotal !== false ? `<div class="row"><span>Subtotal</span><span>${escapeHtml(formatMoney(receipt.subtotal, currency))}</span></div>` : "",
+      prefs.showTax !== false && receipt.tax > 0 ? `<div class="row"><span>Tax</span><span>${escapeHtml(formatMoney(receipt.tax, currency))}</span></div>` : "",
+      `<div class="row total"><span>Total</span><span>${escapeHtml(formatMoney(receipt.total, currency))}</span></div>`,
+      prefs.showPaymentMethod !== false ? `<div class="center">Paid by: ${escapeHtml(receipt.method)}</div>` : "",
+    ].join("");
+    const popup = window.open("", "strap-receipt", "width=420,height=720");
+    if (!popup) { toast.error("Allow pop-ups for Strap to print receipts."); return; }
+    popup.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(receipt.reference)}</title><style>
+      *{box-sizing:border-box}body{font-family:Arial,sans-serif;padding:16px;max-width:${width};margin:auto;color:#111;font-size:${fontSize};line-height:1.45}
+      h1{font-size:18px;margin:0 0 5px;text-align:${align}}.center{text-align:${align}}.logo{display:block;max-width:110px;max-height:56px;object-fit:contain;margin:0 auto 8px}
+      .row{display:flex;justify-content:space-between;gap:12px;margin:6px 0;text-align:left}.rule{border-top:1px dashed #999;margin:12px 0}.total{font-weight:700;font-size:1.2em}
+      @page{size:${paper === "A4" ? "A4" : paper + " auto"};margin:5mm}@media print{body{padding:0;margin:0 auto}}
+    </style></head><body>
+      ${logo}<h1>${escapeHtml(businessName)}</h1><div class="center">${details}</div>
+      ${prefs.header === "" ? "" : `<p class="center">${escapeHtml(prefs.header || "Thank you for your purchase")}</p>`}
+      <div class="rule"></div><div class="center">${metadata}</div><div class="rule"></div>
+      ${rows}<div class="rule"></div>${totals}
+      ${prefs.thankYou ? `<p class="center" style="margin-top:18px">${escapeHtml(prefs.thankYou)}</p>` : '<p class="center" style="margin-top:18px">Thank you for shopping with us.</p>'}
+      ${prefs.showFooter === false ? "" : `<p class="center">${escapeHtml(prefs.footer || "Powered by Strap")}</p>`}
+      <script>window.onload=()=>window.print()<\/script></body></html>`);
+    popup.document.close(); popup.focus();
   }
   const cartPanel = (
     <div className="flex h-full min-h-0 flex-col">
@@ -683,7 +726,7 @@ function PosPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex min-w-0 items-center gap-2">
                     <p className="truncate text-sm font-semibold">{line.product.name}</p>
-                    <span className="inline-flex shrink-0 items-center rounded-md bg-[#C6F432] px-1.5 py-0.5 text-[10px] font-extrabold text-[#0E1116]">
+                    <span className="inline-flex shrink-0 items-center rounded-md bg-foreground px-1.5 py-0.5 text-[10px] font-extrabold text-background">
                       {line.quantity}×
                     </span>
                   </div>
@@ -1324,9 +1367,9 @@ function PosPage() {
         </BottomSheet>
         {receipt && (
           <div className="fixed inset-0 z-[80] flex items-end justify-center overflow-y-auto overscroll-contain bg-black/60 p-3 sm:items-center sm:p-4">
-            <div className="my-auto max-h-[92dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-3xl border border-border bg-surface p-5 shadow-2xl sm:p-6">
+            <div className="my-auto max-h-[92dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-3xl border border-border bg-surface p-5 text-foreground shadow-2xl sm:p-6">
               <div className="flex items-start gap-3">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent-soft">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-secondary text-accent-ink">
                   <Check className="size-5" />
                 </span>
                 <div className="min-w-0 flex-1">
