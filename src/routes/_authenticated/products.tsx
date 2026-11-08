@@ -35,6 +35,8 @@ import { getBusinessMode } from "@/lib/business-modes";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { fetchAllRows } from "@/lib/supabase-pagination";
 
+const EMPTY_ARRAY: never[] = [];
+
 export const Route = createFileRoute("/_authenticated/products")({ component: ProductsPage });
 
 type ProductWithPublishState = ProductWithStock & { is_published: boolean };
@@ -105,7 +107,7 @@ function ProductsPage() {
     enabled: Boolean(storeId && branchId),
     queryFn: () => fetchProductsWithStock(storeId!, branchId!),
   });
-  const products = query.data ?? [];
+  const products = query.data ?? EMPTY_ARRAY;
   const fashionDetailsQuery = useQuery({
     queryKey: ["fashion-product-details", storeId],
     enabled: Boolean(isFashion && storeId),
