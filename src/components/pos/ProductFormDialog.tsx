@@ -140,27 +140,27 @@ export function ProductFormDialog({
       void (async () => {
         const db = supabase as any;
         try {
-          const [
-            { data: images, error: imagesError },
-            { data: details, error: detailsError },
-          ] = await Promise.all([
-            db
-              .from("product_images")
-              .select("id,image_url,sort_order")
-              .eq("product_id", product.id)
-              .order("sort_order"),
-            isFashion
-              ? db
-                  .from("product_fashion_details")
-                  .select("size_options,color_options,material,style_notes")
-                  .eq("product_id", product.id)
-                  .maybeSingle()
-              : Promise.resolve({ data: null, error: null }),
-          ]);
+          const [{ data: images, error: imagesError }, { data: details, error: detailsError }] =
+            await Promise.all([
+              db
+                .from("product_images")
+                .select("id,image_url,sort_order")
+                .eq("product_id", product.id)
+                .order("sort_order"),
+              isFashion
+                ? db
+                    .from("product_fashion_details")
+                    .select("size_options,color_options,material,style_notes")
+                    .eq("product_id", product.id)
+                    .maybeSingle()
+                : Promise.resolve({ data: null, error: null }),
+            ]);
           if (cancelled) return;
           if (imagesError || detailsError) {
             setProductLoadError(true);
-            toast.error("We couldn't load this product's saved details. Check your connection and reopen it before saving.");
+            toast.error(
+              "We couldn't load this product's saved details. Check your connection and reopen it before saving.",
+            );
             return;
           }
           setExistingImages((images ?? []) as ProductImage[]);
@@ -205,7 +205,9 @@ export function ProductFormDialog({
         if (cancelled) return;
         if (error) {
           setVariantLoadError(true);
-          toast.error("We couldn't load stock for this branch. Check your connection before saving.");
+          toast.error(
+            "We couldn't load stock for this branch. Check your connection before saving.",
+          );
           return;
         }
         setVariantInventory(
