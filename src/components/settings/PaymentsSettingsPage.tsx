@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CheckCircle2, CreditCard, ExternalLink, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,7 +15,7 @@ export function PaymentsSettingsPage() {
   const [amount, setAmount] = useState("5000");
   const [busy, setBusy] = useState(false);
   const canManage = role === "owner";
-  async function load() {
+  const load = useCallback(async () => {
     if (!store?.id) return;
     setLoading(true);
     const { data, error } = await (supabase as any)
@@ -26,10 +26,10 @@ export function PaymentsSettingsPage() {
     if (error) toast.error(error.message);
     setSubscription(data);
     setLoading(false);
-  }
+  }, [store?.id]);
   useEffect(() => {
     void load();
-  }, [store?.id]);
+  }, [load]);
   async function subscribe() {
     if (!store?.id || !canManage) return;
     setBusy(true);
