@@ -436,7 +436,7 @@ begin
   end loop;
   return order_no;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.create_sale(_store_id uuid, _branch_id uuid, _payment_method text, _items jsonb, _note text DEFAULT ''::text, _customer_id uuid DEFAULT NULL::uuid, _offline_id text DEFAULT NULL::text)
@@ -685,7 +685,7 @@ begin
   end if;
   return v_sale_id;
 end;
-$function$
+$function$;
 
 
 
@@ -779,7 +779,7 @@ begin
 
   return jsonb_build_object('created',v_created,'updated',v_updated,'processed',v_seen);
 end;
-$function$
+$function$;
 
 
 -- Reject NULL and non-array return payloads before recording a return.
@@ -855,7 +855,7 @@ begin
   end loop;
   return v_return_id;
 end;
-$function$
+$function$;
 
 
 
