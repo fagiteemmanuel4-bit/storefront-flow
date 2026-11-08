@@ -454,7 +454,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     "strap_get_ai_access",
     {
       title: "Inspect STRAP AI access permissions",
-      description: "Show the effective branch scope and read/write permissions configured by the store owner or manager. Use this before attempting a write action.",
+      description: "Inspect whether this application is enabled or paused and review its configured branch scope and read/write permissions. Use this before attempting a write action.",
       inputSchema: { store_id: z.string().uuid() },
     },
     async ({ store_id }) => {
@@ -462,11 +462,11 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
         await requireStoreAccess(supabase, store_id);
         const settings = await getSettings(store_id);
         let branches: unknown[] = [];
-        if (settings.allowed_branch_ids === null) {
+        if (settings.enabled && settings.allowed_branch_ids === null) {
           const { data, error } = await supabase.from("branches").select("id,name,is_default").eq("store_id", store_id).order("name").limit(100);
           if (error) throw error;
           branches = data ?? [];
-        } else if (settings.allowed_branch_ids.length) {
+        } else if (settings.enabled && settings.allowed_branch_ids.length) {
           const { data, error } = await supabase.from("branches").select("id,name,is_default").eq("store_id", store_id).in("id", settings.allowed_branch_ids).order("name").limit(100);
           if (error) throw error;
           branches = data ?? [];
