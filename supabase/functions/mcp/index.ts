@@ -450,7 +450,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           supabase
             .from("sales")
             .select(
-              "id,store_id,branch_id,cashier_id,reference,subtotal,tax,total,payment_method,note,created_at,customer_id",
+              "id,branch_id,reference,subtotal,tax,total,payment_method,created_at",
             )
             .eq("store_id", store_id)
             .order("created_at", { ascending: false })
@@ -599,7 +599,6 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
         store_id: z.string().uuid(),
         name: z.string().trim().min(1).max(160),
         price: z.number().min(0),
-        cost: z.number().min(0).optional(),
         sku: z.string().trim().max(80).optional(),
         barcode: z.string().trim().max(100).optional(),
         category: z.string().trim().max(100).optional(),
@@ -619,7 +618,6 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
             store_id,
             name: input.name,
             price: input.price,
-            cost: input.cost ?? 0,
             sku: input.sku ?? "",
             barcode: input.barcode ?? "",
             category: input.category ?? "",
@@ -629,7 +627,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
             piece_price: input.piece_price ?? 0,
             is_active: input.is_active ?? true,
           })
-          .select("id,name,sku,barcode,category,price,cost,is_active,created_at")
+          .select("id,name,sku,barcode,category,price,is_active,created_at")
           .single();
         if (error) throw error;
         const auditWarning = await recordMcpAction(
@@ -656,7 +654,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     {
       title: "Update a product",
       description:
-        "Update editable catalogue fields for an existing product in an accessible STRAP store. Requires product write access and owner/manager permissions.",
+        "Update catalogue details and customer-facing prices for an existing product. Internal cost and margin fields stay private.",
       inputSchema: {
         store_id: z.string().uuid(),
         product_id: z.string().uuid(),
@@ -686,7 +684,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           .update(changes)
           .eq("id", product_id)
           .eq("store_id", store_id)
-          .select("id,name,sku,barcode,category,price,cost,is_active,updated_at")
+          .select("id,name,sku,barcode,category,price,is_active,updated_at")
           .maybeSingle();
         if (error) throw error;
         if (!data) throw new Error("Product not found or you do not have permission to update it.");
