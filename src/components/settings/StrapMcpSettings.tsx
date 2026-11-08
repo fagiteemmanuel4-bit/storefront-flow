@@ -141,8 +141,7 @@ export function StrapMcpSettingsPage() {
       const { data: activity, error: activityError } = await db.from("mcp_action_audit")
         .select("id,action,summary,created_at").eq("store_id", store.id)
         .order("created_at", { ascending: false }).limit(10);
-      if (activityError) throw activityError;
-      setAudit(activity ?? []);
+      setAudit(activityError ? [] : (activity ?? []));
     } catch (error) {
       const message = error instanceof Error ? error.message : "Could not load connected applications.";
       setLoadError(message);
@@ -255,7 +254,7 @@ export function StrapMcpSettingsPage() {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-secondary"><Bot className="size-5" /></div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2"><h4 className="text-lg font-bold">{grant.client_name || "Connected application"}</h4><span className="rounded-full bg-emerald-500/10 px-2 py-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-300">Connected</span></div>
+                  <div className="flex flex-wrap items-center gap-2"><h4 className="text-lg font-bold">{grant.client_name || "Connected application"}</h4><span className={`rounded-full px-2 py-1 text-[11px] font-bold ${config.enabled ? "bg-success-soft text-success" : "bg-warning-soft text-warning"}`}>{config.enabled ? "Access enabled" : savedConfig || legacyAvailable ? "Access paused" : "Access not configured"}</span></div>
                   <p className="mt-1 break-all text-xs text-muted-foreground">Client ID: {grant.client_id}</p>
                   <p className="mt-1 text-xs text-muted-foreground">Authorised {new Date(grant.created_at).toLocaleDateString()} · Scopes: {(grant.scopes ?? []).join(", ") || "standard OAuth"}</p>
                   <p className="mt-3 text-sm text-muted-foreground">{savedConfig ? `${savedConfig.enabled ? "Access enabled" : "Access paused"} · ${savedConfig.allowed_branch_ids === null ? "All branches" : savedConfig.allowed_branch_ids.length + " selected branches"} · ${[savedConfig.allow_store_read, savedConfig.allow_products_read, savedConfig.allow_inventory_read, savedConfig.allow_sales_read, savedConfig.allow_expenses_read, savedConfig.allow_customers_read].filter(Boolean).length} read permissions enabled` : legacyAvailable ? "Using previous store-wide permissions until you save app-specific settings." : "No app-specific access has been configured for this store."}</p>
