@@ -43,7 +43,9 @@ export function markUpdateSeen(version: string): void {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(STORAGE_KEY, version);
-  } catch {}
+  } catch {
+    // Storage may be unavailable in private browsing; update notices should still render.
+  }
 }
 export function hasUnseenUpdate(): boolean {
   return getLastSeenUpdate() !== LATEST_UPDATE.version;
