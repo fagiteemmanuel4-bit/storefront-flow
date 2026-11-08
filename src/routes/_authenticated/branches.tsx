@@ -29,21 +29,25 @@ function Branches() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const branchLimitReached = branchLimit !== -1 && branches.length >= branchLimit;
+  const storeId = store?.id;
   const load = useCallback(async () => {
-    if (!store) return;
+    if (!storeId) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const { data, error } = await onlineSupabase
       .from("branches")
       .select("id,name,address,is_default")
-      .eq("store_id", store.id)
+      .eq("store_id", storeId)
       .order("is_default", { ascending: false })
       .order("created_at");
     if (error) toast.error(error.message);
     else setBranches((data ?? []) as Branch[]);
     setLoading(false);
-  }, [store?.id]);
+  }, [storeId]);
   useEffect(() => {
-    if (store?.id) void load();
+    void load();
   }, [load]);
   async function add() {
     if (!store || !name.trim()) return;
