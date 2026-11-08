@@ -133,7 +133,6 @@ export function ProductFormDialog({
     setMaterial("");
     setStyleNotes("");
     setVariantInventory("");
-    setLoadingFashionVariants(Boolean(product?.id && isFashion));
     setProductLoadError(false);
 
     if (product?.id) {
@@ -143,7 +142,6 @@ export function ProductFormDialog({
           const [
             { data: images, error: imagesError },
             { data: details, error: detailsError },
-            { data: variants, error: variantsError },
           ] = await Promise.all([
             db
               .from("product_images")
@@ -157,18 +155,9 @@ export function ProductFormDialog({
                   .eq("product_id", product.id)
                   .maybeSingle()
               : Promise.resolve({ data: null, error: null }),
-            isFashion
-              ? db
-                  .from("fashion_variant_stock")
-                  .select("size,color,quantity")
-                  .eq("product_id", product.id)
-                  .eq("branch_id", branchId)
-                  .order("size")
-                  .order("color")
-              : Promise.resolve({ data: [], error: null }),
           ]);
           if (cancelled) return;
-          if (imagesError || detailsError || variantsError) {
+          if (imagesError || detailsError) {
             setProductLoadError(true);
             toast.error("We couldn't load this product's saved details. Check your connection and reopen it before saving.");
             return;
@@ -180,18 +169,11 @@ export function ProductFormDialog({
             setMaterial(details.material ?? "");
             setStyleNotes(details.style_notes ?? "");
           }
-          setVariantInventory(
-            (variants ?? [])
-              .map((row: any) => `${row.size} | ${row.color} | ${row.quantity}`)
-              .join("\n"),
-          );
         } catch (error) {
           if (!cancelled) {
             setProductLoadError(true);
             toast.error(errorMessage(error, "We couldn't load this product's saved details."));
           }
-        } finally {
-          if (!cancelled) setLoadingFashionVariants(false);
         }
       })();
     }
@@ -199,7 +181,48 @@ export function ProductFormDialog({
     return () => {
       cancelled = true;
     };
-  }, [open, product, isFashion, branchId]);
+  }, [open, product, isFashion]);
+
+  useEffect(() => {
+    if (!open || !product?.id || !isFashion) {
+      setLoadingFashionVariants(false);
+      return;
+    }
+    let cancelled = false;
+    setLoadingFashionVariants(true);
+    void (async () => {
+      try {
+        const { data: variants, error } = await (supabase as any)
+          .from("fashion_variant_stock")
+          .select("size,color,quantity")
+          .eq("product_id", product.id)
+          .eq("branch_id", branchId)
+          .order("size")
+          .order("color");
+        if (cancelled) return;
+        if (error) {
+          setProductLoadError(true);
+          toast.error("We couldn't load stock for this branch. Check your connection before saving.");
+          return;
+        }
+        setVariantInventory(
+          (variants ?? [])
+            .map((row: any) => `${row.size} | ${row.color} | ${row.quantity}`)
+            .join("\n"),
+        );
+      } catch (error) {
+        if (!cancelled) {
+          setProductLoadError(true);
+          toast.error(errorMessage(error, "We couldn't load stock for this branch."));
+        }
+      } finally {
+        if (!cancelled) setLoadingFashionVariants(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [open, product?.id, isFashion, branchId]);
 
   useEffect(() => {
     pendingImagesRef.current = pendingImages;
