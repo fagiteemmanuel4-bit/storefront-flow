@@ -512,7 +512,14 @@ function OAuthConsentPage() {
                   Deny request
                 </Button>
                 <Button
-                  disabled={busy || loading || !stores.length || !selectedStore || branchesLoadedForStoreId !== storeId || Boolean(branchesError)}
+                  disabled={
+                    busy ||
+                    loading ||
+                    !stores.length ||
+                    !selectedStore ||
+                    branchesLoadedForStoreId !== storeId ||
+                    Boolean(branchesError)
+                  }
                   onClick={() => void decide("approve")}
                   className="h-11 gap-2"
                 >
