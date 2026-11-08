@@ -111,7 +111,7 @@ begin
   end if;
 
   if account.locked_until is not null and account.locked_until > now() then
-    return jsonb_build_object('ok', false, 'message', 'Email or password is incorrect. If you have tried several times, wait a little before trying again.');
+    return jsonb_build_object('ok', false, 'message', 'Email or password is incorrect');
   end if;
 
   if _password is null
