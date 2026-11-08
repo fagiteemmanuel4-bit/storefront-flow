@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BarChart3, Boxes, ClipboardList, Package, Printer, ScanLine, ShieldCheck, ShoppingBag, Users, WifiOff } from "lucide-react";
+import { ArrowRight, BarChart3, Boxes, ClipboardList, Package, ScanLine, ShieldCheck, ShoppingBag, Users, WifiOff } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
 export const Route=createFileRoute("/landing")({component:Landing});
 const features=[
