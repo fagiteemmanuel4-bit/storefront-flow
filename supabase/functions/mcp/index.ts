@@ -570,7 +570,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
             .limit(100);
           if (error) throw error;
           branches = data ?? [];
-        } else if (settings.enabled && settings.allowed_branch_ids.length) {
+        } else if (settings.enabled && settings.allowed_branch_ids?.length) {
           const { data, error } = await supabase
             .from("branches")
             .select("id,name,is_default")
@@ -810,7 +810,8 @@ function getOAuthClientIdFromRequest(req: Request) {
   return claims.client_id as string;
 }
 
-async function handleMcpRequest(req: Request, context: { supabase: UserSupabase }) {
+async function handleMcpRequest(req: Request, context: object) {
+  const { supabase } = context as { supabase: UserSupabase };
   const server = new McpServer({
     name: "strap",
     version: "0.2.0",
@@ -823,7 +824,7 @@ async function handleMcpRequest(req: Request, context: { supabase: UserSupabase 
     ],
   });
   const clientId = getOAuthClientIdFromRequest(req);
-  registerTools(server, context.supabase, clientId);
+  registerTools(server, supabase, clientId);
 
   const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined });
   await server.connect(transport);
