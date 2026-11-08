@@ -895,6 +895,29 @@ using (
   )
 );
 
+-- A manager may update only the OAuth permission row they personally approved.
+-- This prevents moving another manager's row into their own user scope.
+drop policy if exists mcp_client_access_update_manager on public.mcp_client_access_settings;
+create policy mcp_client_access_update_manager
+on public.mcp_client_access_settings
+for update to authenticated
+using (
+  user_id = (select auth.uid())
+  and private.has_store_role(
+    store_id,
+    (select auth.uid()),
+    array['owner'::public.store_role, 'manager'::public.store_role]
+  )
+)
+with check (
+  user_id = (select auth.uid())
+  and private.has_store_role(
+    store_id,
+    (select auth.uid()),
+    array['owner'::public.store_role, 'manager'::public.store_role]
+  )
+);
+
 
 -- Only the MCP Edge Function's service-role client may write audit records.
 -- Direct table inserts would let any manager forge audit history.
