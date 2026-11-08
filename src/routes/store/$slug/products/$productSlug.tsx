@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { formatMoney } from "@/lib/currency";
-import { buildProductJsonLd, buildStoreJsonLd } from "@/lib/storefront-seo";
+import { buildProductJsonLd, buildStoreJsonLd, serializeJsonLd } from "@/lib/storefront-seo";
 import { Button } from "@/components/ui/button";
 
 type PublicProduct = {
@@ -145,11 +145,11 @@ function PublicProductPage() {
     <main className="min-h-screen bg-background">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(productJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(storeJsonLd) }}
       />
       <header className="border-b border-border bg-surface/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 lg:px-8">
