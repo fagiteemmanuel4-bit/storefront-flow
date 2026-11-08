@@ -12,6 +12,8 @@ import { fetchProductsWithStock } from "@/routes/_authenticated/products";
 import { formatMoney } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
 
+const EMPTY_ARRAY: never[] = [];
+
 export const Route = createFileRoute("/_authenticated/grocery-inventory")({
   component: GroceryInventoryPage,
 });
@@ -138,9 +140,9 @@ function GroceryInventoryPage() {
       return dataOrEmpty(items) as SoldLine[];
     },
   });
-  const products = (productsQuery.data ?? []) as Product[];
-  const batches = batchesQuery.data ?? [];
-  const waste = wasteQuery.data ?? [];
+  const products = (productsQuery.data ?? EMPTY_ARRAY) as Product[];
+  const batches = batchesQuery.data ?? EMPTY_ARRAY;
+  const waste = wasteQuery.data ?? EMPTY_ARRAY;
   const activeBatches = batches.filter((b) => b.status === "active" && b.quantity > 0);
   const nearExpiry = activeBatches.filter(
     (b) =>
