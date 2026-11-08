@@ -1,3 +1,4 @@
+// Keep both package managers pinned to the patched transitive versions.
 import { readFileSync } from "node:fs";
 
 const packageLock = JSON.parse(readFileSync("package-lock.json", "utf8"));
