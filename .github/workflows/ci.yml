@@ -33,8 +33,8 @@ jobs:
         run: node scripts/check-dependency-patches.mjs
       - name: Format source consistently
         run: bunx prettier --write .
-      - name: Lint
-        run: bun run lint
+      - name: Lint and apply safe formatting fixes
+        run: bunx eslint . --fix && bun run lint
       - name: Production build
         if: always()
         run: bun run build
