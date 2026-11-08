@@ -123,7 +123,7 @@ begin
     and octet_length(_password) <= 72
     and account.password_hash is not null
   then
-    v_password_matches := extensions.crypt(_password, account.password_hash) = account.password_hash;
+    v_password_matches := coalesce(extensions.crypt(_password, account.password_hash) = account.password_hash, false);
   else
     perform extensions.crypt(coalesce(_password, ''), extensions.gen_salt('bf', 12));
   end if;
