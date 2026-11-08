@@ -23,9 +23,9 @@ function AboutPage() {
             The calm operating system for everyday commerce.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Strap brings point of sale, products, multi-branch inventory, customers, expenses, online orders
-            and business reporting into one connected workspace. Compatible AI assistants can also
-            work with approved store data through STRAP MCP.
+            Strap brings point of sale, products, multi-branch inventory, customers, expenses,
+            online orders and business reporting into one connected workspace. Compatible AI
+            assistants can also work with approved store data through STRAP MCP.
           </p>
         </section>
         <section className="strap-video-placeholder overflow-hidden rounded-[28px] border border-border bg-secondary/50">

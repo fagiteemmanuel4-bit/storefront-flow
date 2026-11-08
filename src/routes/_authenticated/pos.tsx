@@ -40,6 +40,8 @@ import {
 import { cn } from "@/lib/utils";
 import { getBusinessMode } from "@/lib/business-modes";
 
+const EMPTY_ARRAY: never[] = [];
+
 export const Route = createFileRoute("/_authenticated/pos")({ ssr: false, component: PosPage });
 
 let offlineSaleSyncInFlight = false;
@@ -185,11 +187,11 @@ function PosPage() {
       return (data ?? []) as FoodModifier[];
     },
   });
-  const products = productsQuery.data ?? [];
-  const customers = customersQuery.data ?? [];
-  const fashionVariants = fashionVariantsQuery.data ?? [];
-  const electronicsDevices = electronicsDevicesQuery.data ?? [];
-  const foodModifiers = foodModifiersQuery.data ?? [];
+  const products = productsQuery.data ?? EMPTY_ARRAY;
+  const customers = customersQuery.data ?? EMPTY_ARRAY;
+  const fashionVariants = fashionVariantsQuery.data ?? EMPTY_ARRAY;
+  const electronicsDevices = electronicsDevicesQuery.data ?? EMPTY_ARRAY;
+  const foodModifiers = foodModifiersQuery.data ?? EMPTY_ARRAY;
   const selectedCustomer = customers.find((c) => c.id === customerId);
   useEffect(() => {
     const openScanner = () => setScanning(true);
@@ -214,7 +216,7 @@ function PosPage() {
   }, []);
   useEffect(() => {
     let cancelled = false;
-    let retryTimer: ReturnType<typeof window.setTimeout> | undefined;
+    let retryTimer: number | undefined;
     const scheduleRetry = () => {
       if (cancelled || !navigator.onLine || retryTimer !== undefined) return;
       retryTimer = window.setTimeout(() => {
@@ -462,7 +464,10 @@ function PosPage() {
           : 0;
     return (
       basePrice +
-      (line.foodModifiers ?? []).reduce((sum, modifier) => sum + Number(modifier.price_delta || 0), 0)
+      (line.foodModifiers ?? []).reduce(
+        (sum, modifier) => sum + Number(modifier.price_delta || 0),
+        0,
+      )
     );
   };
   const subtotal = cart.reduce((sum, l) => sum + lineUnitPrice(l) * l.quantity, 0);
@@ -575,9 +580,7 @@ function PosPage() {
       const savedTotal = Number(saved.total ?? 0);
       // Fall back to the saved breakdown if an older row has a zero grand total.
       const receiptTotal =
-        Number.isFinite(savedTotal) && savedTotal > 0
-          ? savedTotal
-          : savedSubtotal + savedTax;
+        Number.isFinite(savedTotal) && savedTotal > 0 ? savedTotal : savedSubtotal + savedTax;
       setReceipt({
         reference: saved.reference,
         subtotal: savedSubtotal,

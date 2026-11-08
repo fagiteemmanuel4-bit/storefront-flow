@@ -35,6 +35,8 @@ import { getBusinessMode } from "@/lib/business-modes";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { fetchAllRows } from "@/lib/supabase-pagination";
 
+const EMPTY_ARRAY: never[] = [];
+
 export const Route = createFileRoute("/_authenticated/products")({ component: ProductsPage });
 
 type ProductWithPublishState = ProductWithStock & { is_published: boolean };
@@ -45,13 +47,27 @@ export async function fetchProductsWithStock(
 ): Promise<ProductWithPublishState[]> {
   const [products, stock, onlineProducts] = await Promise.all([
     fetchAllRows<any>(
-      supabase.from("products").select("*").eq("store_id", storeId).eq("is_active", true).order("name").order("id"),
+      supabase
+        .from("products")
+        .select("*")
+        .eq("store_id", storeId)
+        .eq("is_active", true)
+        .order("name")
+        .order("id"),
     ),
     fetchAllRows<{ product_id: string; quantity: number }>(
-      supabase.from("branch_stock").select("product_id,quantity").eq("branch_id", branchId).order("product_id"),
+      supabase
+        .from("branch_stock")
+        .select("product_id,quantity")
+        .eq("branch_id", branchId)
+        .order("product_id"),
     ),
     fetchAllRows<{ product_id: string; enabled: boolean }>(
-      onlineSupabase.from("online_products").select("product_id,enabled").eq("store_id", storeId).order("product_id"),
+      onlineSupabase
+        .from("online_products")
+        .select("product_id,enabled")
+        .eq("store_id", storeId)
+        .order("product_id"),
     ),
   ]);
   const stockByProduct = new Map((stock ?? []).map((row) => [row.product_id, row.quantity]));
@@ -91,7 +107,7 @@ function ProductsPage() {
     enabled: Boolean(storeId && branchId),
     queryFn: () => fetchProductsWithStock(storeId!, branchId!),
   });
-  const products = query.data ?? [];
+  const products = query.data ?? EMPTY_ARRAY;
   const fashionDetailsQuery = useQuery({
     queryKey: ["fashion-product-details", storeId],
     enabled: Boolean(isFashion && storeId),

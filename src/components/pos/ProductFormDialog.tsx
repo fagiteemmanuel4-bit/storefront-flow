@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ImagePlus, Package, Plus, ScanLine, X } from "lucide-react";
 import { z } from "zod";
@@ -91,7 +91,9 @@ export function ProductFormDialog({
   const [styleNotes, setStyleNotes] = useState("");
   const [variantInventory, setVariantInventory] = useState("");
   const [loadingFashionVariants, setLoadingFashionVariants] = useState(false);
-  const [fashionVariantLoadError, setFashionVariantLoadError] = useState(false);
+  const [productLoadError, setProductLoadError] = useState(false);
+  const [variantLoadError, setVariantLoadError] = useState(false);
+  const pendingImagesRef = useRef<PendingImage[]>([]);
   const queryClient = useQueryClient();
   const shelvesQuery = useQuery({
     queryKey: ["shelves", storeId],
@@ -104,6 +106,7 @@ export function ProductFormDialog({
 
   useEffect(() => {
     if (!open) return;
+    let cancelled = false;
     const p = product as any;
     setErrors({});
     setName(product?.name ?? "");
@@ -124,6 +127,8 @@ export function ProductFormDialog({
     );
     setAddingShelf(false);
     setNewShelf("");
+    pendingImagesRef.current.forEach((image) => URL.revokeObjectURL(image.preview));
+    pendingImagesRef.current = [];
     setPendingImages([]);
     setExistingImages([]);
     setSizes("");
@@ -131,43 +136,32 @@ export function ProductFormDialog({
     setMaterial("");
     setStyleNotes("");
     setVariantInventory("");
-    setLoadingFashionVariants(Boolean(product?.id && isFashion));
-    setFashionVariantLoadError(false);
-    if (product?.id)
+    setProductLoadError(false);
+
+    if (product?.id) {
       void (async () => {
         const db = supabase as any;
         try {
-          const [
-            { data: images },
-            { data: details, error: detailsError },
-            { data: variants, error: variantsError },
-          ] = await Promise.all([
-            db
-              .from("product_images")
-              .select("id,image_url,sort_order")
-              .eq("product_id", product.id)
-              .order("sort_order"),
-            isFashion
-              ? db
-                  .from("product_fashion_details")
-                  .select("size_options,color_options,material,style_notes")
-                  .eq("product_id", product.id)
-                  .maybeSingle()
-              : Promise.resolve({ data: null, error: null }),
-            isFashion
-              ? db
-                  .from("fashion_variant_stock")
-                  .select("size,color,quantity")
-                  .eq("product_id", product.id)
-                  .eq("branch_id", branchId)
-                  .order("size")
-                  .order("color")
-              : Promise.resolve({ data: [], error: null }),
-          ]);
-          if (detailsError || variantsError) {
-            setFashionVariantLoadError(true);
+          const [{ data: images, error: imagesError }, { data: details, error: detailsError }] =
+            await Promise.all([
+              db
+                .from("product_images")
+                .select("id,image_url,sort_order")
+                .eq("product_id", product.id)
+                .order("sort_order"),
+              isFashion
+                ? db
+                    .from("product_fashion_details")
+                    .select("size_options,color_options,material,style_notes")
+                    .eq("product_id", product.id)
+                    .maybeSingle()
+                : Promise.resolve({ data: null, error: null }),
+            ]);
+          if (cancelled) return;
+          if (imagesError || detailsError) {
+            setProductLoadError(true);
             toast.error(
-              "Fashion options could not be loaded. Close and reopen this product before saving.",
+              "We couldn't load this product's saved details. Check your connection and reopen it before saving.",
             );
             return;
           }
@@ -178,19 +172,79 @@ export function ProductFormDialog({
             setMaterial(details.material ?? "");
             setStyleNotes(details.style_notes ?? "");
           }
-          setVariantInventory(
-            (variants ?? [])
-              .map((row: any) => `${row.size} | ${row.color} | ${row.quantity}`)
-              .join("\n"),
-          );
-        } finally {
-          setLoadingFashionVariants(false);
+        } catch (error) {
+          if (!cancelled) {
+            setProductLoadError(true);
+            toast.error(errorMessage(error, "We couldn't load this product's saved details."));
+          }
         }
       })();
+    }
+
+    return () => {
+      cancelled = true;
+    };
   }, [open, product, isFashion]);
+
+  useEffect(() => {
+    if (!open || !product?.id || !isFashion) {
+      setLoadingFashionVariants(false);
+      setVariantLoadError(false);
+      return;
+    }
+    let cancelled = false;
+    setLoadingFashionVariants(true);
+    setVariantLoadError(false);
+    void (async () => {
+      try {
+        const { data: variants, error } = await (supabase as any)
+          .from("fashion_variant_stock")
+          .select("size,color,quantity")
+          .eq("product_id", product.id)
+          .eq("branch_id", branchId)
+          .order("size")
+          .order("color");
+        if (cancelled) return;
+        if (error) {
+          setVariantLoadError(true);
+          toast.error(
+            "We couldn't load stock for this branch. Check your connection before saving.",
+          );
+          return;
+        }
+        setVariantInventory(
+          (variants ?? [])
+            .map((row: any) => `${row.size} | ${row.color} | ${row.quantity}`)
+            .join("\n"),
+        );
+      } catch (error) {
+        if (!cancelled) {
+          setVariantLoadError(true);
+          toast.error(errorMessage(error, "We couldn't load stock for this branch."));
+        }
+      } finally {
+        if (!cancelled) setLoadingFashionVariants(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [open, product?.id, isFashion, branchId]);
+
+  useEffect(() => {
+    pendingImagesRef.current = pendingImages;
+  }, [pendingImages]);
+
+  useEffect(() => {
+    if (!open) {
+      pendingImagesRef.current.forEach((image) => URL.revokeObjectURL(image.preview));
+      pendingImagesRef.current = [];
+    }
+  }, [open]);
+
   useEffect(
-    () => () => pendingImages.forEach((image) => URL.revokeObjectURL(image.preview)),
-    [pendingImages],
+    () => () => pendingImagesRef.current.forEach((image) => URL.revokeObjectURL(image.preview)),
+    [],
   );
 
   async function handleCreateShelf() {
@@ -384,6 +438,7 @@ export function ProductFormDialog({
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (saving || loadingFashionVariants || productLoadError || variantLoadError) return;
     const parsed = schema.safeParse({
       name,
       sku,
@@ -475,7 +530,7 @@ export function ProductFormDialog({
   return (
     <>
       <BottomSheet open={open} onOpenChange={onOpenChange}>
-        <BottomSheetContent className="max-h-[92dvh] overflow-y-auto mx-auto w-full max-w-lg">
+        <BottomSheetContent className="mx-auto w-full max-w-lg">
           <BottomSheetHeader>
             <BottomSheetTitle>{product ? "Edit product" : "Add product"}</BottomSheetTitle>
             <BottomSheetDescription>
@@ -805,6 +860,13 @@ export function ProductFormDialog({
                 />
               </Field>
             </div>
+            {(productLoadError || variantLoadError) && (
+              <p role="alert" className="text-sm text-destructive">
+                {variantLoadError
+                  ? "Branch stock couldn't be loaded. Close this sheet and reopen the product to try again."
+                  : "Saved product details couldn't be loaded. Close this sheet and reopen the product to try again."}
+              </p>
+            )}
             <div className="flex gap-3 pt-1">
               <Button
                 type="button"
@@ -817,7 +879,7 @@ export function ProductFormDialog({
               <Button
                 type="submit"
                 className="h-12 flex-1"
-                disabled={saving || loadingFashionVariants || fashionVariantLoadError}
+                disabled={saving || loadingFashionVariants || productLoadError || variantLoadError}
               >
                 {loadingFashionVariants
                   ? "Loading stock options…"

@@ -12,6 +12,8 @@ import { fetchProductsWithStock } from "@/routes/_authenticated/products";
 import { formatMoney } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
 
+const EMPTY_ARRAY: never[] = [];
+
 export const Route = createFileRoute("/_authenticated/electronics-workspace")({
   component: ElectronicsWorkspacePage,
 });
@@ -110,9 +112,9 @@ function ElectronicsWorkspacePage() {
       return (data ?? []) as Repair[];
     },
   });
-  const products = productsQuery.data ?? [];
-  const devices = devicesQuery.data ?? [];
-  const repairs = repairsQuery.data ?? [];
+  const products = productsQuery.data ?? EMPTY_ARRAY;
+  const devices = devicesQuery.data ?? EMPTY_ARRAY;
+  const repairs = repairsQuery.data ?? EMPTY_ARRAY;
   const filteredDevices = useMemo(() => {
     const term = search.trim().toLowerCase();
     return devices.filter((d) => {

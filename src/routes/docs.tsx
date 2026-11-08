@@ -462,12 +462,17 @@ function DocsPage() {
               public fields.
             </p>
           </DocSection>
-          <DocSection id="theme" icon={Palette} title="Theme & display" eyebrow="Make Strap comfortable to use">
+          <DocSection
+            id="theme"
+            icon={Palette}
+            title="Theme & display"
+            eyebrow="Make Strap comfortable to use"
+          >
             <p>
               Strap uses light mode by default. Open Settings → Theme & display to choose Light,
-              Dark or System. Your preference is saved to your account and restored when you sign in.
-              Authentication and connection-approval screens stay in light mode for a consistent,
-              readable security experience.
+              Dark or System. Your preference is saved to your account and restored when you sign
+              in. Authentication and connection-approval screens stay in light mode for a
+              consistent, readable security experience.
             </p>
           </DocSection>
 
@@ -487,8 +492,8 @@ function DocsPage() {
             <p className="mt-2">
               The STRAP approval screen lets an owner or manager choose a store, select all branches
               or specific locations, and decide which information the assistant may read. Expense
-              and customer access start disabled. Product creation, product updates and stock changes
-              are also disabled until explicitly enabled.
+              and customer access start disabled. Product creation, product updates and stock
+              changes are also disabled until explicitly enabled.
             </p>
             <h3 className="mt-6 font-semibold">Manage or revoke a connection</h3>
             <p className="mt-2">
@@ -500,8 +505,14 @@ function DocsPage() {
             <h3 className="mt-6 font-semibold">Available capabilities</h3>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
               <li>Identify the connected STRAP user and list authorised stores.</li>
-              <li>Search products, review stock, branches, sales, expenses and customer records when permitted.</li>
-              <li>Create products, update catalogue details and set exact stock quantities when write access is enabled.</li>
+              <li>
+                Search products, review stock, branches, sales, expenses and customer records when
+                permitted.
+              </li>
+              <li>
+                Create products, update catalogue details and set exact stock quantities when write
+                access is enabled.
+              </li>
             </ul>
             <p className="mt-4 text-sm leading-6 text-muted-foreground">
               Branch selection applies to branch-level inventory, sales, expenses and stock updates.

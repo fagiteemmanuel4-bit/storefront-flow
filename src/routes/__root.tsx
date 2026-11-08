@@ -8,7 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import landingCss from "../landing-modern.css?url";
 import modernAppCss from "../kudi-modern.css?url";
@@ -22,6 +22,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { NotFoundScreen } from "@/components/shell/NotFoundScreen";
+import { serializeJsonLd } from "@/lib/storefront-seo";
 import { StoreFeedbackFloating } from "@/components/site/StoreFeedbackFloating";
 import { StoreCustomerAccess } from "@/components/site/StoreCustomerAccess";
 import { QuickFindHost } from "@/components/shell/QuickFind";
@@ -90,7 +91,10 @@ function getErrorVariant(error: Error) {
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
-  const safeError = error instanceof Error ? error : new Error(String(error));
+  const safeError = useMemo(
+    () => (error instanceof Error ? error : new Error(String(error))),
+    [error],
+  );
   const variant = getErrorVariant(safeError);
   useEffect(() => {
     reportLovableError(safeError, { boundary: `tanstack_root_${variant}_error` });
@@ -236,7 +240,7 @@ function RootShell({ children }: { children: ReactNode }) {
         {children}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(STRUCTURED_DATA) }}
         />
         <Scripts />
       </body>
@@ -281,7 +285,8 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const forceLight = pathname === "/auth" || pathname === "/oauth/consent" || pathname === "/verify-email";
+  const forceLight =
+    pathname === "/auth" || pathname === "/oauth/consent" || pathname === "/verify-email";
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;

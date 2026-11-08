@@ -20,7 +20,13 @@ function apply(theme: Theme) {
   document.documentElement.style.colorScheme = dark ? "dark" : "light";
 }
 
-export function ThemeProvider({ children, forceLight = false }: { children: ReactNode; forceLight?: boolean }) {
+export function ThemeProvider({
+  children,
+  forceLight = false,
+}: {
+  children: ReactNode;
+  forceLight?: boolean;
+}) {
   const [theme, setTheme] = useState<Theme>(() => readLocal());
   useEffect(() => {
     apply(forceLight ? "light" : theme);
@@ -39,7 +45,10 @@ export function ThemeProvider({ children, forceLight = false }: { children: Reac
   useEffect(() => {
     let cancelled = false;
     void supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) { if (!cancelled) setTheme("light"); return; }
+      if (!data.user) {
+        if (!cancelled) setTheme("light");
+        return;
+      }
       if (cancelled) return;
       const { data: profile } = await supabase
         .from("profiles")
@@ -47,7 +56,8 @@ export function ThemeProvider({ children, forceLight = false }: { children: Reac
         .eq("id", data.user.id)
         .maybeSingle();
       const value = profile?.theme_preference as Theme | undefined;
-      if (!cancelled) setTheme(value === "light" || value === "dark" || value === "system" ? value : "light");
+      if (!cancelled)
+        setTheme(value === "light" || value === "dark" || value === "system" ? value : "light");
     });
     return () => {
       cancelled = true;

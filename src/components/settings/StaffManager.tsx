@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Copy, ExternalLink, KeyRound, Link2, Plus, RefreshCw, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,7 +27,7 @@ export function StaffManager() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ name: "", pin: "", role: "cashier", branch: "" });
-  async function load() {
+  const load = useCallback(async () => {
     if (!store?.id) return;
     setLoading(true);
     const [s, b] = await Promise.all([
@@ -54,10 +54,10 @@ export function StaffManager() {
     setStaff(rows);
     setBranches(b.data ?? []);
     setLoading(false);
-  }
+  }, [store?.id]);
   useEffect(() => {
     void load();
-  }, [store?.id]);
+  }, [load]);
   async function create() {
     if (!store?.id || !form.name.trim() || !/^[0-9]{4,8}$/.test(form.pin)) {
       toast.error("Enter a name and a 4–8 digit PIN.");

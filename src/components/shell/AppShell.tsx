@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Activity,
   BarChart3,
@@ -238,55 +238,68 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
   const isElectronics = businessMode.key === "electronics";
   const isFoodService = businessMode.key === "food-service";
   const isGrocery = businessMode.key === "grocery-provision";
-  const primaryNav = isFashion
-    ? [
-        { to: "/products", label: "Collection", icon: Package, area: "products" },
-        { to: "/online-store", label: "Storefront", icon: Store, area: "store" },
-        { to: "/online-store/orders", label: "Orders", icon: ReceiptText, area: "orders" },
-        { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
-        { to: "/customers", label: "Customers", icon: Users, area: "customers" },
-        { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
-      ]
-    : isElectronics
-      ? [
-          { to: "/electronics-workspace", label: "Devices & repairs", icon: Cpu, area: "products" },
-          { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
-          { to: "/products", label: "Catalogue", icon: Package, area: "products" },
-          { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
-        ]
-      : isFoodService
+  const primaryNav = useMemo(
+    () =>
+      isFashion
         ? [
-            { to: "/food-service", label: "Kitchen & menu", icon: ChefHat, area: "orders" },
+            { to: "/products", label: "Collection", icon: Package, area: "products" },
+            { to: "/online-store", label: "Storefront", icon: Store, area: "store" },
+            { to: "/online-store/orders", label: "Orders", icon: ReceiptText, area: "orders" },
             { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
-            { to: "/products", label: "Ingredients", icon: Package, area: "products" },
+            { to: "/customers", label: "Customers", icon: Users, area: "customers" },
             { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
           ]
-        : isGrocery
+        : isElectronics
           ? [
               {
-                to: "/grocery-inventory",
-                label: "Batches & expiry",
-                icon: Boxes,
+                to: "/electronics-workspace",
+                label: "Devices & repairs",
+                icon: Cpu,
                 area: "products",
               },
               { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
               { to: "/products", label: "Catalogue", icon: Package, area: "products" },
               { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
             ]
-          : PRIMARY_NAV;
-  const secondaryNav = isFashion
-    ? [
-        ...SECONDARY_NAV.filter((item) => item.to !== "/online-store"),
-        {
-          to: "/fashion-returns",
-          label: "Returns & exchanges",
-          icon: ReceiptText,
-          area: "products",
-        },
-      ]
-    : isElectronics
-      ? SECONDARY_NAV.filter((item) => item.to !== "/online-store")
-      : SECONDARY_NAV;
+          : isFoodService
+            ? [
+                { to: "/food-service", label: "Kitchen & menu", icon: ChefHat, area: "orders" },
+                { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
+                { to: "/products", label: "Ingredients", icon: Package, area: "products" },
+                { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
+              ]
+            : isGrocery
+              ? [
+                  {
+                    to: "/grocery-inventory",
+                    label: "Batches & expiry",
+                    icon: Boxes,
+                    area: "products",
+                  },
+                  { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
+                  { to: "/products", label: "Catalogue", icon: Package, area: "products" },
+                  { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
+                ]
+              : PRIMARY_NAV,
+    [isFashion, isElectronics, isFoodService, isGrocery],
+  );
+  const secondaryNav = useMemo(
+    () =>
+      isFashion
+        ? [
+            ...SECONDARY_NAV.filter((item) => item.to !== "/online-store"),
+            {
+              to: "/fashion-returns",
+              label: "Returns & exchanges",
+              icon: ReceiptText,
+              area: "products",
+            },
+          ]
+        : isElectronics
+          ? SECONDARY_NAV.filter((item) => item.to !== "/online-store")
+          : SECONDARY_NAV,
+    [isFashion, isElectronics],
+  );
   useEffect(() => {
     setStaffSessionState(getStaffSession(store?.id));
     return subscribeStaffSession(() => setStaffSessionState(getStaffSession(store?.id)));

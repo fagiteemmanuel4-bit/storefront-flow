@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Building2, LockKeyhole, MapPin, Plus, Star, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
@@ -29,22 +29,26 @@ function Branches() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const branchLimitReached = branchLimit !== -1 && branches.length >= branchLimit;
-  useEffect(() => {
-    if (store) void load();
-  }, [store]);
-  async function load() {
-    if (!store) return;
+  const storeId = store?.id;
+  const load = useCallback(async () => {
+    if (!storeId) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const { data, error } = await onlineSupabase
       .from("branches")
       .select("id,name,address,is_default")
-      .eq("store_id", store.id)
+      .eq("store_id", storeId)
       .order("is_default", { ascending: false })
       .order("created_at");
     if (error) toast.error(error.message);
     else setBranches((data ?? []) as Branch[]);
     setLoading(false);
-  }
+  }, [storeId]);
+  useEffect(() => {
+    void load();
+  }, [load]);
   async function add() {
     if (!store || !name.trim()) return;
     if (branchLimitReached) {

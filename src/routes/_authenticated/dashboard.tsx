@@ -69,7 +69,10 @@ function DashboardPage() {
         .eq("store_id", storeId as string);
       if (branch?.id) query = query.eq("branch_id", branch.id);
       return await fetchAllRows<{ total: number | string; created_at: string }>(
-        query.gte("created_at", startOfToday.toISOString()).order("created_at", { ascending: false }).order("id"),
+        query
+          .gte("created_at", startOfToday.toISOString())
+          .order("created_at", { ascending: false })
+          .order("id"),
       );
     },
   });

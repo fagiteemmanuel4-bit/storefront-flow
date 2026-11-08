@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
+const EMPTY_ARRAY: never[] = [];
+
 export const Route = createFileRoute("/_authenticated/unit-sale")({ component: UnitSalePage });
 type Unit = "piece" | "pack";
 type Line = { product: ProductWithStock; unit: Unit; quantity: number };
@@ -39,7 +41,7 @@ function UnitSalePage() {
     enabled: Boolean(storeId && branchId),
     queryFn: () => fetchProductsWithStock(storeId!, branchId!),
   });
-  const products = query.data ?? [];
+  const products = query.data ?? EMPTY_ARRAY;
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
     return products.filter(

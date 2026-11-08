@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ArrowLeft,
   Clock3,
@@ -81,30 +81,33 @@ function CustomerAccountPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: orderPhone, password: "" });
   const [trackingToken, setTrackingToken] = useState("");
 
-  async function refresh(token: string) {
-    if (!token || !store) {
-      setAccount(null);
-      setOrders([]);
+  const refresh = useCallback(
+    async (token: string) => {
+      if (!token || !store) {
+        setAccount(null);
+        setOrders([]);
+        setLoading(false);
+        return;
+      }
+      const result = await onlineSupabase.rpc("customer_account_get", { _token: token });
+      if (result.error) {
+        clearToken(store);
+        setAccount(null);
+        setOrders([]);
+        setLoading(false);
+        return;
+      }
+      setAccount(result.data as Account);
+      const orderResult = await onlineSupabase.rpc("customer_account_orders", { _token: token });
+      if (!orderResult.error) setOrders((orderResult.data ?? []) as Order[]);
       setLoading(false);
-      return;
-    }
-    const result = await onlineSupabase.rpc("customer_account_get", { _token: token });
-    if (result.error) {
-      clearToken(store);
-      setAccount(null);
-      setOrders([]);
-      setLoading(false);
-      return;
-    }
-    setAccount(result.data as Account);
-    const orderResult = await onlineSupabase.rpc("customer_account_orders", { _token: token });
-    if (!orderResult.error) setOrders((orderResult.data ?? []) as Order[]);
-    setLoading(false);
-  }
+    },
+    [store],
+  );
 
   useEffect(() => {
     void refresh(readToken(store));
-  }, [store]);
+  }, [refresh, store]);
 
   async function resolveOrderToken(orderNumber: string, phone: string) {
     if (!orderNumber.trim() || !phone.trim()) return "";

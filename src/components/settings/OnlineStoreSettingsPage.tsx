@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ExternalLink, Globe2, LockKeyhole } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -27,11 +27,7 @@ export function OnlineStoreSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [plan, setPlan] = useState("free");
   const canManage = role === "owner" || role === "manager";
-  useEffect(() => {
-    if (!store?.id) return;
-    void load();
-  }, [store?.id]);
-  async function load() {
+  const load = useCallback(async () => {
     if (!store?.id) return;
     setLoading(true);
     const [o, c, s] = await Promise.all([
@@ -67,7 +63,10 @@ export function OnlineStoreSettingsPage() {
     setForm(next);
     setInitial(next);
     setLoading(false);
-  }
+  }, [store?.id]);
+  useEffect(() => {
+    void load();
+  }, [load]);
   if (loading || !form) return <Loading />;
   const dirty = JSON.stringify(form) !== JSON.stringify(initial);
   const update = (key: string, value: unknown) =>
