@@ -894,3 +894,10 @@ using (
     array['owner'::public.store_role, 'manager'::public.store_role]
   )
 );
+
+
+-- Only the MCP Edge Function's service-role client may write audit records.
+-- Direct table inserts would let any manager forge audit history.
+drop policy if exists mcp_action_audit_insert_manager on public.mcp_action_audit;
+revoke insert on public.mcp_action_audit from authenticated;
+grant insert on public.mcp_action_audit to service_role;
