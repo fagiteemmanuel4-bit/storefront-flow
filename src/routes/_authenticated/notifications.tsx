@@ -262,7 +262,10 @@ function NotificationsPage() {
                         {item.body}
                       </p>
                       {item.title === "STRAP MCP is live" && (
-                        <Link to="/mcp" className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-accent-ink hover:underline">
+                        <Link
+                          to="/mcp"
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-accent-ink hover:underline"
+                        >
                           Learn more about STRAP MCP <span aria-hidden="true">→</span>
                         </Link>
                       )}

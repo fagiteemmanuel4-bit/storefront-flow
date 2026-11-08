@@ -189,7 +189,8 @@ const meta: Record<Section, { title: string; description: string }> = {
   },
   theme: {
     title: "Theme & display",
-    description: "Choose how the Strap workspace looks on this device and across your signed-in account.",
+    description:
+      "Choose how the Strap workspace looks on this device and across your signed-in account.",
   },
   staff: {
     title: "Staff & permissions",
@@ -632,7 +633,6 @@ export function SettingsSectionPage({ section }: { section: Section }) {
   );
 }
 
-
 function ThemePreferences() {
   const { theme, setTheme } = useTheme();
   const { userId } = useStoreContext();
@@ -640,13 +640,20 @@ function ThemePreferences() {
   const options = [
     { value: "light", title: "Light", description: "A bright, clear workspace for everyday use." },
     { value: "dark", title: "Dark", description: "A darker interface for low-light environments." },
-    { value: "system", title: "System", description: "Follow the appearance setting on this device." },
+    {
+      value: "system",
+      title: "System",
+      description: "Follow the appearance setting on this device.",
+    },
   ] as const;
   const choose = async (value: "light" | "dark" | "system") => {
     if (saving || value === theme) return;
     setSaving(true);
     try {
-      const { error } = await db.from("profiles").update({ theme_preference: value }).eq("id", userId);
+      const { error } = await db
+        .from("profiles")
+        .update({ theme_preference: value })
+        .eq("id", userId);
       if (error) throw new Error(error.message);
       setTheme(value);
       toast.success("Theme preference saved.");
@@ -658,16 +665,27 @@ function ThemePreferences() {
   };
   return (
     <div className="space-y-5">
-      <CardSection title="App appearance" description="Light is the default for new accounts. Your selection is saved to your Strap profile and remembered on this device.">
+      <CardSection
+        title="App appearance"
+        description="Light is the default for new accounts. Your selection is saved to your Strap profile and remembered on this device."
+      >
         <div className="grid gap-3 sm:grid-cols-3">
           {options.map((option) => (
-            <button key={option.value} type="button" onClick={() => void choose(option.value)} aria-pressed={theme === option.value} disabled={saving}
-              className={`rounded-2xl border p-4 text-left transition hover:border-foreground/30 disabled:opacity-60 ${theme === option.value ? "border-foreground bg-accent-soft" : "border-border bg-background"}`}>
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => void choose(option.value)}
+              aria-pressed={theme === option.value}
+              disabled={saving}
+              className={`rounded-2xl border p-4 text-left transition hover:border-foreground/30 disabled:opacity-60 ${theme === option.value ? "border-foreground bg-accent-soft" : "border-border bg-background"}`}
+            >
               <span className="flex items-center justify-between gap-2">
                 <span className="text-sm font-bold">{option.title}</span>
                 {theme === option.value && <Check className="size-4 text-accent-ink" />}
               </span>
-              <span className="mt-2 block text-xs leading-5 text-muted-foreground">{option.description}</span>
+              <span className="mt-2 block text-xs leading-5 text-muted-foreground">
+                {option.description}
+              </span>
             </button>
           ))}
         </div>
@@ -1890,7 +1908,10 @@ function Security() {
       </CardSection>
       <CardSection title="Authentication">
         <div className="grid gap-3 sm:grid-cols-2">
-          <Detail label="Email verification" value={verified ? "Verified" : "Verification required"} />
+          <Detail
+            label="Email verification"
+            value={verified ? "Verified" : "Verification required"}
+          />
           <Detail label="Session timeout" value="Managed by Supabase Auth" />
         </div>
         <p className="mt-3 text-xs text-muted-foreground">

@@ -462,7 +462,10 @@ function PosPage() {
           : 0;
     return (
       basePrice +
-      (line.foodModifiers ?? []).reduce((sum, modifier) => sum + Number(modifier.price_delta || 0), 0)
+      (line.foodModifiers ?? []).reduce(
+        (sum, modifier) => sum + Number(modifier.price_delta || 0),
+        0,
+      )
     );
   };
   const subtotal = cart.reduce((sum, l) => sum + lineUnitPrice(l) * l.quantity, 0);
@@ -575,9 +578,7 @@ function PosPage() {
       const savedTotal = Number(saved.total ?? 0);
       // Fall back to the saved breakdown if an older row has a zero grand total.
       const receiptTotal =
-        Number.isFinite(savedTotal) && savedTotal > 0
-          ? savedTotal
-          : savedSubtotal + savedTax;
+        Number.isFinite(savedTotal) && savedTotal > 0 ? savedTotal : savedSubtotal + savedTax;
       setReceipt({
         reference: saved.reference,
         subtotal: savedSubtotal,

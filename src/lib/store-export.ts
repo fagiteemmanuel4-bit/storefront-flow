@@ -32,8 +32,17 @@ function finish(sheet: ExcelJS.Worksheet, headerRowNumber = 1) {
 export async function downloadStoreWorkbook(store: StoreInfo, range: ExportRange): Promise<void> {
   const [products, stock, branches] = await Promise.all([
     fetchAllRows<any>(supabase.from("products").select("*").eq("store_id", store.id).order("name")),
-    fetchAllRows<any>(supabase.from("branch_stock").select("*").eq("store_id", store.id).order("product_id").order("branch_id")),
-    fetchAllRows<any>(supabase.from("branches").select("*").eq("store_id", store.id).order("created_at")),
+    fetchAllRows<any>(
+      supabase
+        .from("branch_stock")
+        .select("*")
+        .eq("store_id", store.id)
+        .order("product_id")
+        .order("branch_id"),
+    ),
+    fetchAllRows<any>(
+      supabase.from("branches").select("*").eq("store_id", store.id).order("created_at"),
+    ),
   ]);
 
   let salesQuery = supabase
@@ -59,9 +68,11 @@ export async function downloadStoreWorkbook(store: StoreInfo, range: ExportRange
     const itemPages = await Promise.all(
       batches.map((ids) =>
         fetchAllRows<any>(
-          supabase.from("sale_items")
+          supabase
+            .from("sale_items")
             .select("sale_id, product_name, quantity, unit_price, line_total")
-            .in("sale_id", ids).order("id"),
+            .in("sale_id", ids)
+            .order("id"),
         ),
       ),
     );
