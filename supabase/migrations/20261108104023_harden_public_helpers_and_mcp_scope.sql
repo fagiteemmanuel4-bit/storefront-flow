@@ -89,6 +89,7 @@ declare
   os public.online_stores%rowtype;
   account public.store_customer_accounts%rowtype;
   raw_token text;
+  v_password_matches boolean := false;
 begin
   perform public.customer_account_cleanup_expired();
 
@@ -107,18 +108,27 @@ begin
     and email = lower(btrim(_email));
 
   if not found or account.expires_at <= now() then
+    -- Match bcrypt's cost for unknown and expired accounts to reduce timing-based
+    -- account enumeration.
+    perform extensions.crypt(coalesce(_password, ''), extensions.gen_salt('bf', 12));
     return jsonb_build_object('ok', false, 'message', 'Email or password is incorrect');
   end if;
 
   if account.locked_until is not null and account.locked_until > now() then
+    perform extensions.crypt(coalesce(_password, ''), extensions.gen_salt('bf', 12));
     return jsonb_build_object('ok', false, 'message', 'Email or password is incorrect');
   end if;
 
-  if _password is null
-    or octet_length(_password) > 72
-    or account.password_hash is null
-    or extensions.crypt(_password, account.password_hash) is distinct from account.password_hash
+  if _password is not null
+    and octet_length(_password) <= 72
+    and account.password_hash is not null
   then
+    v_password_matches := extensions.crypt(_password, account.password_hash) = account.password_hash;
+  else
+    perform extensions.crypt(coalesce(_password, ''), extensions.gen_salt('bf', 12));
+  end if;
+
+  if not v_password_matches then
     update public.store_customer_accounts
     set failed_attempts = failed_attempts + 1,
         locked_until = case
