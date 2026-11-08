@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 import { pipeline } from "npm:@supabase/middleware@1";
 import { withOAuthProtectedResource, withSupabase } from "npm:@supabase/server@1";
+import { createClient } from "npm:@supabase/supabase-js@2";
 import { McpServer } from "npm:@modelcontextprotocol/sdk@1.25.3/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "npm:@modelcontextprotocol/sdk@1.25.3/server/webStandardStreamableHttp.js";
 import { z } from "npm:zod@4";
@@ -164,7 +165,16 @@ async function recordMcpAction(
   const { data: auth, error: authError } = await supabase.auth.getUser();
   if (authError) throw authError;
   if (!auth.user) throw new Error("The authenticated STRAP user could not be verified.");
-  const { error } = await supabase.from("mcp_action_audit").insert({
+  await requireManagerAccess(supabase, storeId);
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error("The server-side audit logger is not configured.");
+  }
+  const auditClient = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { error } = await auditClient.from("mcp_action_audit").insert({
     store_id: storeId,
     user_id: auth.user.id,
     action,
