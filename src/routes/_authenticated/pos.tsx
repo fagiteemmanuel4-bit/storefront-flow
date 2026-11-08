@@ -683,7 +683,7 @@ function PosPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex min-w-0 items-center gap-2">
                     <p className="truncate text-sm font-semibold">{line.product.name}</p>
-                    <span className="inline-flex shrink-0 items-center rounded-md bg-[#C6F432] px-1.5 py-0.5 text-[10px] font-extrabold text-[#0E1116]">
+                    <span className="inline-flex shrink-0 items-center rounded-md bg-foreground px-1.5 py-0.5 text-[10px] font-extrabold text-background">
                       {line.quantity}×
                     </span>
                   </div>
@@ -1324,9 +1324,9 @@ function PosPage() {
         </BottomSheet>
         {receipt && (
           <div className="fixed inset-0 z-[80] flex items-end justify-center overflow-y-auto overscroll-contain bg-black/60 p-3 sm:items-center sm:p-4">
-            <div className="my-auto max-h-[92dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-3xl border border-border bg-surface p-5 shadow-2xl sm:p-6">
+            <div className="my-auto max-h-[92dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-3xl border border-border bg-surface p-5 text-foreground shadow-2xl sm:p-6">
               <div className="flex items-start gap-3">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent-soft">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-secondary text-accent-ink">
                   <Check className="size-5" />
                 </span>
                 <div className="min-w-0 flex-1">
