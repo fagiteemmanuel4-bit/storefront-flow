@@ -29,6 +29,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+const EMPTY_ARRAY: never[] = [];
+
 export const Route = createFileRoute("/_authenticated/expenses")({
   head: () => ({
     meta: [
@@ -67,7 +69,7 @@ function ExpensesPage() {
       return (data as ExpenseRow[]) ?? [];
     },
   });
-  const expenses = q.data ?? [];
+  const expenses = q.data ?? EMPTY_ARRAY;
   const visible = useMemo(
     () =>
       expenses.filter(
