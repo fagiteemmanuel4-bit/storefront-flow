@@ -185,11 +185,11 @@ function PosPage() {
       return (data ?? []) as FoodModifier[];
     },
   });
-  const products = productsQuery.data ?? [];
-  const customers = customersQuery.data ?? [];
-  const fashionVariants = fashionVariantsQuery.data ?? [];
-  const electronicsDevices = electronicsDevicesQuery.data ?? [];
-  const foodModifiers = foodModifiersQuery.data ?? [];
+  const products = productsQuery.data ?? EMPTY_ARRAY;
+  const customers = customersQuery.data ?? EMPTY_ARRAY;
+  const fashionVariants = fashionVariantsQuery.data ?? EMPTY_ARRAY;
+  const electronicsDevices = electronicsDevicesQuery.data ?? EMPTY_ARRAY;
+  const foodModifiers = foodModifiersQuery.data ?? EMPTY_ARRAY;
   const selectedCustomer = customers.find((c) => c.id === customerId);
   useEffect(() => {
     const openScanner = () => setScanning(true);
