@@ -91,23 +91,11 @@ async function getMcpSettings(
   if (error) throw error;
   if (data) return { ...DEFAULT_MCP_SETTINGS, ...data };
 
-  // Compatibility for OAuth grants created before per-application permissions existed.
-  // The Settings page lets these users save an app-specific record; new OAuth consent
-  // requests always create that record before approval.
-  const { data: legacy, error: legacyError } = await supabase
-    .from("mcp_access_settings")
-    .select(
-      "enabled,allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes",
-    )
-    .eq("store_id", storeId)
-    .maybeSingle();
-  if (legacyError) throw legacyError;
-  if (!legacy || legacy.enabled === false) {
-    throw new Error(
-      "This AI application has not been authorised for this store. Configure its access in Settings → Connected applications.",
-    );
-  }
-  return { ...DEFAULT_MCP_SETTINGS, ...legacy };
+  // Fail closed when this OAuth client has no individual consent record.
+  // Store-wide legacy grants must never be inherited by a different application.
+  throw new Error(
+    "This AI application has not been authorised for this store. Reconnect it and approve its individual permissions in STRAP.",
+  );
 }
 
 async function requireManagerAccess(supabase: UserSupabase, storeId: string) {
@@ -373,7 +361,22 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
               .select("branch_id,product_id,quantity")
               .eq("store_id", store_id),
           ).limit(5000),
-          supabase.from("branches").select("id,name").eq("store_id", store_id).limit(100),
+          (() => {
+            let branchQuery = supabase
+              .from("branches")
+              .select("id,name")
+              .eq("store_id", store_id)
+              .limit(100);
+            if (settings.allowed_branch_ids) {
+              branchQuery = branchQuery.in(
+                "id",
+                settings.allowed_branch_ids.length
+                  ? settings.allowed_branch_ids
+                  : ["00000000-0000-0000-0000-000000000000"],
+              );
+            }
+            return branchQuery;
+          })(),
         ]);
         if (productsResult.error) throw productsResult.error;
         if (stockResult.error) throw stockResult.error;
