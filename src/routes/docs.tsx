@@ -19,6 +19,7 @@ import {
   ShoppingBag,
   Store,
   Users,
+  WifiOff,
   Zap,
 } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
