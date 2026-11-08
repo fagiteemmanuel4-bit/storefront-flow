@@ -103,6 +103,8 @@ function OAuthConsentPage() {
   const [stores, setStores] = useState<StoreOption[]>([]);
   const [storeId, setStoreId] = useState("");
   const [branches, setBranches] = useState<BranchOption[]>([]);
+  const [branchesLoadedForStoreId, setBranchesLoadedForStoreId] = useState("");
+  const [branchesError, setBranchesError] = useState("");
   const [allBranches, setAllBranches] = useState(true);
   const [selectedBranches, setSelectedBranches] = useState<string[]>([]);
   const [permissions, setPermissions] = useState<Permissions>(DEFAULT_PERMISSIONS);
@@ -193,9 +195,13 @@ function OAuthConsentPage() {
     if (!storeId) {
       setBranches([]);
       setSelectedBranches([]);
+      setBranchesLoadedForStoreId("");
+      setBranchesError("");
       return;
     }
     let active = true;
+    setBranchesLoadedForStoreId("");
+    setBranchesError("");
     void db
       .from("branches")
       .select("id,name,is_default")
@@ -203,14 +209,19 @@ function OAuthConsentPage() {
       .order("name")
       .then(({ data, error: branchError }: any) => {
         if (!active) return;
-        if (branchError) {
-          setError(branchError.message);
-          return;
-        }
+        if (branchError) throw branchError;
         const rows = (data ?? []) as BranchOption[];
         setBranches(rows);
         setSelectedBranches(rows.map((branch) => branch.id));
         setAllBranches(true);
+        setBranchesLoadedForStoreId(storeId);
+      })
+      .catch((cause: unknown) => {
+        if (!active) return;
+        const message =
+          cause instanceof Error ? cause.message : "We couldn't verify this store's branches.";
+        setBranchesError(message);
+        setError("We couldn't load the branch list. Reload this page before approving access.");
       });
     return () => {
       active = false;
@@ -221,6 +232,13 @@ function OAuthConsentPage() {
     if (!details?.authorization_id || busy) return;
     if (decision === "approve" && (!clientId || !storeId)) {
       setError("The requesting application or selected store could not be verified.");
+      return;
+    }
+    if (decision === "approve" && branchesLoadedForStoreId !== storeId) {
+      setError(
+        branchesError ||
+          "We haven't verified this store's branches yet. Wait for the branch list or reload the page.",
+      );
       return;
     }
     setBusy(true);
@@ -494,7 +512,7 @@ function OAuthConsentPage() {
                   Deny request
                 </Button>
                 <Button
-                  disabled={busy || loading || !stores.length || !selectedStore}
+                  disabled={busy || loading || !stores.length || !selectedStore || branchesLoadedForStoreId !== storeId || Boolean(branchesError)}
                   onClick={() => void decide("approve")}
                   className="h-11 gap-2"
                 >
