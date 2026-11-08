@@ -672,3 +672,173 @@ begin
 end;
 $function$
 
+
+
+-- Reject NULL and non-array bulk import payloads before array operations.
+CREATE OR REPLACE FUNCTION public.bulk_import_products(_store_id uuid, _branch_id uuid, _rows jsonb)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public', 'extensions'
+AS $function$
+declare
+  v_user_id uuid := auth.uid();
+  v_row jsonb;
+  v_product_id uuid;
+  v_name text;
+  v_sku text;
+  v_barcode text;
+  v_category text;
+  v_price numeric;
+  v_cost numeric;
+  v_quantity integer;
+  v_low_stock integer;
+  v_created integer := 0;
+  v_updated integer := 0;
+  v_seen integer := 0;
+begin
+  if v_user_id is null then raise exception 'Not authenticated'; end if;
+  if not private.has_store_role(_store_id, v_user_id, array['owner','manager']::public.store_role[]) then
+    raise exception 'Not authorized for bulk product import';
+  end if;
+  if not exists (select 1 from public.branches b where b.id = _branch_id and b.store_id = _store_id) then
+    raise exception 'Invalid branch';
+  end if;
+  if coalesce(jsonb_typeof(_rows), '') <> 'array' then
+    raise exception 'Import must contain at least one product';
+  end if;
+  if jsonb_array_length(_rows) = 0 then
+    raise exception 'Import must contain at least one product';
+  end if;
+  if jsonb_array_length(_rows) > 5000 then
+    raise exception 'Import is limited to 5000 products per batch';
+  end if;
+
+  for v_row in select value from jsonb_array_elements(_rows) loop
+    v_seen := v_seen + 1;
+    v_name := nullif(trim(v_row->>'name'), '');
+    v_sku := trim(coalesce(v_row->>'sku', ''));
+    v_barcode := trim(coalesce(v_row->>'barcode', ''));
+    v_category := trim(coalesce(v_row->>'category', ''));
+    v_price := greatest(coalesce((v_row->>'price')::numeric, 0), 0);
+    v_cost := greatest(coalesce((v_row->>'cost')::numeric, 0), 0);
+    v_quantity := greatest(coalesce((v_row->>'quantity')::integer, 0), 0);
+    v_low_stock := greatest(coalesce((v_row->>'lowStockThreshold')::integer, 5), 0);
+
+    if v_name is null then raise exception 'Product % has no name', v_seen; end if;
+
+    v_product_id := null;
+    if v_sku <> '' then
+      select p.id into v_product_id from public.products p
+      where p.store_id = _store_id and p.is_active = true and lower(trim(coalesce(p.sku,''))) = lower(v_sku)
+      order by p.updated_at desc nulls last limit 1 for update;
+    end if;
+    if v_product_id is null and v_barcode <> '' then
+      select p.id into v_product_id from public.products p
+      where p.store_id = _store_id and p.is_active = true and trim(coalesce(p.barcode,'')) = v_barcode
+      order by p.updated_at desc nulls last limit 1 for update;
+    end if;
+    if v_product_id is null then
+      select p.id into v_product_id from public.products p
+      where p.store_id = _store_id and p.is_active = true and lower(trim(p.name)) = lower(v_name)
+      order by p.updated_at desc nulls last limit 1 for update;
+    end if;
+
+    if v_product_id is null then
+      insert into public.products(store_id,name,sku,barcode,category,price,piece_price,cost,low_stock_threshold,is_active)
+      values (_store_id,v_name,v_sku,v_barcode,v_category,v_price,v_price,v_cost,v_low_stock,true)
+      returning id into v_product_id;
+      v_created := v_created + 1;
+    else
+      update public.products set name=v_name, sku=v_sku, barcode=v_barcode, category=v_category,
+        price=v_price, piece_price=v_price, cost=v_cost, low_stock_threshold=v_low_stock, updated_at=now()
+      where id=v_product_id;
+      v_updated := v_updated + 1;
+    end if;
+
+    insert into public.branch_stock(store_id,branch_id,product_id,quantity,updated_at)
+    values (_store_id,_branch_id,v_product_id,v_quantity,now())
+    on conflict (branch_id,product_id) do update
+      set quantity=excluded.quantity, store_id=excluded.store_id, updated_at=now();
+  end loop;
+
+  return jsonb_build_object('created',v_created,'updated',v_updated,'processed',v_seen);
+end;
+$function$
+
+
+-- Reject NULL and non-array return payloads before recording a return.
+CREATE OR REPLACE FUNCTION public.process_fashion_return(_store_id uuid, _sale_id uuid, _reason text, _items jsonb)
+ RETURNS uuid
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public', 'extensions'
+AS $function$
+declare
+  v_user_id uuid := auth.uid();
+  v_sale record;
+  v_item jsonb;
+  v_sale_item record;
+  v_return_id uuid;
+  v_variant_id uuid;
+  v_quantity integer;
+  v_already_returned integer;
+  v_total numeric(12,2) := 0;
+  v_reference text;
+begin
+  if v_user_id is null then raise exception 'Not authenticated'; end if;
+  if not private.has_store_role(_store_id,v_user_id,array['owner','manager','cashier']::public.store_role[]) then raise exception 'Not authorized for this store'; end if;
+  if length(btrim(coalesce(_reason,''))) < 3 then raise exception 'Enter a return reason'; end if;
+  if coalesce(jsonb_typeof(_items), '') <> 'array' then raise exception 'Select at least one item to return'; end if;
+  if jsonb_array_length(_items) = 0 then raise exception 'Select at least one item to return'; end if;
+  select id,store_id,branch_id,reference into v_sale from public.sales where id=_sale_id and store_id=_store_id for update;
+  if not found then raise exception 'Sale not found in this store'; end if;
+
+  -- Reject duplicate line IDs so repeated entries cannot bypass the return limit.
+  if exists (
+    select 1 from jsonb_array_elements(_items) as input_rows(value)
+    group by input_rows.value->>'sale_item_id'
+    having count(*) > 1
+  ) then raise exception 'Each sale item can appear only once in a return'; end if;
+
+  -- Validate requested quantities before writing any return records.
+  for v_item in select value from jsonb_array_elements(_items) loop
+    v_quantity := (v_item->>'quantity')::integer;
+    if v_quantity is null or v_quantity <= 0 then raise exception 'Return quantity must be greater than zero'; end if;
+    select si.* into v_sale_item from public.sale_items si
+      where si.id=(v_item->>'sale_item_id')::uuid and si.sale_id=_sale_id and si.store_id=_store_id
+      for update;
+    if not found then raise exception 'An item does not belong to this sale'; end if;
+    select coalesce(sum(sri.quantity),0)::integer into v_already_returned from public.sale_return_items sri where sri.sale_item_id=v_sale_item.id;
+    if v_already_returned + v_quantity > v_sale_item.quantity then raise exception 'Return quantity exceeds the quantity originally sold for %',v_sale_item.product_name; end if;
+    v_total := v_total + v_sale_item.unit_price * v_quantity;
+  end loop;
+
+  v_reference := 'RET-'||to_char(clock_timestamp(),'YYYYMMDD-HH24MISSMS')||'-'||upper(substr(replace(gen_random_uuid()::text,'-',''),1,5));
+  insert into public.sale_returns(store_id,branch_id,sale_id,reference,reason,total_amount,processed_by)
+    values(_store_id,v_sale.branch_id,_sale_id,v_reference,btrim(_reason),v_total,v_user_id)
+    returning id into v_return_id;
+
+  for v_item in select value from jsonb_array_elements(_items) loop
+    v_quantity := (v_item->>'quantity')::integer;
+    select si.* into v_sale_item from public.sale_items si
+      where si.id=(v_item->>'sale_item_id')::uuid and si.sale_id=_sale_id and si.store_id=_store_id
+      for update;
+    insert into public.sale_return_items(return_id,sale_id,store_id,sale_item_id,product_id,product_name,quantity,unit_price,line_total,variant_size,variant_color)
+      values(v_return_id,_sale_id,_store_id,v_sale_item.id,v_sale_item.product_id,v_sale_item.product_name,v_quantity,v_sale_item.unit_price,v_sale_item.unit_price*v_quantity,v_sale_item.variant_size,v_sale_item.variant_color);
+
+    if coalesce(v_sale_item.variant_size,'')<>'' and coalesce(v_sale_item.variant_color,'')<>'' then
+      insert into public.fashion_variant_stock(store_id,branch_id,product_id,size,color,quantity,updated_at)
+        values(_store_id,v_sale.branch_id,v_sale_item.product_id,v_sale_item.variant_size,v_sale_item.variant_color,v_quantity,now())
+        on conflict(branch_id,product_id,size,color) do update set quantity=public.fashion_variant_stock.quantity+excluded.quantity,updated_at=now()
+        returning id into v_variant_id;
+    else
+      insert into public.branch_stock(store_id,branch_id,product_id,quantity,updated_at)
+        values(_store_id,v_sale.branch_id,v_sale_item.product_id,v_quantity,now())
+        on conflict(branch_id,product_id) do update set quantity=public.branch_stock.quantity+excluded.quantity,updated_at=now();
+    end if;
+  end loop;
+  return v_return_id;
+end;
+$function$
+
