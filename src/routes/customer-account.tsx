@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ArrowLeft,
   Clock3,
@@ -81,7 +81,7 @@ function CustomerAccountPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: orderPhone, password: "" });
   const [trackingToken, setTrackingToken] = useState("");
 
-  async function refresh(token: string) {
+  const refresh = useCallback(async (token: string) => {
     if (!token || !store) {
       setAccount(null);
       setOrders([]);
@@ -100,11 +100,11 @@ function CustomerAccountPage() {
     const orderResult = await onlineSupabase.rpc("customer_account_orders", { _token: token });
     if (!orderResult.error) setOrders((orderResult.data ?? []) as Order[]);
     setLoading(false);
-  }
+  }, [store]);
 
   useEffect(() => {
     void refresh(readToken(store));
-  }, [store]);
+  }, [refresh]);
 
   async function resolveOrderToken(orderNumber: string, phone: string) {
     if (!orderNumber.trim() || !phone.trim()) return "";
