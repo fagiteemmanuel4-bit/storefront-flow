@@ -1,0 +1,5 @@
+alter policy product_images_manager_write on public.product_images using ((select private.has_store_role(store_id, (select auth.uid()), array['owner'::store_role, 'manager'::store_role]))) with check ((select private.has_store_role(store_id, (select auth.uid()), array['owner'::store_role, 'manager'::store_role])));
+alter policy product_images_members_read on public.product_images using ((select private.is_store_member(store_id, (select auth.uid()))));
+alter policy store_hero_banners_members_read on public.store_hero_banners using ((select private.is_store_member(store_id, (select auth.uid()))));
+alter policy store_hero_banners_owner_manager_write on public.store_hero_banners using ((select private.has_store_role(store_id, (select auth.uid()), array['owner'::store_role, 'manager'::store_role]))) with check ((select private.has_store_role(store_id, (select auth.uid()), array['owner'::store_role, 'manager'::store_role])));
+alter policy stores_select_owner on public.stores using (owner_id = (select auth.uid()));
