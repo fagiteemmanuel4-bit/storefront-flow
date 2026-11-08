@@ -41,6 +41,7 @@ async function requireStoreAccess(supabase: UserSupabase, storeId: string) {
 
 
 type McpAccessSettings = {
+  enabled: boolean;
   allowed_branch_ids: string[] | null;
   allow_store_read: boolean;
   allow_products_read: boolean;
@@ -53,6 +54,7 @@ type McpAccessSettings = {
 };
 
 const DEFAULT_MCP_SETTINGS: McpAccessSettings = {
+  enabled: true,
   allowed_branch_ids: null,
   allow_store_read: true,
   allow_products_read: true,
@@ -70,7 +72,7 @@ async function getMcpSettings(supabase: UserSupabase, storeId: string, clientId:
   if (!auth.user) throw new Error("Your STRAP login could not be verified.");
   const { data, error } = await supabase
     .from("mcp_client_access_settings")
-    .select("allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
+    .select("enabled,allowed_branch_ids,allow_store_read,allow_products_read,allow_inventory_read,allow_sales_read,allow_expenses_read,allow_customers_read,allow_product_writes,allow_stock_writes")
     .eq("store_id", storeId)
     .eq("user_id", auth.user.id)
     .eq("client_id", clientId)
@@ -93,6 +95,32 @@ async function getMcpSettings(supabase: UserSupabase, storeId: string, clientId:
   return { ...DEFAULT_MCP_SETTINGS, ...legacy };
 }
 
+async function requireManagerAccess(supabase: UserSupabase, storeId: string) {
+  const { data: auth, error: authError } = await supabase.auth.getUser();
+  if (authError) throw authError;
+  if (!auth.user) throw new Error("Your STRAP login could not be verified.");
+
+  const { data: store, error: storeError } = await supabase
+    .from("stores")
+    .select("owner_id")
+    .eq("id", storeId)
+    .maybeSingle();
+  if (storeError) throw storeError;
+  if (!store) throw new Error("Store not found or you do not have permission to access it.");
+  if (store.owner_id === auth.user.id) return;
+
+  const { data: membership, error: membershipError } = await supabase
+    .from("store_members")
+    .select("role")
+    .eq("store_id", storeId)
+    .eq("user_id", auth.user.id)
+    .maybeSingle();
+  if (membershipError) throw membershipError;
+  if (!membership || !["owner", "manager"].includes(membership.role)) {
+    throw new Error("Only a store owner or manager can perform this write action.");
+  }
+}
+
 async function requireMcpPermission(
   supabase: UserSupabase,
   storeId: string,
@@ -102,6 +130,8 @@ async function requireMcpPermission(
 ) {
   await requireStoreAccess(supabase, storeId);
   const settings = await getMcpSettings(supabase, storeId, clientId);
+  if (!settings.enabled) throw new Error("This AI application is paused in STRAP Settings → Connected applications.");
+  if (permission.endsWith("_writes")) await requireManagerAccess(supabase, storeId);
   if (settings[permission] !== true) throw new Error("This action is disabled for this connected application.");
   if (branchId && settings.allowed_branch_ids && !settings.allowed_branch_ids.includes(branchId)) {
     throw new Error("This branch is outside the branches authorised for this AI application.");
@@ -180,7 +210,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
         const visibleStores = await Promise.all((data ?? []).map(async (store: any) => {
           try {
             const settings = await getSettings(store.id);
-            return settings.allow_store_read ? store : null;
+            return settings.enabled && settings.allow_store_read ? store : null;
           } catch {
             return null;
           }
@@ -442,6 +472,8 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           branches = data ?? [];
         }
         return result({
+          enabled: settings.enabled,
+          status: settings.enabled ? "enabled" : "paused",
           branch_scope: settings.allowed_branch_ids === null ? "all_branches" : "selected_branches",
           allowed_branches: branches,
           permissions: {
