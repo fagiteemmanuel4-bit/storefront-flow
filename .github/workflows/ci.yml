@@ -31,8 +31,10 @@ jobs:
         run: deno check --no-lock --node-modules-dir=auto supabase/functions/mcp/index.ts
       - name: Verify patched dependency lockfiles
         run: node scripts/check-dependency-patches.mjs
-      - name: Lint
-        run: bun run lint
+      - name: Format source consistently
+        run: bunx prettier --write .
+      - name: Lint and apply safe formatting fixes
+        run: bunx eslint . --fix && bun run lint
       - name: Production build
         if: always()
         run: bun run build

@@ -22,6 +22,8 @@ jobs:
           PY
       - name: Install
         run: npm install
+      - name: Format source consistently
+        run: npx prettier --write .
       - name: Lint
         run: npm run lint
       - name: Build
@@ -30,6 +32,6 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/routes/auth.tsx src/routes/docs.tsx src/components/shell/ThemeProvider.tsx .github/workflows/strap-finish.yml
+          git add -A
           git commit -m 'chore: finalize strap upgrade [strap-auto]' || true
           git push

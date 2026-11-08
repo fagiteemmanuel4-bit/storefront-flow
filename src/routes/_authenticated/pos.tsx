@@ -700,7 +700,7 @@ function PosPage() {
       ${rows}<div class="rule"></div>${totals}
       ${prefs.thankYou ? `<p class="center" style="margin-top:18px">${escapeHtml(prefs.thankYou)}</p>` : '<p class="center" style="margin-top:18px">Thank you for shopping with us.</p>'}
       ${prefs.showFooter === false ? "" : `<p class="center">${escapeHtml(prefs.footer || "Powered by Strap")}</p>`}
-      <script>window.onload=()=>window.print()<\/script></body></html>`);
+      <script>window.onload=()=>window.print()</script></body></html>`);
     popup.document.close(); popup.focus();
   }
   const cartPanel = (
