@@ -29,9 +29,6 @@ function Branches() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const branchLimitReached = branchLimit !== -1 && branches.length >= branchLimit;
-  useEffect(() => {
-    if (store?.id) void load();
-  }, [load]);
   const load = useCallback(async () => {
     if (!store) return;
     setLoading(true);
@@ -45,6 +42,9 @@ function Branches() {
     else setBranches((data ?? []) as Branch[]);
     setLoading(false);
   }, [store?.id]);
+  useEffect(() => {
+    if (store?.id) void load();
+  }, [load]);
   async function add() {
     if (!store || !name.trim()) return;
     if (branchLimitReached) {
