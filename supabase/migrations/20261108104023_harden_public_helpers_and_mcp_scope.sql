@@ -934,6 +934,69 @@ with check (
 );
 
 
+-- Subscription tier checks are private to the store's own members. Public storefronts
+-- use public_store_has_premium(), which intentionally exposes only a boolean.
+create or replace function public.get_effective_plan(p_store_id uuid)
+returns text
+language sql
+stable
+security definer
+set search_path = public
+as $function$
+  select case
+    when auth.uid() is null or not private.is_store_member(p_store_id, auth.uid()) then null
+    when exists (
+      select 1
+      from public.store_subscriptions s
+      where s.store_id = p_store_id
+        and s.plan_code = 'pro'
+        and s.status in ('trialing', 'active')
+        and coalesce(s.expires_at, s.current_period_end) > now()
+    ) then 'pro'
+    when exists (
+      select 1
+      from public.store_subscriptions s
+      where s.store_id = p_store_id
+        and s.plan_code = 'business'
+        and s.status in ('trialing', 'active')
+        and coalesce(s.expires_at, s.current_period_end) > now()
+    ) then 'business'
+    else 'free'
+  end;
+$function$;
+
+create or replace function public.store_has_premium(
+  p_store_id uuid,
+  p_required_plan text default 'business'
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $function$
+  select case
+    when auth.uid() is null or not private.is_store_member(p_store_id, auth.uid()) then false
+    when p_required_plan = 'business' then exists (
+      select 1
+      from public.store_subscriptions s
+      where s.store_id = p_store_id
+        and s.status in ('trialing', 'active')
+        and coalesce(s.expires_at, s.current_period_end) > now()
+        and s.plan_code in ('business', 'pro')
+    )
+    when p_required_plan = 'pro' then exists (
+      select 1
+      from public.store_subscriptions s
+      where s.store_id = p_store_id
+        and s.status in ('trialing', 'active')
+        and coalesce(s.expires_at, s.current_period_end) > now()
+        and s.plan_code = 'pro'
+    )
+    else false
+  end;
+$function$;
+
 -- Only the MCP Edge Function's service-role client may write audit records.
 -- Direct table inserts would let any manager forge audit history.
 drop policy if exists mcp_action_audit_insert_manager on public.mcp_action_audit;
