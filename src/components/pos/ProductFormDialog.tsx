@@ -92,6 +92,7 @@ export function ProductFormDialog({
   const [variantInventory, setVariantInventory] = useState("");
   const [loadingFashionVariants, setLoadingFashionVariants] = useState(false);
   const [productLoadError, setProductLoadError] = useState(false);
+  const [variantLoadError, setVariantLoadError] = useState(false);
   const pendingImagesRef = useRef<PendingImage[]>([]);
   const queryClient = useQueryClient();
   const shelvesQuery = useQuery({
@@ -186,10 +187,12 @@ export function ProductFormDialog({
   useEffect(() => {
     if (!open || !product?.id || !isFashion) {
       setLoadingFashionVariants(false);
+      setVariantLoadError(false);
       return;
     }
     let cancelled = false;
     setLoadingFashionVariants(true);
+    setVariantLoadError(false);
     void (async () => {
       try {
         const { data: variants, error } = await (supabase as any)
@@ -201,7 +204,7 @@ export function ProductFormDialog({
           .order("color");
         if (cancelled) return;
         if (error) {
-          setProductLoadError(true);
+          setVariantLoadError(true);
           toast.error("We couldn't load stock for this branch. Check your connection before saving.");
           return;
         }
@@ -212,7 +215,7 @@ export function ProductFormDialog({
         );
       } catch (error) {
         if (!cancelled) {
-          setProductLoadError(true);
+          setVariantLoadError(true);
           toast.error(errorMessage(error, "We couldn't load stock for this branch."));
         }
       } finally {
@@ -864,7 +867,7 @@ export function ProductFormDialog({
               <Button
                 type="submit"
                 className="h-12 flex-1"
-                disabled={saving || loadingFashionVariants || productLoadError}
+                disabled={saving || loadingFashionVariants || productLoadError || variantLoadError}
               >
                 {loadingFashionVariants
                   ? "Loading stock options…"
