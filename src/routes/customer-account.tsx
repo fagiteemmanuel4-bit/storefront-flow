@@ -143,6 +143,20 @@ function CustomerAccountPage() {
       const result = await rpc;
       if (result.error) throw new Error(result.error.message);
       const resultData = result.data;
+      if (
+        mode === "login" &&
+        resultData &&
+        typeof resultData === "object" &&
+        !Array.isArray(resultData) &&
+        "ok" in resultData &&
+        resultData.ok === false
+      ) {
+        throw new Error(
+          "message" in resultData && typeof resultData.message === "string"
+            ? resultData.message
+            : "Email or password is incorrect",
+        );
+      }
       const tokenValue =
         resultData &&
         typeof resultData === "object" &&
