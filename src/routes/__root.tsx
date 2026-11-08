@@ -8,7 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import landingCss from "../landing-modern.css?url";
 import modernAppCss from "../kudi-modern.css?url";
@@ -91,7 +91,10 @@ function getErrorVariant(error: Error) {
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
-  const safeError = error instanceof Error ? error : new Error(String(error));
+  const safeError = useMemo(
+    () => (error instanceof Error ? error : new Error(String(error))),
+    [error],
+  );
   const variant = getErrorVariant(safeError);
   useEffect(() => {
     reportLovableError(safeError, { boundary: `tanstack_root_${variant}_error` });
