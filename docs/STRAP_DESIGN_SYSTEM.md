@@ -6,7 +6,7 @@ Strap uses one visual language across marketing, authentication, onboarding, ope
 
 1. **Trust before decoration.** Commerce software should feel dependable, quiet, and precise.
 2. **Hierarchy over containers.** Use typography, spacing, alignment, and rules before adding cards.
-3. **One accent.** Strap blue is the action and focus color. Success, warning, and destructive colors are semantic only.
+3. **One accent.** Strap lime is the action and focus color. Success, warning, and destructive colours are reserved for status.
 4. **Dense where work happens.** Tables, POS, inventory, and settings prioritize scanability and keyboard/mouse efficiency.
 5. **Motion explains state.** Transitions should communicate loading, completion, or focus—not add spectacle.
 6. **Accessible by default.** Visible focus, comfortable touch targets, reduced-motion support, and semantic controls are part of the design system.
@@ -17,21 +17,21 @@ Strap uses one visual language across marketing, authentication, onboarding, ope
 
 | Token              | Value     | Use                       |
 | ------------------ | --------- | ------------------------- |
-| `--strap-canvas`   | `#F8FAFC` | Application background    |
+| `--strap-canvas`   | `#F7F7F5` | Application background    |
 | `--strap-panel`    | `#FFFFFF` | Surfaces and controls     |
-| `--strap-ink`      | `#101828` | Primary text              |
-| `--strap-muted`    | `#667085` | Secondary text            |
-| `--strap-line`     | `#E4E7EC` | Borders and rules         |
-| `--strap-blue-500` | `#3767E8` | Primary accent            |
-| `--strap-blue-600` | `#2856D7` | Primary actions           |
-| `--strap-blue-700` | `#2047B7` | Active/strong accent text |
+| `--strap-ink`      | `#0E1116` | Primary text              |
+| `--strap-muted`    | `#555C6A` | Secondary text            |
+| `--strap-line`     | `#D5D8DE` | Borders and rules         |
+| `--strap-blue-500` | `#C6F432` | Strap lime accent (legacy token name) |
+| `--strap-blue-600` | `#B0DC20` | Accent hover              |
+| `--strap-blue-700` | `#789B12` | Strong accent text        |
 
 Dark mode maps the same semantic roles to a deep navy canvas and blue-tinted surfaces. It is not a simple inversion.
 
 ## Typography
 
 - **Body:** Inter 400/500/600/700
-- **Display/headings:** Manrope 500/600/700/800
+- **Display/headings:** Bricolage Grotesque 600/700
 - Display tracking is intentionally tight; operational text stays compact and readable.
 - Numeric values use tabular numerals where comparison matters.
 
@@ -39,9 +39,10 @@ Dark mode maps the same semantic roles to a deep navy canvas and blue-tinted sur
 
 - Base spacing follows the existing Tailwind scale.
 - Standard control radius: 10px.
-- Standard surface radius: 18px.
+- Compact surfaces: 14px; standard surfaces: 18px.
 - Large editorial surfaces: 24px.
 - Avoid decorative 28–40px rounding on ordinary application panels.
+- Keep the established Tailwind spacing scale; align related controls and card content to a consistent vertical rhythm.
 
 ## Elevation
 
