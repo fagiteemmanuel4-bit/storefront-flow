@@ -534,7 +534,7 @@ function useSettingsData() {
       online: onlineQ.data,
     });
     setLoading(false);
-  }, [store?.id, userId]);
+  }, [store, userId]);
   useEffect(() => {
     void reload();
   }, [reload]);
