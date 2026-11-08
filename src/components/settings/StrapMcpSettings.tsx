@@ -316,7 +316,7 @@ export function StrapMcpSettingsPage() {
       <AlertDialog open={Boolean(confirmingGrant)} onOpenChange={(open) => { if (!open) setConfirmingGrant(null); }}>
         <AlertDialogContent className="max-w-md rounded-3xl border-border bg-background p-5 shadow-float sm:p-6">
           <AlertDialogHeader className="text-left">
-            <AlertDialogTitle>Disconnect {confirmingGrant?.client_name || "this application"}?</AlertDialogTitle>
+            <AlertDialogTitle>Disconnect {confirmingGrant?.client?.name || "this application"}?</AlertDialogTitle>
             <AlertDialogDescription>Its active OAuth tokens will stop working immediately. You can reconnect it later, but it will need to be authorised again.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
