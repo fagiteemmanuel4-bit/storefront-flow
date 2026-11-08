@@ -449,9 +449,22 @@ function PosPage() {
     setMethod("cash");
     setCustomerId(null);
   }
-  const lineUnitPrice = (line: CartLine) =>
-    Number((line.product as any).piece_price ?? line.product.price) +
-    (line.foodModifiers ?? []).reduce((sum, m) => sum + Number(m.price_delta), 0);
+  const lineUnitPrice = (line: CartLine) => {
+    const configuredPiecePrice = Number((line.product as any).piece_price);
+    const catalogPrice = Number(line.product.price);
+    // Older imports may have piece_price=0 even though the product has a valid price.
+    // Treat zero as an unset legacy value, not as a free item.
+    const basePrice =
+      Number.isFinite(configuredPiecePrice) && configuredPiecePrice > 0
+        ? configuredPiecePrice
+        : Number.isFinite(catalogPrice) && catalogPrice >= 0
+          ? catalogPrice
+          : 0;
+    return (
+      basePrice +
+      (line.foodModifiers ?? []).reduce((sum, modifier) => sum + Number(modifier.price_delta || 0), 0)
+    );
+  };
   const subtotal = cart.reduce((sum, l) => sum + lineUnitPrice(l) * l.quantity, 0);
   const tax = Math.round(subtotal * taxRate) / 100;
   const total = subtotal + tax;
