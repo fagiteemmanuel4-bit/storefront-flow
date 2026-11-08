@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowLeft, ArrowUp, Eye, GripVertical, Plus, Save, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
@@ -225,9 +225,9 @@ function StoreBuilder() {
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const selectedTemplate = useMemo(() => TEMPLATES.find((x) => x.id === template)!, [template]);
   useEffect(() => {
-    if (store) void loadConfig();
-  }, [store]);
-  async function loadConfig() {
+    void loadConfig();
+  }, [loadConfig]);
+  const loadConfig = useCallback(async () => {
     if (!store) return;
     setLoading(true);
     const [configResult, storeResult] = await Promise.all([
@@ -274,7 +274,7 @@ function StoreBuilder() {
       setPublished(Boolean(existing.is_published));
     } else setSections(makeSections(selectedTemplate.sections));
     setLoading(false);
-  }
+  }, [store?.id]);
   function applyTemplate(next: Template) {
     if (next === template) return;
     setTemplate(next);
