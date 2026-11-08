@@ -23,6 +23,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatMoney } from "@/lib/currency";
 import type { OnlineProductRow } from "@/integrations/supabase/online-types";
 
+const EMPTY_ARRAY: never[] = [];
+
 export const Route = createFileRoute("/_authenticated/online-store/catalog")({
   ssr: false,
   component: OnlineCatalogPage,
@@ -82,7 +84,7 @@ function OnlineCatalogPage() {
     staleTime: 10_000,
   });
 
-  const rows = productsQuery.data ?? [];
+  const rows = productsQuery.data ?? EMPTY_ARRAY;
   const categories = useMemo(
     () => Array.from(new Set(rows.map((r) => r.product.category).filter(Boolean))).sort(),
     [rows],
