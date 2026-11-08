@@ -13,7 +13,7 @@ import {
   Undo2,
   Redo2,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
@@ -98,9 +98,9 @@ function AdvancedEditor() {
     [blocks, selected],
   );
   useEffect(() => {
-    if (store) void load();
-  }, [store]);
-  async function load() {
+    void load();
+  }, [load]);
+  const load = useCallback(async () => {
     if (!store) return;
     setLoading(true);
     const [c, s] = await Promise.all([
@@ -133,7 +133,7 @@ function AdvancedEditor() {
           ),
     );
     setLoading(false);
-  }
+  }, [store?.id]);
   function commit(next: Block[]) {
     setHistory((h) => [...h, blocks].slice(-30));
     setFuture([]);
