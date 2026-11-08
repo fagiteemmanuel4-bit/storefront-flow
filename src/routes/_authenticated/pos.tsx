@@ -214,7 +214,7 @@ function PosPage() {
   }, []);
   useEffect(() => {
     let cancelled = false;
-    let retryTimer: ReturnType<typeof window.setTimeout> | undefined;
+    let retryTimer: number | undefined;
     const scheduleRetry = () => {
       if (cancelled || !navigator.onLine || retryTimer !== undefined) return;
       retryTimer = window.setTimeout(() => {
