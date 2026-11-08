@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BarChart3, Boxes, ClipboardList, Package, Printer, ScanLine, ShieldCheck, ShoppingBag, Users, WifiOff } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
-export const Route=createFileRoute("/")({component:Landing});
+export const Route=createFileRoute("/landing")({component:Landing});
 const features=[
  {icon:ShoppingBag,title:"Point of sale",body:"Search or scan products, hold carts, apply discounts, take payment and issue clear receipts. Offline sales can queue and sync when you reconnect."},
  {icon:Package,title:"Products & catalogue",body:"Keep product names, images, categories, SKUs, barcodes, variants and pricing together."},
