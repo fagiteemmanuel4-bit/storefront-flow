@@ -43,7 +43,7 @@ function categoryFor(text: string) {
  * name is therefore intentionally conservative.
  */
 function productCandidate(line: string) {
-  const value = clean(line).replace(/^[•●▪🔸🔹➤→-]+\s*/, "");
+  const value = clean(line).replace(/^[•●▪🔸🔹➤→-]+\s*/u, "");
   if (!value || value.length < 3 || value.length > 140) return false;
   if (/:/.test(value)) return false;
   if (
@@ -93,7 +93,7 @@ function extractPrice(line: string) {
 }
 
 function looksLikeDetailLine(line: string) {
-  const value = clean(line).replace(/^[•●▪🔸🔹➤→-]+\s*/, "");
+  const value = clean(line).replace(/^[•●▪🔸🔹➤→-]+\s*/u, "");
   return (
     /:/.test(value) ||
     /^(?:brand|model|type|storage|ram|supported os|battery|bluetooth|hdmi|webcam|usb|chrome|microsoft office|vlc|condition|with|useful for)\b/i.test(
