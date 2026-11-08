@@ -241,58 +241,63 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
   const primaryNav = useMemo(
     () =>
       isFashion
+        ? [
+            { to: "/products", label: "Collection", icon: Package, area: "products" },
+            { to: "/online-store", label: "Storefront", icon: Store, area: "store" },
+            { to: "/online-store/orders", label: "Orders", icon: ReceiptText, area: "orders" },
+            { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
+            { to: "/customers", label: "Customers", icon: Users, area: "customers" },
+            { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
+          ]
+        : isElectronics
           ? [
-              { to: "/products", label: "Collection", icon: Package, area: "products" },
-              { to: "/online-store", label: "Storefront", icon: Store, area: "store" },
-              { to: "/online-store/orders", label: "Orders", icon: ReceiptText, area: "orders" },
+              {
+                to: "/electronics-workspace",
+                label: "Devices & repairs",
+                icon: Cpu,
+                area: "products",
+              },
               { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
-              { to: "/customers", label: "Customers", icon: Users, area: "customers" },
+              { to: "/products", label: "Catalogue", icon: Package, area: "products" },
               { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
             ]
-          : isElectronics
+          : isFoodService
             ? [
-                { to: "/electronics-workspace", label: "Devices & repairs", icon: Cpu, area: "products" },
+                { to: "/food-service", label: "Kitchen & menu", icon: ChefHat, area: "orders" },
                 { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
-                { to: "/products", label: "Catalogue", icon: Package, area: "products" },
+                { to: "/products", label: "Ingredients", icon: Package, area: "products" },
                 { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
               ]
-            : isFoodService
+            : isGrocery
               ? [
-                  { to: "/food-service", label: "Kitchen & menu", icon: ChefHat, area: "orders" },
+                  {
+                    to: "/grocery-inventory",
+                    label: "Batches & expiry",
+                    icon: Boxes,
+                    area: "products",
+                  },
                   { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
-                  { to: "/products", label: "Ingredients", icon: Package, area: "products" },
+                  { to: "/products", label: "Catalogue", icon: Package, area: "products" },
                   { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
                 ]
-              : isGrocery
-                ? [
-                    {
-                      to: "/grocery-inventory",
-                      label: "Batches & expiry",
-                      icon: Boxes,
-                      area: "products",
-                    },
-                    { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
-                    { to: "/products", label: "Catalogue", icon: Package, area: "products" },
-                    { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
-                  ]
-                : PRIMARY_NAV,
+              : PRIMARY_NAV,
     [isFashion, isElectronics, isFoodService, isGrocery],
   );
   const secondaryNav = useMemo(
     () =>
       isFashion
-          ? [
-              ...SECONDARY_NAV.filter((item) => item.to !== "/online-store"),
-              {
-                to: "/fashion-returns",
-                label: "Returns & exchanges",
-                icon: ReceiptText,
-                area: "products",
-              },
-            ]
-          : isElectronics
-            ? SECONDARY_NAV.filter((item) => item.to !== "/online-store")
-            : SECONDARY_NAV,
+        ? [
+            ...SECONDARY_NAV.filter((item) => item.to !== "/online-store"),
+            {
+              to: "/fashion-returns",
+              label: "Returns & exchanges",
+              icon: ReceiptText,
+              area: "products",
+            },
+          ]
+        : isElectronics
+          ? SECONDARY_NAV.filter((item) => item.to !== "/online-store")
+          : SECONDARY_NAV,
     [isFashion, isElectronics],
   );
   useEffect(() => {

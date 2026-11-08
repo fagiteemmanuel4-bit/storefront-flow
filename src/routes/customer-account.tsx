@@ -81,26 +81,29 @@ function CustomerAccountPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: orderPhone, password: "" });
   const [trackingToken, setTrackingToken] = useState("");
 
-  const refresh = useCallback(async (token: string) => {
-    if (!token || !store) {
-      setAccount(null);
-      setOrders([]);
+  const refresh = useCallback(
+    async (token: string) => {
+      if (!token || !store) {
+        setAccount(null);
+        setOrders([]);
+        setLoading(false);
+        return;
+      }
+      const result = await onlineSupabase.rpc("customer_account_get", { _token: token });
+      if (result.error) {
+        clearToken(store);
+        setAccount(null);
+        setOrders([]);
+        setLoading(false);
+        return;
+      }
+      setAccount(result.data as Account);
+      const orderResult = await onlineSupabase.rpc("customer_account_orders", { _token: token });
+      if (!orderResult.error) setOrders((orderResult.data ?? []) as Order[]);
       setLoading(false);
-      return;
-    }
-    const result = await onlineSupabase.rpc("customer_account_get", { _token: token });
-    if (result.error) {
-      clearToken(store);
-      setAccount(null);
-      setOrders([]);
-      setLoading(false);
-      return;
-    }
-    setAccount(result.data as Account);
-    const orderResult = await onlineSupabase.rpc("customer_account_orders", { _token: token });
-    if (!orderResult.error) setOrders((orderResult.data ?? []) as Order[]);
-    setLoading(false);
-  }, [store]);
+    },
+    [store],
+  );
 
   useEffect(() => {
     void refresh(readToken(store));
