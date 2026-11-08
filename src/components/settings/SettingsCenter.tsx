@@ -36,6 +36,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { BUSINESS_MODES, getBusinessMode } from "@/lib/business-modes";
 import { useTheme } from "@/components/shell/ThemeProvider";
+import { ReceiptSettingsPanel } from "@/components/settings/ReceiptSettingsPanel";
 
 const db = supabase as any;
 
@@ -1534,127 +1535,7 @@ function AdvancedToggles({ group, title, rows }: { group: string; title: string;
   );
 }
 
-function Receipts() {
-  const { store, advanced, loading, reload } = useSettingsData();
-  const { role } = useStoreContext();
-  const canManage = role === "owner" || role === "manager";
-  const [form, setForm] = useState<any>({});
-  const [initial, setInitial] = useState<any>({});
-  const [saving, setSaving] = useState(false);
-  useEffect(() => {
-    const next = advanced.receipts ?? {};
-    setForm(next);
-    setInitial(next);
-  }, [advanced.receipts]);
-  if (loading) return <Loading />;
-  const dirty = JSON.stringify(form) !== JSON.stringify(initial);
-  const u = (k: string, v: any) => setForm((x: any) => ({ ...x, [k]: v }));
-  const save = async () => {
-    if (!store?.id || !canManage) return;
-    setSaving(true);
-    try {
-      await persistAdvanced(store.id, advanced, { receipts: form });
-      setInitial(form);
-      await reload();
-      toast.success("Receipt settings saved.");
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not save receipts.");
-    } finally {
-      setSaving(false);
-    }
-  };
-  return (
-    <div className="space-y-5">
-      <CardSection title="Receipt branding">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            label="Logo URL"
-            value={form.logoUrl ?? ""}
-            onChange={(v) => u("logoUrl", v)}
-            placeholder="https://"
-          />
-          <Field
-            label="Business name"
-            value={form.businessName ?? store.name}
-            onChange={(v) => u("businessName", v)}
-          />
-          <Field label="Address" value={form.address ?? ""} onChange={(v) => u("address", v)} />
-          <Field label="Phone" value={form.phone ?? ""} onChange={(v) => u("phone", v)} />
-          <Field label="Email" value={form.email ?? ""} onChange={(v) => u("email", v)} />
-        </div>
-      </CardSection>
-      <CardSection title="Receipt content">
-        <div className="grid gap-4">
-          <Field
-            label="Header"
-            value={form.header ?? "Thank you for your purchase"}
-            onChange={(v) => u("header", v)}
-          />
-          <Textarea
-            value={form.footer ?? "Powered by Strap"}
-            onChange={(e) => u("footer", e.target.value)}
-          />
-          <Textarea
-            value={form.thankYou ?? "Thank you for shopping with us."}
-            onChange={(e) => u("thankYou", e.target.value)}
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Tax ID" value={form.taxId ?? ""} onChange={(v) => u("taxId", v)} />
-            <Field
-              label="Receipt prefix"
-              value={form.prefix ?? "STRAP"}
-              onChange={(v) => u("prefix", v)}
-            />
-          </div>
-        </div>
-      </CardSection>
-      <CardSection title="Printing">
-        <ToggleRow
-          label="Automatic printing"
-          description="Print supported receipts automatically after eligible sales."
-          checked={Boolean(form.autoPrint)}
-          onChange={(v) => u("autoPrint", v)}
-        />
-        <div className="mt-3 grid gap-4 sm:grid-cols-2">
-          <SelectField
-            label="Print copies"
-            value={String(form.copies ?? 1)}
-            onChange={(v) => u("copies", Number(v))}
-            options={["1", "2", "3"]}
-          />
-          <SelectField
-            label="Paper size"
-            value={form.paperSize ?? "80mm"}
-            onChange={(v) => u("paperSize", v)}
-            options={["58mm", "80mm", "A4"]}
-          />
-        </div>
-      </CardSection>
-      <CardSection title="Preview">
-        <div className="mx-auto max-w-sm rounded-xl border border-border bg-white p-5 font-mono text-xs text-black">
-          <div className="text-center font-bold">{form.businessName ?? store.name}</div>
-          <div className="mt-2 text-center">{form.header ?? "Thank you for your purchase"}</div>
-          <div className="my-4 border-t border-dashed border-black/30" />
-          <div className="flex justify-between">
-            <span>Product</span>
-            <span>1 × 0.00</span>
-          </div>
-          <div className="mt-3 border-t border-dashed border-black/30 pt-3 text-center">
-            {form.thankYou ?? "Thank you for shopping with us."}
-          </div>
-          <div className="mt-2 text-center">{form.footer ?? "Powered by Strap"}</div>
-        </div>
-      </CardSection>
-      {!canManage && <ReadOnly />}
-      <SaveBar
-        dirty={dirty && canManage}
-        saving={saving}
-        discard={() => setForm(initial)}
-        save={() => void save()}
-      />
-    </div>
-  );
-}
+function Receipts() { return <ReceiptSettingsPanel />; }
 
 function OnlineStore() {
   const { store, online, config, loading, reload } = useSettingsData();
