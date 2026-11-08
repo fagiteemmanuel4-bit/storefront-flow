@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ImagePlus, Package, Plus, ScanLine, X } from "lucide-react";
 import { z } from "zod";
@@ -91,7 +91,8 @@ export function ProductFormDialog({
   const [styleNotes, setStyleNotes] = useState("");
   const [variantInventory, setVariantInventory] = useState("");
   const [loadingFashionVariants, setLoadingFashionVariants] = useState(false);
-  const [fashionVariantLoadError, setFashionVariantLoadError] = useState(false);
+  const [productLoadError, setProductLoadError] = useState(false);
+  const pendingImagesRef = useRef<PendingImage[]>([]);
   const queryClient = useQueryClient();
   const shelvesQuery = useQuery({
     queryKey: ["shelves", storeId],
@@ -104,6 +105,7 @@ export function ProductFormDialog({
 
   useEffect(() => {
     if (!open) return;
+    let cancelled = false;
     const p = product as any;
     setErrors({});
     setName(product?.name ?? "");
@@ -132,13 +134,14 @@ export function ProductFormDialog({
     setStyleNotes("");
     setVariantInventory("");
     setLoadingFashionVariants(Boolean(product?.id && isFashion));
-    setFashionVariantLoadError(false);
-    if (product?.id)
+    setProductLoadError(false);
+
+    if (product?.id) {
       void (async () => {
         const db = supabase as any;
         try {
           const [
-            { data: images },
+            { data: images, error: imagesError },
             { data: details, error: detailsError },
             { data: variants, error: variantsError },
           ] = await Promise.all([
@@ -164,11 +167,10 @@ export function ProductFormDialog({
                   .order("color")
               : Promise.resolve({ data: [], error: null }),
           ]);
-          if (detailsError || variantsError) {
-            setFashionVariantLoadError(true);
-            toast.error(
-              "Fashion options could not be loaded. Close and reopen this product before saving.",
-            );
+          if (cancelled) return;
+          if (imagesError || detailsError || variantsError) {
+            setProductLoadError(true);
+            toast.error("We couldn't load this product's saved details. Check your connection and reopen it before saving.");
             return;
           }
           setExistingImages((images ?? []) as ProductImage[]);
@@ -183,14 +185,36 @@ export function ProductFormDialog({
               .map((row: any) => `${row.size} | ${row.color} | ${row.quantity}`)
               .join("\n"),
           );
+        } catch (error) {
+          if (!cancelled) {
+            setProductLoadError(true);
+            toast.error(errorMessage(error, "We couldn't load this product's saved details."));
+          }
         } finally {
-          setLoadingFashionVariants(false);
+          if (!cancelled) setLoadingFashionVariants(false);
         }
       })();
-  }, [open, product, isFashion]);
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, product, isFashion, branchId]);
+
+  useEffect(() => {
+    pendingImagesRef.current = pendingImages;
+  }, [pendingImages]);
+
+  useEffect(() => {
+    if (!open) {
+      pendingImagesRef.current.forEach((image) => URL.revokeObjectURL(image.preview));
+      pendingImagesRef.current = [];
+    }
+  }, [open]);
+
   useEffect(
-    () => () => pendingImages.forEach((image) => URL.revokeObjectURL(image.preview)),
-    [pendingImages],
+    () => () => pendingImagesRef.current.forEach((image) => URL.revokeObjectURL(image.preview)),
+    [],
   );
 
   async function handleCreateShelf() {
@@ -475,7 +499,7 @@ export function ProductFormDialog({
   return (
     <>
       <BottomSheet open={open} onOpenChange={onOpenChange}>
-        <BottomSheetContent className="max-h-[92dvh] overflow-y-auto mx-auto w-full max-w-lg">
+        <BottomSheetContent className="mx-auto w-full max-w-lg">
           <BottomSheetHeader>
             <BottomSheetTitle>{product ? "Edit product" : "Add product"}</BottomSheetTitle>
             <BottomSheetDescription>
@@ -817,7 +841,7 @@ export function ProductFormDialog({
               <Button
                 type="submit"
                 className="h-12 flex-1"
-                disabled={saving || loadingFashionVariants || fashionVariantLoadError}
+                disabled={saving || loadingFashionVariants || productLoadError}
               >
                 {loadingFashionVariants
                   ? "Loading stock options…"
