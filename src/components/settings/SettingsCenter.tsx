@@ -467,7 +467,7 @@ function ToggleRow({
         <p className="text-sm font-semibold">{label}</p>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">{description}</p>
       </div>
-      <Switch checked={checked} onCheckedChange={onChange} />
+      <Switch checked={checked} onCheckedChange={onChange} aria-label={label} />
     </div>
   );
 }
@@ -861,7 +861,7 @@ function StoreProfile() {
             value={form.description}
             onChange={(v) => update("description", v)}
           />
-          <Field label="Store ID" value={store.id} onChange={() => undefined} disabled />
+          <Detail label="Store ID" value={store.id} />
           <Detail
             label="Owner"
             value={
@@ -1650,9 +1650,6 @@ function OnlineStore() {
     const next = {
       status: online?.is_published ? "Online" : online?.setup_completed ? "Offline" : "Coming Soon",
       slug: online?.slug ?? "",
-      homepage: "Storefront home",
-      productVisibility: true,
-      collectionVisibility: true,
       seoTitle: config?.seo?.title ?? "",
       metaDescription: config?.seo?.description ?? "",
       noIndex: Boolean(config?.seo?.noIndex),
@@ -1740,22 +1737,12 @@ function OnlineStore() {
             onChange={(v) => u("slug", v)}
             placeholder="my-store"
           />
-          <Field label="Homepage" value={form.homepage} onChange={(v) => u("homepage", v)} />
         </div>
-        <div className="mt-4 grid gap-3">
-          <ToggleRow
-            label="Product visibility"
-            description="Keep the product grid available to customers."
-            checked={form.productVisibility}
-            onChange={(v) => u("productVisibility", v)}
-          />
-          <ToggleRow
-            label="Collection visibility"
-            description="Show collection/category navigation where supported."
-            checked={form.collectionVisibility}
-            onChange={(v) => u("collectionVisibility", v)}
-          />
-        </div>
+        <p className="mt-4 rounded-xl border border-border bg-secondary/40 p-4 text-sm leading-6 text-muted-foreground">
+          Product and collection sections are managed in the storefront builder. This page saves
+          your store status, public URL and search metadata; it does not show visibility switches
+          that are not connected to the live storefront.
+        </p>
       </CardSection>
       <CardSection title="SEO">
         <Field label="Page title" value={form.seoTitle} onChange={(v) => u("seoTitle", v)} />
@@ -1902,21 +1889,15 @@ function Security() {
         </div>
       </CardSection>
       <CardSection title="Authentication">
-        <ToggleRow
-          label="Email verification"
-          description="Protected Strap access continues to rely on the existing verified-email flow."
-          checked={verified}
-          onChange={() => undefined}
-        />
-        <div className="mt-3">
-          <SelectField
-            label="Session timeout"
-            value="Managed by Supabase Auth"
-            onChange={() => undefined}
-            options={["Managed by Supabase Auth"]}
-          />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Detail label="Email verification" value={verified ? "Verified" : "Verification required"} />
+          <Detail label="Session timeout" value="Managed by Supabase Auth" />
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
+          Email verification is enforced by the existing authentication flow. Session lifetime is
+          controlled by Supabase Auth; Strap does not expose a local override.
+        </p>
+        <p className="mt-2 text-xs text-muted-foreground">
           Staff PIN security remains in the existing staff system.
         </p>
       </CardSection>
@@ -1949,9 +1930,6 @@ function Payments() {
       <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
         We're preparing secure payment infrastructure for Strap businesses.
       </p>
-      <span className="mt-6 inline-flex cursor-not-allowed rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-muted-foreground">
-        Notify me
-      </span>
     </div>
   );
 }
