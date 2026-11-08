@@ -861,7 +861,7 @@ function StoreProfile() {
             value={form.description}
             onChange={(v) => update("description", v)}
           />
-          <Field label="Store ID" value={store.id} onChange={() => undefined} disabled />
+          <Detail label="Store ID" value={store.id} />
           <Detail
             label="Owner"
             value={
