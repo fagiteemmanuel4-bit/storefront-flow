@@ -103,7 +103,7 @@ export function StrapMcpSettingsPage() {
       if (grantError) throw grantError;
       const nextGrants: OAuthGrant[] = grantData ?? [];
       setGrants(nextGrants);
-      const clientIds = nextGrants.map((grant) => grant.client_id).filter(Boolean);
+      const clientIds = nextGrants.map((grant) => grant.client.id).filter(Boolean);
       const [appSettingsResult, legacyResult] = await Promise.all([
         clientIds.length
           ? db.from("mcp_client_access_settings")
@@ -128,7 +128,7 @@ export function StrapMcpSettingsPage() {
       setSaved(appMap);
       const draftMap: Record<string, AccessConfig> = {};
       for (const grant of nextGrants) {
-        draftMap[grant.client_id] = appMap[grant.client_id] ?? legacy;
+        draftMap[grant.client.id] = appMap[grant.client.id] ?? legacy;
       }
       setDrafts(draftMap);
       setBaselineDrafts(draftMap);
@@ -161,15 +161,15 @@ export function StrapMcpSettingsPage() {
   };
 
   const saveAccess = async (grant: OAuthGrant) => {
-    const config = drafts[grant.client_id] ?? DEFAULT_ACCESS;
+    const config = drafts[grant.client.id] ?? DEFAULT_ACCESS;
     if (!store?.id || !userId || !canManage) return;
-    setSavingId(grant.client_id);
+    setSavingId(grant.client.id);
     try {
       const allSelected = config.allowed_branch_ids === null ||
         (branches.length > 0 && branches.every((branch) => config.allowed_branch_ids?.includes(branch.id)));
       const payload = {
-        store_id: store.id, user_id: userId, client_id: grant.client_id,
-        client_name: grant.client_name || "Connected AI application",
+        store_id: store.id, user_id: userId, client_id: grant.client.id,
+        client_name: grant.client.name || "Connected AI application",
         enabled: config.enabled,
         allowed_branch_ids: allSelected ? null : config.allowed_branch_ids,
         allow_store_read: config.allow_store_read,
@@ -185,28 +185,28 @@ export function StrapMcpSettingsPage() {
       const { error } = await db.from("mcp_client_access_settings").upsert(payload, { onConflict: "store_id,user_id,client_id" });
       if (error) throw error;
       const next = { ...DEFAULT_ACCESS, ...config, allowed_branch_ids: allSelected ? null : config.allowed_branch_ids };
-      setSaved((current) => ({ ...current, [grant.client_id]: next }));
-      setDrafts((current) => ({ ...current, [grant.client_id]: next }));
-      setBaselineDrafts((current) => ({ ...current, [grant.client_id]: next }));
+      setSaved((current) => ({ ...current, [grant.client.id]: next }));
+      setDrafts((current) => ({ ...current, [grant.client.id]: next }));
+      setBaselineDrafts((current) => ({ ...current, [grant.client.id]: next }));
       setEditing(null);
-      toast.success(`Access for ${grant.client_name} saved.`);
+      toast.success(`Access for ${grant.client.name} saved.`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not save app permissions.");
     } finally { setSavingId(null); }
   };
 
   const revoke = async (grant: OAuthGrant) => {
-    setRevokingId(grant.client_id);
+    setRevokingId(grant.client.id);
     setConfirmingGrant(null);
     try {
-      const { error } = await supabase.auth.oauth.revokeGrant({ clientId: grant.client_id });
+      const { error } = await supabase.auth.oauth.revokeGrant({ clientId: grant.client.id });
       if (error) throw error;
       const { error: cleanupError } = await db.from("mcp_client_access_settings").delete()
-        .eq("user_id", userId).eq("client_id", grant.client_id);
+        .eq("user_id", userId).eq("client_id", grant.client.id);
       if (cleanupError) {
         toast.error("The app was disconnected, but its saved permission record could not be cleaned up: " + cleanupError.message);
       } else {
-        toast.success(`${grant.client_name} has been disconnected.`);
+        toast.success(`${grant.client.name} has been disconnected.`);
       }
       await load();
     } catch (error) {
@@ -241,22 +241,22 @@ export function StrapMcpSettingsPage() {
         {loading ? <div className="rounded-2xl border border-border p-8 text-sm text-muted-foreground">Loading connected apps…</div> : loadError ? <div role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5"><p className="text-sm font-semibold">Connected applications could not be loaded</p><p className="mt-1 text-sm text-muted-foreground">{loadError}</p><Button className="mt-3" variant="outline" onClick={() => void load()}>Try again</Button></div> :
           grants.length === 0 ? <div className="rounded-2xl border border-dashed border-border p-8 text-center"><Bot className="mx-auto size-8 text-muted-foreground" /><h4 className="mt-3 font-semibold">No third-party apps connected</h4><p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">When you connect Claude or another compatible AI assistant, it will appear here.</p><Link to="/mcp" className="mt-4 inline-flex text-sm font-semibold text-accent-ink hover:underline">How to connect an AI assistant</Link></div> :
           grants.map((grant) => {
-            const config = drafts[grant.client_id] ?? DEFAULT_ACCESS;
-            const savedConfig = saved[grant.client_id];
-            const isEditing = editing === grant.client_id;
+            const config = drafts[grant.client.id] ?? DEFAULT_ACCESS;
+            const savedConfig = saved[grant.client.id];
+            const isEditing = editing === grant.client.id;
             const allBranches = config.allowed_branch_ids === null;
-            return <article key={grant.client_id} className="rounded-2xl border border-border bg-background p-5 sm:p-6">
+            return <article key={grant.client.id} className="rounded-2xl border border-border bg-background p-5 sm:p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-secondary"><Bot className="size-5" /></div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2"><h4 className="text-lg font-bold">{grant.client_name || "Connected application"}</h4><span className={`rounded-full px-2 py-1 text-[11px] font-bold ${config.enabled ? "bg-success-soft text-success" : "bg-warning-soft text-warning"}`}>{config.enabled ? "Access enabled" : savedConfig || legacyAvailable ? "Access paused" : "Access not configured"}</span></div>
-                  <p className="mt-1 break-all text-xs text-muted-foreground">Client ID: {grant.client_id}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">Authorised {new Date(grant.created_at).toLocaleDateString()} · Scopes: {(grant.scopes ?? []).join(", ") || "standard OAuth"}</p>
+                  <div className="flex flex-wrap items-center gap-2"><h4 className="text-lg font-bold">{grant.client.name || "Connected application"}</h4><span className={`rounded-full px-2 py-1 text-[11px] font-bold ${config.enabled ? "bg-success-soft text-success" : "bg-warning-soft text-warning"}`}>{config.enabled ? "Access enabled" : savedConfig || legacyAvailable ? "Access paused" : "Access not configured"}</span></div>
+                  <p className="mt-1 break-all text-xs text-muted-foreground">Client ID: {grant.client.id}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Authorised {new Date(grant.granted_at).toLocaleDateString()} · Scopes: {(grant.scopes ?? []).join(", ") || "standard OAuth"}</p>
                   <p className="mt-3 text-sm text-muted-foreground">{savedConfig ? `${savedConfig.enabled ? "Access enabled" : "Access paused"} · ${savedConfig.allowed_branch_ids === null ? "All branches" : savedConfig.allowed_branch_ids.length + " selected branches"} · ${[savedConfig.allow_store_read, savedConfig.allow_products_read, savedConfig.allow_inventory_read, savedConfig.allow_sales_read, savedConfig.allow_expenses_read, savedConfig.allow_customers_read].filter(Boolean).length} read permissions enabled` : legacyAvailable ? (config.enabled ? "Using previous store-wide permissions until you save app-specific settings." : "Previous store-wide access is paused for this application.") : "No app-specific access has been configured for this store."}</p>
                 </div>
                 <div className="flex shrink-0 flex-wrap gap-2">
-                  <Button variant="outline" size="sm" disabled={!canManage} onClick={() => { setEditing(isEditing ? null : grant.client_id); setDrafts((current) => ({ ...current, [grant.client_id]: current[grant.client_id] ?? savedConfig ?? DEFAULT_ACCESS })); }}>{isEditing ? "Close editor" : "Edit access"}</Button>
-                  <Button variant="destructive" size="sm" disabled={revokingId === grant.client_id || savingId === grant.client_id} onClick={() => setConfirmingGrant(grant)}><Trash2 className="mr-1 size-4" />{revokingId === grant.client_id ? "Revoking…" : "Revoke"}</Button>
+                  <Button variant="outline" size="sm" disabled={!canManage} onClick={() => { setEditing(isEditing ? null : grant.client.id); setDrafts((current) => ({ ...current, [grant.client.id]: current[grant.client.id] ?? savedConfig ?? DEFAULT_ACCESS })); }}>{isEditing ? "Close editor" : "Edit access"}</Button>
+                  <Button variant="destructive" size="sm" disabled={revokingId === grant.client.id || savingId === grant.client.id} onClick={() => setConfirmingGrant(grant)}><Trash2 className="mr-1 size-4" />{revokingId === grant.client.id ? "Revoking…" : "Revoke"}</Button>
                 </div>
               </div>
               {isEditing && <div className="mt-5 space-y-5 border-t border-border pt-5">
@@ -267,14 +267,14 @@ export function StrapMcpSettingsPage() {
                       <p className="text-sm font-semibold">Allow this application to access STRAP</p>
                       <p className="mt-1 text-xs leading-5 text-muted-foreground">Pause all data access without disconnecting the application. You can turn it back on at any time.</p>
                     </div>
-                    <Switch checked={config.enabled} disabled={!canManage} onCheckedChange={(value) => updateDraft(grant.client_id, { enabled: value })} aria-label="Enable application access" />
+                    <Switch checked={config.enabled} disabled={!canManage} onCheckedChange={(value) => updateDraft(grant.client.id, { enabled: value })} aria-label="Enable application access" />
                   </div>
                 </div>
                 <div>
                   <h5 className="font-semibold">Branch access</h5>
                   <p className="mt-1 text-xs text-muted-foreground">Choose where this application can read branch-level information and change stock.</p>
                   <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface p-3">
-                    <Checkbox checked={allBranches} disabled={!canManage || !config.enabled} onCheckedChange={(checked) => updateDraft(grant.client_id, { allowed_branch_ids: checked === true ? null : [] })} />
+                    <Checkbox checked={allBranches} disabled={!canManage || !config.enabled} onCheckedChange={(checked) => updateDraft(grant.client.id, { allowed_branch_ids: checked === true ? null : [] })} />
                     <span className="text-sm font-semibold">All branches</span>
                   </label>
                   {branches.length > 0 ? (
@@ -289,7 +289,7 @@ export function StrapMcpSettingsPage() {
                               const next = checked === true
                                 ? [...current.filter((id) => id !== branch.id), branch.id]
                                 : current.filter((id) => id !== branch.id);
-                              updateDraft(grant.client_id, { allowed_branch_ids: next });
+                              updateDraft(grant.client.id, { allowed_branch_ids: next });
                             }}
                           />
                           <GitBranch className="size-4 shrink-0 text-muted-foreground" />
@@ -301,9 +301,9 @@ export function StrapMcpSettingsPage() {
                     <p className="mt-3 rounded-xl border border-dashed border-border p-3 text-sm text-muted-foreground">No branches are available for this store yet.</p>
                   )}
                 </div>
-                <div><h5 className="font-semibold">Read permissions</h5><div className="mt-2 divide-y divide-border">{READ_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-muted-foreground">{option.description}</p></div><Switch checked={Boolean(config[option.key])} disabled={!canManage || !config.enabled} onCheckedChange={(value) => updateDraft(grant.client_id, { [option.key]: value })} aria-label={option.title} /></div>)}</div></div>
-                <div><h5 className="font-semibold">Write permissions</h5><div className="mt-2 divide-y divide-border">{WRITE_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-muted-foreground">{option.description}</p></div><Switch checked={Boolean(config[option.key])} disabled={!canManage} onCheckedChange={(value) => updateDraft(grant.client_id, { [option.key]: value })} /></div>)}</div></div>
-                <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end"><Button variant="ghost" disabled={savingId === grant.client_id} onClick={() => { setDrafts((current) => ({ ...current, [grant.client_id]: baselineDrafts[grant.client_id] ?? UNCONFIGURED_ACCESS })); setEditing(null); }}>Cancel</Button><Button onClick={() => void saveAccess(grant)} disabled={!canManage || savingId === grant.client_id} className="gap-2"><Check className="size-4" />{savingId === grant.client_id ? "Saving…" : "Save permissions"}</Button></div>
+                <div><h5 className="font-semibold">Read permissions</h5><div className="mt-2 divide-y divide-border">{READ_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-muted-foreground">{option.description}</p></div><Switch checked={Boolean(config[option.key])} disabled={!canManage || !config.enabled} onCheckedChange={(value) => updateDraft(grant.client.id, { [option.key]: value })} aria-label={option.title} /></div>)}</div></div>
+                <div><h5 className="font-semibold">Write permissions</h5><div className="mt-2 divide-y divide-border">{WRITE_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-muted-foreground">{option.description}</p></div><Switch checked={Boolean(config[option.key])} disabled={!canManage} onCheckedChange={(value) => updateDraft(grant.client.id, { [option.key]: value })} /></div>)}</div></div>
+                <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end"><Button variant="ghost" disabled={savingId === grant.client.id} onClick={() => { setDrafts((current) => ({ ...current, [grant.client.id]: baselineDrafts[grant.client.id] ?? UNCONFIGURED_ACCESS })); setEditing(null); }}>Cancel</Button><Button onClick={() => void saveAccess(grant)} disabled={!canManage || savingId === grant.client.id} className="gap-2"><Check className="size-4" />{savingId === grant.client.id ? "Saving…" : "Save permissions"}</Button></div>
               </div>}
             </article>;
           })}
