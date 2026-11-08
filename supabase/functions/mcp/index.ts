@@ -352,9 +352,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           );
           return result(products.slice(0, clampLimit(limit)));
         }
-        const { data, error } = await selectProducts()
-          .order("name")
-          .limit(clampLimit(limit));
+        const { data, error } = await selectProducts().order("name").limit(clampLimit(limit));
         if (error) throw error;
         return result(data ?? []);
       } catch (error) {
