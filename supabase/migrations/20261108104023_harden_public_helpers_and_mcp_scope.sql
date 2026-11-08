@@ -877,3 +877,20 @@ as $function$
     )
   order by s.is_active desc, lower(s.name);
 $function$;
+
+
+-- Per-client OAuth grants contain an application's branch and data-access scope.
+-- Store members must not be able to inspect another manager's connected-app grants.
+drop policy if exists mcp_client_access_select_member on public.mcp_client_access_settings;
+drop policy if exists mcp_client_access_select_manager on public.mcp_client_access_settings;
+create policy mcp_client_access_select_manager
+on public.mcp_client_access_settings
+for select to authenticated
+using (
+  user_id = (select auth.uid())
+  and private.has_store_role(
+    store_id,
+    (select auth.uid()),
+    array['owner'::public.store_role, 'manager'::public.store_role]
+  )
+);
