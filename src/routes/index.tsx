@@ -1,8 +1,3 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-
-// The previous marketing landing page is intentionally paused while its replacement is prepared.
-export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    throw redirect({ to: "/auth" });
-  },
-});
+import { createFileRoute } from "@tanstack/react-router";
+import { Route as LandingRoute } from "./landing";
+export const Route=createFileRoute("/")({component:LandingRoute.options.component as React.ComponentType});
