@@ -20,6 +20,8 @@ import { fetchProductsWithStock } from "@/routes/_authenticated/products";
 import { formatMoney } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
 
+const EMPTY_ARRAY: never[] = [];
+
 export const Route = createFileRoute("/_authenticated/food-service")({
   component: FoodServicePage,
 });
@@ -163,10 +165,10 @@ function FoodServicePage() {
       return (data ?? []) as Waste[];
     },
   });
-  const products = (productsQuery.data ?? []) as Product[];
-  const modifiers = modifiersQuery.data ?? [];
-  const recipes = recipesQuery.data ?? [];
-  const waste = wasteQuery.data ?? [];
+  const products = (productsQuery.data ?? EMPTY_ARRAY) as Product[];
+  const modifiers = modifiersQuery.data ?? EMPTY_ARRAY;
+  const recipes = recipesQuery.data ?? EMPTY_ARRAY;
+  const waste = wasteQuery.data ?? EMPTY_ARRAY;
   const itemsByTicket = useMemo(() => {
     const map = new Map<string, TicketItem[]>();
     for (const item of ticketItemsQuery.data ?? [])
