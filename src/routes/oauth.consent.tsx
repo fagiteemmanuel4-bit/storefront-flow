@@ -183,7 +183,7 @@ function OAuthConsentPage() {
         </header>
 
         <section className="rounded-3xl border border-border bg-surface p-5 shadow-lift sm:p-8">
-          {loading ? <div className="py-14 text-center text-sm text-[#73786d]">Preparing your secure connection…</div> : <>
+          {loading ? <div className="py-14 text-center text-sm text-muted-foreground">Preparing your secure connection…</div> : <>
             <div className="flex items-start gap-4">
               <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink"><Bot className="size-6" /></div>
               <div className="min-w-0 flex-1">
@@ -193,10 +193,10 @@ function OAuthConsentPage() {
               </div>
             </div>
 
-            {details?.redirect_uri && <p className="mt-5 break-all rounded-xl bg-[#f5f6f2] p-3 text-xs text-[#62685d]">Redirect destination: <span className="font-semibold text-[#33392d]">{(() => { try { return new URL(details.redirect_uri).host; } catch { return "Unrecognised destination"; } })()}</span></p>}
+            {details?.redirect_uri && <p className="mt-5 break-all rounded-xl bg-secondary p-3 text-xs text-muted-foreground">Redirect destination: <span className="font-semibold text-foreground">{(() => { try { return new URL(details.redirect_uri).host; } catch { return "Unrecognised destination"; } })()}</span></p>}
 
             {stores.length > 0 && <>
-              <div className="mt-7 border-t border-[#e9ebe5] pt-6">
+              <div className="mt-7 border-t border-border pt-6">
                 <h2 className="text-base font-bold">Choose a STRAP store</h2>
                 <p className="mt-1 text-sm text-muted-foreground">This connection will be authorised for the selected store.</p>
                 <select value={storeId} onChange={(event) => setStoreId(event.target.value)} className="field mt-3 h-12 text-sm font-semibold">
@@ -215,22 +215,22 @@ function OAuthConsentPage() {
               </div>
 
               <div className="mt-7 border-t border-border pt-6">
-                <div className="flex items-start justify-between gap-4"><div><h2 className="text-base font-bold">Branch access</h2><p className="mt-1 text-sm text-[#697064]">Limit branch-level information and stock updates to selected locations.</p></div><GitBranch className="size-5 text-[#727a67]" /></div>
+                <div className="flex items-start justify-between gap-4"><div><h2 className="text-base font-bold">Branch access</h2><p className="mt-1 text-sm text-muted-foreground">Limit branch-level information and stock updates to selected locations.</p></div><GitBranch className="size-5 text-muted-foreground" /></div>
                 <label className="mt-4 flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface p-3.5"><Checkbox checked={allBranches} onCheckedChange={(checked) => { const selected = checked === true; setAllBranches(selected); setSelectedBranches(selected ? branches.map((branch) => branch.id) : []); }} /><span className="text-sm font-semibold">All branches</span></label>
                 {!allBranches && <div className="mt-2 grid gap-2 sm:grid-cols-2">{branches.map((branch) => <label key={branch.id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface p-3"><Checkbox checked={selectedBranches.includes(branch.id)} onCheckedChange={(checked) => setSelectedBranches((current) => checked === true ? [...current.filter((id) => id !== branch.id), branch.id] : current.filter((id) => id !== branch.id))} /><span className="text-sm">{branch.name}</span>{branch.is_default && <span className="ml-auto text-[10px] font-bold text-muted-foreground">DEFAULT</span>}</label>)}</div>}
-                {branches.length === 0 && <p className="mt-3 text-sm text-[#697064]">No branches have been created for this store yet.</p>}
+                {branches.length === 0 && <p className="mt-3 text-sm text-muted-foreground">No branches have been created for this store yet.</p>}
               </div>
 
               <div className="mt-7 border-t border-border pt-6">
                 <h2 className="text-base font-bold">Read permissions</h2>
-                <p className="mt-1 text-sm text-[#697064]">Select the information the assistant may inspect.</p>
+                <p className="mt-1 text-sm text-muted-foreground">Select the information the assistant may inspect.</p>
                 <div className="mt-3 divide-y divide-border">{READ_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3.5"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-muted-foreground">{option.description}</p></div><Switch checked={permissions[option.key]} onCheckedChange={(value) => setPermission(option.key, value)} /></div>)}</div>
               </div>
 
               <div className="mt-7 border-t border-border pt-6">
                 <h2 className="text-base font-bold">Write permissions</h2>
-                <p className="mt-1 text-sm text-[#697064]">Write access is off by default. Enable only actions you trust this application to perform.</p>
-                <div className="mt-3 divide-y divide-[#edf0e9]">{WRITE_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3.5"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-[#73796e]">{option.description}</p></div><Switch checked={permissions[option.key]} onCheckedChange={(value) => setPermission(option.key, value)} /></div>)}</div>
+                <p className="mt-1 text-sm text-muted-foreground">Write access is off by default. Enable only actions you trust this application to perform.</p>
+                <div className="mt-3 divide-y divide-border">{WRITE_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3.5"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-muted-foreground">{option.description}</p></div><Switch checked={permissions[option.key]} onCheckedChange={(value) => setPermission(option.key, value)} /></div>)}</div>
               </div>
             </>}
 
@@ -240,7 +240,7 @@ function OAuthConsentPage() {
             <div className="mt-7 flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end"><Button variant="outline" disabled={busy || loading} onClick={() => void decide("deny")} className="h-11">Deny request</Button><Button disabled={busy || loading || !stores.length || !selectedStore} onClick={() => void decide("approve")} className="h-11 gap-2">{busy ? "Saving…" : <><Check className="size-4" /> Approve connection</>}</Button></div>
           </>}
         </section>
-        <p className="mt-5 text-center text-xs text-[#7a8074]">You remain in control of connected applications and their access to STRAP.</p>
+        <p className="mt-5 text-center text-xs text-muted-foreground">You remain in control of connected applications and their access to STRAP.</p>
       </div>
     </main>
   );
