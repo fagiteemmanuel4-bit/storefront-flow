@@ -40,6 +40,8 @@ import {
 import { cn } from "@/lib/utils";
 import { getBusinessMode } from "@/lib/business-modes";
 
+const EMPTY_ARRAY: never[] = [];
+
 export const Route = createFileRoute("/_authenticated/pos")({ ssr: false, component: PosPage });
 
 let offlineSaleSyncInFlight = false;
