@@ -160,6 +160,9 @@ const LABELS: Record<string, string> = {
   footer: "Footer",
 };
 const SECTION_TYPES = Object.keys(LABELS);
+const DEFAULT_TEMPLATE: Template = "minimal-commerce";
+const DEFAULT_TEMPLATE_SECTIONS = TEMPLATES.find((item) => item.id === DEFAULT_TEMPLATE)!.sections;
+
 const defaultTheme: Theme = {
   primaryColor: "#111827",
   secondaryColor: "#f3f4f6",
@@ -211,7 +214,7 @@ function makeSections(types: string[], prefix = String(Date.now())): Section[] {
 
 function StoreBuilder() {
   const { store } = useStoreContext();
-  const [template, setTemplate] = useState<Template>("minimal-commerce");
+  const [template, setTemplate] = useState<Template>(DEFAULT_TEMPLATE);
   const [theme, setTheme] = useState(defaultTheme);
   const [branding, setBranding] = useState<Branding>(defaultBranding);
   const [sections, setSections] = useState<Section[]>([]);
@@ -269,7 +272,7 @@ function StoreBuilder() {
       setSeoDescription(seo?.description ?? "");
       setCustomCss(existing.custom_css ?? "");
       setPublished(Boolean(existing.is_published));
-    } else setSections(makeSections(selectedTemplate.sections));
+    } else setSections(makeSections(DEFAULT_TEMPLATE_SECTIONS));
     setLoading(false);
   }, [store]);
   useEffect(() => {
