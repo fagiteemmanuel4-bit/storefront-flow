@@ -127,6 +127,8 @@ export function ProductFormDialog({
     );
     setAddingShelf(false);
     setNewShelf("");
+    pendingImagesRef.current.forEach((image) => URL.revokeObjectURL(image.preview));
+    pendingImagesRef.current = [];
     setPendingImages([]);
     setExistingImages([]);
     setSizes("");
