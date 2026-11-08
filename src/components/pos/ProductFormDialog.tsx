@@ -860,6 +860,13 @@ export function ProductFormDialog({
                 />
               </Field>
             </div>
+            {(productLoadError || variantLoadError) && (
+              <p role="alert" className="text-sm text-destructive">
+                {variantLoadError
+                  ? "Branch stock couldn't be loaded. Close this sheet and reopen the product to try again."
+                  : "Saved product details couldn't be loaded. Close this sheet and reopen the product to try again."}
+              </p>
+            )}
             <div className="flex gap-3 pt-1">
               <Button
                 type="button"
