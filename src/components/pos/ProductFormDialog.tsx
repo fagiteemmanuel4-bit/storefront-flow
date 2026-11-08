@@ -438,6 +438,7 @@ export function ProductFormDialog({
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (saving || loadingFashionVariants || productLoadError || variantLoadError) return;
     const parsed = schema.safeParse({
       name,
       sku,
