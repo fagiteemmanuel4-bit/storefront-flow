@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Bot, Check, GitBranch, LockKeyhole, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 
 const db = supabase as any;
@@ -60,6 +61,7 @@ function OAuthConsentPage() {
   const [allBranches, setAllBranches] = useState(true);
   const [selectedBranches, setSelectedBranches] = useState<string[]>([]);
   const [permissions, setPermissions] = useState<Permissions>(DEFAULT_PERMISSIONS);
+  const [enabled, setEnabled] = useState(true);
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -148,6 +150,7 @@ function OAuthConsentPage() {
           user_id: userId,
           client_id: clientId,
           client_name: details.client.name || "Connected AI application",
+          enabled,
           allowed_branch_ids: allBranches ? null : selectedBranches,
           ...permissions,
           updated_at: new Date().toISOString(),
@@ -172,21 +175,21 @@ function OAuthConsentPage() {
   const setPermission = (key: keyof Permissions, value: boolean) => setPermissions((current) => ({ ...current, [key]: value }));
 
   return (
-    <main className="min-h-screen bg-[#f7f7f4] px-4 py-8 text-[#171915] sm:py-14">
+    <main className="min-h-screen bg-background px-4 py-8 text-foreground sm:py-14">
       <div className="mx-auto max-w-2xl">
         <header className="mb-8 flex items-center justify-between">
           <Link to="/auth" className="flex items-center gap-2.5"><img src="/favicon.svg" alt="STRAP" className="size-9" /><span className="text-lg font-extrabold tracking-tight">STRAP</span></Link>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#dfe3d7] bg-white px-3 py-1.5 text-xs font-semibold text-[#4b5940]"><LockKeyhole className="size-3.5" /> Secure authorisation</span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-muted-foreground"><LockKeyhole className="size-3.5" /> Secure authorisation</span>
         </header>
 
-        <section className="rounded-3xl border border-[#e3e5df] bg-white p-5 shadow-[0_18px_60px_-42px_rgba(20,25,15,.35)] sm:p-8">
+        <section className="rounded-3xl border border-border bg-surface p-5 shadow-lift sm:p-8">
           {loading ? <div className="py-14 text-center text-sm text-[#73786d]">Preparing your secure connection…</div> : <>
             <div className="flex items-start gap-4">
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#eef2e6] text-[#34402a]"><Bot className="size-6" /></div>
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink"><Bot className="size-6" /></div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold uppercase tracking-[.15em] text-[#6b735f]">Third-party connection request</p>
+                <p className="text-xs font-bold uppercase tracking-[.15em] text-muted-foreground">Third-party connection request</p>
                 <h1 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">{details?.client?.name ?? "An AI application"} wants to connect to STRAP</h1>
-                <p className="mt-2 text-sm leading-6 text-[#656b60]">Choose exactly which store information and actions this application may access. You can change these permissions or revoke the connection later in Settings → Connected applications.</p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">Choose exactly which store information and actions this application may access. You can change these permissions or revoke the connection later in Settings → Connected applications.</p>
               </div>
             </div>
 
@@ -195,36 +198,46 @@ function OAuthConsentPage() {
             {stores.length > 0 && <>
               <div className="mt-7 border-t border-[#e9ebe5] pt-6">
                 <h2 className="text-base font-bold">Choose a STRAP store</h2>
-                <p className="mt-1 text-sm text-[#697064]">This connection will be authorised for the selected store.</p>
-                <select value={storeId} onChange={(event) => setStoreId(event.target.value)} className="mt-3 h-12 w-full rounded-xl border border-[#dfe3d7] bg-white px-3 text-sm font-semibold outline-none focus:border-[#8a9a6a]">
+                <p className="mt-1 text-sm text-muted-foreground">This connection will be authorised for the selected store.</p>
+                <select value={storeId} onChange={(event) => setStoreId(event.target.value)} className="field mt-3 h-12 text-sm font-semibold">
                   {stores.map((store) => <option key={store.id} value={store.id}>{store.name}</option>)}
                 </select>
               </div>
 
-              <div className="mt-7 border-t border-[#e9ebe5] pt-6">
+              <div className="mt-7 border-t border-border pt-6">
+                <div className="flex items-center justify-between gap-4 rounded-xl border border-border bg-surface p-4">
+                  <div className="min-w-0">
+                    <h2 className="text-base font-bold">Connection status</h2>
+                    <p className="mt-1 text-sm leading-5 text-muted-foreground">You can approve the connection while keeping its data access paused. Re-enable it later in Settings → Connected applications.</p>
+                  </div>
+                  <Switch checked={enabled} onCheckedChange={setEnabled} aria-label="Enable this application" />
+                </div>
+              </div>
+
+              <div className="mt-7 border-t border-border pt-6">
                 <div className="flex items-start justify-between gap-4"><div><h2 className="text-base font-bold">Branch access</h2><p className="mt-1 text-sm text-[#697064]">Limit branch-level information and stock updates to selected locations.</p></div><GitBranch className="size-5 text-[#727a67]" /></div>
-                <label className="mt-4 flex cursor-pointer items-center gap-3 rounded-xl border border-[#dfe3d7] p-3.5"><input type="checkbox" checked={allBranches} onChange={(event) => { setAllBranches(event.target.checked); setSelectedBranches(event.target.checked ? branches.map((branch) => branch.id) : []); }} className="size-4 accent-[#536344]" /><span className="text-sm font-semibold">All branches</span></label>
-                {!allBranches && <div className="mt-2 grid gap-2 sm:grid-cols-2">{branches.map((branch) => <label key={branch.id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dfe3d7] p-3"><input type="checkbox" checked={selectedBranches.includes(branch.id)} onChange={(event) => setSelectedBranches((current) => event.target.checked ? [...current, branch.id] : current.filter((id) => id !== branch.id))} className="size-4 accent-[#536344]" /><span className="text-sm">{branch.name}</span>{branch.is_default && <span className="ml-auto text-[10px] font-bold text-[#7b826f]">DEFAULT</span>}</label>)}</div>}
+                <label className="mt-4 flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface p-3.5"><Checkbox checked={allBranches} onCheckedChange={(checked) => { const selected = checked === true; setAllBranches(selected); setSelectedBranches(selected ? branches.map((branch) => branch.id) : []); }} /><span className="text-sm font-semibold">All branches</span></label>
+                {!allBranches && <div className="mt-2 grid gap-2 sm:grid-cols-2">{branches.map((branch) => <label key={branch.id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface p-3"><Checkbox checked={selectedBranches.includes(branch.id)} onCheckedChange={(checked) => setSelectedBranches((current) => checked === true ? [...current.filter((id) => id !== branch.id), branch.id] : current.filter((id) => id !== branch.id))} /><span className="text-sm">{branch.name}</span>{branch.is_default && <span className="ml-auto text-[10px] font-bold text-muted-foreground">DEFAULT</span>}</label>)}</div>}
                 {branches.length === 0 && <p className="mt-3 text-sm text-[#697064]">No branches have been created for this store yet.</p>}
               </div>
 
-              <div className="mt-7 border-t border-[#e9ebe5] pt-6">
+              <div className="mt-7 border-t border-border pt-6">
                 <h2 className="text-base font-bold">Read permissions</h2>
                 <p className="mt-1 text-sm text-[#697064]">Select the information the assistant may inspect.</p>
-                <div className="mt-3 divide-y divide-[#edf0e9]">{READ_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3.5"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-[#73796e]">{option.description}</p></div><Switch checked={permissions[option.key]} onCheckedChange={(value) => setPermission(option.key, value)} /></div>)}</div>
+                <div className="mt-3 divide-y divide-border">{READ_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3.5"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-muted-foreground">{option.description}</p></div><Switch checked={permissions[option.key]} onCheckedChange={(value) => setPermission(option.key, value)} /></div>)}</div>
               </div>
 
-              <div className="mt-7 border-t border-[#e9ebe5] pt-6">
+              <div className="mt-7 border-t border-border pt-6">
                 <h2 className="text-base font-bold">Write permissions</h2>
                 <p className="mt-1 text-sm text-[#697064]">Write access is off by default. Enable only actions you trust this application to perform.</p>
                 <div className="mt-3 divide-y divide-[#edf0e9]">{WRITE_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3.5"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-[#73796e]">{option.description}</p></div><Switch checked={permissions[option.key]} onCheckedChange={(value) => setPermission(option.key, value)} /></div>)}</div>
               </div>
             </>}
 
-            <div className="mt-6 flex items-start gap-3 rounded-xl bg-[#f3f5ef] p-4"><ShieldCheck className="mt-0.5 size-5 shrink-0 text-[#536344]" /><p className="text-xs leading-5 text-[#60675a]">STRAP uses your authenticated account, store role and the permissions selected here. AI clients cannot use this approval to access other merchants. You can revoke an app's OAuth grant later to invalidate its active tokens.</p></div>
-            {scopes.length > 0 && <p className="mt-4 text-xs text-[#73796e]">Requested identity scopes: {scopes.join(", ")}. These are separate from the STRAP data permissions above.</p>}
-            {error && <p role="alert" className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-            <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><Button variant="outline" disabled={busy || loading} onClick={() => void decide("deny")} className="h-11">Deny request</Button><Button disabled={busy || loading || !stores.length || !selectedStore} onClick={() => void decide("approve")} className="h-11 gap-2">{busy ? "Saving…" : <><Check className="size-4" /> Approve connection</>}</Button></div>
+            <div className="mt-6 flex items-start gap-3 rounded-xl bg-accent-soft p-4"><ShieldCheck className="mt-0.5 size-5 shrink-0 text-accent-ink" /><p className="text-xs leading-5 text-muted-foreground">STRAP uses your authenticated account, store role and the permissions selected here. AI clients cannot use this approval to access other merchants. You can revoke an app's OAuth grant later to invalidate its active tokens.</p></div>
+            {scopes.length > 0 && <p className="mt-4 text-xs text-muted-foreground">Requested identity scopes: {scopes.join(", ")}. These are separate from the STRAP data permissions above.</p>}
+            {error && <p role="alert" className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</p>}
+            <div className="mt-7 flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end"><Button variant="outline" disabled={busy || loading} onClick={() => void decide("deny")} className="h-11">Deny request</Button><Button disabled={busy || loading || !stores.length || !selectedStore} onClick={() => void decide("approve")} className="h-11 gap-2">{busy ? "Saving…" : <><Check className="size-4" /> Approve connection</>}</Button></div>
           </>}
         </section>
         <p className="mt-5 text-center text-xs text-[#7a8074]">You remain in control of connected applications and their access to STRAP.</p>
