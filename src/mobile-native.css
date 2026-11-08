@@ -314,7 +314,6 @@
   }
 }
 
-
 /* Mobile-only POS simplification and narrow-screen safeguards. */
 @media (max-width: 767px) {
   .kudi-app-shell:has(.pos-sell-page) > div > main,
@@ -422,18 +421,17 @@
   }
 }
 
-
 @media (max-width: 767px) {
   .mobile-hide-layout-customization {
     display: none !important;
   }
 }
 
-
 /* Shared mobile canvas: remove the desktop-style outer page card on every route. */
 @media (max-width: 767px) {
   .kudi-app-shell > div > div {
-    padding: 14px var(--mobile-gutter) calc(var(--mobile-nav-height) + env(safe-area-inset-bottom) + 18px) !important;
+    padding: 14px var(--mobile-gutter)
+      calc(var(--mobile-nav-height) + env(safe-area-inset-bottom) + 18px) !important;
   }
 
   .kudi-app-shell > div > div > main[data-tour="main-content"] {
@@ -488,7 +486,6 @@
     border-radius: 16px !important;
   }
 }
-
 
 /* Compact, app-like settings and cards on small screens. */
 @media (max-width: 767px) {

@@ -1535,7 +1535,9 @@ function AdvancedToggles({ group, title, rows }: { group: string; title: string;
   );
 }
 
-function Receipts() { return <ReceiptSettingsPanel />; }
+function Receipts() {
+  return <ReceiptSettingsPanel />;
+}
 
 function OnlineStore() {
   const { store, online, config, loading, reload } = useSettingsData();

@@ -15,16 +15,16 @@ Strap uses one visual language across marketing, authentication, onboarding, ope
 
 ### Light
 
-| Token              | Value     | Use                       |
-| ------------------ | --------- | ------------------------- |
-| `--strap-canvas`   | `#F7F7F5` | Application background    |
-| `--strap-panel`    | `#FFFFFF` | Surfaces and controls     |
-| `--strap-ink`      | `#0E1116` | Primary text              |
-| `--strap-muted`    | `#555C6A` | Secondary text            |
-| `--strap-line`     | `#D5D8DE` | Borders and rules         |
+| Token              | Value     | Use                                   |
+| ------------------ | --------- | ------------------------------------- |
+| `--strap-canvas`   | `#F7F7F5` | Application background                |
+| `--strap-panel`    | `#FFFFFF` | Surfaces and controls                 |
+| `--strap-ink`      | `#0E1116` | Primary text                          |
+| `--strap-muted`    | `#555C6A` | Secondary text                        |
+| `--strap-line`     | `#D5D8DE` | Borders and rules                     |
 | `--strap-blue-500` | `#C6F432` | Strap lime accent (legacy token name) |
-| `--strap-blue-600` | `#B0DC20` | Accent hover              |
-| `--strap-blue-700` | `#789B12` | Strong accent text        |
+| `--strap-blue-600` | `#B0DC20` | Accent hover                          |
+| `--strap-blue-700` | `#789B12` | Strong accent text                    |
 
 Dark mode maps the same semantic roles to a deep navy canvas and blue-tinted surfaces. It is not a simple inversion.
 

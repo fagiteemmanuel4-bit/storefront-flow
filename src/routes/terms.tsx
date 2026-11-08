@@ -376,7 +376,38 @@ function Terms() {
           </Section>
         </div>
       </main>
-      <section className="mx-auto max-w-4xl px-4 pb-10 sm:px-6"><div className="space-y-3 text-[15px] leading-7 text-muted-foreground"><h2 className="font-display text-xl font-bold text-foreground">Receipts and printing preferences</h2><p>Strap provides configurable receipt content and layout preferences, including business identity, contact details, receipt references, transaction date, customer and branch details, item information, totals, tax display, paper size and browser printing preferences. Actual receipt fields depend on the information recorded for a sale and the settings saved by the merchant. The merchant remains responsible for statutory invoice, tax and record-keeping requirements.</p><h2 className="font-display text-xl font-bold text-foreground">Offline transactions</h2><p>Where offline sale queuing is supported, transactions may be stored temporarily on the device and synchronized after connectivity returns. A merchant must reconnect and check synchronization status, protect devices and resolve any inventory or transaction conflicts that require attention. Offline queuing does not guarantee uninterrupted availability or eliminate the need for reconciliation.</p><h2 className="font-display text-xl font-bold text-foreground">Third-party connections and payment providers</h2><p>Connected applications operate only within the permissions authorized for them. Third-party payment providers, when enabled for a merchant, process payments under their own terms and service availability. Strap may record transaction status and references but does not guarantee authorization, settlement or uninterrupted provider service.</p></div></section>
+      <section className="mx-auto max-w-4xl px-4 pb-10 sm:px-6">
+        <div className="space-y-3 text-[15px] leading-7 text-muted-foreground">
+          <h2 className="font-display text-xl font-bold text-foreground">
+            Receipts and printing preferences
+          </h2>
+          <p>
+            Strap provides configurable receipt content and layout preferences, including business
+            identity, contact details, receipt references, transaction date, customer and branch
+            details, item information, totals, tax display, paper size and browser printing
+            preferences. Actual receipt fields depend on the information recorded for a sale and the
+            settings saved by the merchant. The merchant remains responsible for statutory invoice,
+            tax and record-keeping requirements.
+          </p>
+          <h2 className="font-display text-xl font-bold text-foreground">Offline transactions</h2>
+          <p>
+            Where offline sale queuing is supported, transactions may be stored temporarily on the
+            device and synchronized after connectivity returns. A merchant must reconnect and check
+            synchronization status, protect devices and resolve any inventory or transaction
+            conflicts that require attention. Offline queuing does not guarantee uninterrupted
+            availability or eliminate the need for reconciliation.
+          </p>
+          <h2 className="font-display text-xl font-bold text-foreground">
+            Third-party connections and payment providers
+          </h2>
+          <p>
+            Connected applications operate only within the permissions authorized for them.
+            Third-party payment providers, when enabled for a merchant, process payments under their
+            own terms and service availability. Strap may record transaction status and references
+            but does not guarantee authorization, settlement or uninterrupted provider service.
+          </p>
+        </div>
+      </section>
       <SiteFooter />
     </div>
   );

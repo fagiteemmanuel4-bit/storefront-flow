@@ -18,6 +18,8 @@ import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as CustomerAccountRouteImport } from './routes/customer-account'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as EmailConfirmedRouteImport } from './routes/email-confirmed'
+import { Route as LandingRouteImport } from './routes/landing'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -54,6 +56,7 @@ import { Route as AuthenticatedStockSenseRouteImport } from './routes/_authentic
 import { Route as AuthenticatedStoreEditorRouteImport } from './routes/_authenticated/store-editor'
 import { Route as AuthenticatedUnitSaleRouteImport } from './routes/_authenticated/unit-sale'
 import { Route as AuthenticatedUpgradeRouteImport } from './routes/_authenticated/upgrade'
+import { Route as OauthConsentRouteImport } from './routes/oauth.consent'
 import { Route as StaffLoginSlugRouteImport } from './routes/staff-login.$slug'
 import { Route as StoreSlugRouteImport } from './routes/store/$slug'
 import { Route as TrackTokenRouteImport } from './routes/track/$token'
@@ -64,6 +67,7 @@ import { Route as AuthenticatedOnlineStoreCatalogRouteImport } from './routes/_a
 import { Route as AuthenticatedOnlineStoreOrdersRouteImport } from './routes/_authenticated/online-store/orders'
 import { Route as AuthenticatedOnlineStoreSetupRouteImport } from './routes/_authenticated/online-store/setup'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedSettingsAiAgentsRouteImport } from './routes/_authenticated/settings/ai-agents'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsCheckoutRouteImport } from './routes/_authenticated/settings/checkout'
 import { Route as AuthenticatedSettingsInventoryRouteImport } from './routes/_authenticated/settings/inventory'
@@ -76,6 +80,7 @@ import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_aut
 import { Route as AuthenticatedSettingsSessionsRouteImport } from './routes/_authenticated/settings/sessions'
 import { Route as AuthenticatedSettingsStaffRouteImport } from './routes/_authenticated/settings/staff'
 import { Route as AuthenticatedSettingsStoreProfileRouteImport } from './routes/_authenticated/settings/store-profile'
+import { Route as AuthenticatedSettingsThemeRouteImport } from './routes/_authenticated/settings/theme'
 import { Route as AuthenticatedSettingsSessionsRevokeRouteImport } from './routes/_authenticated/settings/sessions/revoke'
 import { Route as StoreSlugCategoryCategoryRouteImport } from './routes/store/$slug/category/$category'
 import { Route as StoreSlugProductsProductSlugRouteImport } from './routes/store/$slug/products/$productSlug'
@@ -122,6 +127,16 @@ const DocsRoute = DocsRouteImport.update({
 const EmailConfirmedRoute = EmailConfirmedRouteImport.update({
   id: '/email-confirmed',
   path: '/email-confirmed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LandingRoute = LandingRouteImport.update({
+  id: '/landing',
+  path: '/landing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PartnersRoute = PartnersRouteImport.update({
@@ -314,6 +329,11 @@ const AuthenticatedUpgradeRoute = AuthenticatedUpgradeRouteImport.update({
   path: '/upgrade',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const OauthConsentRoute = OauthConsentRouteImport.update({
+  id: '/oauth/consent',
+  path: '/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StaffLoginSlugRoute = StaffLoginSlugRouteImport.update({
   id: '/staff-login/$slug',
   path: '/staff-login/$slug',
@@ -369,6 +389,12 @@ const AuthenticatedSettingsIndexRoute =
   AuthenticatedSettingsIndexRouteImport.update({
     id: '/',
     path: '/',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
+const AuthenticatedSettingsAiAgentsRoute =
+  AuthenticatedSettingsAiAgentsRouteImport.update({
+    id: '/ai-agents',
+    path: '/ai-agents',
     getParentRoute: () => AuthenticatedSettingsRoute,
   } as any)
 const AuthenticatedSettingsAppearanceRoute =
@@ -443,6 +469,12 @@ const AuthenticatedSettingsStoreProfileRoute =
     path: '/store-profile',
     getParentRoute: () => AuthenticatedSettingsRoute,
   } as any)
+const AuthenticatedSettingsThemeRoute =
+  AuthenticatedSettingsThemeRouteImport.update({
+    id: '/theme',
+    path: '/theme',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
 const AuthenticatedSettingsSessionsRevokeRoute =
   AuthenticatedSettingsSessionsRevokeRouteImport.update({
     id: '/revoke',
@@ -471,6 +503,8 @@ export interface FileRoutesByFullPath {
   '/customer-account': typeof CustomerAccountRoute
   '/docs': typeof DocsRoute
   '/email-confirmed': typeof EmailConfirmedRoute
+  '/landing': typeof LandingRoute
+  '/mcp': typeof McpRoute
   '/partners': typeof PartnersRoute
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
@@ -507,6 +541,7 @@ export interface FileRoutesByFullPath {
   '/store-editor': typeof AuthenticatedStoreEditorRoute
   '/unit-sale': typeof AuthenticatedUnitSaleRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
+  '/oauth/consent': typeof OauthConsentRoute
   '/staff-login/$slug': typeof StaffLoginSlugRoute
   '/store/$slug': typeof StoreSlugRouteWithChildren
   '/track/$token': typeof TrackTokenRoute
@@ -515,6 +550,7 @@ export interface FileRoutesByFullPath {
   '/online-store/catalog': typeof AuthenticatedOnlineStoreCatalogRoute
   '/online-store/orders': typeof AuthenticatedOnlineStoreOrdersRoute
   '/online-store/setup': typeof AuthenticatedOnlineStoreSetupRoute
+  '/settings/ai-agents': typeof AuthenticatedSettingsAiAgentsRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/checkout': typeof AuthenticatedSettingsCheckoutRoute
   '/settings/inventory': typeof AuthenticatedSettingsInventoryRoute
@@ -527,6 +563,7 @@ export interface FileRoutesByFullPath {
   '/settings/sessions': typeof AuthenticatedSettingsSessionsRouteWithChildren
   '/settings/staff': typeof AuthenticatedSettingsStaffRoute
   '/settings/store-profile': typeof AuthenticatedSettingsStoreProfileRoute
+  '/settings/theme': typeof AuthenticatedSettingsThemeRoute
   '/online-store/': typeof AuthenticatedOnlineStoreIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/settings/sessions/revoke': typeof AuthenticatedSettingsSessionsRevokeRoute
@@ -542,6 +579,8 @@ export interface FileRoutesByTo {
   '/customer-account': typeof CustomerAccountRoute
   '/docs': typeof DocsRoute
   '/email-confirmed': typeof EmailConfirmedRoute
+  '/landing': typeof LandingRoute
+  '/mcp': typeof McpRoute
   '/partners': typeof PartnersRoute
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
@@ -577,6 +616,7 @@ export interface FileRoutesByTo {
   '/store-editor': typeof AuthenticatedStoreEditorRoute
   '/unit-sale': typeof AuthenticatedUnitSaleRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
+  '/oauth/consent': typeof OauthConsentRoute
   '/staff-login/$slug': typeof StaffLoginSlugRoute
   '/store/$slug': typeof StoreSlugRouteWithChildren
   '/track/$token': typeof TrackTokenRoute
@@ -585,6 +625,7 @@ export interface FileRoutesByTo {
   '/online-store/catalog': typeof AuthenticatedOnlineStoreCatalogRoute
   '/online-store/orders': typeof AuthenticatedOnlineStoreOrdersRoute
   '/online-store/setup': typeof AuthenticatedOnlineStoreSetupRoute
+  '/settings/ai-agents': typeof AuthenticatedSettingsAiAgentsRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/checkout': typeof AuthenticatedSettingsCheckoutRoute
   '/settings/inventory': typeof AuthenticatedSettingsInventoryRoute
@@ -597,6 +638,7 @@ export interface FileRoutesByTo {
   '/settings/sessions': typeof AuthenticatedSettingsSessionsRouteWithChildren
   '/settings/staff': typeof AuthenticatedSettingsStaffRoute
   '/settings/store-profile': typeof AuthenticatedSettingsStoreProfileRoute
+  '/settings/theme': typeof AuthenticatedSettingsThemeRoute
   '/online-store': typeof AuthenticatedOnlineStoreIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/settings/sessions/revoke': typeof AuthenticatedSettingsSessionsRevokeRoute
@@ -614,6 +656,8 @@ export interface FileRoutesById {
   '/customer-account': typeof CustomerAccountRoute
   '/docs': typeof DocsRoute
   '/email-confirmed': typeof EmailConfirmedRoute
+  '/landing': typeof LandingRoute
+  '/mcp': typeof McpRoute
   '/partners': typeof PartnersRoute
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
@@ -650,6 +694,7 @@ export interface FileRoutesById {
   '/_authenticated/store-editor': typeof AuthenticatedStoreEditorRoute
   '/_authenticated/unit-sale': typeof AuthenticatedUnitSaleRoute
   '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
+  '/oauth/consent': typeof OauthConsentRoute
   '/staff-login/$slug': typeof StaffLoginSlugRoute
   '/store/$slug': typeof StoreSlugRouteWithChildren
   '/track/$token': typeof TrackTokenRoute
@@ -658,6 +703,7 @@ export interface FileRoutesById {
   '/_authenticated/online-store/catalog': typeof AuthenticatedOnlineStoreCatalogRoute
   '/_authenticated/online-store/orders': typeof AuthenticatedOnlineStoreOrdersRoute
   '/_authenticated/online-store/setup': typeof AuthenticatedOnlineStoreSetupRoute
+  '/_authenticated/settings/ai-agents': typeof AuthenticatedSettingsAiAgentsRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/checkout': typeof AuthenticatedSettingsCheckoutRoute
   '/_authenticated/settings/inventory': typeof AuthenticatedSettingsInventoryRoute
@@ -670,6 +716,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/sessions': typeof AuthenticatedSettingsSessionsRouteWithChildren
   '/_authenticated/settings/staff': typeof AuthenticatedSettingsStaffRoute
   '/_authenticated/settings/store-profile': typeof AuthenticatedSettingsStoreProfileRoute
+  '/_authenticated/settings/theme': typeof AuthenticatedSettingsThemeRoute
   '/_authenticated/online-store/': typeof AuthenticatedOnlineStoreIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/settings/sessions/revoke': typeof AuthenticatedSettingsSessionsRevokeRoute
@@ -687,6 +734,8 @@ export interface FileRouteTypes {
     | '/customer-account'
     | '/docs'
     | '/email-confirmed'
+    | '/landing'
+    | '/mcp'
     | '/partners'
     | '/privacy'
     | '/signup'
@@ -723,6 +772,7 @@ export interface FileRouteTypes {
     | '/store-editor'
     | '/unit-sale'
     | '/upgrade'
+    | '/oauth/consent'
     | '/staff-login/$slug'
     | '/store/$slug'
     | '/track/$token'
@@ -731,6 +781,7 @@ export interface FileRouteTypes {
     | '/online-store/catalog'
     | '/online-store/orders'
     | '/online-store/setup'
+    | '/settings/ai-agents'
     | '/settings/appearance'
     | '/settings/checkout'
     | '/settings/inventory'
@@ -743,6 +794,7 @@ export interface FileRouteTypes {
     | '/settings/sessions'
     | '/settings/staff'
     | '/settings/store-profile'
+    | '/settings/theme'
     | '/online-store/'
     | '/settings/'
     | '/settings/sessions/revoke'
@@ -758,6 +810,8 @@ export interface FileRouteTypes {
     | '/customer-account'
     | '/docs'
     | '/email-confirmed'
+    | '/landing'
+    | '/mcp'
     | '/partners'
     | '/privacy'
     | '/signup'
@@ -793,6 +847,7 @@ export interface FileRouteTypes {
     | '/store-editor'
     | '/unit-sale'
     | '/upgrade'
+    | '/oauth/consent'
     | '/staff-login/$slug'
     | '/store/$slug'
     | '/track/$token'
@@ -801,6 +856,7 @@ export interface FileRouteTypes {
     | '/online-store/catalog'
     | '/online-store/orders'
     | '/online-store/setup'
+    | '/settings/ai-agents'
     | '/settings/appearance'
     | '/settings/checkout'
     | '/settings/inventory'
@@ -813,6 +869,7 @@ export interface FileRouteTypes {
     | '/settings/sessions'
     | '/settings/staff'
     | '/settings/store-profile'
+    | '/settings/theme'
     | '/online-store'
     | '/settings'
     | '/settings/sessions/revoke'
@@ -829,6 +886,8 @@ export interface FileRouteTypes {
     | '/customer-account'
     | '/docs'
     | '/email-confirmed'
+    | '/landing'
+    | '/mcp'
     | '/partners'
     | '/privacy'
     | '/signup'
@@ -865,6 +924,7 @@ export interface FileRouteTypes {
     | '/_authenticated/store-editor'
     | '/_authenticated/unit-sale'
     | '/_authenticated/upgrade'
+    | '/oauth/consent'
     | '/staff-login/$slug'
     | '/store/$slug'
     | '/track/$token'
@@ -873,6 +933,7 @@ export interface FileRouteTypes {
     | '/_authenticated/online-store/catalog'
     | '/_authenticated/online-store/orders'
     | '/_authenticated/online-store/setup'
+    | '/_authenticated/settings/ai-agents'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/checkout'
     | '/_authenticated/settings/inventory'
@@ -885,6 +946,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/sessions'
     | '/_authenticated/settings/staff'
     | '/_authenticated/settings/store-profile'
+    | '/_authenticated/settings/theme'
     | '/_authenticated/online-store/'
     | '/_authenticated/settings/'
     | '/_authenticated/settings/sessions/revoke'
@@ -902,6 +964,8 @@ export interface RootRouteChildren {
   CustomerAccountRoute: typeof CustomerAccountRoute
   DocsRoute: typeof DocsRoute
   EmailConfirmedRoute: typeof EmailConfirmedRoute
+  LandingRoute: typeof LandingRoute
+  McpRoute: typeof McpRoute
   PartnersRoute: typeof PartnersRoute
   PrivacyRoute: typeof PrivacyRoute
   SignupRoute: typeof SignupRoute
@@ -909,6 +973,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   VerifiedRoute: typeof VerifiedRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
+  OauthConsentRoute: typeof OauthConsentRoute
   StaffLoginSlugRoute: typeof StaffLoginSlugRoute
   StoreSlugRoute: typeof StoreSlugRouteWithChildren
   TrackTokenRoute: typeof TrackTokenRoute
@@ -977,6 +1042,20 @@ declare module '@tanstack/react-router' {
       path: '/email-confirmed'
       fullPath: '/email-confirmed'
       preLoaderRoute: typeof EmailConfirmedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/landing': {
+      id: '/landing'
+      path: '/landing'
+      fullPath: '/landing'
+      preLoaderRoute: typeof LandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/partners': {
@@ -1231,6 +1310,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUpgradeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/oauth/consent': {
+      id: '/oauth/consent'
+      path: '/oauth/consent'
+      fullPath: '/oauth/consent'
+      preLoaderRoute: typeof OauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/staff-login/$slug': {
       id: '/staff-login/$slug'
       path: '/staff-login/$slug'
@@ -1299,6 +1385,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/settings/'
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
+    '/_authenticated/settings/ai-agents': {
+      id: '/_authenticated/settings/ai-agents'
+      path: '/ai-agents'
+      fullPath: '/settings/ai-agents'
+      preLoaderRoute: typeof AuthenticatedSettingsAiAgentsRouteImport
       parentRoute: typeof AuthenticatedSettingsRoute
     }
     '/_authenticated/settings/appearance': {
@@ -1385,6 +1478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsStoreProfileRouteImport
       parentRoute: typeof AuthenticatedSettingsRoute
     }
+    '/_authenticated/settings/theme': {
+      id: '/_authenticated/settings/theme'
+      path: '/theme'
+      fullPath: '/settings/theme'
+      preLoaderRoute: typeof AuthenticatedSettingsThemeRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
     '/_authenticated/settings/sessions/revoke': {
       id: '/_authenticated/settings/sessions/revoke'
       path: '/revoke'
@@ -1425,6 +1525,7 @@ const AuthenticatedSettingsSessionsRouteWithChildren =
   )
 
 interface AuthenticatedSettingsRouteChildren {
+  AuthenticatedSettingsAiAgentsRoute: typeof AuthenticatedSettingsAiAgentsRoute
   AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
   AuthenticatedSettingsCheckoutRoute: typeof AuthenticatedSettingsCheckoutRoute
   AuthenticatedSettingsInventoryRoute: typeof AuthenticatedSettingsInventoryRoute
@@ -1437,10 +1538,12 @@ interface AuthenticatedSettingsRouteChildren {
   AuthenticatedSettingsSessionsRoute: typeof AuthenticatedSettingsSessionsRouteWithChildren
   AuthenticatedSettingsStaffRoute: typeof AuthenticatedSettingsStaffRoute
   AuthenticatedSettingsStoreProfileRoute: typeof AuthenticatedSettingsStoreProfileRoute
+  AuthenticatedSettingsThemeRoute: typeof AuthenticatedSettingsThemeRoute
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
 }
 
 const AuthenticatedSettingsRouteChildren: AuthenticatedSettingsRouteChildren = {
+  AuthenticatedSettingsAiAgentsRoute: AuthenticatedSettingsAiAgentsRoute,
   AuthenticatedSettingsAppearanceRoute: AuthenticatedSettingsAppearanceRoute,
   AuthenticatedSettingsCheckoutRoute: AuthenticatedSettingsCheckoutRoute,
   AuthenticatedSettingsInventoryRoute: AuthenticatedSettingsInventoryRoute,
@@ -1456,6 +1559,7 @@ const AuthenticatedSettingsRouteChildren: AuthenticatedSettingsRouteChildren = {
   AuthenticatedSettingsStaffRoute: AuthenticatedSettingsStaffRoute,
   AuthenticatedSettingsStoreProfileRoute:
     AuthenticatedSettingsStoreProfileRoute,
+  AuthenticatedSettingsThemeRoute: AuthenticatedSettingsThemeRoute,
   AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
 }
 
@@ -1569,6 +1673,8 @@ const rootRouteChildren: RootRouteChildren = {
   CustomerAccountRoute: CustomerAccountRoute,
   DocsRoute: DocsRoute,
   EmailConfirmedRoute: EmailConfirmedRoute,
+  LandingRoute: LandingRoute,
+  McpRoute: McpRoute,
   PartnersRoute: PartnersRoute,
   PrivacyRoute: PrivacyRoute,
   SignupRoute: SignupRoute,
@@ -1576,6 +1682,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   VerifiedRoute: VerifiedRoute,
   VerifyEmailRoute: VerifyEmailRoute,
+  OauthConsentRoute: OauthConsentRoute,
   StaffLoginSlugRoute: StaffLoginSlugRoute,
   StoreSlugRoute: StoreSlugRouteWithChildren,
   TrackTokenRoute: TrackTokenRoute,

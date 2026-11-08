@@ -662,33 +662,62 @@ function PosPage() {
     const paper = prefs.paperSize === "58mm" ? "58mm" : prefs.paperSize === "A4" ? "A4" : "80mm";
     const width = paper === "A4" ? "190mm" : paper;
     const align = prefs.alignment === "left" ? "left" : "center";
-    const fontSize = prefs.fontSize === "compact" ? "10px" : prefs.fontSize === "large" ? "14px" : "12px";
-    const rows = prefs.showItemDetails === false ? "" : receipt.lines.map((l) =>
-      `<div class="row"><span>${escapeHtml(l.name)} × ${l.quantity}</span><span>${escapeHtml(formatMoney(l.lineTotal, currency))}</span></div>`
-    ).join("");
-    const logo = prefs.showLogo !== false && prefs.logoUrl ? `<img class="logo" src="${escapeHtml(prefs.logoUrl)}" alt="" />` : "";
+    const fontSize =
+      prefs.fontSize === "compact" ? "10px" : prefs.fontSize === "large" ? "14px" : "12px";
+    const rows =
+      prefs.showItemDetails === false
+        ? ""
+        : receipt.lines
+            .map(
+              (l) =>
+                `<div class="row"><span>${escapeHtml(l.name)} × ${l.quantity}</span><span>${escapeHtml(formatMoney(l.lineTotal, currency))}</span></div>`,
+            )
+            .join("");
+    const logo =
+      prefs.showLogo !== false && prefs.logoUrl
+        ? `<img class="logo" src="${escapeHtml(prefs.logoUrl)}" alt="" />`
+        : "";
     const businessName = prefs.businessName || store?.name || "STRAP STORE";
     const details = [
       prefs.showAddress !== false && prefs.address ? escapeHtml(prefs.address) : "",
       prefs.showPhone !== false && prefs.phone ? escapeHtml(prefs.phone) : "",
       prefs.showEmail === true && prefs.email ? escapeHtml(prefs.email) : "",
       prefs.showTaxId === true && prefs.taxId ? `Tax ID: ${escapeHtml(prefs.taxId)}` : "",
-    ].filter(Boolean).map((x) => `<div>${x}</div>`).join("");
+    ]
+      .filter(Boolean)
+      .map((x) => `<div>${x}</div>`)
+      .join("");
     const metadata = [
-      prefs.showReference !== false ? `<div>Receipt: ${escapeHtml(prefs.prefix || "STRAP")}-${escapeHtml(receipt.reference)}</div>` : "",
+      prefs.showReference !== false
+        ? `<div>Receipt: ${escapeHtml(prefs.prefix || "STRAP")}-${escapeHtml(receipt.reference)}</div>`
+        : "",
       prefs.showDate !== false ? `<div>${escapeHtml(formatDateTime(receipt.at))}</div>` : "",
-      prefs.showCustomer !== false && receipt.customerName ? `<div>Customer: ${escapeHtml(receipt.customerName)}</div>` : "",
-      prefs.showBranch === true && branch?.name ? `<div>Branch: ${escapeHtml(branch.name)}</div>` : "",
+      prefs.showCustomer !== false && receipt.customerName
+        ? `<div>Customer: ${escapeHtml(receipt.customerName)}</div>`
+        : "",
+      prefs.showBranch === true && branch?.name
+        ? `<div>Branch: ${escapeHtml(branch.name)}</div>`
+        : "",
     ].join("");
     const totals = [
-      prefs.showSubtotal !== false ? `<div class="row"><span>Subtotal</span><span>${escapeHtml(formatMoney(receipt.subtotal, currency))}</span></div>` : "",
-      prefs.showTax !== false && receipt.tax > 0 ? `<div class="row"><span>Tax</span><span>${escapeHtml(formatMoney(receipt.tax, currency))}</span></div>` : "",
+      prefs.showSubtotal !== false
+        ? `<div class="row"><span>Subtotal</span><span>${escapeHtml(formatMoney(receipt.subtotal, currency))}</span></div>`
+        : "",
+      prefs.showTax !== false && receipt.tax > 0
+        ? `<div class="row"><span>Tax</span><span>${escapeHtml(formatMoney(receipt.tax, currency))}</span></div>`
+        : "",
       `<div class="row total"><span>Total</span><span>${escapeHtml(formatMoney(receipt.total, currency))}</span></div>`,
-      prefs.showPaymentMethod !== false ? `<div class="center">Paid by: ${escapeHtml(receipt.method)}</div>` : "",
+      prefs.showPaymentMethod !== false
+        ? `<div class="center">Paid by: ${escapeHtml(receipt.method)}</div>`
+        : "",
     ].join("");
     const popup = window.open("", "strap-receipt", "width=420,height=720");
-    if (!popup) { toast.error("Allow pop-ups for Strap to print receipts."); return; }
-    popup.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(receipt.reference)}</title><style>
+    if (!popup) {
+      toast.error("Allow pop-ups for Strap to print receipts.");
+      return;
+    }
+    popup.document
+      .write(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(receipt.reference)}</title><style>
       *{box-sizing:border-box}body{font-family:Arial,sans-serif;padding:16px;max-width:${width};margin:auto;color:#111;font-size:${fontSize};line-height:1.45}
       h1{font-size:18px;margin:0 0 5px;text-align:${align}}.center{text-align:${align}}.logo{display:block;max-width:110px;max-height:56px;object-fit:contain;margin:0 auto 8px}
       .row{display:flex;justify-content:space-between;gap:12px;margin:6px 0;text-align:left}.rule{border-top:1px dashed #999;margin:12px 0}.total{font-weight:700;font-size:1.2em}
@@ -701,7 +730,8 @@ function PosPage() {
       ${prefs.thankYou ? `<p class="center" style="margin-top:18px">${escapeHtml(prefs.thankYou)}</p>` : '<p class="center" style="margin-top:18px">Thank you for shopping with us.</p>'}
       ${prefs.showFooter === false ? "" : `<p class="center">${escapeHtml(prefs.footer || "Powered by Strap")}</p>`}
       <script>window.onload=()=>window.print()</script></body></html>`);
-    popup.document.close(); popup.focus();
+    popup.document.close();
+    popup.focus();
   }
   const cartPanel = (
     <div className="flex h-full min-h-0 flex-col">

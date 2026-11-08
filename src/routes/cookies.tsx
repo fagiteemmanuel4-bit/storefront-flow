@@ -64,9 +64,10 @@ function Cookies() {
           <section>
             <h2 className="font-display text-xl font-bold text-foreground">Managing cookies</h2>
             <p className="mt-3">
-              You can control cookies through your browser settings. Strap also remembers interface preferences such as the selected theme and receipt preview preferences where applicable. Blocking necessary cookies or
-              clearing site storage can sign you out, remove preferences or affect offline queues.
-              For privacy requests, contact{" "}
+              You can control cookies through your browser settings. Strap also remembers interface
+              preferences such as the selected theme and receipt preview preferences where
+              applicable. Blocking necessary cookies or clearing site storage can sign you out,
+              remove preferences or affect offline queues. For privacy requests, contact{" "}
               <strong className="text-foreground">[PRIVACY/DPO EMAIL]</strong>.
             </p>
           </section>

@@ -384,7 +384,42 @@ function Privacy() {
           </Section>
         </div>
       </main>
-      <section className="mx-auto max-w-4xl px-4 pb-10 sm:px-6"><div className="space-y-3 text-[15px] leading-7 text-muted-foreground"><h2 className="font-display text-xl font-bold text-foreground">Receipts, sales and offline records</h2><p>Strap stores operational transaction records needed to create receipts, reconcile sales, manage stock and provide merchant reporting. Store owners and authorized managers may configure receipt identity, visible fields, print layout and print preferences. Receipt content can include product descriptions, quantities, totals, tax where applicable, payment method, customer details and branch details depending on merchant settings and available transaction data.</p><p>Supported offline workflows may temporarily retain queued sale details in browser storage on the device used to operate Strap. Those records are intended to synchronize when connectivity returns. Merchants should protect shared devices and verify that queued sales have synchronized before clearing browser data or changing devices.</p><h2 className="font-display text-xl font-bold text-foreground">Connected applications and authorization</h2><p>Where a merchant authorizes an external application or MCP client, Strap records the grant and applies the permissions approved for that client. Merchants can review and revoke supported authorizations. Audit events may be retained to investigate security incidents, protect accounts and establish transaction history.</p><p>Strap's public storefronts may display merchant-selected catalogue and business information. A merchant remains responsible for ensuring that information it publishes is accurate and that it has a lawful basis to enter customer and staff information into the platform.</p></div></section>
+      <section className="mx-auto max-w-4xl px-4 pb-10 sm:px-6">
+        <div className="space-y-3 text-[15px] leading-7 text-muted-foreground">
+          <h2 className="font-display text-xl font-bold text-foreground">
+            Receipts, sales and offline records
+          </h2>
+          <p>
+            Strap stores operational transaction records needed to create receipts, reconcile sales,
+            manage stock and provide merchant reporting. Store owners and authorized managers may
+            configure receipt identity, visible fields, print layout and print preferences. Receipt
+            content can include product descriptions, quantities, totals, tax where applicable,
+            payment method, customer details and branch details depending on merchant settings and
+            available transaction data.
+          </p>
+          <p>
+            Supported offline workflows may temporarily retain queued sale details in browser
+            storage on the device used to operate Strap. Those records are intended to synchronize
+            when connectivity returns. Merchants should protect shared devices and verify that
+            queued sales have synchronized before clearing browser data or changing devices.
+          </p>
+          <h2 className="font-display text-xl font-bold text-foreground">
+            Connected applications and authorization
+          </h2>
+          <p>
+            Where a merchant authorizes an external application or MCP client, Strap records the
+            grant and applies the permissions approved for that client. Merchants can review and
+            revoke supported authorizations. Audit events may be retained to investigate security
+            incidents, protect accounts and establish transaction history.
+          </p>
+          <p>
+            Strap's public storefronts may display merchant-selected catalogue and business
+            information. A merchant remains responsible for ensuring that information it publishes
+            is accurate and that it has a lawful basis to enter customer and staff information into
+            the platform.
+          </p>
+        </div>
+      </section>
       <SiteFooter />
     </div>
   );

@@ -644,18 +644,64 @@ function DocsPage() {
             </div>
           </DocSection>
 
-          <DocSection id="receipts" icon={Receipt} title="Receipt preferences and printing" eyebrow="Customer-ready records">
-            <p>Store owners and managers can configure receipt branding and content in Settings → Receipts. Preferences include business identity, logo URL, address, phone, email, tax ID, header and footer wording, receipt prefix, paper width, copy count, text size and header alignment.</p>
-            <p>Receipt content can be tailored to show or hide the reference, timestamp, customer, branch, item details, subtotal, tax, payment method and closing message. The live preview helps check the layout before saving. POS printing uses the saved store preferences when available; browser pop-up and printer permissions still apply.</p>
-            <p>Receipt settings are store-scoped. Only owners and managers can save them. Cashiers can use the receipt workflow according to their existing role permissions.</p>
+          <DocSection
+            id="receipts"
+            icon={Receipt}
+            title="Receipt preferences and printing"
+            eyebrow="Customer-ready records"
+          >
+            <p>
+              Store owners and managers can configure receipt branding and content in Settings →
+              Receipts. Preferences include business identity, logo URL, address, phone, email, tax
+              ID, header and footer wording, receipt prefix, paper width, copy count, text size and
+              header alignment.
+            </p>
+            <p>
+              Receipt content can be tailored to show or hide the reference, timestamp, customer,
+              branch, item details, subtotal, tax, payment method and closing message. The live
+              preview helps check the layout before saving. POS printing uses the saved store
+              preferences when available; browser pop-up and printer permissions still apply.
+            </p>
+            <p>
+              Receipt settings are store-scoped. Only owners and managers can save them. Cashiers
+              can use the receipt workflow according to their existing role permissions.
+            </p>
           </DocSection>
-          <DocSection id="offline" icon={WifiOff} title="Offline sales and synchronization" eyebrow="Keep selling during interruptions">
-            <p>When supported connectivity is unavailable, Strap can queue eligible sales locally with a stable transaction identifier. The application retries synchronization when the device reconnects and checks for an existing transaction before replaying a queued sale to reduce duplicate-sale risk.</p>
-            <p>Keep the device secure and reconnect regularly. Confirm queued sales have synchronized before clearing browser storage, signing out of a shared device or moving to another device. Offline mode does not guarantee conflict-free stock reconciliation across multiple devices.</p>
+          <DocSection
+            id="offline"
+            icon={WifiOff}
+            title="Offline sales and synchronization"
+            eyebrow="Keep selling during interruptions"
+          >
+            <p>
+              When supported connectivity is unavailable, Strap can queue eligible sales locally
+              with a stable transaction identifier. The application retries synchronization when the
+              device reconnects and checks for an existing transaction before replaying a queued
+              sale to reduce duplicate-sale risk.
+            </p>
+            <p>
+              Keep the device secure and reconnect regularly. Confirm queued sales have synchronized
+              before clearing browser storage, signing out of a shared device or moving to another
+              device. Offline mode does not guarantee conflict-free stock reconciliation across
+              multiple devices.
+            </p>
           </DocSection>
-          <DocSection id="connected-apps" icon={ShieldCheck} title="Connected apps and access" eyebrow="Authorised integrations">
-            <p>Connected applications and MCP clients use explicit per-client authorization grants. Store owners can review available access, approve the permissions requested for an integration and revoke grants that are no longer needed. Audit events support security review and accountability.</p>
-            <p>Never share staff PINs, account passwords or private API credentials with an integration. Give external clients only the access needed for their task.</p>
+          <DocSection
+            id="connected-apps"
+            icon={ShieldCheck}
+            title="Connected apps and access"
+            eyebrow="Authorised integrations"
+          >
+            <p>
+              Connected applications and MCP clients use explicit per-client authorization grants.
+              Store owners can review available access, approve the permissions requested for an
+              integration and revoke grants that are no longer needed. Audit events support security
+              review and accountability.
+            </p>
+            <p>
+              Never share staff PINs, account passwords or private API credentials with an
+              integration. Give external clients only the access needed for their task.
+            </p>
           </DocSection>
 
           <footer className="mt-16 border-t border-border pt-8 text-sm text-muted-foreground">

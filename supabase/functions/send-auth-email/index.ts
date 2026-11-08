@@ -27,7 +27,10 @@ Deno.serve(async (req) => {
       headers: { "Content-Type": upstream.headers.get("content-type") ?? "application/json" },
     });
   } catch (error) {
-    console.error("Signed auth hook relay failed", error instanceof Error ? error.message : String(error));
+    console.error(
+      "Signed auth hook relay failed",
+      error instanceof Error ? error.message : String(error),
+    );
     return new Response(JSON.stringify({ error: "Authentication email hook unavailable" }), {
       status: 502,
       headers: { "Content-Type": "application/json" },
