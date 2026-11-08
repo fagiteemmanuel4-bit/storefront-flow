@@ -24,6 +24,8 @@ jobs:
         run: npm install
       - name: Format source consistently
         run: npx prettier --write .
+      - name: Apply safe ESLint fixes
+        run: npx eslint . --fix
       - name: Lint
         run: npm run lint
       - name: Build
