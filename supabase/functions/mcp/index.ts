@@ -324,20 +324,37 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     async ({ store_id, query, limit }) => {
       try {
         const settings = await requirePermission(store_id, "allow_products_read");
-        let request = supabase
-          .from("products")
-          .select(
-            "id,store_id,name,sku,barcode,category,price,is_active,low_stock_threshold,units_per_pack,pack_price,piece_price",
-          )
-          .eq("store_id", store_id)
-          .eq("is_active", true)
-          .order("name")
-          .limit(clampLimit(limit));
+        const selectProducts = () =>
+          supabase
+            .from("products")
+            .select(
+              "id,store_id,name,sku,barcode,category,price,is_active,low_stock_threshold,units_per_pack,pack_price,piece_price",
+            )
+            .eq("store_id", store_id)
+            .eq("is_active", true);
         if (query) {
           const pattern = `%${query.replace(/[\\%_]/g, "")}%`;
-          request = request.ilike("name", pattern);
+          const matches = await Promise.all([
+            selectProducts().ilike("name", pattern).limit(clampLimit(limit)),
+            selectProducts().ilike("sku", pattern).limit(clampLimit(limit)),
+            selectProducts().ilike("barcode", pattern).limit(clampLimit(limit)),
+          ]);
+          const byId = new Map<string, Record<string, unknown>>();
+          for (const match of matches) {
+            if (match.error) throw match.error;
+            for (const product of match.data ?? []) {
+              const row = product as Record<string, unknown>;
+              byId.set(String(row.id), row);
+            }
+          }
+          const products = [...byId.values()].sort((a, b) =>
+            String(a.name ?? "").localeCompare(String(b.name ?? "")),
+          );
+          return result(products.slice(0, clampLimit(limit)));
         }
-        const { data, error } = await request;
+        const { data, error } = await selectProducts()
+          .order("name")
+          .limit(clampLimit(limit));
         if (error) throw error;
         return result(data ?? []);
       } catch (error) {
