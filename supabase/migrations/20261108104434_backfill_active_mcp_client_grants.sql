@@ -1,3 +1,8 @@
+-- The original per-client table migration predates the enabled flag used by the MCP server.
+-- Add it before copying legacy grants so clean installs and existing projects match.
+alter table public.mcp_client_access_settings
+  add column if not exists enabled boolean not null default true;
+
 -- Preserve existing, explicitly active MCP grants while moving from store-wide
 -- settings to per-OAuth-client permissions. New clients do not inherit this row.
 -- Only users who still have owner/manager access receive a backfilled grant.
