@@ -22,6 +22,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { NotFoundScreen } from "@/components/shell/NotFoundScreen";
+import { serializeJsonLd } from "@/lib/storefront-seo";
 import { StoreFeedbackFloating } from "@/components/site/StoreFeedbackFloating";
 import { StoreCustomerAccess } from "@/components/site/StoreCustomerAccess";
 import { QuickFindHost } from "@/components/shell/QuickFind";
@@ -236,7 +237,7 @@ function RootShell({ children }: { children: ReactNode }) {
         {children}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(STRUCTURED_DATA) }}
         />
         <Scripts />
       </body>
