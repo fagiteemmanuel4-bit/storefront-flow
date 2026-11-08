@@ -449,9 +449,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           settings,
           supabase
             .from("sales")
-            .select(
-              "id,branch_id,reference,subtotal,tax,total,payment_method,created_at",
-            )
+            .select("id,branch_id,reference,subtotal,tax,total,payment_method,created_at")
             .eq("store_id", store_id)
             .order("created_at", { ascending: false })
             .limit(clampLimit(limit)),
