@@ -594,7 +594,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     {
       title: "Create a product",
       description:
-        "Create a product in an accessible STRAP store. Requires the store owner or manager to enable product write access. Use only when the user explicitly asks to add a product.",
+        "Create a product in an accessible STRAP store using customer-facing catalogue fields. Internal cost and margin fields stay private.",
       inputSchema: {
         store_id: z.string().uuid(),
         name: z.string().trim().min(1).max(160),
@@ -660,7 +660,6 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
         product_id: z.string().uuid(),
         name: z.string().trim().min(1).max(160).optional(),
         price: z.number().min(0).optional(),
-        cost: z.number().min(0).optional(),
         sku: z.string().trim().max(80).optional(),
         barcode: z.string().trim().max(100).optional(),
         category: z.string().trim().max(100).optional(),
