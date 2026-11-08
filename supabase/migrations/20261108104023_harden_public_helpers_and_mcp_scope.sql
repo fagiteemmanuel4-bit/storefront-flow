@@ -115,6 +115,7 @@ begin
   end if;
 
   if _password is null
+    or octet_length(_password) > 72
     or account.password_hash is null
     or extensions.crypt(_password, account.password_hash) is distinct from account.password_hash
   then
@@ -256,6 +257,9 @@ begin
   end if;
   if coalesce(length(_password), 0) < 8 then
     raise exception 'Password must be at least 8 characters';
+  end if;
+  if octet_length(_password) > 72 then
+    raise exception 'Password is too long. Use 72 bytes or fewer.';
   end if;
 
   select * into os
