@@ -1,0 +1,9 @@
+create index if not exists branch_stock_product_id_idx on public.branch_stock (product_id);
+create index if not exists expenses_created_by_idx on public.expenses (created_by);
+create index if not exists online_order_items_product_id_idx on public.online_order_items (product_id);
+create index if not exists online_order_items_store_id_idx on public.online_order_items (store_id);
+create index if not exists online_orders_online_store_id_idx on public.online_orders (online_store_id);
+create index if not exists sale_items_product_id_idx on public.sale_items (product_id);
+create index if not exists sales_cashier_id_idx on public.sales (cashier_id);
+create index if not exists store_customer_orders_order_id_idx on public.store_customer_orders (order_id);
+create index if not exists store_customer_sessions_account_id_idx on public.store_customer_sessions (account_id);
