@@ -86,6 +86,7 @@ export function StrapMcpSettingsPage() {
   const [grants, setGrants] = useState<OAuthGrant[]>([]);
   const [saved, setSaved] = useState<Record<string, AccessConfig>>({});
   const [drafts, setDrafts] = useState<Record<string, AccessConfig>>({});
+  const [baselineDrafts, setBaselineDrafts] = useState<Record<string, AccessConfig>>({});
   const [editing, setEditing] = useState<string | null>(null);
   const [audit, setAudit] = useState<AuditRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -135,6 +136,7 @@ export function StrapMcpSettingsPage() {
         draftMap[grant.client_id] = appMap[grant.client_id] ?? legacy;
       }
       setDrafts(draftMap);
+      setBaselineDrafts(draftMap);
 
       const { data: activity, error: activityError } = await db.from("mcp_action_audit")
         .select("id,action,summary,created_at").eq("store_id", store.id)
@@ -191,6 +193,7 @@ export function StrapMcpSettingsPage() {
       const next = { ...DEFAULT_ACCESS, ...config, allowed_branch_ids: allSelected ? null : config.allowed_branch_ids };
       setSaved((current) => ({ ...current, [grant.client_id]: next }));
       setDrafts((current) => ({ ...current, [grant.client_id]: next }));
+      setBaselineDrafts((current) => ({ ...current, [grant.client_id]: next }));
       setEditing(null);
       toast.success(`Access for ${grant.client_name} saved.`);
     } catch (error) {
@@ -306,7 +309,7 @@ export function StrapMcpSettingsPage() {
                 </div>
                 <div><h5 className="font-semibold">Read permissions</h5><div className="mt-2 divide-y divide-border">{READ_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-muted-foreground">{option.description}</p></div><Switch checked={Boolean(config[option.key])} disabled={!canManage || !config.enabled} onCheckedChange={(value) => updateDraft(grant.client_id, { [option.key]: value })} /></div>)}</div></div>
                 <div><h5 className="font-semibold">Write permissions</h5><div className="mt-2 divide-y divide-border">{WRITE_OPTIONS.map((option) => <div key={option.key} className="flex items-center justify-between gap-4 py-3"><div><p className="text-sm font-semibold">{option.title}</p><p className="mt-1 text-xs text-muted-foreground">{option.description}</p></div><Switch checked={Boolean(config[option.key])} disabled={!canManage} onCheckedChange={(value) => updateDraft(grant.client_id, { [option.key]: value })} /></div>)}</div></div>
-                <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end"><Button variant="ghost" disabled={savingId === grant.client_id} onClick={() => { setDrafts((current) => ({ ...current, [grant.client_id]: savedConfig ?? (legacyAvailable ? current[grant.client_id] : UNCONFIGURED_ACCESS) })); setEditing(null); }}>Cancel</Button><Button onClick={() => void saveAccess(grant)} disabled={!canManage || savingId === grant.client_id} className="gap-2"><Check className="size-4" />{savingId === grant.client_id ? "Saving…" : "Save permissions"}</Button></div>
+                <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end"><Button variant="ghost" disabled={savingId === grant.client_id} onClick={() => { setDrafts((current) => ({ ...current, [grant.client_id]: baselineDrafts[grant.client_id] ?? UNCONFIGURED_ACCESS })); setEditing(null); }}>Cancel</Button><Button onClick={() => void saveAccess(grant)} disabled={!canManage || savingId === grant.client_id} className="gap-2"><Check className="size-4" />{savingId === grant.client_id ? "Saving…" : "Save permissions"}</Button></div>
               </div>}
             </article>;
           })}
