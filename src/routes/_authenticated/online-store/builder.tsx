@@ -224,9 +224,6 @@ function StoreBuilder() {
   const [saving, setSaving] = useState(false);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const selectedTemplate = useMemo(() => TEMPLATES.find((x) => x.id === template)!, [template]);
-  useEffect(() => {
-    void loadConfig();
-  }, [loadConfig]);
   const loadConfig = useCallback(async () => {
     if (!store) return;
     setLoading(true);
@@ -274,7 +271,10 @@ function StoreBuilder() {
       setPublished(Boolean(existing.is_published));
     } else setSections(makeSections(selectedTemplate.sections));
     setLoading(false);
-  }, [store?.id]);
+  }, [store]);
+  useEffect(() => {
+    void loadConfig();
+  }, [loadConfig]);
   function applyTemplate(next: Template) {
     if (next === template) return;
     setTemplate(next);
