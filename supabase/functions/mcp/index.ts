@@ -314,7 +314,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
     {
       title: "Search store products",
       description:
-        "Search active products by name, SKU, or barcode within an accessible store. Use this when the user asks about a product, its price, or its catalogue details.",
+        "Search active products by name, SKU, or barcode within an accessible store. Returns customer-facing selling prices and catalogue details, never internal cost prices or margins.",
       inputSchema: {
         store_id: z.string().uuid(),
         query: z.string().trim().max(120).optional(),
@@ -327,7 +327,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
         let request = supabase
           .from("products")
           .select(
-            "id,store_id,name,sku,barcode,category,price,cost,is_active,low_stock_threshold,units_per_pack,pack_price,piece_price",
+            "id,store_id,name,sku,barcode,category,price,is_active,low_stock_threshold,units_per_pack,pack_price,piece_price",
           )
           .eq("store_id", store_id)
           .eq("is_active", true)
