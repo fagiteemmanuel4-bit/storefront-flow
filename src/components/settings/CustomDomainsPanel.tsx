@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CheckCircle2, Copy, Globe2, Loader2, Plus, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,7 +13,7 @@ export function CustomDomainsPanel() {
   const [hostname, setHostname] = useState("");
   const [busy, setBusy] = useState(false);
   const canManage = role === "owner" || role === "manager";
-  async function load() {
+  const load = useCallback(async () => {
     if (!store?.id) return;
     const { data, error } = await (supabase as any)
       .from("store_custom_domains")
@@ -23,10 +23,10 @@ export function CustomDomainsPanel() {
       .order("created_at");
     if (error) toast.error(error.message);
     setDomains(data || []);
-  }
+  }, [store?.id]);
   useEffect(() => {
     void load();
-  }, [store?.id]);
+  }, [load]);
   async function add() {
     if (!store?.id || !hostname.trim() || !canManage) return;
     setBusy(true);
