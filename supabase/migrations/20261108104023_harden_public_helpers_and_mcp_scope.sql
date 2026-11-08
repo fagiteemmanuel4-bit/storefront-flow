@@ -366,7 +366,8 @@ begin
     subtotal:=subtotal+product_row.price*qty;
   end loop;
 
-  order_no:='KU-'||to_char(clock_timestamp(),'YYMMDDHH24MISS')||'-'||upper(substr(replace(gen_random_uuid()::text,'-',''),1,5));
+  -- Keep the public order-number + phone lookup resistant to order-number enumeration.
+  order_no:='KU-'||to_char(clock_timestamp(),'YYMMDDHH24MISS')||'-'||upper(substr(replace(gen_random_uuid()::text,'-',''),1,16));
   insert into public.online_orders(store_id,online_store_id,order_number,customer_name,customer_email,customer_phone,shipping_address,customer_note,payment_method,subtotal,total)
     values(s.id,os.id,order_no,btrim(_customer_name),lower(btrim(coalesce(_customer_email,''))),btrim(_customer_phone),btrim(_shipping_address),btrim(coalesce(_customer_note,'')),_payment_method,subtotal,subtotal)
     returning id into v_order_id;
