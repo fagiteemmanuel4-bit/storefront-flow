@@ -167,7 +167,7 @@ export function SupplierWorkspace({ vendor, userId, onBrowseMarketplace }: {
       queryClient.invalidateQueries({queryKey:["connect-supplier-events",vendor.id]}),
       queryClient.invalidateQueries({queryKey:["connect-supplier-settings",vendor.id]}),
       queryClient.invalidateQueries({queryKey:["connect-distribution-groups",vendor.id]}),
-      queryClient.invalidateQueries({queryKey:["connect-products"]}),
+      queryClient.invalidateQueries({queryKey:["connect-products"]}),\n      queryClient.invalidateQueries({queryKey:["connect-my-vendor",userId]}),\n      queryClient.invalidateQueries({queryKey:["connect-vendors"]}),
     ]);
   }
   async function importCsv(file: File) {
