@@ -420,11 +420,11 @@ function SupplierSetupPage() {
                               update("category", category);
                               setCategoryPickerOpen(false);
                             }}
-                            className={`flex min-h-[58px] items-center justify-between rounded-xl border px-3 text-left text-sm font-medium transition active:scale-[.98] ${draft.category === category ? "border-[#c6f432] bg-[#c6f432]/10" : "border-border bg-surface hover:bg-secondary"}`}
+                            className={`flex min-h-[58px] items-center justify-between rounded-xl border px-3 text-left text-sm font-medium transition active:scale-[.98] ${draft.category === category ? "border-[#101114] bg-[#c6f432]/10" : "border-border bg-surface hover:bg-secondary"}`}
                           >
                             {category}
                             {draft.category === category && (
-                              <Check className="size-4 text-[#789b00]" />
+                              <Check className="size-4 text-[#101114]" />
                             )}
                           </button>
                         ))}
@@ -619,12 +619,7 @@ function SupplierSetupPage() {
         </div>
       </div>
 
-      <footer className="pointer-events-none absolute bottom-6 left-0 right-0 flex items-center justify-center px-6 text-[10px] font-medium tracking-[0.12em] text-muted-foreground/70">
-        POWERED BY{" "}
-        <span className="ml-1.5 font-bold tracking-[0.2em] text-foreground/70">STRAP</span>
-      </footer>
-
-      <div
+            <div
         className="fixed inset-x-0 bottom-0 z-[70] mx-auto w-full max-w-[520px] bg-[#F7F7F5] px-[clamp(20px,6vw,32px)] pb-[max(16px,env(safe-area-inset-bottom))] pt-4 sm:rounded-b-[28px] sm:bg-white sm:pt-5"
       >
         {step === steps.length - 1 ? (
