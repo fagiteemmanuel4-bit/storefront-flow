@@ -32,6 +32,8 @@ type SupplierDraft = {
   whatsapp_number: string;
 };
 
+const db = supabase as any;
+
 const emptyDraft: SupplierDraft = {
   business_name: "",
   category: "Fashion",
@@ -69,7 +71,7 @@ function SupplierSetupPage() {
     }
     if (saved) setDraft({ ...emptyDraft, ...saved });
     void (async () => {
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from("connect_vendors")
         .select("id,slug,business_name,category,description,state,city,whatsapp_number")
         .eq("owner_id", userId)
@@ -152,8 +154,8 @@ function SupplierSetupPage() {
       is_published: true,
     };
     const result = vendorId
-      ? await supabase.from("connect_vendors").update(payload).eq("id", vendorId)
-      : await supabase.from("connect_vendors").insert(payload);
+      ? await db.from("connect_vendors").update(payload).eq("id", vendorId)
+      : await db.from("connect_vendors").insert(payload);
     setBusy(false);
     if (result.error) {
       toast.error(result.error.message);
