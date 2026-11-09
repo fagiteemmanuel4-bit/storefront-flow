@@ -8,10 +8,7 @@ export function NotFoundScreen() {
       className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-background px-5 py-12"
       aria-labelledby="not-found-title"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 overflow-hidden"
-      >
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -left-32 -top-36 size-80 rounded-full bg-accent/10 blur-3xl" />
         <div className="absolute -bottom-40 -right-28 size-96 rounded-full bg-accent/10 blur-3xl" />
       </div>
@@ -43,8 +40,8 @@ export function NotFoundScreen() {
             Looks like this page took a wrong turn.
           </h1>
           <p className="mx-auto mt-4 max-w-md text-sm leading-7 text-muted-foreground sm:text-base">
-            We can’t find the page you’re looking for. The address may be incorrect,
-            the link may have expired, or the page may have been moved.
+            We can’t find the page you’re looking for. The address may be incorrect, the link may
+            have expired, or the page may have been moved.
           </p>
 
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
