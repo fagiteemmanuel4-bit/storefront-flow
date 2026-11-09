@@ -420,6 +420,10 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
     await supabase.auth.signOut();
     void navigate({ to: "/auth", replace: true });
   }
+  if (pathname === "/connect-supplier-setup") {
+    return <div className="min-h-[100dvh] w-full overflow-hidden bg-background">{children}</div>;
+  }
+
   return (
     <div className="kudi-app-shell min-h-[100dvh] overflow-x-hidden bg-background lg:pb-0">
       {routeLoading && (
