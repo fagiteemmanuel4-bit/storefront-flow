@@ -27,7 +27,7 @@ export function StorePromotionsPanel({ storeId, currency, canManage }: Props) {
     queryFn: async () => {
       const [products, online] = await Promise.all([
         supabase.from("products").select("id,name,price,category").eq("store_id", storeId).eq("is_active", true).order("name"),
-        supabase.from("online_products").select("*").eq("store_id", storeId),
+        (supabase as any).from("online_products").select("*").eq("store_id", storeId),
       ]);
       if (products.error) throw new Error(products.error.message);
       if (online.error) throw new Error(online.error.message);
@@ -58,7 +58,7 @@ export function StorePromotionsPanel({ storeId, currency, canManage }: Props) {
       for (const row of selectedRows) {
         const online = row.online || {};
         const slug = online.slug || row.product.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-        const { error } = await supabase.from("online_products").upsert({
+        const { error } = await (supabase as any).from("online_products").upsert({
           store_id: storeId,
           product_id: row.product.id,
           enabled: true,
@@ -89,7 +89,7 @@ export function StorePromotionsPanel({ storeId, currency, canManage }: Props) {
   }
   async function clear(row: Row) {
     if (!row.online) return;
-    const { error } = await supabase.from("online_products").update({
+    const { error } = await (supabase as any).from("online_products").update({
       discount_type: null, discount_value: null, discount_starts_at: null, discount_ends_at: null, discount_label: "",
     }).eq("store_id", storeId).eq("product_id", row.product.id);
     if (error) toast.error(error.message);
