@@ -71,7 +71,9 @@ export function SupplierWorkspace({ vendor, userId, onBrowseMarketplace }: {
   const [codeApproval,setCodeApproval] = useState(false);
   const [codeLimit,setCodeLimit] = useState("");
   const [codeExpiry,setCodeExpiry] = useState("");
-  const [newCode,setNewCode] = useState("");\n  const [newLink,setNewLink] = useState("");\n  const [codeGroupId,setCodeGroupId] = useState("");
+  const [newCode,setNewCode] = useState("");
+  const [newLink,setNewLink] = useState("");
+  const [codeGroupId,setCodeGroupId] = useState("");
   const [saving,setSaving] = useState(false);
   const [productSearch,setProductSearch] = useState("");
   const [settings,setSettings] = useState<any>(null);
@@ -148,7 +150,8 @@ export function SupplierWorkspace({ vendor, userId, onBrowseMarketplace }: {
     toast.success(`${selected.length} products updated.`);setSelected([]);await refresh();
   }
   async function generateCode() {
-    if(codeScope==="selected"&&!selected.length)return toast.error("Select the products to include first.");\n    if(codeScope==="group"&&!codeGroupId)return toast.error("Choose a product collection.");
+    if(codeScope==="selected"&&!selected.length)return toast.error("Select the products to include first.");
+    if(codeScope==="group"&&!codeGroupId)return toast.error("Choose a product collection.");
     setSaving(true);
     const code=makeCode();
     const codeHash=await hashCode(code);
