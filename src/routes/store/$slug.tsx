@@ -47,6 +47,8 @@ type Product = {
   description: string;
   stock_quantity: number;
   fashion_variants: StoreVariant[];
+  original_price?: number;
+  discount_label?: string;
 };
 type CartItem = {
   productId: string;
@@ -483,9 +485,19 @@ function PublicStorefrontPage() {
                   </p>
                   <div className="mt-4 flex items-center justify-between gap-3">
                     <div>
-                      <span className="numeric text-lg font-bold">
+                      <span className="numeric text-lg font-bold text-success">
                         {formatMoney(product.price, store.currency)}
                       </span>
+                      {Number(product.original_price ?? product.price) > Number(product.price) && (
+                        <span className="ml-2 text-sm text-muted-foreground line-through">
+                          {formatMoney(Number(product.original_price), store.currency)}
+                        </span>
+                      )}
+                      {product.discount_label && (
+                        <span className="mt-1 block w-fit rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success">
+                          {product.discount_label}
+                        </span>
+                      )}
                       <p
                         className={`mt-1 text-xs font-semibold ${product.stock_quantity > 0 ? "text-success" : "text-destructive"}`}
                       >

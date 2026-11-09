@@ -30,6 +30,11 @@ export type OnlineProductRow = {
   description: string;
   created_at: string;
   updated_at: string;
+  discount_type?: "percentage" | "fixed" | null;
+  discount_value?: number | null;
+  discount_starts_at?: string | null;
+  discount_ends_at?: string | null;
+  discount_label?: string;
 };
 export type OnlineOrderRow = {
   id: string;
@@ -88,6 +93,9 @@ export type PublicStoreCatalogRow = {
   featured: boolean;
   description: string;
   stock_quantity: number;
+  fashion_variants?: Array<{ size: string; color: string; quantity: number }>;
+  original_price?: number;
+  discount_label?: string;
 };
 export type OnlineStoreHeroRow = {
   store_id: string;

@@ -25,6 +25,8 @@ type PublicProduct = {
   product_featured: boolean;
   stock_quantity: number;
   available: boolean;
+  product_original_price?: number;
+  discount_label?: string;
 };
 
 type RelatedProduct = {
@@ -204,9 +206,21 @@ function PublicProductPage() {
               {product.product_category || "Product"}
             </p>
             <h1 className="text-display-lg mt-3">{product.product_name}</h1>
-            <p className="numeric mt-5 text-2xl font-bold">
-              {formatMoney(product.product_price, product.currency)}
-            </p>
+            <div className="mt-5 flex flex-wrap items-baseline gap-3">
+              <p className="numeric text-2xl font-bold text-success">
+                {formatMoney(product.product_price, product.currency)}
+              </p>
+              {Number(product.product_original_price ?? product.product_price) > Number(product.product_price) && (
+                <p className="text-base text-muted-foreground line-through">
+                  {formatMoney(Number(product.product_original_price), product.currency)}
+                </p>
+              )}
+              {product.discount_label && (
+                <span className="rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">
+                  {product.discount_label}
+                </span>
+              )}
+            </div>
             <p
               className={`mt-2 text-sm font-semibold ${product.available ? "text-success" : "text-destructive"}`}
             >
