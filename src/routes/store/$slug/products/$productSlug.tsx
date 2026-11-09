@@ -210,7 +210,8 @@ function PublicProductPage() {
               <p className="numeric text-2xl font-bold text-success">
                 {formatMoney(product.product_price, product.currency)}
               </p>
-              {Number(product.product_original_price ?? product.product_price) > Number(product.product_price) && (
+              {Number(product.product_original_price ?? product.product_price) >
+                Number(product.product_price) && (
                 <p className="text-base text-muted-foreground line-through">
                   {formatMoney(Number(product.product_original_price), product.currency)}
                 </p>

@@ -322,7 +322,13 @@ function OnlineCatalogPage() {
         </div>
       </section>
 
-      {storeId && <StorePromotionsPanel storeId={storeId} currency={store?.currency ?? "NGN"} canManage={canManage} />}
+      {storeId && (
+        <StorePromotionsPanel
+          storeId={storeId}
+          currency={store?.currency ?? "NGN"}
+          canManage={canManage}
+        />
+      )}
 
       {selected.size > 0 && (
         <div className="sticky top-[70px] z-30 mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-surface/95 p-3 shadow-lg backdrop-blur">

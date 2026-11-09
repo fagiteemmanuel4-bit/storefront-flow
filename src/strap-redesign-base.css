@@ -60,22 +60,36 @@ h6,
   font-family: var(--font-display) !important;
 }
 
-
 /* Final app-wide type and control layer — intentionally loaded after the other theme sheets. */
 :root {
   --font-sans: Arial, Helvetica, sans-serif;
   --font-display: Arial, Helvetica, sans-serif;
 }
-html, body, body * {
+html,
+body,
+body * {
   font-family: Arial, Helvetica, sans-serif !important;
 }
-h1, h2, h3, h4, h5, h6, .font-display,
-.text-display-lg, .text-display-md, .text-title-lg, .numeric {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-display,
+.text-display-lg,
+.text-display-md,
+.text-title-lg,
+.numeric {
   font-family: Arial, Helvetica, sans-serif !important;
   letter-spacing: normal !important;
 }
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-textarea, select, [data-slot="input"], [data-slot="select-trigger"], .field {
+textarea,
+select,
+[data-slot="input"],
+[data-slot="select-trigger"],
+.field {
   min-height: 48px !important;
   border: 1.5px solid color-mix(in srgb, var(--foreground) 20%, var(--border)) !important;
   border-radius: 14px !important;
@@ -85,23 +99,47 @@ textarea, select, [data-slot="input"], [data-slot="select-trigger"], .field {
   font-size: 15px !important;
   line-height: 1.4 !important;
   box-shadow: 0 1px 2px rgb(15 23 42 / 0.045) !important;
-  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease !important;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease !important;
 }
-textarea { min-height: 112px !important; }
+textarea {
+  min-height: 112px !important;
+}
 input:not([type="checkbox"]):not([type="radio"]):focus,
-textarea:focus, select:focus, [data-slot="input"]:focus-visible,
-[data-slot="select-trigger"]:focus-visible, .field:focus {
+textarea:focus,
+select:focus,
+[data-slot="input"]:focus-visible,
+[data-slot="select-trigger"]:focus-visible,
+.field:focus {
   border-color: var(--ring) !important;
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--ring) 25%, transparent) !important;
   outline: none !important;
 }
-input[type="checkbox"], input[type="radio"] {
+input[type="checkbox"],
+input[type="radio"] {
   width: 19px !important;
   height: 19px !important;
   accent-color: var(--primary) !important;
 }
-input[type="file"] { min-height: 52px !important; padding: 0.55rem !important; }
-input::placeholder, textarea::placeholder { color: var(--muted-foreground) !important; opacity: .9; }
-label { line-height: 1.45; }
-fieldset { border: 1px solid var(--border); border-radius: 16px; padding: 1rem; }
-[role="dialog"] { border-radius: 22px !important; }
+input[type="file"] {
+  min-height: 52px !important;
+  padding: 0.55rem !important;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 0.9;
+}
+label {
+  line-height: 1.45;
+}
+fieldset {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+}
+[role="dialog"] {
+  border-radius: 22px !important;
+}

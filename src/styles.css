@@ -624,23 +624,37 @@ button.bg-accent:hover {
   }
 }
 
-
 /* STRAP UI polish: consistent Arial typography and clearer, roomier form controls. */
 :root {
   --font-sans: Arial, Helvetica, sans-serif;
   --font-display: Arial, Helvetica, sans-serif;
   --radius: 1rem;
 }
-html, body, body * {
+html,
+body,
+body * {
   font-family: Arial, Helvetica, sans-serif !important;
 }
-h1, h2, h3, h4, h5, h6, .font-display,
-.text-display-lg, .text-display-md, .text-title-lg, .numeric {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-display,
+.text-display-lg,
+.text-display-md,
+.text-title-lg,
+.numeric {
   font-family: Arial, Helvetica, sans-serif !important;
   letter-spacing: normal !important;
 }
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-textarea, select, [data-slot="input"], [data-slot="select-trigger"], .field {
+textarea,
+select,
+[data-slot="input"],
+[data-slot="select-trigger"],
+.field {
   min-height: 48px !important;
   border: 1.5px solid color-mix(in oklch, var(--color-foreground) 20%, var(--color-border)) !important;
   border-radius: 14px !important;
@@ -650,17 +664,26 @@ textarea, select, [data-slot="input"], [data-slot="select-trigger"], .field {
   font-size: 15px !important;
   line-height: 1.4 !important;
   box-shadow: 0 1px 2px rgb(15 23 42 / 0.04) !important;
-  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease !important;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease !important;
 }
-textarea { min-height: 112px !important; }
+textarea {
+  min-height: 112px !important;
+}
 input:not([type="checkbox"]):not([type="radio"]):focus,
-textarea:focus, select:focus, [data-slot="input"]:focus-visible,
-[data-slot="select-trigger"]:focus-visible, .field:focus {
+textarea:focus,
+select:focus,
+[data-slot="input"]:focus-visible,
+[data-slot="select-trigger"]:focus-visible,
+.field:focus {
   border-color: var(--color-ring) !important;
   box-shadow: 0 0 0 4px color-mix(in oklch, var(--color-ring) 24%, transparent) !important;
   outline: none !important;
 }
-input[type="checkbox"], input[type="radio"] {
+input[type="checkbox"],
+input[type="radio"] {
   width: 19px !important;
   height: 19px !important;
   accent-color: var(--color-primary) !important;
@@ -669,11 +692,14 @@ input[type="file"] {
   min-height: 52px !important;
   padding: 0.55rem !important;
 }
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: var(--color-muted-foreground) !important;
   opacity: 0.9;
 }
-label { line-height: 1.45; }
+label {
+  line-height: 1.45;
+}
 fieldset {
   border: 1px solid var(--color-border);
   border-radius: 16px;
