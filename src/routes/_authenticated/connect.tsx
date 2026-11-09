@@ -522,6 +522,10 @@ function ConnectPage() {
   const loading = productsQuery.isLoading || vendorsQuery.isLoading;
   const queryError = productsQuery.error || vendorsQuery.error;
 
+  if (myVendor && tab === "my-shop") {
+    return <SupplierWorkspace vendor={myVendor} userId={userId} onBrowseMarketplace={() => setTab("discover")} />;
+  }
+
   return (
     <AppShell title="STRAP Connect">
       <div className="mx-auto max-w-7xl space-y-6 pb-10">
@@ -558,7 +562,8 @@ function ConnectPage() {
             [
               ["discover", "Discover", Compass],
               ["saved", "Saved", Bookmark],
-              ["my-shop", "My supplier space", Store],
+              ["imports", "My imports", Package],
+              ...(myVendor ? [["my-shop", "Supplier dashboard", Store] as const] : []),
             ] as const
           ).map(([value, label, Icon]) => (
             <button
