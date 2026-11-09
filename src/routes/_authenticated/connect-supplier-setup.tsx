@@ -289,17 +289,29 @@ function SupplierSetupPage() {
     <main className="supplier-setup-shell relative flex min-h-[100dvh] w-full flex-col overflow-x-hidden bg-[#F7F7F5] text-[#101114] [font-family:Inter,Arial,sans-serif]">
       <header className="relative z-10 mx-auto flex h-[76px] w-full max-w-[520px] shrink-0 items-center justify-between px-[clamp(20px,6vw,32px)] sm:mt-8 sm:rounded-t-[28px] sm:bg-white sm:px-8">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="shrink-0 text-[15px] font-bold tracking-[0.16em] [font-family:'Inter_Tight',Inter,sans-serif]">STRAP</span>
+          <span className="shrink-0 text-[15px] font-bold tracking-[0.16em] [font-family:'Inter_Tight',Inter,sans-serif]">
+            STRAP
+          </span>
           <span className="h-5 w-px shrink-0 bg-[#E3E3DF]" />
-          <span className="truncate text-[14px] font-medium text-[#6B6F76] max-[359px]:hidden">Supplier setup</span>
+          <span className="truncate text-[14px] font-medium text-[#6B6F76] max-[359px]:hidden">
+            Supplier setup
+          </span>
         </div>
-        <div aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-full border border-[#E3E3DF] bg-white text-[#101114]">
+        <div
+          aria-hidden="true"
+          className="grid size-10 shrink-0 place-items-center rounded-full border border-[#E3E3DF] bg-white text-[#101114]"
+        >
           <Store className="size-[17px]" />
         </div>
       </header>
       <div className="mx-auto w-full max-w-[520px] px-[clamp(20px,6vw,32px)] pb-5 sm:bg-white sm:px-8">
         <div className="grid grid-cols-5 gap-2" aria-label={`Step ${step + 1} of 5`}>
-          {steps.map((_, index) => <span key={index} className={`h-[3px] rounded-full ${index <= step ? "bg-[#101114]" : "bg-[#E3E3DF]"}`} />)}
+          {steps.map((_, index) => (
+            <span
+              key={index}
+              className={`h-[3px] rounded-full ${index <= step ? "bg-[#101114]" : "bg-[#E3E3DF]"}`}
+            />
+          ))}
         </div>
         <p className="mt-3 text-[13px] font-medium text-[#6B6F76]">Step {step + 1} of 5</p>
       </div>
@@ -310,7 +322,9 @@ function SupplierSetupPage() {
           className={`w-full transition-all duration-250 ease-out ${leaving ? "translate-y-5 opacity-0" : "translate-y-0 opacity-100 animate-in fade-in slide-in-from-bottom-3 duration-500"}`}
         >
           <div className="mb-7 flex items-center justify-between">
-            <span className="text-[13px] font-medium text-[#6B6F76]">Step {step + 1} of {steps.length}</span>
+            <span className="text-[13px] font-medium text-[#6B6F76]">
+              Step {step + 1} of {steps.length}
+            </span>
             {step > 0 && (
               <button
                 type="button"
@@ -325,14 +339,15 @@ function SupplierSetupPage() {
           <h1 className="max-w-[460px] text-[clamp(32px,6vw,44px)] font-semibold leading-[1.08] tracking-[-0.035em] [font-family:'Inter_Tight',Inter,sans-serif]">
             {steps[step].title}
           </h1>
-          <p className="mt-3 max-w-xl text-[16px] leading-6 text-[#6B6F76]">
-            {steps[step].hint}
-          </p>
+          <p className="mt-3 max-w-xl text-[16px] leading-6 text-[#6B6F76]">{steps[step].hint}</p>
 
           <div className="mt-9 min-h-[150px]">
             {field === "business" && (
               <div className="max-w-xl">
-                <label htmlFor="supplier-business-name" className="mb-2 block text-[14px] font-medium text-[#101114]">
+                <label
+                  htmlFor="supplier-business-name"
+                  className="mb-2 block text-[14px] font-medium text-[#101114]"
+                >
                   Business name
                 </label>
                 <Input
@@ -344,20 +359,31 @@ function SupplierSetupPage() {
                   value={draft.business_name}
                   onFocus={() => tapFeedback("light")}
                   onChange={(event) => update("business_name", event.target.value)}
-                  onKeyDown={(event) => { if (event.key === "Enter" && valid) continueStep(); }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && valid) continueStep();
+                  }}
                   placeholder="Your business name"
                   maxLength={120}
                   className="h-[58px] rounded-[14px] border border-[#CFCFCA] bg-white px-4 text-[16px] text-[#101114] shadow-none placeholder:text-[#A3A7AD] transition-[border-color,box-shadow] duration-150 focus-visible:border-[#101114] focus-visible:ring-4 focus-visible:ring-[rgba(16,17,20,.07)] focus-visible:ring-offset-0 motion-reduce:transition-none"
                 />
-                <p className="mt-2.5 text-[13px] leading-5 text-[#6B6F76]">You can change this later in settings.</p>
-                <section aria-live="polite" className="mt-7 rounded-[18px] border border-[#E3E3DF] bg-white p-5 shadow-[0_1px_2px_rgba(16,17,20,.025),0_8px_24px_rgba(16,17,20,.035)]">
+                <p className="mt-2.5 text-[13px] leading-5 text-[#6B6F76]">
+                  You can change this later in settings.
+                </p>
+                <section
+                  aria-live="polite"
+                  className="mt-7 rounded-[18px] border border-[#E3E3DF] bg-white p-5 shadow-[0_1px_2px_rgba(16,17,20,.025),0_8px_24px_rgba(16,17,20,.035)]"
+                >
                   <p className="text-[13px] font-medium text-[#6B6F76]">Preview</p>
                   <div className="mt-4 flex min-w-0 items-center gap-3.5">
-                    <div className={`grid size-12 shrink-0 place-items-center rounded-[14px] bg-[#101114] text-[20px] font-semibold text-white [font-family:'Inter_Tight',Inter,sans-serif] ${draft.business_name.trim() ? "opacity-100" : "opacity-35"}`}>
+                    <div
+                      className={`grid size-12 shrink-0 place-items-center rounded-[14px] bg-[#101114] text-[20px] font-semibold text-white [font-family:'Inter_Tight',Inter,sans-serif] ${draft.business_name.trim() ? "opacity-100" : "opacity-35"}`}
+                    >
                       {draft.business_name.trim().charAt(0).toUpperCase() || "S"}
                     </div>
                     <div className="min-w-0">
-                      <p className={`truncate text-[18px] font-semibold tracking-[-0.025em] [font-family:'Inter_Tight',Inter,sans-serif] ${draft.business_name.trim() ? "text-[#101114]" : "text-[#A3A7AD]"}`}>
+                      <p
+                        className={`truncate text-[18px] font-semibold tracking-[-0.025em] [font-family:'Inter_Tight',Inter,sans-serif] ${draft.business_name.trim() ? "text-[#101114]" : "text-[#A3A7AD]"}`}
+                      >
                         {draft.business_name.trim() || "Your business name"}
                       </p>
                       <p className="mt-1 text-[13px] text-[#6B6F76]">How retailers will see you</p>
@@ -619,9 +645,7 @@ function SupplierSetupPage() {
         </div>
       </div>
 
-            <div
-        className="fixed inset-x-0 bottom-0 z-[70] mx-auto w-full max-w-[520px] bg-[#F7F7F5] px-[clamp(20px,6vw,32px)] pb-[max(16px,env(safe-area-inset-bottom))] pt-4 sm:rounded-b-[28px] sm:bg-white sm:pt-5"
-      >
+      <div className="fixed inset-x-0 bottom-0 z-[70] mx-auto w-full max-w-[520px] bg-[#F7F7F5] px-[clamp(20px,6vw,32px)] pb-[max(16px,env(safe-area-inset-bottom))] pt-4 sm:rounded-b-[28px] sm:bg-white sm:pt-5">
         {step === steps.length - 1 ? (
           <Button
             type="button"
