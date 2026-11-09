@@ -1,0 +1,2 @@
+revoke all on function public.apply_online_product_discount_to_order_item() from public, anon, authenticated;
+revoke all on function public.refresh_online_order_totals_after_item() from public, anon, authenticated;
