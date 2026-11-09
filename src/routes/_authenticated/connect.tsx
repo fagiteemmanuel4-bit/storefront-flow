@@ -194,7 +194,7 @@ function ConnectPage() {
     queryFn: async () => {
       const { data, error } = await db
         .from("connect_vendors")
-        .select("*")
+        .select("id,business_name,slug,description,category,country,state,city,whatsapp_number,logo_url,is_published,created_at,updated_at")
         .eq("owner_id", userId)
         .maybeSingle();
       if (error) throw new Error(error.message);
