@@ -58,10 +58,8 @@ function parseCsv(text: string) {
     } else if (char === "," && !quoted) {
       row.push(field.trim());
       field = "";
-    } else if ((char === "
-" || char === "\r") && !quoted) {
-      if (char === "\r" && text[i + 1] === "
-") i += 1;
+    } else if ((char === "\n" || char === "\r") && !quoted) {
+      if (char === "\r" && text[i + 1] === "\n") i += 1;
       row.push(field.trim());
       if (row.some((cell) => cell.length)) rows.push(row);
       row = [];
@@ -210,8 +208,7 @@ export function SupplierWorkspace({ vendor, userId, onBrowseMarketplace }: {
     const headers = ["sku","title","category","description","wholesale_price","suggested_retail_price","stock_quantity","min_order_quantity","unit","is_seasonal","distribution_enabled"];
     const escape = (value: unknown) => `"${String(value ?? "").replaceAll('"','""')}"`;
     const lines = [headers.join(","), ...products.map((product) => headers.map((key) => escape((product as any)[key])).join(","))];
-    const blob = new Blob([lines.join("
-")], { type: "text/csv;charset=utf-8" });
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
