@@ -294,7 +294,7 @@ function RootComponent() {
       const target = event.target;
       if (!(target instanceof Element)) return;
       const control = target.closest(
-        'button, a[href], [role="button"], [role="menuitem"], summary, select, input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="reset"], [data-haptic]',
+        'button, a[href], [role="button"], [role="link"], [role="menuitem"], [role="option"], [role="tab"], [role="switch"], [role="checkbox"], [role="radio"], summary, select, input[type="button"], input[type="image"], input[type="submit"], input[type="reset"], input[type="checkbox"], input[type="radio"], input[type="range"], input[type="file"], [data-haptic]',
       );
       if (!control || control.getAttribute("aria-disabled") === "true") return;
       if ("disabled" in control && Boolean((control as HTMLButtonElement).disabled)) return;
