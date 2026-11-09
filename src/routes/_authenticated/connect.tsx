@@ -284,6 +284,14 @@ function ConnectPage() {
     if (myVendorQuery.data?.id) setTab("my-shop");
   }, [myVendorQuery.data?.id]);
 
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (code) {
+      setRedeemCode(code.toUpperCase());
+      setTab("discover");
+    }
+  }, []);
+
   const savedProductIds = savedProductsQuery.data ?? new Set<string>();
   const savedVendorIds = savedVendorsQuery.data ?? new Set<string>();
   const products = productsQuery.data ?? [];
@@ -791,7 +799,7 @@ function ConnectPage() {
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {(importsQuery.data ?? []).map((item: any) => (
                   <article key={item.id} className="rounded-2xl border border-border bg-surface p-4">
-                    <div className="flex gap-3"><div className="size-16 shrink-0 overflow-hidden rounded-xl bg-secondary">{safeImage(item.product?.image_url) ? <img src={safeImage(item.product.image_url)} alt="" className="size-full object-cover"/> : <Package className="m-5 size-6 text-muted-foreground"/>}</div><div className="min-w-0 flex-1"><p className="truncate font-semibold">{item.custom_title || item.product?.title}</p><p className="text-xs text-muted-foreground">{item.product?.vendor?.business_name}</p><p className="mt-1 text-sm font-bold">{money(item.source_wholesale_price)}</p></div></div>
+                    <div className="flex gap-3"><div className="size-16 shrink-0 overflow-hidden rounded-xl bg-secondary">{safeImage(item.product?.image_url) ? <img src={safeImage(item.product.image_url)} alt="" className="size-full object-cover"/> : <Package className="m-5 size-6 text-muted-foreground"/>}</div><div className="min-w-0 flex-1"><p className="truncate font-semibold">{item.custom_title || item.product?.title}</p><p className="text-xs text-muted-foreground">{item.product?.vendor?.business_name}</p><p className="mt-1 text-sm font-bold">Wholesale: {money(item.source_wholesale_price)}</p><label className="mt-2 block text-[10px] text-muted-foreground">Your selling price (₦)<Input type="number" min="0" step="0.01" defaultValue={item.selling_price ?? item.product?.suggested_retail_price ?? ""} className="mt-1 h-8 rounded-lg" onBlur={async e=>{const value=e.target.value===""?null:Number(e.target.value);const {error}=await db.from("connect_product_connections").update({selling_price:value}).eq("id",item.id).eq("retailer_user_id",userId);if(error)toast.error(error.message);else toast.success("Your selling price was saved.");}}/></label></div></div>
                     <div className="mt-3 flex items-center justify-between text-xs"><span className={`rounded-full px-2 py-1 ${item.source_availability_status === "available" ? "bg-emerald-500/10 text-emerald-700" : "bg-amber-500/10 text-amber-700"}`}>{(item.source_availability_status||"available").replaceAll("_"," ")}</span><span className="text-muted-foreground">{item.source_stock_quantity} supplier stock</span></div>
                     <div className="mt-3 space-y-2 border-t border-border pt-3">{([["sync_stock","Stock updates"],["sync_wholesale_price","Wholesale price updates"],["sync_availability","Availability updates"],["sync_product_details","Product detail updates"]] as const).map(([key,label]) => <label key={key} className="flex items-center justify-between gap-2 text-xs"><span>{label}</span><input type="checkbox" checked={Boolean(item[key])} onChange={async e=>{const {error}=await db.from("connect_product_connections").update({[key]:e.target.checked}).eq("id",item.id).eq("retailer_user_id",userId);if(error)toast.error(error.message);else{toast.success("Sync preference saved.");await client.invalidateQueries({queryKey:["connect-imported-products",userId]});}}}/></label>)}</div>
                     <p className="mt-2 text-[10px] text-muted-foreground">Last synced {new Date(item.last_synced_at).toLocaleString()}</p>
