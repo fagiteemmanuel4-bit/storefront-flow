@@ -21,6 +21,7 @@ import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatMoney } from "@/lib/currency";
+import { StorePromotionsPanel } from "@/components/online-store/StorePromotionsPanel";
 import type { OnlineProductRow } from "@/integrations/supabase/online-types";
 
 const EMPTY_ARRAY: never[] = [];
@@ -67,7 +68,7 @@ function OnlineCatalogPage() {
             .order("name"),
           supabase
             .from("online_products")
-            .select("id,store_id,product_id,enabled,featured,description,created_at,updated_at")
+            .select("id,store_id,product_id,enabled,featured,description,created_at,updated_at,discount_type,discount_value,discount_starts_at,discount_ends_at,discount_label")
             .eq("store_id", storeId!),
         ]);
       if (productError) throw new Error(`Products: ${productError.message}`);
@@ -320,6 +321,8 @@ function OnlineCatalogPage() {
           </Button>
         </div>
       </section>
+
+      {storeId && <StorePromotionsPanel storeId={storeId} currency={store?.currency ?? "NGN"} canManage={canManage} />}
 
       {selected.size > 0 && (
         <div className="sticky top-[70px] z-30 mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-surface/95 p-3 shadow-lg backdrop-blur">
