@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { SupplierWorkspace } from "@/components/connect/SupplierWorkspace";
 
 export const Route = createFileRoute("/_authenticated/connect")({
   head: () => ({
@@ -74,7 +75,7 @@ type ConnectProduct = {
   >;
 };
 
-type Tab = "discover" | "saved" | "my-shop";
+type Tab = "discover" | "saved" | "my-shop" | "imports";
 
 const db = supabase as any;
 const CATEGORIES = [
@@ -137,6 +138,8 @@ function ConnectPage() {
   const [vendorFormOpen, setVendorFormOpen] = useState(false);
   const [productFormOpen, setProductFormOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [redeemCode, setRedeemCode] = useState("");
+  const [redeemBusy, setRedeemBusy] = useState(false);
   const [vendorForm, setVendorForm] = useState({
     business_name: "",
     category: "Fashion",
@@ -235,6 +238,20 @@ function ConnectPage() {
     enabled: Boolean(userId),
   });
 
+  const importsQuery = useQuery({
+    queryKey: ["connect-imported-products", userId],
+    queryFn: async () => {
+      const { data, error } = await db
+        .from("connect_product_connections")
+        .select("id,supplier_product_id,custom_title,selling_price,sync_stock,sync_wholesale_price,sync_availability,sync_product_details,source_stock_quantity,source_wholesale_price,source_is_active,source_availability_status,source_title,source_description,source_category,source_image_url,source_unit,source_supplier_name,source_suggested_retail_price,last_synced_at")
+        .eq("retailer_user_id", userId)
+        .order("imported_at", { ascending: false });
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+    enabled: Boolean(userId),
+  });
+
   const myProductsQuery = useQuery({
     queryKey: ["connect-my-products", myVendorQuery.data?.id],
     queryFn: async () => {
@@ -262,6 +279,18 @@ function ConnectPage() {
       logo_url: vendor.logo_url,
     });
   }, [myVendorQuery.data]);
+
+  useEffect(() => {
+    if (myVendorQuery.data?.id) setTab("my-shop");
+  }, [myVendorQuery.data?.id]);
+
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (code) {
+      setRedeemCode(code.toUpperCase());
+      setTab("discover");
+    }
+  }, []);
 
   const savedProductIds = savedProductsQuery.data ?? new Set<string>();
   const savedVendorIds = savedVendorsQuery.data ?? new Set<string>();
@@ -485,8 +514,25 @@ function ConnectPage() {
     window.open(url, "_blank", "noopener,noreferrer");
   }
 
+  async function redeemSupplierCode() {
+    const code = redeemCode.trim();
+    if (!code) return toast.error("Enter a supplier code.");
+    setRedeemBusy(true);
+    const { data, error } = await db.rpc("redeem_connect_distribution_code", { p_code: code });
+    setRedeemBusy(false);
+    if (error) return toast.error(error.message || "We could not redeem that code.");
+    setRedeemCode("");
+    toast.success(data?.status === "pending" ? "Request sent. The supplier must approve your access." : `${data?.products_added ?? 0} supplier products added to your imports.`);
+    await client.invalidateQueries({ queryKey: ["connect-imported-products", userId] });
+    await client.invalidateQueries({ queryKey: ["connect-supplier-connections"] });
+  }
+
   const loading = productsQuery.isLoading || vendorsQuery.isLoading;
   const queryError = productsQuery.error || vendorsQuery.error;
+
+  if (myVendor && tab === "my-shop") {
+    return <SupplierWorkspace vendor={myVendor} userId={userId} onBrowseMarketplace={() => setTab("discover")} />;
+  }
 
   return (
     <AppShell title="STRAP Connect">
@@ -504,19 +550,28 @@ function ConnectPage() {
             </p>
           </div>
           <Button
-            onClick={() => navigate({ to: "/connect-supplier-setup" })}
+            onClick={() => (myVendor ? setTab("my-shop") : navigate({ to: "/connect-supplier-setup" }))}
             className="min-h-11 shrink-0 rounded-xl"
           >
-            <Store className="mr-2 size-4" /> Become a supplier
+            <Store className="mr-2 size-4" /> {myVendor ? "Supplier dashboard" : "Become a supplier"}
           </Button>
         </section>
+
+        {tab === "discover" && (
+          <form onSubmit={event => { event.preventDefault(); void redeemSupplierCode(); }} className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-3 sm:flex-row sm:items-center">
+            <div className="min-w-0 flex-1"><p className="text-sm font-semibold">Have a supplier code?</p><p className="text-xs text-muted-foreground">Redeem a private code to import selected products into My imports.</p></div>
+            <Input value={redeemCode} onChange={event=>setRedeemCode(event.target.value.toUpperCase())} placeholder="Enter STRAP supplier code" className="h-10 rounded-xl sm:max-w-xs"/>
+            <Button type="submit" disabled={redeemBusy} className="h-10 rounded-xl">{redeemBusy?"Connecting…":"Redeem code"}</Button>
+          </form>
+        )}
 
         <div className="flex flex-wrap items-center gap-2 border-b border-border pb-3">
           {(
             [
               ["discover", "Discover", Compass],
               ["saved", "Saved", Bookmark],
-              ["my-shop", "My supplier space", Store],
+              ["imports", "My imports", Package],
+              ...(myVendor ? [["my-shop", "Supplier dashboard", Store] as const] : []),
             ] as const
           ).map(([value, label, Icon]) => (
             <button
@@ -535,7 +590,7 @@ function ConnectPage() {
           ))}
         </div>
 
-        {tab !== "my-shop" && (
+        {tab !== "my-shop" && tab !== "imports" && (
           <>
             <section className="grid gap-3 rounded-2xl border border-border bg-surface p-3 sm:grid-cols-[minmax(0,1fr)_190px_180px_170px] sm:p-4">
               <div className="relative">
@@ -737,6 +792,24 @@ function ConnectPage() {
           </>
         )}
 
+        {tab === "imports" && (
+          <section className="space-y-4">
+            <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Connected supplier catalogue</p><h2 className="mt-1 font-display text-2xl font-bold">My imported products</h2><p className="mt-1 text-sm text-muted-foreground">Products stay linked to their original supplier. Stock and availability follow your synchronization preferences.</p></div>
+            {importsQuery.isLoading ? <LoadingGrid /> : importsQuery.error ? <ErrorState message={(importsQuery.error as Error).message} /> : (importsQuery.data ?? []).length ? (
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {(importsQuery.data ?? []).map((item: any) => (
+                  <article key={item.id} className="rounded-2xl border border-border bg-surface p-4">
+                    <div className="flex gap-3"><div className="size-16 shrink-0 overflow-hidden rounded-xl bg-secondary">{safeImage(item.source_image_url) ? <img src={safeImage(item.product.image_url)} alt="" className="size-full object-cover"/> : <Package className="m-5 size-6 text-muted-foreground"/>}</div><div className="min-w-0 flex-1"><p className="truncate font-semibold">{item.custom_title || item.source_title}</p><p className="text-xs text-muted-foreground">{item.source_supplier_name}</p><p className="mt-1 text-sm font-bold">Wholesale: {money(item.source_wholesale_price)}</p><label className="mt-2 block text-[10px] text-muted-foreground">Your selling price (₦)<Input type="number" min="0" step="0.01" defaultValue={item.selling_price ?? item.source_suggested_retail_price ?? ""} className="mt-1 h-8 rounded-lg" onBlur={async e=>{const value=e.target.value===""?null:Number(e.target.value);const {error}=await db.from("connect_product_connections").update({selling_price:value}).eq("id",item.id).eq("retailer_user_id",userId);if(error)toast.error(error.message);else toast.success("Your selling price was saved.");}}/></label></div></div>
+                    <div className="mt-3 flex items-center justify-between text-xs"><span className={`rounded-full px-2 py-1 ${item.source_availability_status === "available" ? "bg-emerald-500/10 text-emerald-700" : "bg-amber-500/10 text-amber-700"}`}>{(item.source_availability_status||"available").replaceAll("_"," ")}</span><span className="text-muted-foreground">{item.source_stock_quantity} supplier stock</span></div>
+                    <div className="mt-3 space-y-2 border-t border-border pt-3">{([["sync_stock","Stock updates"],["sync_wholesale_price","Wholesale price updates"],["sync_availability","Availability updates"],["sync_product_details","Product detail updates"]] as const).map(([key,label]) => <label key={key} className="flex items-center justify-between gap-2 text-xs"><span>{label}</span><input type="checkbox" checked={Boolean(item[key])} onChange={async e=>{const {error}=await db.from("connect_product_connections").update({[key]:e.target.checked}).eq("id",item.id).eq("retailer_user_id",userId);if(error)toast.error(error.message);else{toast.success("Sync preference saved.");await client.invalidateQueries({queryKey:["connect-imported-products",userId]});}}}/></label>)}</div>
+                    <p className="mt-2 text-[10px] text-muted-foreground">Last synced {new Date(item.last_synced_at).toLocaleString()}</p>
+                  </article>
+                ))}
+              </div>
+            ) : <EmptyState title="No imported products yet" text="Enter a supplier's distribution code above to add products from their catalogue."/>}
+          </section>
+        )}
+
         {tab === "my-shop" && (
           <section className="space-y-5">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
@@ -785,7 +858,7 @@ function ConnectPage() {
                   </p>
                 </div>
                 <Button
-                  onClick={() => navigate({ to: "/connect-supplier-setup" })}
+                  onClick={() => (myVendor ? setTab("my-shop") : navigate({ to: "/connect-supplier-setup" }))}
                   className="min-h-11 rounded-xl"
                 >
                   <Plus className="mr-2 size-4" /> Create supplier profile
