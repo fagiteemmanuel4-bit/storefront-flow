@@ -1,10 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Boxes, Grid2X2, Search, ShoppingCart } from "lucide-react";
+import { Boxes, Grid2X2, Network, Search, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PRIMARY = [
   { to: "/pos", label: "Sell", icon: ShoppingCart },
   { to: "/products", label: "Products", icon: Boxes },
+  { to: "/connect", label: "Connect", icon: Network },
 ] as const;
 
 export function MobileNav() {
@@ -13,6 +14,7 @@ export function MobileNav() {
     "/dashboard",
     "/pos",
     "/products",
+    "/connect",
     "/online-store",
     "/customers",
     "/insights",
@@ -43,7 +45,7 @@ export function MobileNav() {
       className="strap-mobile-nav-dock fixed bottom-[calc(12px+env(safe-area-inset-bottom))] left-3 right-3 z-40 mx-auto max-w-[430px] rounded-[24px] border border-border/80 bg-background/95 px-2 py-2 shadow-[0_12px_40px_rgba(0,0,0,.18)] backdrop-blur-2xl lg:hidden"
       aria-label="Primary mobile navigation"
     >
-      <div className="mx-auto grid grid-cols-4 gap-1">
+      <div className="mx-auto grid grid-cols-5 gap-1">
         {PRIMARY.map(({ to, icon: Icon, label }) => {
           const active = pathname === to || pathname.startsWith(`${to}/`);
           return (
