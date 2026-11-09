@@ -66,3 +66,7 @@ begin
  end if;
  return new;
 end; $$;
+
+drop trigger if exists connect_supplier_product_sync on public.connect_products;
+create trigger connect_supplier_product_sync before insert or update on public.connect_products
+for each row execute function private.sync_connect_supplier_product();
