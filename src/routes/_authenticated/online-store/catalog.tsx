@@ -68,7 +68,7 @@ function OnlineCatalogPage() {
             .order("name"),
           supabase
             .from("online_products")
-            .select("id,store_id,product_id,enabled,featured,description,created_at,updated_at,discount_type,discount_value,discount_starts_at,discount_ends_at,discount_label")
+            .select("id,store_id,product_id,enabled,featured,description,created_at,updated_at")
             .eq("store_id", storeId!),
         ]);
       if (productError) throw new Error(`Products: ${productError.message}`);
