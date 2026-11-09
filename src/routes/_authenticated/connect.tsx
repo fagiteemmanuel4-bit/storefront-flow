@@ -194,7 +194,9 @@ function ConnectPage() {
     queryFn: async () => {
       const { data, error } = await db
         .from("connect_vendors")
-        .select("id,business_name,slug,description,category,country,state,city,whatsapp_number,logo_url,is_published,created_at,updated_at")
+        .select(
+          "id,business_name,slug,description,category,country,state,city,whatsapp_number,logo_url,is_published,created_at,updated_at",
+        )
         .eq("owner_id", userId)
         .maybeSingle();
       if (error) throw new Error(error.message);
@@ -446,7 +448,10 @@ function ConnectPage() {
     await client.invalidateQueries({ queryKey: ["connect-saved-vendors", userId] });
   }
 
-  function contactVendor(vendor: Pick<Vendor, "business_name" | "whatsapp_number">, product?: string) {
+  function contactVendor(
+    vendor: Pick<Vendor, "business_name" | "whatsapp_number">,
+    product?: string,
+  ) {
     const url = whatsappLink(
       vendor.whatsapp_number,
       product
@@ -558,7 +563,11 @@ function ConnectPage() {
                 className="h-11 rounded-xl border border-input bg-background px-3 text-sm"
               >
                 <option value="all">All categories</option>
-                {CATEGORIES.map((item) => <option key={item} value={item}>{item}</option>)}
+                {CATEGORIES.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
               </select>
               <select
                 aria-label="Filter by state"
@@ -567,7 +576,11 @@ function ConnectPage() {
                 className="h-11 rounded-xl border border-input bg-background px-3 text-sm"
               >
                 <option value="all">All locations</option>
-                {locations.map((item) => <option key={item} value={item}>{item}</option>)}
+                {locations.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
               </select>
               {tab === "discover" ? (
                 <select
@@ -600,13 +613,26 @@ function ConnectPage() {
               <section className="space-y-4">
                 <div className="flex items-end justify-between gap-3">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Wholesale marketplace</p>
-                    <h2 className="mt-1 font-display text-2xl font-bold">Products worth sourcing</h2>
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                      Wholesale marketplace
+                    </p>
+                    <h2 className="mt-1 font-display text-2xl font-bold">
+                      Products worth sourcing
+                    </h2>
                   </div>
-                  <span className="text-xs text-muted-foreground">{visibleProducts.length} results</span>
+                  <span className="text-xs text-muted-foreground">
+                    {visibleProducts.length} results
+                  </span>
                 </div>
-                {loading ? <LoadingGrid /> : queryError ? <ErrorState message={(queryError as Error).message} /> : visibleProducts.length === 0 ? (
-                  <EmptyState title="No products match those filters" text="Try another category or location, or check back as more suppliers join." />
+                {loading ? (
+                  <LoadingGrid />
+                ) : queryError ? (
+                  <ErrorState message={(queryError as Error).message} />
+                ) : visibleProducts.length === 0 ? (
+                  <EmptyState
+                    title="No products match those filters"
+                    text="Try another category or location, or check back as more suppliers join."
+                  />
                 ) : (
                   <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                     {visibleProducts.map((product) => (
@@ -622,10 +648,14 @@ function ConnectPage() {
                 )}
                 <div className="flex items-center justify-between gap-3 pt-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Meet the people behind the products</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                      Meet the people behind the products
+                    </p>
                     <h2 className="mt-1 font-display text-2xl font-bold">Suppliers to know</h2>
                   </div>
-                  <span className="text-xs text-muted-foreground">{visibleVendors.length} suppliers</span>
+                  <span className="text-xs text-muted-foreground">
+                    {visibleVendors.length} suppliers
+                  </span>
                 </div>
                 {visibleVendors.length > 0 ? (
                   <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -640,7 +670,9 @@ function ConnectPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">Supplier profiles will appear here as vendors publish their businesses.</p>
+                  <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+                    Supplier profiles will appear here as vendors publish their businesses.
+                  </p>
                 )}
               </section>
             )}
@@ -650,10 +682,14 @@ function ConnectPage() {
                 <div>
                   <div className="mb-4 flex items-end justify-between gap-3">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Your shortlist</p>
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                        Your shortlist
+                      </p>
                       <h2 className="mt-1 font-display text-2xl font-bold">Saved products</h2>
                     </div>
-                    <span className="text-xs text-muted-foreground">{visibleProducts.length} saved</span>
+                    <span className="text-xs text-muted-foreground">
+                      {visibleProducts.length} saved
+                    </span>
                   </div>
                   {visibleProducts.length ? (
                     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -668,25 +704,41 @@ function ConnectPage() {
                       ))}
                     </div>
                   ) : (
-                    <EmptyState title="No saved products yet" text="Bookmark products while browsing and they will be waiting here." />
+                    <EmptyState
+                      title="No saved products yet"
+                      text="Bookmark products while browsing and they will be waiting here."
+                    />
                   )}
                 </div>
                 <div>
                   <div className="mb-4 flex items-end justify-between gap-3">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Your network</p>
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                        Your network
+                      </p>
                       <h2 className="mt-1 font-display text-2xl font-bold">Saved suppliers</h2>
                     </div>
-                    <span className="text-xs text-muted-foreground">{visibleVendors.length} saved</span>
+                    <span className="text-xs text-muted-foreground">
+                      {visibleVendors.length} saved
+                    </span>
                   </div>
                   {visibleVendors.length ? (
                     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                       {visibleVendors.map((vendor) => (
-                        <VendorCard key={vendor.id} vendor={vendor} saved onSave={() => void toggleSavedVendor(vendor.id)} onContact={() => contactVendor(vendor)} />
+                        <VendorCard
+                          key={vendor.id}
+                          vendor={vendor}
+                          saved
+                          onSave={() => void toggleSavedVendor(vendor.id)}
+                          onContact={() => contactVendor(vendor)}
+                        />
                       ))}
                     </div>
                   ) : (
-                    <EmptyState title="No saved suppliers yet" text="Save suppliers you want to keep in your business network." />
+                    <EmptyState
+                      title="No saved suppliers yet"
+                      text="Save suppliers you want to keep in your business network."
+                    />
                   )}
                 </div>
               </section>
@@ -698,16 +750,29 @@ function ConnectPage() {
           <section className="space-y-5">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Supplier workspace</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  Supplier workspace
+                </p>
                 <h2 className="mt-1 font-display text-2xl font-bold">Your supplier space</h2>
-                <p className="mt-1 max-w-2xl text-sm text-muted-foreground">Create your supplier profile, publish wholesale products and let retailers reach you directly.</p>
+                <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+                  Create your supplier profile, publish wholesale products and let retailers reach
+                  you directly.
+                </p>
               </div>
               {myVendor && (
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="outline" onClick={() => setVendorFormOpen((open) => !open)} className="rounded-xl">
+                  <Button
+                    variant="outline"
+                    onClick={() => setVendorFormOpen((open) => !open)}
+                    className="rounded-xl"
+                  >
                     <Building2 className="mr-2 size-4" /> Edit profile
                   </Button>
-                  <Button onClick={() => void togglePublish()} disabled={busy} className="rounded-xl">
+                  <Button
+                    onClick={() => void togglePublish()}
+                    disabled={busy}
+                    className="rounded-xl"
+                  >
                     {myVendor.is_published ? "Unpublish profile" : "Publish profile"}
                   </Button>
                 </div>
@@ -716,12 +781,21 @@ function ConnectPage() {
 
             {!myVendor && (
               <div className="surface-card flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:p-8">
-                <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink"><Store className="size-7" /></div>
-                <div className="flex-1">
-                  <h3 className="font-display text-xl font-bold">Start selling wholesale on Connect</h3>
-                  <p className="mt-1 text-sm leading-6 text-muted-foreground">Set up your business profile once. You can then add products, manage availability and receive enquiries through WhatsApp.</p>
+                <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink">
+                  <Store className="size-7" />
                 </div>
-                <Button onClick={() => setVendorFormOpen(true)} className="min-h-11 rounded-xl"><Plus className="mr-2 size-4" /> Create supplier profile</Button>
+                <div className="flex-1">
+                  <h3 className="font-display text-xl font-bold">
+                    Start selling wholesale on Connect
+                  </h3>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                    Set up your business profile once. You can then add products, manage
+                    availability and receive enquiries through WhatsApp.
+                  </p>
+                </div>
+                <Button onClick={() => setVendorFormOpen(true)} className="min-h-11 rounded-xl">
+                  <Plus className="mr-2 size-4" /> Create supplier profile
+                </Button>
               </div>
             )}
 
@@ -729,99 +803,366 @@ function ConnectPage() {
               <>
                 <div className="surface-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:p-6">
                   <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-secondary text-xl font-bold">
-                    {safeImage(myVendor.logo_url) ? <img src={safeImage(myVendor.logo_url)} alt="" className="size-full object-cover" /> : myVendor.business_name.slice(0, 2).toUpperCase()}
+                    {safeImage(myVendor.logo_url) ? (
+                      <img
+                        src={safeImage(myVendor.logo_url)}
+                        alt=""
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      myVendor.business_name.slice(0, 2).toUpperCase()
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-display text-xl font-bold">{myVendor.business_name}</h3>
-                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${myVendor.is_published ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-700"}`}>{myVendor.is_published ? "Live" : "Draft"}</span>
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${myVendor.is_published ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-700"}`}
+                      >
+                        {myVendor.is_published ? "Live" : "Draft"}
+                      </span>
                     </div>
-                    <p className="mt-1 text-sm text-muted-foreground">{[myVendor.category, myVendor.city, myVendor.state].filter(Boolean).join(" · ")}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">WhatsApp: {myVendor.whatsapp_number || "Not added"}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {[myVendor.category, myVendor.city, myVendor.state]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      WhatsApp: {myVendor.whatsapp_number || "Not added"}
+                    </p>
                   </div>
                   <div className="rounded-xl bg-secondary px-4 py-3 text-center">
-                    <p className="font-display text-2xl font-bold">{myProductsQuery.data?.length ?? 0}</p>
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Products</p>
+                    <p className="font-display text-2xl font-bold">
+                      {myProductsQuery.data?.length ?? 0}
+                    </p>
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      Products
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <h3 className="font-display text-xl font-bold">Your catalogue</h3>
-                    <p className="text-sm text-muted-foreground">Manage the products retailers can discover.</p>
+                    <p className="text-sm text-muted-foreground">
+                      Manage the products retailers can discover.
+                    </p>
                   </div>
-                  <Button onClick={() => setProductFormOpen((open) => !open)} className="rounded-xl"><Plus className="mr-2 size-4" /> Add product</Button>
+                  <Button
+                    onClick={() => setProductFormOpen((open) => !open)}
+                    className="rounded-xl"
+                  >
+                    <Plus className="mr-2 size-4" /> Add product
+                  </Button>
                 </div>
                 {productFormOpen && (
-                  <form onSubmit={(event) => void addProduct(event)} className="surface-card grid gap-4 p-5 sm:grid-cols-2 sm:p-6">
-                    <Field label="Product name"><Input required minLength={2} maxLength={160} value={productForm.title} onChange={(e) => setProductForm({ ...productForm, title: e.target.value })} placeholder="e.g. Premium cotton T-shirt" /></Field>
-                    <Field label="Category"><select value={productForm.category} onChange={(e) => setProductForm({ ...productForm, category: e.target.value })} className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm">{CATEGORIES.map((item) => <option key={item}>{item}</option>)}</select></Field>
-                    <Field label="Wholesale price (₦)"><Input required type="number" min="0" step="0.01" value={productForm.wholesale_price} onChange={(e) => setProductForm({ ...productForm, wholesale_price: e.target.value })} placeholder="2500" /></Field>
-                    <Field label="Suggested retail price (₦)"><Input type="number" min="0" step="0.01" value={productForm.suggested_retail_price} onChange={(e) => setProductForm({ ...productForm, suggested_retail_price: e.target.value })} placeholder="4000" /></Field>
-                    <Field label="Available stock"><Input type="number" min="0" step="1" value={productForm.stock_quantity} onChange={(e) => setProductForm({ ...productForm, stock_quantity: e.target.value })} /></Field>
-                    <Field label="Minimum order quantity"><Input required type="number" min="1" step="1" value={productForm.min_order_quantity} onChange={(e) => setProductForm({ ...productForm, min_order_quantity: e.target.value })} /></Field>
-                    <Field label="Unit"><Input maxLength={32} value={productForm.unit} onChange={(e) => setProductForm({ ...productForm, unit: e.target.value })} placeholder="piece, pack, carton" /></Field>
-                    <Field label="Product image URL"><Input type="url" value={productForm.image_url} onChange={(e) => setProductForm({ ...productForm, image_url: e.target.value })} placeholder="https://…" /></Field>
-                    <div className="sm:col-span-2"><Field label="Product details"><textarea maxLength={2000} rows={3} value={productForm.description} onChange={(e) => setProductForm({ ...productForm, description: e.target.value })} className="w-full rounded-xl border border-input bg-background p-3 text-sm" placeholder="Describe quality, sizes, colours, packaging and delivery terms." /></Field></div>
-                    {Number(productForm.suggested_retail_price) > Number(productForm.wholesale_price) && Number(productForm.wholesale_price) >= 0 && (
-                      <p className="sm:col-span-2 rounded-xl bg-accent-soft p-3 text-sm text-accent-ink">Indicative reseller spread: <strong>{money(Number(productForm.suggested_retail_price) - Number(productForm.wholesale_price))}</strong> per {productForm.unit || "unit"} before other costs.</p>
-                    )}
+                  <form
+                    onSubmit={(event) => void addProduct(event)}
+                    className="surface-card grid gap-4 p-5 sm:grid-cols-2 sm:p-6"
+                  >
+                    <Field label="Product name">
+                      <Input
+                        required
+                        minLength={2}
+                        maxLength={160}
+                        value={productForm.title}
+                        onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
+                        placeholder="e.g. Premium cotton T-shirt"
+                      />
+                    </Field>
+                    <Field label="Category">
+                      <select
+                        value={productForm.category}
+                        onChange={(e) =>
+                          setProductForm({ ...productForm, category: e.target.value })
+                        }
+                        className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm"
+                      >
+                        {CATEGORIES.map((item) => (
+                          <option key={item}>{item}</option>
+                        ))}
+                      </select>
+                    </Field>
+                    <Field label="Wholesale price (₦)">
+                      <Input
+                        required
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={productForm.wholesale_price}
+                        onChange={(e) =>
+                          setProductForm({ ...productForm, wholesale_price: e.target.value })
+                        }
+                        placeholder="2500"
+                      />
+                    </Field>
+                    <Field label="Suggested retail price (₦)">
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={productForm.suggested_retail_price}
+                        onChange={(e) =>
+                          setProductForm({ ...productForm, suggested_retail_price: e.target.value })
+                        }
+                        placeholder="4000"
+                      />
+                    </Field>
+                    <Field label="Available stock">
+                      <Input
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={productForm.stock_quantity}
+                        onChange={(e) =>
+                          setProductForm({ ...productForm, stock_quantity: e.target.value })
+                        }
+                      />
+                    </Field>
+                    <Field label="Minimum order quantity">
+                      <Input
+                        required
+                        type="number"
+                        min="1"
+                        step="1"
+                        value={productForm.min_order_quantity}
+                        onChange={(e) =>
+                          setProductForm({ ...productForm, min_order_quantity: e.target.value })
+                        }
+                      />
+                    </Field>
+                    <Field label="Unit">
+                      <Input
+                        maxLength={32}
+                        value={productForm.unit}
+                        onChange={(e) => setProductForm({ ...productForm, unit: e.target.value })}
+                        placeholder="piece, pack, carton"
+                      />
+                    </Field>
+                    <Field label="Product image URL">
+                      <Input
+                        type="url"
+                        value={productForm.image_url}
+                        onChange={(e) =>
+                          setProductForm({ ...productForm, image_url: e.target.value })
+                        }
+                        placeholder="https://…"
+                      />
+                    </Field>
+                    <div className="sm:col-span-2">
+                      <Field label="Product details">
+                        <textarea
+                          maxLength={2000}
+                          rows={3}
+                          value={productForm.description}
+                          onChange={(e) =>
+                            setProductForm({ ...productForm, description: e.target.value })
+                          }
+                          className="w-full rounded-xl border border-input bg-background p-3 text-sm"
+                          placeholder="Describe quality, sizes, colours, packaging and delivery terms."
+                        />
+                      </Field>
+                    </div>
+                    {Number(productForm.suggested_retail_price) >
+                      Number(productForm.wholesale_price) &&
+                      Number(productForm.wholesale_price) >= 0 && (
+                        <p className="sm:col-span-2 rounded-xl bg-accent-soft p-3 text-sm text-accent-ink">
+                          Indicative reseller spread:{" "}
+                          <strong>
+                            {money(
+                              Number(productForm.suggested_retail_price) -
+                                Number(productForm.wholesale_price),
+                            )}
+                          </strong>{" "}
+                          per {productForm.unit || "unit"} before other costs.
+                        </p>
+                      )}
                     <div className="flex flex-wrap justify-end gap-2 sm:col-span-2">
-                      <Button type="button" variant="outline" onClick={() => setProductFormOpen(false)}>Cancel</Button>
-                      <Button type="submit" disabled={busy}>{busy ? "Saving…" : "Add to catalogue"}</Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setProductFormOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button type="submit" disabled={busy}>
+                        {busy ? "Saving…" : "Add to catalogue"}
+                      </Button>
                     </div>
                   </form>
                 )}
 
-                {myProductsQuery.isLoading ? <LoadingGrid /> : (myProductsQuery.data ?? []).length ? (
+                {myProductsQuery.isLoading ? (
+                  <LoadingGrid />
+                ) : (myProductsQuery.data ?? []).length ? (
                   <div className="overflow-hidden rounded-2xl border border-border bg-surface">
                     {(myProductsQuery.data ?? []).map((product) => (
-                      <div key={product.id} className="flex items-center gap-3 border-b border-border p-3 last:border-0 sm:p-4">
+                      <div
+                        key={product.id}
+                        className="flex items-center gap-3 border-b border-border p-3 last:border-0 sm:p-4"
+                      >
                         <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary">
-                          {safeImage(product.image_url) ? <img src={safeImage(product.image_url)} alt="" className="size-full object-cover" /> : <Package className="size-5 text-muted-foreground" />}
+                          {safeImage(product.image_url) ? (
+                            <img
+                              src={safeImage(product.image_url)}
+                              alt=""
+                              className="size-full object-cover"
+                            />
+                          ) : (
+                            <Package className="size-5 text-muted-foreground" />
+                          )}
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-semibold">{product.title}</p>
-                          <p className="mt-1 text-xs text-muted-foreground">{money(product.wholesale_price)} · MOQ {product.min_order_quantity} · {product.stock_quantity} in stock</p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {money(product.wholesale_price)} · MOQ {product.min_order_quantity} ·{" "}
+                            {product.stock_quantity} in stock
+                          </p>
                         </div>
-                        <span className={`hidden rounded-full px-2 py-1 text-[10px] font-bold sm:inline-flex ${product.is_active ? "bg-emerald-500/10 text-emerald-600" : "bg-secondary text-muted-foreground"}`}>{product.is_active ? "Active" : "Hidden"}</span>
-                        <Button size="icon" variant="ghost" aria-label={`Remove ${product.title}`} onClick={() => void removeProduct(product.id)}><Trash2 className="size-4 text-muted-foreground" /></Button>
+                        <span
+                          className={`hidden rounded-full px-2 py-1 text-[10px] font-bold sm:inline-flex ${product.is_active ? "bg-emerald-500/10 text-emerald-600" : "bg-secondary text-muted-foreground"}`}
+                        >
+                          {product.is_active ? "Active" : "Hidden"}
+                        </span>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          aria-label={`Remove ${product.title}`}
+                          onClick={() => void removeProduct(product.id)}
+                        >
+                          <Trash2 className="size-4 text-muted-foreground" />
+                        </Button>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <EmptyState title="Your catalogue is empty" text="Add your first wholesale product to make it discoverable to retailers and resellers." />
+                  <EmptyState
+                    title="Your catalogue is empty"
+                    text="Add your first wholesale product to make it discoverable to retailers and resellers."
+                  />
                 )}
               </>
             )}
 
             {vendorFormOpen && (
-              <form onSubmit={(event) => void saveVendor(event)} className="surface-card space-y-4 p-5 sm:p-6">
+              <form
+                onSubmit={(event) => void saveVendor(event)}
+                className="surface-card space-y-4 p-5 sm:p-6"
+              >
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <h3 className="font-display text-xl font-bold">{myVendor ? "Edit supplier profile" : "Create supplier profile"}</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">Use accurate business and contact details so buyers know who they are reaching.</p>
+                    <h3 className="font-display text-xl font-bold">
+                      {myVendor ? "Edit supplier profile" : "Create supplier profile"}
+                    </h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Use accurate business and contact details so buyers know who they are
+                      reaching.
+                    </p>
                   </div>
-                  <Button type="button" size="icon" variant="ghost" aria-label="Close form" onClick={() => setVendorFormOpen(false)}><X className="size-4" /></Button>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Close form"
+                    onClick={() => setVendorFormOpen(false)}
+                  >
+                    <X className="size-4" />
+                  </Button>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Business name"><Input required minLength={2} maxLength={120} value={vendorForm.business_name} onChange={(e) => setVendorForm({ ...vendorForm, business_name: e.target.value })} placeholder="Your business name" /></Field>
-                  <Field label="Main category"><select value={vendorForm.category} onChange={(e) => setVendorForm({ ...vendorForm, category: e.target.value })} className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm">{CATEGORIES.map((item) => <option key={item}>{item}</option>)}</select></Field>
-                  <Field label="State"><Input required maxLength={80} value={vendorForm.state} onChange={(e) => setVendorForm({ ...vendorForm, state: e.target.value })} placeholder="e.g. Lagos" /></Field>
-                  <Field label="City / area"><Input required maxLength={80} value={vendorForm.city} onChange={(e) => setVendorForm({ ...vendorForm, city: e.target.value })} placeholder="e.g. Ikeja" /></Field>
-                  <Field label="WhatsApp number (include country code)"><Input required maxLength={32} value={vendorForm.whatsapp_number} onChange={(e) => setVendorForm({ ...vendorForm, whatsapp_number: e.target.value })} placeholder="2348012345678" /></Field>
-                  <Field label="Business logo URL (optional)"><Input type="url" value={vendorForm.logo_url} onChange={(e) => setVendorForm({ ...vendorForm, logo_url: e.target.value })} placeholder="https://…" /></Field>
-                  <div className="sm:col-span-2"><Field label="About your business"><textarea maxLength={1200} rows={4} value={vendorForm.description} onChange={(e) => setVendorForm({ ...vendorForm, description: e.target.value })} className="w-full rounded-xl border border-input bg-background p-3 text-sm" placeholder="What do you supply? Tell buyers about quality, experience, delivery areas and terms." /></Field></div>
+                  <Field label="Business name">
+                    <Input
+                      required
+                      minLength={2}
+                      maxLength={120}
+                      value={vendorForm.business_name}
+                      onChange={(e) =>
+                        setVendorForm({ ...vendorForm, business_name: e.target.value })
+                      }
+                      placeholder="Your business name"
+                    />
+                  </Field>
+                  <Field label="Main category">
+                    <select
+                      value={vendorForm.category}
+                      onChange={(e) => setVendorForm({ ...vendorForm, category: e.target.value })}
+                      className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm"
+                    >
+                      {CATEGORIES.map((item) => (
+                        <option key={item}>{item}</option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field label="State">
+                    <Input
+                      required
+                      maxLength={80}
+                      value={vendorForm.state}
+                      onChange={(e) => setVendorForm({ ...vendorForm, state: e.target.value })}
+                      placeholder="e.g. Lagos"
+                    />
+                  </Field>
+                  <Field label="City / area">
+                    <Input
+                      required
+                      maxLength={80}
+                      value={vendorForm.city}
+                      onChange={(e) => setVendorForm({ ...vendorForm, city: e.target.value })}
+                      placeholder="e.g. Ikeja"
+                    />
+                  </Field>
+                  <Field label="WhatsApp number (include country code)">
+                    <Input
+                      required
+                      maxLength={32}
+                      value={vendorForm.whatsapp_number}
+                      onChange={(e) =>
+                        setVendorForm({ ...vendorForm, whatsapp_number: e.target.value })
+                      }
+                      placeholder="2348012345678"
+                    />
+                  </Field>
+                  <Field label="Business logo URL (optional)">
+                    <Input
+                      type="url"
+                      value={vendorForm.logo_url}
+                      onChange={(e) => setVendorForm({ ...vendorForm, logo_url: e.target.value })}
+                      placeholder="https://…"
+                    />
+                  </Field>
+                  <div className="sm:col-span-2">
+                    <Field label="About your business">
+                      <textarea
+                        maxLength={1200}
+                        rows={4}
+                        value={vendorForm.description}
+                        onChange={(e) =>
+                          setVendorForm({ ...vendorForm, description: e.target.value })
+                        }
+                        className="w-full rounded-xl border border-input bg-background p-3 text-sm"
+                        placeholder="What do you supply? Tell buyers about quality, experience, delivery areas and terms."
+                      />
+                    </Field>
+                  </div>
                 </div>
                 <div className="flex flex-wrap justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => setVendorFormOpen(false)}>Cancel</Button>
-                  <Button type="submit" disabled={busy}>{busy ? "Saving…" : myVendor ? "Save profile" : "Create profile"}</Button>
+                  <Button type="button" variant="outline" onClick={() => setVendorFormOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={busy}>
+                    {busy ? "Saving…" : myVendor ? "Save profile" : "Create profile"}
+                  </Button>
                 </div>
               </form>
             )}
             <div className="flex items-start gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs leading-5 text-muted-foreground">
               <ShieldAlert className="mt-0.5 size-4 shrink-0 text-amber-600" />
-              <p>Connect introduces buyers and suppliers. WhatsApp numbers are supplied by vendors and are not independently verified yet. Confirm product quality, stock, delivery terms and payment arrangements directly before sending money. STRAP does not currently process or guarantee these transactions.</p>
+              <p>
+                Connect introduces buyers and suppliers. WhatsApp numbers are supplied by vendors
+                and are not independently verified yet. Confirm product quality, stock, delivery
+                terms and payment arrangements directly before sending money. STRAP does not
+                currently process or guarantee these transactions.
+              </p>
             </div>
           </section>
         )}
@@ -831,7 +1172,12 @@ function ConnectPage() {
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <div className="space-y-1.5"><Label>{label}</Label>{children}</div>;
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      {children}
+    </div>
+  );
 }
 
 function ProductCard({
@@ -851,15 +1197,37 @@ function ProductCard({
   return (
     <article className="group overflow-hidden rounded-2xl border border-border bg-surface transition hover:-translate-y-0.5 hover:shadow-lg">
       <div className="relative aspect-[5/3] overflow-hidden bg-secondary">
-        {image ? <img src={image} alt={product.title} loading="lazy" className="size-full object-cover transition duration-500 group-hover:scale-[1.03]" /> : <div className="flex size-full items-center justify-center"><Package className="size-10 text-muted-foreground/40" /></div>}
-        <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide backdrop-blur">{product.category}</span>
-        <button type="button" onClick={onSave} aria-label={saved ? "Remove saved product" : "Save product"} className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm backdrop-blur hover:bg-[#c6f432]"><Bookmark className={`size-4 ${saved ? "fill-current" : ""}`} /></button>
+        {image ? (
+          <img
+            src={image}
+            alt={product.title}
+            loading="lazy"
+            className="size-full object-cover transition duration-500 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <div className="flex size-full items-center justify-center">
+            <Package className="size-10 text-muted-foreground/40" />
+          </div>
+        )}
+        <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide backdrop-blur">
+          {product.category}
+        </span>
+        <button
+          type="button"
+          onClick={onSave}
+          aria-label={saved ? "Remove saved product" : "Save product"}
+          className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm backdrop-blur hover:bg-[#c6f432]"
+        >
+          <Bookmark className={`size-4 ${saved ? "fill-current" : ""}`} />
+        </button>
       </div>
       <div className="space-y-3 p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <h3 className="line-clamp-2 font-semibold leading-5">{product.title}</h3>
-            <p className="mt-1 truncate text-xs text-muted-foreground">{product.vendor.business_name}</p>
+            <p className="mt-1 truncate text-xs text-muted-foreground">
+              {product.vendor.business_name}
+            </p>
           </div>
           <div className="shrink-0 text-right">
             <p className="font-display text-lg font-bold">{money(wholesale)}</p>
@@ -867,9 +1235,18 @@ function ProductCard({
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-          <span className="inline-flex items-center gap-1"><MapPin className="size-3.5" /> {[product.vendor.city, product.vendor.state].filter(Boolean).join(", ") || "Nigeria"}</span>
-          <span>·</span><span>MOQ {product.min_order_quantity}</span>
-          <span>·</span><span>{product.stock_quantity > 0 ? `${product.stock_quantity} available` : "Stock on request"}</span>
+          <span className="inline-flex items-center gap-1">
+            <MapPin className="size-3.5" />{" "}
+            {[product.vendor.city, product.vendor.state].filter(Boolean).join(", ") || "Nigeria"}
+          </span>
+          <span>·</span>
+          <span>MOQ {product.min_order_quantity}</span>
+          <span>·</span>
+          <span>
+            {product.stock_quantity > 0
+              ? `${product.stock_quantity} available`
+              : "Stock on request"}
+          </span>
         </div>
         {retail > wholesale && (
           <div className="flex items-center justify-between rounded-xl bg-accent-soft px-3 py-2 text-xs text-accent-ink">
@@ -877,7 +1254,9 @@ function ProductCard({
             <strong>{money(retail - wholesale)}</strong>
           </div>
         )}
-        <Button onClick={onContact} className="min-h-10 w-full rounded-xl"><MessageCircle className="mr-2 size-4" /> Contact supplier</Button>
+        <Button onClick={onContact} className="min-h-10 w-full rounded-xl">
+          <MessageCircle className="mr-2 size-4" /> Contact supplier
+        </Button>
       </div>
     </article>
   );
@@ -898,7 +1277,11 @@ function VendorCard({
   return (
     <article className="flex min-w-0 gap-3 rounded-2xl border border-border bg-surface p-4">
       <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary font-bold">
-        {image ? <img src={image} alt="" loading="lazy" className="size-full object-cover" /> : vendor.business_name.slice(0, 2).toUpperCase()}
+        {image ? (
+          <img src={image} alt="" loading="lazy" className="size-full object-cover" />
+        ) : (
+          vendor.business_name.slice(0, 2).toUpperCase()
+        )}
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
@@ -906,24 +1289,59 @@ function VendorCard({
             <h3 className="truncate text-sm font-semibold">{vendor.business_name}</h3>
             <p className="mt-0.5 text-xs text-muted-foreground">{vendor.category}</p>
           </div>
-          <button type="button" onClick={onSave} aria-label={saved ? "Remove saved supplier" : "Save supplier"} className="flex size-8 shrink-0 items-center justify-center rounded-lg hover:bg-secondary"><Bookmark className={`size-4 ${saved ? "fill-current" : ""}`} /></button>
+          <button
+            type="button"
+            onClick={onSave}
+            aria-label={saved ? "Remove saved supplier" : "Save supplier"}
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg hover:bg-secondary"
+          >
+            <Bookmark className={`size-4 ${saved ? "fill-current" : ""}`} />
+          </button>
         </div>
-        <p className="mt-2 line-clamp-2 text-xs leading-5 text-muted-foreground">{vendor.description || "Wholesale supplier on STRAP Connect."}</p>
-        <p className="mt-2 flex items-center gap-1 text-[11px] text-muted-foreground"><MapPin className="size-3.5" /> {[vendor.city, vendor.state].filter(Boolean).join(", ") || vendor.country}</p>
-        <Button variant="outline" size="sm" onClick={onContact} className="mt-3 min-h-9 rounded-lg"><MessageCircle className="mr-2 size-3.5" /> Contact supplier</Button>
+        <p className="mt-2 line-clamp-2 text-xs leading-5 text-muted-foreground">
+          {vendor.description || "Wholesale supplier on STRAP Connect."}
+        </p>
+        <p className="mt-2 flex items-center gap-1 text-[11px] text-muted-foreground">
+          <MapPin className="size-3.5" />{" "}
+          {[vendor.city, vendor.state].filter(Boolean).join(", ") || vendor.country}
+        </p>
+        <Button variant="outline" size="sm" onClick={onContact} className="mt-3 min-h-9 rounded-lg">
+          <MessageCircle className="mr-2 size-3.5" /> Contact supplier
+        </Button>
       </div>
     </article>
   );
 }
 
 function EmptyState({ title, text }: { title: string; text: string }) {
-  return <div className="rounded-2xl border border-dashed border-border bg-surface px-5 py-10 text-center"><div className="mx-auto flex size-11 items-center justify-center rounded-2xl bg-secondary"><CircleHelp className="size-5 text-muted-foreground" /></div><h3 className="mt-3 font-semibold">{title}</h3><p className="mx-auto mt-1 max-w-md text-sm leading-6 text-muted-foreground">{text}</p></div>;
+  return (
+    <div className="rounded-2xl border border-dashed border-border bg-surface px-5 py-10 text-center">
+      <div className="mx-auto flex size-11 items-center justify-center rounded-2xl bg-secondary">
+        <CircleHelp className="size-5 text-muted-foreground" />
+      </div>
+      <h3 className="mt-3 font-semibold">{title}</h3>
+      <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-muted-foreground">{text}</p>
+    </div>
+  );
 }
 
 function LoadingGrid() {
-  return <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{[1, 2, 3].map((item) => <div key={item} className="h-72 animate-pulse rounded-2xl bg-secondary" />)}</div>;
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {[1, 2, 3].map((item) => (
+        <div key={item} className="h-72 animate-pulse rounded-2xl bg-secondary" />
+      ))}
+    </div>
+  );
 }
 
 function ErrorState({ message }: { message: string }) {
-  return <div role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5 text-sm text-destructive">Connect could not load this information: {message}</div>;
+  return (
+    <div
+      role="alert"
+      className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5 text-sm text-destructive"
+    >
+      Connect could not load this information: {message}
+    </div>
+  );
 }

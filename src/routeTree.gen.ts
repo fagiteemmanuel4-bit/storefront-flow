@@ -30,6 +30,7 @@ import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as AuthenticatedActivityRouteImport } from './routes/_authenticated/activity'
 import { Route as AuthenticatedBranchesRouteImport } from './routes/_authenticated/branches'
 import { Route as AuthenticatedCommandCenterRouteImport } from './routes/_authenticated/command-center'
+import { Route as AuthenticatedConnectRouteImport } from './routes/_authenticated/connect'
 import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedElectronicsWorkspaceRouteImport } from './routes/_authenticated/electronics-workspace'
@@ -190,6 +191,11 @@ const AuthenticatedCommandCenterRoute =
     path: '/command-center',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedConnectRoute = AuthenticatedConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCustomersRoute = AuthenticatedCustomersRouteImport.update({
   id: '/customers',
   path: '/customers',
@@ -515,6 +521,7 @@ export interface FileRoutesByFullPath {
   '/activity': typeof AuthenticatedActivityRoute
   '/branches': typeof AuthenticatedBranchesRoute
   '/command-center': typeof AuthenticatedCommandCenterRoute
+  '/connect': typeof AuthenticatedConnectRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/electronics-workspace': typeof AuthenticatedElectronicsWorkspaceRoute
@@ -591,6 +598,7 @@ export interface FileRoutesByTo {
   '/activity': typeof AuthenticatedActivityRoute
   '/branches': typeof AuthenticatedBranchesRoute
   '/command-center': typeof AuthenticatedCommandCenterRoute
+  '/connect': typeof AuthenticatedConnectRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/electronics-workspace': typeof AuthenticatedElectronicsWorkspaceRoute
@@ -668,6 +676,7 @@ export interface FileRoutesById {
   '/_authenticated/activity': typeof AuthenticatedActivityRoute
   '/_authenticated/branches': typeof AuthenticatedBranchesRoute
   '/_authenticated/command-center': typeof AuthenticatedCommandCenterRoute
+  '/_authenticated/connect': typeof AuthenticatedConnectRoute
   '/_authenticated/customers': typeof AuthenticatedCustomersRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/electronics-workspace': typeof AuthenticatedElectronicsWorkspaceRoute
@@ -746,6 +755,7 @@ export interface FileRouteTypes {
     | '/activity'
     | '/branches'
     | '/command-center'
+    | '/connect'
     | '/customers'
     | '/dashboard'
     | '/electronics-workspace'
@@ -822,6 +832,7 @@ export interface FileRouteTypes {
     | '/activity'
     | '/branches'
     | '/command-center'
+    | '/connect'
     | '/customers'
     | '/dashboard'
     | '/electronics-workspace'
@@ -898,6 +909,7 @@ export interface FileRouteTypes {
     | '/_authenticated/activity'
     | '/_authenticated/branches'
     | '/_authenticated/command-center'
+    | '/_authenticated/connect'
     | '/_authenticated/customers'
     | '/_authenticated/dashboard'
     | '/_authenticated/electronics-workspace'
@@ -1126,6 +1138,13 @@ declare module '@tanstack/react-router' {
       path: '/command-center'
       fullPath: '/command-center'
       preLoaderRoute: typeof AuthenticatedCommandCenterRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/connect': {
+      id: '/_authenticated/connect'
+      path: '/connect'
+      fullPath: '/connect'
+      preLoaderRoute: typeof AuthenticatedConnectRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/customers': {
@@ -1572,6 +1591,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedActivityRoute: typeof AuthenticatedActivityRoute
   AuthenticatedBranchesRoute: typeof AuthenticatedBranchesRoute
   AuthenticatedCommandCenterRoute: typeof AuthenticatedCommandCenterRoute
+  AuthenticatedConnectRoute: typeof AuthenticatedConnectRoute
   AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedElectronicsWorkspaceRoute: typeof AuthenticatedElectronicsWorkspaceRoute
@@ -1610,6 +1630,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedActivityRoute: AuthenticatedActivityRoute,
   AuthenticatedBranchesRoute: AuthenticatedBranchesRoute,
   AuthenticatedCommandCenterRoute: AuthenticatedCommandCenterRoute,
+  AuthenticatedConnectRoute: AuthenticatedConnectRoute,
   AuthenticatedCustomersRoute: AuthenticatedCustomersRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedElectronicsWorkspaceRoute:
