@@ -845,7 +845,7 @@ function ConnectPage() {
                   </p>
                 </div>
                 <Button
-                  onClick={() => navigate({ to: "/connect-supplier-setup" })}
+                  onClick={() => (myVendor ? setTab("my-shop") : navigate({ to: "/connect-supplier-setup" }))}
                   className="min-h-11 rounded-xl"
                 >
                   <Plus className="mr-2 size-4" /> Create supplier profile
