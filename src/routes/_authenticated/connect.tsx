@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Bookmark,
@@ -12,6 +12,7 @@ import {
   Plus,
   Search,
   ShieldAlert,
+  Sparkles,
   Store,
   Trash2,
   X,
@@ -125,6 +126,9 @@ function whatsappLink(phone: string, message: string) {
 function ConnectPage() {
   const { userId } = useStoreContext();
   const client = useQueryClient();
+  const navigate = useNavigate();
+  const [productImageFile, setProductImageFile] = useState<File | null>(null);
+  const [productImagePreview, setProductImagePreview] = useState("");
   const [tab, setTab] = useState<Tab>("discover");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
@@ -372,12 +376,25 @@ function ConnectPage() {
       return;
     }
     setBusy(true);
+    let uploadedImageUrl = safeImage(productForm.image_url);
+    if (productImageFile) {
+      const extension = productImageFile.name.split(".").pop()?.toLowerCase() || "jpg";
+      const objectPath = `${userId}/products/${crypto.randomUUID()}.${extension}`;
+      const { error: uploadError } = await supabase.storage
+        .from("connect-product-images")
+        .upload(objectPath, productImageFile, { contentType: productImageFile.type, upsert: false });
+      if (uploadError) {
+        setBusy(false);
+        return toast.error(`Image upload failed: ${uploadError.message}`);
+      }
+      uploadedImageUrl = supabase.storage.from("connect-product-images").getPublicUrl(objectPath).data.publicUrl;
+    }
     const { error } = await db.from("connect_products").insert({
       vendor_id: myVendor.id,
       title: productForm.title.trim(),
       category: productForm.category,
       description: productForm.description.trim(),
-      image_url: safeImage(productForm.image_url),
+      image_url: uploadedImageUrl,
       wholesale_price: wholesale,
       suggested_retail_price: Number.isFinite(retail) && retail >= 0 ? retail : 0,
       stock_quantity: stock,
@@ -387,6 +404,8 @@ function ConnectPage() {
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Product added to your Connect catalogue.");
+    setProductImageFile(null);
+    setProductImagePreview("");
     setProductForm({
       title: "",
       category: vendorForm.category,
@@ -468,56 +487,15 @@ function ConnectPage() {
   return (
     <AppShell title="STRAP Connect">
       <div className="mx-auto max-w-7xl space-y-6 pb-10">
-        <section className="relative overflow-hidden rounded-[28px] bg-[#0e1116] p-6 text-white sm:p-8">
-          <div className="pointer-events-none absolute -right-12 -top-20 size-72 rounded-full bg-[#c6f432]/15 blur-3xl" />
-          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#c6f432]">
-                <Compass className="size-3.5" /> The business connection hub
-              </div>
-              <h1 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
-                Source smarter.
-                <br />
-                <span className="text-[#c6f432]">Grow together.</span>
-              </h1>
-              <p className="mt-4 max-w-xl text-sm leading-6 text-white/65 sm:text-base">
-                Discover wholesale products, meet suppliers and build stronger business
-                relationships — all from one place.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                onClick={() => setTab("discover")}
-                className="min-h-11 rounded-xl bg-[#c6f432] px-5 font-semibold text-[#0e1116] hover:bg-[#d8f18a]"
-              >
-                Explore products <ChevronRight className="ml-1 size-4" />
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setTab("my-shop");
-                  if (!myVendor) setVendorFormOpen(true);
-                }}
-                className="min-h-11 rounded-xl border-white/25 bg-white/5 px-5 text-white hover:bg-white/10 hover:text-white"
-              >
-                <Store className="mr-2 size-4" /> Become a supplier
-              </Button>
-            </div>
+        <section className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">STRAP Connect</p>
+            <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">Find your next supplier.</h1>
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground">A simpler way to discover wholesale products and build supplier relationships.</p>
           </div>
-          <div className="relative mt-8 grid grid-cols-3 gap-3 border-t border-white/10 pt-5">
-            <div>
-              <p className="font-display text-2xl font-bold">{vendors.length}</p>
-              <p className="mt-1 text-[11px] text-white/55 sm:text-xs">Suppliers listed</p>
-            </div>
-            <div>
-              <p className="font-display text-2xl font-bold">{products.length}</p>
-              <p className="mt-1 text-[11px] text-white/55 sm:text-xs">Products to explore</p>
-            </div>
-            <div>
-              <p className="font-display text-2xl font-bold">₦</p>
-              <p className="mt-1 text-[11px] text-white/55 sm:text-xs">Built for local trade</p>
-            </div>
-          </div>
+          <Button onClick={() => navigate({ to: "/connect-supplier-setup" })} className="min-h-11 shrink-0 rounded-xl">
+            <Store className="mr-2 size-4" /> Become a supplier
+          </Button>
         </section>
 
         <div className="flex flex-wrap items-center gap-2 border-b border-border pb-3">
@@ -793,7 +771,7 @@ function ConnectPage() {
                     availability and receive enquiries through WhatsApp.
                   </p>
                 </div>
-                <Button onClick={() => setVendorFormOpen(true)} className="min-h-11 rounded-xl">
+                <Button onClick={() => navigate({ to: "/connect-supplier-setup" })} className="min-h-11 rounded-xl">
                   <Plus className="mr-2 size-4" /> Create supplier profile
                 </Button>
               </div>
@@ -856,9 +834,10 @@ function ConnectPage() {
                   </Button>
                 </div>
                 {productFormOpen && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 backdrop-blur-sm">
                   <form
                     onSubmit={(event) => void addProduct(event)}
-                    className="surface-card grid gap-4 p-5 sm:grid-cols-2 sm:p-6"
+                    className="surface-card grid max-h-[92vh] w-full max-w-3xl gap-4 overflow-y-auto rounded-2xl p-5 shadow-2xl sm:grid-cols-2 sm:p-6"
                   >
                     <Field label="Product name">
                       <Input
@@ -939,16 +918,40 @@ function ConnectPage() {
                         placeholder="piece, pack, carton"
                       />
                     </Field>
-                    <Field label="Product image URL">
-                      <Input
-                        type="url"
-                        value={productForm.image_url}
-                        onChange={(e) =>
-                          setProductForm({ ...productForm, image_url: e.target.value })
-                        }
-                        placeholder="https://…"
-                      />
+                    <Field label="Product photos">
+                      <div className="space-y-3 rounded-xl border border-dashed border-border p-3">
+                        <Input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/avif"
+                          onChange={(event) => {
+                            const file = event.target.files?.[0];
+                            if (!file) return;
+                            if (file.size > 8 * 1024 * 1024) {
+                              toast.error("Choose an image smaller than 8 MB.");
+                              event.target.value = "";
+                              return;
+                            }
+                            setProductImageFile(file);
+                            setProductImagePreview(URL.createObjectURL(file));
+                          }}
+                        />
+                        {productImagePreview ? (
+                          <img src={productImagePreview} alt="Product preview" className="h-36 w-full rounded-lg object-cover" />
+                        ) : (
+                          <div className="flex h-28 items-center justify-center gap-2 rounded-lg bg-secondary text-sm text-muted-foreground"><Package className="size-5" /> Choose a product image</div>
+                        )}
+                        <p className="text-xs text-muted-foreground">JPG, PNG, WebP or AVIF · up to 8 MB</p>
+                      </div>
                     </Field>
+                    <div className="sm:col-span-2 rounded-xl border border-[#c6f432]/30 bg-[#c6f432]/5 p-3">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 text-sm font-semibold"><Sparkles className="size-4 text-[#789b00]" /> STRAPSense listing assistant</div>
+                        <Button type="button" size="sm" variant="outline" onClick={() => setProductForm((current) => ({ ...current, description: current.description.trim() || `Wholesale ${current.title.trim() || "product"} in the ${current.category} category. Add verified details such as material, sizes, colours, packaging and delivery options before publishing.` }))}>
+                          Draft product details
+                        </Button>
+                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground">Creates an editable starting draft from the details you provide. STRAPSense will not guess prices, stock or product specifications.</p>
+                    </div>
                     <div className="sm:col-span-2">
                       <Field label="Product details">
                         <textarea
@@ -990,6 +993,7 @@ function ConnectPage() {
                       </Button>
                     </div>
                   </form>
+                  </div>
                 )}
 
                 {myProductsQuery.isLoading ? (
