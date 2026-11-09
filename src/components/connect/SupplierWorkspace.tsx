@@ -2,7 +2,7 @@ import { useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Activity, AlertTriangle, Bell, Check, CheckCircle2, ChevronRight, Clock3, Copy,
-  Link2, Package, Plus, RefreshCw, Settings2, Share2, ShieldCheck, Store, Users, X,
+  Download, Link2, Package, Plus, RefreshCw, Settings2, Share2, ShieldCheck, Store, Upload, Users, X,
 } from "lucide-react";
 import { AppShell } from "@/components/shell/AppShell";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,41 @@ async function hashCode(code: string) {
   const digest = await crypto.subtle.digest("SHA-256", bytes);
   return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
+
+function parseCsv(text: string) {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = "";
+  let quoted = false;
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    if (char === '"' && quoted && text[i + 1] === '"') {
+      field += '"';
+      i += 1;
+    } else if (char === '"') {
+      quoted = !quoted;
+    } else if (char === "," && !quoted) {
+      row.push(field.trim());
+      field = "";
+    } else if ((char === "\n" || char === "\r") && !quoted) {
+      if (char === "\r" && text[i + 1] === "\n") i += 1;
+      row.push(field.trim());
+      if (row.some((cell) => cell.length)) rows.push(row);
+      row = [];
+      field = "";
+    } else {
+      field += char;
+    }
+  }
+  if (field.length || row.length) {
+    row.push(field.trim());
+    if (row.some((cell) => cell.length)) rows.push(row);
+  }
+  if (rows.length < 2) return [];
+  const headers = rows[0].map((header) => header.trim().toLowerCase());
+  return rows.slice(1).map((values) => Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""])));
+}
+
 function makeCode() {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   const bytes = crypto.getRandomValues(new Uint8Array(10));
@@ -129,6 +164,53 @@ export function SupplierWorkspace({ vendor, userId, onBrowseMarketplace }: {
       queryClient.invalidateQueries({queryKey:["connect-products"]}),
     ]);
   }
+  async function importCsv(file: File) {
+    if (file.size > 5 * 1024 * 1024) return toast.error("Choose a CSV file smaller than 5 MB.");
+    const rows = parseCsv(await file.text());
+    if (!rows.length) return toast.error("The CSV is empty or has no product rows.");
+    const valid = rows.map((row: any) => ({
+      vendor_id: vendor.id,
+      sku: String(row.sku ?? "").trim(),
+      title: String(row.title ?? row.product_name ?? "").trim(),
+      category: String(row.category ?? "General").trim() || "General",
+      description: String(row.description ?? "").trim(),
+      image_url: String(row.image_url ?? "").trim(),
+      wholesale_price: Number(row.wholesale_price),
+      suggested_retail_price: Math.max(0, Number(row.suggested_retail_price) || 0),
+      stock_quantity: Number(row.stock_quantity ?? 0),
+      min_order_quantity: Number(row.min_order_quantity ?? 1),
+      unit: String(row.unit ?? "piece").trim() || "piece",
+    }));
+    const invalid = valid.find((row) => row.title.length < 2 || !Number.isFinite(row.wholesale_price) || row.wholesale_price < 0 || !Number.isInteger(row.stock_quantity) || row.stock_quantity < 0 || !Number.isInteger(row.min_order_quantity) || row.min_order_quantity < 1);
+    if (invalid) return toast.error("One or more rows have invalid product names, prices, stock or minimum order quantities.");
+    setSaving(true);
+    let inserted = 0;
+    for (let i = 0; i < valid.length; i += 100) {
+      const { error } = await db.from("connect_products").insert(valid.slice(i, i + 100));
+      if (error) {
+        setSaving(false);
+        await refresh();
+        return toast.error(`Import stopped after ${inserted} rows: ${error.message}`);
+      }
+      inserted += valid.slice(i, i + 100).length;
+    }
+    setSaving(false);
+    toast.success(`${inserted} products imported.`);
+    await refresh();
+  }
+  function exportCsv() {
+    const headers = ["sku","title","category","description","wholesale_price","suggested_retail_price","stock_quantity","min_order_quantity","unit","is_seasonal","distribution_enabled"];
+    const escape = (value: unknown) => `"${String(value ?? "").replaceAll('"','""')}"`;
+    const lines = [headers.join(","), ...products.map((product) => headers.map((key) => escape((product as any)[key])).join(","))];
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${vendor.business_name.toLowerCase().replace(/[^a-z0-9]+/g,"-")}-catalogue.csv`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function createProduct(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const wholesale=Number(productDraft.wholesale_price);const stock=Number(productDraft.stock_quantity);const minimum=Number(productDraft.min_order_quantity);
@@ -239,7 +321,7 @@ export function SupplierWorkspace({ vendor, userId, onBrowseMarketplace }: {
 
       {panel==="products"&&<div className="space-y-5">
         <SectionTitle eyebrow="Catalogue control" title="Your products" description="Update inventory, control distribution and manage seasonal availability. Stock and availability changes are synchronized to connected retailers." action={<Button className="rounded-xl" onClick={()=>setProductCreateOpen(true)}><Plus className="mr-2 size-4"/>Add product</Button>}/>
-        <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-3 sm:flex-row"><Input value={productSearch} onChange={e=>setProductSearch(e.target.value)} placeholder="Search your products or SKU" className="h-10 rounded-xl"/><Button variant="outline" className="rounded-xl" disabled={!selected.length} onClick={()=>void bulkUpdate({distribution_enabled:false})}>Pause distribution ({selected.length})</Button><Button variant="outline" className="rounded-xl" disabled={!selected.length} onClick={()=>void bulkUpdate({distribution_enabled:true,is_active:true})}>Enable ({selected.length})</Button><Button variant="outline" className="rounded-xl" disabled={!selected.length} onClick={()=>setCodeOpen(true)}><Share2 className="mr-2 size-4"/>Create code</Button><Button variant="outline" className="rounded-xl" disabled={!selected.length} onClick={()=>setGroupOpen(true)}>Save collection</Button></div>
+        <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-3 sm:flex-row sm:flex-wrap"><Input value={productSearch} onChange={e=>setProductSearch(e.target.value)} placeholder="Search your products or SKU" className="h-10 min-w-48 flex-1 rounded-xl"/><label className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-border px-3 text-sm font-medium"><Upload className="size-4"/>Import CSV<input type="file" accept=".csv,text/csv" className="sr-only" onChange={e=>{const file=e.target.files?.[0];if(file)void importCsv(file);e.target.value="";}}/></label><Button type="button" variant="outline" className="rounded-xl" onClick={exportCsv}><Download className="mr-2 size-4"/>Export CSV</Button><Button variant="outline" className="rounded-xl" disabled={!selected.length} onClick={()=>void bulkUpdate({distribution_enabled:false})}>Pause distribution ({selected.length})</Button><Button variant="outline" className="rounded-xl" disabled={!selected.length} onClick={()=>void bulkUpdate({distribution_enabled:true,is_active:true})}>Enable ({selected.length})</Button><Button variant="outline" className="rounded-xl" disabled={!selected.length} onClick={()=>setCodeOpen(true)}><Share2 className="mr-2 size-4"/>Create code</Button><Button variant="outline" className="rounded-xl" disabled={!selected.length} onClick={()=>setGroupOpen(true)}>Save collection</Button></div>
         <div className="overflow-hidden rounded-2xl border border-border bg-card"><div className="hidden grid-cols-[36px_minmax(0,1fr)_120px_120px_125px_130px] gap-3 border-b border-border bg-secondary/50 px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground sm:grid"><span><input type="checkbox" aria-label="Select all products" checked={filteredProducts.length>0&&selected.length===filteredProducts.length} onChange={e=>setSelected(e.target.checked?filteredProducts.map(p=>p.id):[])}/></span><span>Product</span><span>Wholesale</span><span>Stock</span><span>Availability</span><span>Controls</span></div>
           {filteredProducts.map(p=><div key={p.id} className="grid gap-3 border-b border-border p-4 last:border-0 sm:grid-cols-[36px_minmax(0,1fr)_120px_120px_125px_130px] sm:items-center"><div className="flex items-center gap-3 sm:block"><input type="checkbox" aria-label={`Select ${p.title}`} checked={selected.includes(p.id)} onChange={e=>setSelected(old=>e.target.checked?[...old,p.id]:old.filter(id=>id!==p.id))}/><div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-secondary sm:hidden">{p.image_url?<img src={p.image_url} alt="" className="size-full object-cover"/>:<Package className="size-5 text-muted-foreground"/>}</div><div className="min-w-0 flex-1 sm:hidden"><p className="truncate text-sm font-semibold">{p.title}</p><p className="text-xs text-muted-foreground">{p.category}</p></div></div><div className="hidden min-w-0 items-center gap-3 sm:flex"><div className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-secondary">{p.image_url?<img src={p.image_url} alt="" className="size-full object-cover"/>:<Package className="size-5 text-muted-foreground"/>}</div><div className="min-w-0"><p className="truncate text-sm font-semibold">{p.title}</p><p className="truncate text-xs text-muted-foreground">{p.sku||p.category} · MOQ {p.min_order_quantity}</p></div></div>
             <div className="grid grid-cols-2 gap-2 sm:block"><label className="text-[10px] text-muted-foreground sm:hidden">Wholesale price</label><Input aria-label={`Wholesale price for ${p.title}`} type="number" min="0" defaultValue={p.wholesale_price} className="h-9 rounded-lg" onBlur={e=>{if(Number(e.target.value)!==Number(p.wholesale_price))void updateProduct(p.id,{wholesale_price:Number(e.target.value)})}}/></div>
