@@ -57,8 +57,8 @@ function Stat({ label, value, hint, icon: Icon }: {label:string;value:string|num
 function SectionTitle({eyebrow,title,description,action}:{eyebrow:string;title:string;description:string;action?:ReactNode}) {
   return <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end"><div><p className="text-[10px] font-bold uppercase tracking-[.17em] text-muted-foreground">{eyebrow}</p><h2 className="mt-1 font-display text-2xl font-bold tracking-tight">{title}</h2><p className="mt-1 max-w-2xl text-sm text-muted-foreground">{description}</p></div>{action}</div>;
 }
-export function SupplierWorkspace({ vendor, userId, onBrowseMarketplace, onAddProduct }: {
-  vendor: Vendor; userId: string; onBrowseMarketplace: () => void; onAddProduct: () => void;
+export function SupplierWorkspace({ vendor, userId, onBrowseMarketplace }: {
+  vendor: Vendor; userId: string; onBrowseMarketplace: () => void;
 }) {
   const queryClient = useQueryClient();
   const [panel,setPanel] = useState<Panel>("overview");
