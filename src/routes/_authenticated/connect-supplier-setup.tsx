@@ -420,7 +420,7 @@ function SupplierSetupPage() {
                               update("category", category);
                               setCategoryPickerOpen(false);
                             }}
-                            className={`flex min-h-[58px] items-center justify-between rounded-xl border px-3 text-left text-sm font-medium transition active:scale-[.98] ${draft.category === category ? "border-[#101114] bg-[#c6f432]/10" : "border-border bg-surface hover:bg-secondary"}`}
+                            className={`flex min-h-[58px] items-center justify-between rounded-xl border px-3 text-left text-sm font-medium transition active:scale-[.98] ${draft.category === category ? "border-[#101114] bg-[#101114]/5" : "border-border bg-surface hover:bg-secondary"}`}
                           >
                             {category}
                             {draft.category === category && (
@@ -537,7 +537,7 @@ function SupplierSetupPage() {
                             className={`flex min-h-12 w-full items-center justify-between border-b border-border/70 px-2 text-left text-sm transition hover:bg-secondary ${draft.state === name ? "font-semibold text-foreground" : "text-muted-foreground"}`}
                           >
                             {name}
-                            {draft.state === name && <Check className="size-4 text-[#789b00]" />}
+                            {draft.state === name && <Check className="size-4 text-[#101114]" />}
                           </button>
                         ))}
                         {filteredStates.length === 0 && (
@@ -635,6 +635,7 @@ function SupplierSetupPage() {
           <Button
             type="button"
             onClick={continueStep}
+            disabled={!valid || busy || leaving}
             className="h-14 w-full rounded-[14px] bg-[#101114] text-[16px] font-semibold text-white shadow-none transition-transform duration-150 active:scale-[.985] hover:bg-[#101114] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#101114] disabled:opacity-25 motion-reduce:transition-none"
           >
             {saved ? "Saved" : "Continue"} <ArrowRight className="ml-2 size-4" />
