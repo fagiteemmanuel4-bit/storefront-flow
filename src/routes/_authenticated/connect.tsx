@@ -382,12 +382,16 @@ function ConnectPage() {
       const objectPath = `${userId}/products/${crypto.randomUUID()}.${extension}`;
       const { error: uploadError } = await supabase.storage
         .from("connect-product-images")
-        .upload(objectPath, productImageFile, { contentType: productImageFile.type, upsert: false });
+        .upload(objectPath, productImageFile, {
+          contentType: productImageFile.type,
+          upsert: false,
+        });
       if (uploadError) {
         setBusy(false);
         return toast.error(`Image upload failed: ${uploadError.message}`);
       }
-      uploadedImageUrl = supabase.storage.from("connect-product-images").getPublicUrl(objectPath).data.publicUrl;
+      uploadedImageUrl = supabase.storage.from("connect-product-images").getPublicUrl(objectPath)
+        .data.publicUrl;
     }
     const { error } = await db.from("connect_products").insert({
       vendor_id: myVendor.id,
@@ -489,11 +493,20 @@ function ConnectPage() {
       <div className="mx-auto max-w-7xl space-y-6 pb-10">
         <section className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">STRAP Connect</p>
-            <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">Find your next supplier.</h1>
-            <p className="mt-2 max-w-xl text-sm text-muted-foreground">A simpler way to discover wholesale products and build supplier relationships.</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              STRAP Connect
+            </p>
+            <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Find your next supplier.
+            </h1>
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+              A simpler way to discover wholesale products and build supplier relationships.
+            </p>
           </div>
-          <Button onClick={() => navigate({ to: "/connect-supplier-setup" })} className="min-h-11 shrink-0 rounded-xl">
+          <Button
+            onClick={() => navigate({ to: "/connect-supplier-setup" })}
+            className="min-h-11 shrink-0 rounded-xl"
+          >
             <Store className="mr-2 size-4" /> Become a supplier
           </Button>
         </section>
@@ -771,7 +784,10 @@ function ConnectPage() {
                     availability and receive enquiries through WhatsApp.
                   </p>
                 </div>
-                <Button onClick={() => navigate({ to: "/connect-supplier-setup" })} className="min-h-11 rounded-xl">
+                <Button
+                  onClick={() => navigate({ to: "/connect-supplier-setup" })}
+                  className="min-h-11 rounded-xl"
+                >
                   <Plus className="mr-2 size-4" /> Create supplier profile
                 </Button>
               </div>
@@ -835,164 +851,195 @@ function ConnectPage() {
                 </div>
                 {productFormOpen && (
                   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 backdrop-blur-sm">
-                  <form
-                    onSubmit={(event) => void addProduct(event)}
-                    className="surface-card grid max-h-[92vh] w-full max-w-3xl gap-4 overflow-y-auto rounded-2xl p-5 shadow-2xl sm:grid-cols-2 sm:p-6"
-                  >
-                    <Field label="Product name">
-                      <Input
-                        required
-                        minLength={2}
-                        maxLength={160}
-                        value={productForm.title}
-                        onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
-                        placeholder="e.g. Premium cotton T-shirt"
-                      />
-                    </Field>
-                    <Field label="Category">
-                      <select
-                        value={productForm.category}
-                        onChange={(e) =>
-                          setProductForm({ ...productForm, category: e.target.value })
-                        }
-                        className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm"
-                      >
-                        {CATEGORIES.map((item) => (
-                          <option key={item}>{item}</option>
-                        ))}
-                      </select>
-                    </Field>
-                    <Field label="Wholesale price (₦)">
-                      <Input
-                        required
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={productForm.wholesale_price}
-                        onChange={(e) =>
-                          setProductForm({ ...productForm, wholesale_price: e.target.value })
-                        }
-                        placeholder="2500"
-                      />
-                    </Field>
-                    <Field label="Suggested retail price (₦)">
-                      <Input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={productForm.suggested_retail_price}
-                        onChange={(e) =>
-                          setProductForm({ ...productForm, suggested_retail_price: e.target.value })
-                        }
-                        placeholder="4000"
-                      />
-                    </Field>
-                    <Field label="Available stock">
-                      <Input
-                        type="number"
-                        min="0"
-                        step="1"
-                        value={productForm.stock_quantity}
-                        onChange={(e) =>
-                          setProductForm({ ...productForm, stock_quantity: e.target.value })
-                        }
-                      />
-                    </Field>
-                    <Field label="Minimum order quantity">
-                      <Input
-                        required
-                        type="number"
-                        min="1"
-                        step="1"
-                        value={productForm.min_order_quantity}
-                        onChange={(e) =>
-                          setProductForm({ ...productForm, min_order_quantity: e.target.value })
-                        }
-                      />
-                    </Field>
-                    <Field label="Unit">
-                      <Input
-                        maxLength={32}
-                        value={productForm.unit}
-                        onChange={(e) => setProductForm({ ...productForm, unit: e.target.value })}
-                        placeholder="piece, pack, carton"
-                      />
-                    </Field>
-                    <Field label="Product photos">
-                      <div className="space-y-3 rounded-xl border border-dashed border-border p-3">
+                    <form
+                      onSubmit={(event) => void addProduct(event)}
+                      className="surface-card grid max-h-[92vh] w-full max-w-3xl gap-4 overflow-y-auto rounded-2xl p-5 shadow-2xl sm:grid-cols-2 sm:p-6"
+                    >
+                      <Field label="Product name">
                         <Input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp,image/avif"
-                          onChange={(event) => {
-                            const file = event.target.files?.[0];
-                            if (!file) return;
-                            if (file.size > 8 * 1024 * 1024) {
-                              toast.error("Choose an image smaller than 8 MB.");
-                              event.target.value = "";
-                              return;
-                            }
-                            setProductImageFile(file);
-                            setProductImagePreview(URL.createObjectURL(file));
-                          }}
-                        />
-                        {productImagePreview ? (
-                          <img src={productImagePreview} alt="Product preview" className="h-36 w-full rounded-lg object-cover" />
-                        ) : (
-                          <div className="flex h-28 items-center justify-center gap-2 rounded-lg bg-secondary text-sm text-muted-foreground"><Package className="size-5" /> Choose a product image</div>
-                        )}
-                        <p className="text-xs text-muted-foreground">JPG, PNG, WebP or AVIF · up to 8 MB</p>
-                      </div>
-                    </Field>
-                    <div className="sm:col-span-2 rounded-xl border border-[#c6f432]/30 bg-[#c6f432]/5 p-3">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div className="flex items-center gap-2 text-sm font-semibold"><Sparkles className="size-4 text-[#789b00]" /> STRAPSense listing assistant</div>
-                        <Button type="button" size="sm" variant="outline" onClick={() => setProductForm((current) => ({ ...current, description: current.description.trim() || `Wholesale ${current.title.trim() || "product"} in the ${current.category} category. Add verified details such as material, sizes, colours, packaging and delivery options before publishing.` }))}>
-                          Draft product details
-                        </Button>
-                      </div>
-                      <p className="mt-1 text-xs text-muted-foreground">Creates an editable starting draft from the details you provide. STRAPSense will not guess prices, stock or product specifications.</p>
-                    </div>
-                    <div className="sm:col-span-2">
-                      <Field label="Product details">
-                        <textarea
-                          maxLength={2000}
-                          rows={3}
-                          value={productForm.description}
+                          required
+                          minLength={2}
+                          maxLength={160}
+                          value={productForm.title}
                           onChange={(e) =>
-                            setProductForm({ ...productForm, description: e.target.value })
+                            setProductForm({ ...productForm, title: e.target.value })
                           }
-                          className="w-full rounded-xl border border-input bg-background p-3 text-sm"
-                          placeholder="Describe quality, sizes, colours, packaging and delivery terms."
+                          placeholder="e.g. Premium cotton T-shirt"
                         />
                       </Field>
-                    </div>
-                    {Number(productForm.suggested_retail_price) >
-                      Number(productForm.wholesale_price) &&
-                      Number(productForm.wholesale_price) >= 0 && (
-                        <p className="sm:col-span-2 rounded-xl bg-accent-soft p-3 text-sm text-accent-ink">
-                          Indicative reseller spread:{" "}
-                          <strong>
-                            {money(
-                              Number(productForm.suggested_retail_price) -
-                                Number(productForm.wholesale_price),
-                            )}
-                          </strong>{" "}
-                          per {productForm.unit || "unit"} before other costs.
+                      <Field label="Category">
+                        <select
+                          value={productForm.category}
+                          onChange={(e) =>
+                            setProductForm({ ...productForm, category: e.target.value })
+                          }
+                          className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm"
+                        >
+                          {CATEGORIES.map((item) => (
+                            <option key={item}>{item}</option>
+                          ))}
+                        </select>
+                      </Field>
+                      <Field label="Wholesale price (₦)">
+                        <Input
+                          required
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={productForm.wholesale_price}
+                          onChange={(e) =>
+                            setProductForm({ ...productForm, wholesale_price: e.target.value })
+                          }
+                          placeholder="2500"
+                        />
+                      </Field>
+                      <Field label="Suggested retail price (₦)">
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={productForm.suggested_retail_price}
+                          onChange={(e) =>
+                            setProductForm({
+                              ...productForm,
+                              suggested_retail_price: e.target.value,
+                            })
+                          }
+                          placeholder="4000"
+                        />
+                      </Field>
+                      <Field label="Available stock">
+                        <Input
+                          type="number"
+                          min="0"
+                          step="1"
+                          value={productForm.stock_quantity}
+                          onChange={(e) =>
+                            setProductForm({ ...productForm, stock_quantity: e.target.value })
+                          }
+                        />
+                      </Field>
+                      <Field label="Minimum order quantity">
+                        <Input
+                          required
+                          type="number"
+                          min="1"
+                          step="1"
+                          value={productForm.min_order_quantity}
+                          onChange={(e) =>
+                            setProductForm({ ...productForm, min_order_quantity: e.target.value })
+                          }
+                        />
+                      </Field>
+                      <Field label="Unit">
+                        <Input
+                          maxLength={32}
+                          value={productForm.unit}
+                          onChange={(e) => setProductForm({ ...productForm, unit: e.target.value })}
+                          placeholder="piece, pack, carton"
+                        />
+                      </Field>
+                      <Field label="Product photos">
+                        <div className="space-y-3 rounded-xl border border-dashed border-border p-3">
+                          <Input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp,image/avif"
+                            onChange={(event) => {
+                              const file = event.target.files?.[0];
+                              if (!file) return;
+                              if (file.size > 8 * 1024 * 1024) {
+                                toast.error("Choose an image smaller than 8 MB.");
+                                event.target.value = "";
+                                return;
+                              }
+                              setProductImageFile(file);
+                              setProductImagePreview(URL.createObjectURL(file));
+                            }}
+                          />
+                          {productImagePreview ? (
+                            <img
+                              src={productImagePreview}
+                              alt="Product preview"
+                              className="h-36 w-full rounded-lg object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-28 items-center justify-center gap-2 rounded-lg bg-secondary text-sm text-muted-foreground">
+                              <Package className="size-5" /> Choose a product image
+                            </div>
+                          )}
+                          <p className="text-xs text-muted-foreground">
+                            JPG, PNG, WebP or AVIF · up to 8 MB
+                          </p>
+                        </div>
+                      </Field>
+                      <div className="sm:col-span-2 rounded-xl border border-[#c6f432]/30 bg-[#c6f432]/5 p-3">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div className="flex items-center gap-2 text-sm font-semibold">
+                            <Sparkles className="size-4 text-[#789b00]" /> STRAPSense listing
+                            assistant
+                          </div>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                              setProductForm((current) => ({
+                                ...current,
+                                description:
+                                  current.description.trim() ||
+                                  `Wholesale ${current.title.trim() || "product"} in the ${current.category} category. Add verified details such as material, sizes, colours, packaging and delivery options before publishing.`,
+                              }))
+                            }
+                          >
+                            Draft product details
+                          </Button>
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Creates an editable starting draft from the details you provide.
+                          STRAPSense will not guess prices, stock or product specifications.
                         </p>
-                      )}
-                    <div className="flex flex-wrap justify-end gap-2 sm:col-span-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setProductFormOpen(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button type="submit" disabled={busy}>
-                        {busy ? "Saving…" : "Add to catalogue"}
-                      </Button>
-                    </div>
-                  </form>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <Field label="Product details">
+                          <textarea
+                            maxLength={2000}
+                            rows={3}
+                            value={productForm.description}
+                            onChange={(e) =>
+                              setProductForm({ ...productForm, description: e.target.value })
+                            }
+                            className="w-full rounded-xl border border-input bg-background p-3 text-sm"
+                            placeholder="Describe quality, sizes, colours, packaging and delivery terms."
+                          />
+                        </Field>
+                      </div>
+                      {Number(productForm.suggested_retail_price) >
+                        Number(productForm.wholesale_price) &&
+                        Number(productForm.wholesale_price) >= 0 && (
+                          <p className="sm:col-span-2 rounded-xl bg-accent-soft p-3 text-sm text-accent-ink">
+                            Indicative reseller spread:{" "}
+                            <strong>
+                              {money(
+                                Number(productForm.suggested_retail_price) -
+                                  Number(productForm.wholesale_price),
+                              )}
+                            </strong>{" "}
+                            per {productForm.unit || "unit"} before other costs.
+                          </p>
+                        )}
+                      <div className="flex flex-wrap justify-end gap-2 sm:col-span-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setProductFormOpen(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button type="submit" disabled={busy}>
+                          {busy ? "Saving…" : "Add to catalogue"}
+                        </Button>
+                      </div>
+                    </form>
                   </div>
                 )}
 
