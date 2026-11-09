@@ -288,6 +288,24 @@ function RootComponent() {
   const forceLight =
     pathname === "/auth" || pathname === "/oauth/consent" || pathname === "/verify-email";
   useEffect(() => {
+    // Subtle, built-in tactile feedback for primary interactions. Browsers that
+    // do not expose the Vibration API simply ignore this enhancement.
+    const handleInteractionHaptic = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const control = target.closest(
+        'button, a[href], [role="button"], [role="menuitem"], summary, select, input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="reset"], [data-haptic]',
+      );
+      if (!control || control.getAttribute("aria-disabled") === "true") return;
+      if ("disabled" in control && Boolean((control as HTMLButtonElement).disabled)) return;
+      if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") {
+        navigator.vibrate(10);
+      }
+    };
+    document.addEventListener("click", handleInteractionHaptic, true);
+    return () => document.removeEventListener("click", handleInteractionHaptic, true);
+  }, []);
+  useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
@@ -305,7 +323,7 @@ function RootComponent() {
         <MobileNav />
         <StoreFeedbackFloating />
         <StoreCustomerAccess />
-        <Toaster position="top-center" richColors />
+        <Toaster position="bottom-center" richColors />
       </QueryClientProvider>
     </ThemeProvider>
   );
