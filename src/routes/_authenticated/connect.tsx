@@ -1,14 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  ArrowDownUp,
   Bookmark,
   Building2,
-  Check,
   ChevronRight,
   CircleHelp,
   Compass,
-  ExternalLink,
   MapPin,
   MessageCircle,
   Package,
@@ -16,9 +13,7 @@ import {
   Search,
   ShieldAlert,
   Store,
-  Tag,
   Trash2,
-  Users,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
@@ -45,7 +40,6 @@ export const Route = createFileRoute("/_authenticated/connect")({
 
 type Vendor = {
   id: string;
-  owner_id: string;
   business_name: string;
   slug: string;
   description: string;
@@ -184,7 +178,7 @@ function ConnectPage() {
       const { data, error } = await db
         .from("connect_vendors")
         .select(
-          "id,owner_id,business_name,slug,description,category,country,state,city,whatsapp_number,logo_url,is_published,created_at",
+          "id,business_name,slug,description,category,country,state,city,whatsapp_number,logo_url,is_published,created_at",
         )
         .eq("is_published", true)
         .order("created_at", { ascending: false })
@@ -261,7 +255,7 @@ function ConnectPage() {
       whatsapp_number: vendor.whatsapp_number,
       logo_url: vendor.logo_url,
     });
-  }, [myVendorQuery.data?.id]);
+  }, [myVendorQuery.data]);
 
   const savedProductIds = savedProductsQuery.data ?? new Set<string>();
   const savedVendorIds = savedVendorsQuery.data ?? new Set<string>();
