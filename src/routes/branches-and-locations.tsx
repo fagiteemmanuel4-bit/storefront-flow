@@ -10,6 +10,7 @@ export const Route = createFileRoute("/branches-and-locations")({
     title: "Multi-location retail — Strap branches and stock",
     description: page.description,
     path: "/branches-and-locations",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
