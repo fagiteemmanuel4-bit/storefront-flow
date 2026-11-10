@@ -1,3 +1,4 @@
+import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -261,6 +262,7 @@ export function Landing() {
             </div>
           </div>
         </section>
+              <RetailVisualGallery />
       </main>
       <SiteFooter />
     </div>
