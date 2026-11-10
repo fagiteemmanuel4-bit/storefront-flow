@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/site/MarketingMotion";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Check, Crown } from "lucide-react";
 import { PREMIUM_PLANS, formatNaira } from "@/lib/premiumPlans";
@@ -59,7 +60,8 @@ export function PricingSection() {
           {plans.map((plan) => {
             const featured = plan.key === "business";
             return (
-              <article key={plan.key} className={`marketing-plan ${featured ? "marketing-plan--featured" : ""}`}>
+              <Reveal key={plan.key} delay={featured ? 80 : 0}>
+              <article className={`marketing-plan ${featured ? "marketing-plan--featured" : ""}`}>
                 {featured && <span className="marketing-plan__badge"><Crown size={13} /> Growing shops</span>}
                 <p className="marketing-plan__name">{plan.name}</p>
                 <p className="marketing-plan__description">{plan.description}</p>
@@ -76,6 +78,7 @@ export function PricingSection() {
                   {plan.key === "free" ? "Start free" : "Choose this plan"} <ArrowRight size={15} />
                 </Link>
               </article>
+              </Reveal>
             );
           })}
         </div>
