@@ -1,3 +1,4 @@
+import { noIndexHead } from "@/lib/marketingSeo";
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -5,16 +6,8 @@ import { AuthBrand } from "@/components/auth/AuthBrand";
 import "@/strap-auth.css";
 
 export const Route = createFileRoute("/verify-email")({
+  head: () => noIndexHead("Verify your email — Strap", "Confirm your email address to access Strap."),
   ssr: false,
-  head: () => ({
-    meta: [
-      { title: "Verify your email — Strap" },
-      {
-        name: "description",
-        content: "Confirm your email with a secure one-time code to access Strap.",
-      },
-    ],
-  }),
   component: VerifyEmailPage,
 });
 
