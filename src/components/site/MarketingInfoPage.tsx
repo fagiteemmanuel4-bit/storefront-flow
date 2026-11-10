@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { SiteFooter } from "@/components/site/SiteChrome";
 import { ArrowRight, CheckCircle2, Sparkles, type LucideIcon } from "lucide-react";
 
 export type MarketingSection = {
@@ -104,6 +105,7 @@ export function MarketingInfoPage({ page }: { page: MarketingPage }) {
           <div className="mt-8 flex flex-wrap justify-center gap-3"><Link to="/product" className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Explore product</Link><Link to="/how-it-works" className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">How it works</Link><Link to="/support" className="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground">Visit Help Centre <ArrowRight className="ml-1 inline size-4" /></Link></div>
         </section>
       </main>
+      <SiteFooter />
     </div>
   );
 }
