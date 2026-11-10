@@ -1,272 +1,262 @@
-import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   BarChart3,
   Boxes,
   ClipboardList,
+  CreditCard,
   Package,
   ScanLine,
   ShieldCheck,
   ShoppingBag,
+  Store,
   Users,
-  WifiOff,
+  Wallet,
 } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
+import { InteractiveProductStage } from "@/components/site/InteractiveProductStage";
+import { PricingSection } from "@/components/site/PricingSection";
+import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
+import { marketingHead } from "@/lib/marketingSeo";
+
 const features = [
   {
     icon: ShoppingBag,
     title: "Point of sale",
-    body: "Search or scan products, hold carts, apply discounts, take payment and issue clear receipts. Offline sales can queue and sync when you reconnect.",
-  },
-  {
-    icon: Package,
-    title: "Products & catalogue",
-    body: "Keep product names, images, categories, SKUs, barcodes, variants and pricing together.",
+    body: "Search or scan products, review the cart, record payment methods and issue receipts from a focused checkout.",
+    href: "/checkout",
+    label: "Sell with confidence",
   },
   {
     icon: Boxes,
-    title: "Inventory control",
-    body: "Track stock by branch, spot low stock, transfer inventory and manage batches and expiry workflows where supported.",
+    title: "Inventory management",
+    body: "Keep product details and stock levels organised. See what is available and what needs attention.",
+    href: "/inventory-management",
+    label: "Know your stock",
   },
   {
     icon: Users,
-    title: "Customers & staff",
-    body: "Link customers to purchases and give owners, managers and cashiers role-appropriate access.",
+    title: "Customers and teams",
+    body: "Keep customer records connected to purchases and give staff access that matches their responsibilities.",
+    href: "/customer-management",
+    label: "Work together",
   },
   {
     icon: BarChart3,
-    title: "Reports & expenses",
-    body: "Understand sales, payment mix, expenses, product performance and the numbers that need attention.",
+    title: "Reports and insights",
+    body: "Review sales, expenses and inventory information to understand what is happening across the business.",
+    href: "/business-insights",
+    label: "Understand the numbers",
+  },
+  {
+    icon: Store,
+    title: "Online storefront",
+    body: "Publish a shareable product catalogue and manage incoming online orders from the same workspace.",
+    href: "/online-store",
+    label: "Sell beyond the counter",
   },
   {
     icon: ClipboardList,
-    title: "Online orders",
-    body: "Publish a shareable storefront, show your catalogue and manage incoming customer orders.",
+    title: "Branches and operations",
+    body: "Organise branch-level stock, sales and team workflows as your retail operation grows.",
+    href: "/branches-and-locations",
+    label: "Grow with structure",
   },
 ];
+
+const steps = [
+  ["01", "Set up your workspace", "Create your account, add your business details and prepare your first location."],
+  ["02", "Build your catalogue", "Add products, prices, categories and barcodes so your team can find items quickly."],
+  ["03", "Run daily operations", "Record sales, manage stock, review customers and keep business activity connected."],
+  ["04", "Take your catalogue online", "Publish selected products and manage online orders alongside your in-store work."],
+];
+
+const shopTypes = [
+  { icon: Store, title: "Grocery and convenience", text: "Manage everyday products, fast-moving stock and counter sales." },
+  { icon: ShoppingBag, title: "Fashion and lifestyle", text: "Organise products, variants and sales in one retail workspace." },
+  { icon: Package, title: "Electronics and accessories", text: "Keep product identifiers, inventory and customer records together." },
+  { icon: Wallet, title: "Food service and specialty retail", text: "Connect daily selling, stock and operating costs." },
+];
+
+const faqs = [
+  ["What is Strap?", "Strap is a retail operations platform that connects point of sale, products, inventory, customers, staff, branches, expenses, reports and online selling in one workspace."],
+  ["Can I use Strap on a phone and a computer?", "Yes. Strap is designed for use across mobile, tablet and desktop screens. Device and browser capabilities can vary for hardware workflows."],
+  ["Can I scan products at the counter?", "Strap supports camera scanning on compatible devices and compatible USB or Bluetooth keyboard-wedge barcode scanners."],
+  ["Can I manage more than one branch?", "Yes. Branch management is available on eligible plans, with branch limits depending on the selected plan."],
+  ["Can I sell online with Strap?", "Yes. Business and Pro plans include an online storefront and catalogue workflow for publishing products and managing incoming orders."],
+  ["Does Strap process online card payments?", "Merchant payment processing is not currently enabled as a production feature. The product can record configured payment methods for in-store sales."],
+  ["How do I get help?", "Visit the Help Centre for setup instructions and product guides, or use the in-app feedback option to report an issue."],
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map(([question, answer]) => ({
+    "@type": "Question",
+    name: question,
+    acceptedAnswer: { "@type": "Answer", text: answer },
+  })),
+};
+
 export function Landing() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="marketing-site min-h-screen bg-background text-foreground">
       <SiteHeader />
       <main>
-        <section className="relative overflow-hidden border-b border-border">
-          <div className="pointer-events-none absolute -right-32 -top-32 size-[34rem] rounded-full bg-accent/15 blur-3xl" />
-          <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-[1.05fr_.95fr]">
-            <div className="relative">
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-                <span className="size-2 rounded-full bg-accent" /> Retail management by Kryonara
-              </span>
-              <h1 className="mt-7 max-w-3xl font-display text-5xl font-bold leading-[.98] tracking-[-.06em] sm:text-7xl">
-                Run your business.{" "}
-                <span className="relative inline-block">
-                  Not around it.
-                  <span className="absolute -bottom-1 left-0 -z-0 h-3 w-full bg-accent/70" />
-                </span>
-              </h1>
-              <p className="mt-7 max-w-xl text-lg leading-8 text-muted-foreground">
-                Meet Strap. Point of sale, inventory, customers, staff, reports, expenses and online
-                sales, together in one workspace.
-              </p>
-              <div className="mt-9 flex flex-wrap gap-3">
-                <Link
-                  to="/auth"
-                  className="inline-flex min-h-12 items-center gap-2 rounded-full bg-foreground px-6 font-semibold text-background transition hover:-translate-y-0.5"
-                >
-                  Get started <ArrowRight className="size-4" />
-                </Link>
-                <a
-                  href="#features"
-                  className="inline-flex min-h-12 items-center rounded-full border border-border bg-surface px-6 font-semibold hover:bg-secondary"
-                >
-                  Explore features
-                </a>
+        <section className="marketing-hero">
+          <div className="marketing-hero__glow marketing-hero__glow--one" aria-hidden="true" />
+          <div className="marketing-hero__glow marketing-hero__glow--two" aria-hidden="true" />
+          <div className="marketing-hero__inner">
+            <div className="marketing-hero__copy">
+              <span className="marketing-kicker"><span className="marketing-kicker__dot" /> RETAIL OPERATIONS BY KRYONARA</span>
+              <h1>Run your retail business from <span>one connected workspace.</span></h1>
+              <p>Strap brings sales, products, inventory, customers, teams, reports and online orders together—so your business can move without disconnected tools.</p>
+              <div className="marketing-hero__actions">
+                <Link to="/auth" className="marketing-button">Create a free account <ArrowRight size={16} /></Link>
+                <Link to="/product" className="marketing-button marketing-button--outline">Explore the platform</Link>
               </div>
-              <div className="mt-9 flex flex-wrap gap-5 text-sm text-muted-foreground">
-                <span className="inline-flex items-center gap-2">
-                  <ScanLine className="size-4" /> Scan & sell
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <WifiOff className="size-4" /> Offline queue
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <ShieldCheck className="size-4" /> Staff access
-                </span>
+              <div className="marketing-hero__signals">
+                <span><ScanLine size={16} /> Scan and sell</span>
+                <span><Boxes size={16} /> Track inventory</span>
+                <span><ShieldCheck size={16} /> Manage access</span>
               </div>
+              <p className="marketing-hero__caption">Start with the essentials. Add more tools as your shop grows.</p>
             </div>
-            <div className="relative">
-              <div className="rounded-[2rem] border border-border bg-surface p-3 shadow-2xl shadow-black/10">
-                <div className="flex items-center justify-between border-b border-border px-3 pb-3">
-                  <div>
-                    <p className="text-xs text-muted-foreground">STRAP WORKSPACE</p>
-                    <p className="font-semibold">Store overview</p>
-                  </div>
-                  <span className="rounded-full bg-accent/20 px-3 py-1 text-xs font-bold text-foreground">
-                    Live workspace
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 gap-3 p-3">
-                  <div className="rounded-2xl bg-secondary p-4">
-                    <p className="text-xs text-muted-foreground">Today's sales</p>
-                    <p className="mt-2 text-2xl font-bold">₦248,500</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Illustrative preview</p>
-                  </div>
-                  <div className="rounded-2xl bg-secondary p-4">
-                    <p className="text-xs text-muted-foreground">Orders</p>
-                    <p className="mt-2 text-2xl font-bold">36</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Illustrative preview</p>
-                  </div>
-                </div>
-                <div className="mx-3 mb-3 rounded-2xl border border-border p-4">
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold">Recent activity</p>
-                    <span className="text-xs text-muted-foreground">Workspace preview</span>
-                  </div>
-                  {[
-                    "Counter sale · Receipt issued",
-                    "Stock updated · Branch transfer",
-                    "New online order · Awaiting review",
-                  ].map((s, i) => (
-                    <div
-                      key={s}
-                      className="flex items-center gap-3 border-t border-border py-3 first:mt-3"
-                    >
-                      <span className="grid size-8 place-items-center rounded-xl bg-accent/20 text-xs font-bold">
-                        {i + 1}
-                      </span>
-                      <span className="text-sm">{s}</span>
-                      <span className="ml-auto size-2 rounded-full bg-accent" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <p className="mt-3 text-center text-xs text-muted-foreground">
-                Illustrative interface preview — not live store data.
-              </p>
+            <div className="marketing-hero__visual">
+              <InteractiveProductStage />
             </div>
+          </div>
+          <div className="marketing-hero__bottom">
+            <span>One workspace</span><span>Daily operations</span><span>Online commerce</span><span>Business visibility</span>
           </div>
         </section>
-        <section id="features" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
-          <div className="max-w-2xl">
-            <p className="text-xs font-bold uppercase tracking-[.2em] text-muted-foreground">
-              One connected workspace
-            </p>
-            <h2 className="mt-4 font-display text-4xl font-bold tracking-tight sm:text-5xl">
-              Every important part of your shop, moving together.
-            </h2>
-            <p className="mt-5 text-lg leading-8 text-muted-foreground">
-              Less switching between tools. A clearer view of the work happening behind the counter
-              and online.
-            </p>
+
+        <section className="marketing-intro" id="platform">
+          <div>
+            <p className="marketing-eyebrow">A connected retail system</p>
+            <h2>Every important part of your shop, moving together.</h2>
           </div>
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map(({ icon: Icon, title, body }) => (
-              <article
-                key={title}
-                className="rounded-3xl border border-border bg-surface p-6 transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <span className="grid size-12 place-items-center rounded-2xl bg-accent text-accent-foreground">
-                  <Icon className="size-5" />
-                </span>
-                <h3 className="mt-5 text-xl font-bold">{title}</h3>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">{body}</p>
+          <p>When a sale happens, the details should not stop at the counter. Strap connects the records and workflows that help your team serve customers, manage stock and understand the business.</p>
+        </section>
+
+        <section className="marketing-feature-section" id="features">
+          <div className="marketing-section-heading">
+            <p className="marketing-eyebrow">The platform</p>
+            <h2>Built around the work behind every sale.</h2>
+            <p>Bring the tools your team uses every day into one clear operating flow.</p>
+          </div>
+          <div className="marketing-feature-grid">
+            {features.map(({ icon: Icon, title, body, href, label }, index) => (
+              <article className={`marketing-feature-card marketing-feature-card--${index + 1}`} key={title}>
+                <div className="marketing-feature-card__top">
+                  <span className="marketing-feature-card__icon"><Icon size={21} /></span>
+                  <span>{label}</span>
+                </div>
+                <h3>{title}</h3>
+                <p>{body}</p>
+                <Link to={href as never} className="marketing-text-link">Explore {title.toLowerCase()} <ArrowRight size={15} /></Link>
               </article>
             ))}
           </div>
         </section>
-        <section className="bg-foreground text-background">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:items-center">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[.2em] text-background/60">
-                Built for everyday retail
-              </p>
-              <h2 className="mt-4 font-display text-4xl font-bold tracking-tight sm:text-5xl">
-                From one counter to multiple branches.
-              </h2>
-              <p className="mt-5 max-w-xl leading-8 text-background/70">
-                Set up the way your business works. Keep stock and sales connected across your team,
-                branches and online storefront.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                "Food service",
-                "Shops & supermarkets",
-                "Fashion & electronics",
-                "Growing brands",
-              ].map((x) => (
-                <div
-                  key={x}
-                  className="rounded-2xl border border-background/15 bg-background/5 p-5 font-semibold"
-                >
-                  {x}
-                </div>
-              ))}
-            </div>
+
+        <section className="marketing-showcase">
+          <div className="marketing-showcase__copy">
+            <p className="marketing-eyebrow">See the workflow</p>
+            <h2>One clear view of what is happening in your business.</h2>
+            <p>Switch between an overview, inventory and online orders to see how the main parts of a retail operation fit together.</p>
+            <ul>
+              <li><CheckCircleIcon /> Sales and stock in context</li>
+              <li><CheckCircleIcon /> Product records that stay organised</li>
+              <li><CheckCircleIcon /> Online orders alongside shop operations</li>
+            </ul>
+            <Link to="/how-it-works" className="marketing-text-link">See how Strap works <ArrowRight size={15} /></Link>
+          </div>
+          <div className="marketing-showcase__preview">
+            <InteractiveProductStage />
           </div>
         </section>
-        <section id="how-it-works" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
-          <p className="text-xs font-bold uppercase tracking-[.2em] text-muted-foreground">
-            Get started
-          </p>
-          <h2 className="mt-4 font-display text-4xl font-bold tracking-tight sm:text-5xl">
-            Simple from the first step.
-          </h2>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {[
-              {
-                n: "01",
-                t: "Create your account",
-                d: "Set up your workspace and business profile.",
-              },
-              {
-                n: "02",
-                t: "Add products and people",
-                d: "Load your catalogue, branches and staff access.",
-              },
-              {
-                n: "03",
-                t: "Start selling",
-                d: "Record sales, manage stock and follow performance.",
-              },
-            ].map((x) => (
-              <div key={x.n} className="border-t border-border pt-5">
-                <p className="text-sm font-bold text-muted-foreground">{x.n}</p>
-                <h3 className="mt-4 text-xl font-bold">{x.t}</h3>
-                <p className="mt-2 text-sm leading-7 text-muted-foreground">{x.d}</p>
-              </div>
+
+        <RetailVisualGallery />
+
+        <section className="marketing-workflow" id="how-it-works">
+          <div className="marketing-section-heading">
+            <p className="marketing-eyebrow">How it works</p>
+            <h2>Simple to start. Structured for the work ahead.</h2>
+            <p>Build your workspace in practical steps and grow into the workflows your business needs.</p>
+          </div>
+          <ol className="marketing-workflow__grid">
+            {steps.map(([number, title, body]) => (
+              <li key={number}>
+                <span>{number}</span>
+                <h3>{title}</h3>
+                <p>{body}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="marketing-audience">
+          <div className="marketing-section-heading">
+            <p className="marketing-eyebrow">Made for everyday retail</p>
+            <h2>Flexible enough for different kinds of shops.</h2>
+            <p>Keep the core workflows consistent while your catalogue and business model stay your own.</p>
+          </div>
+          <div className="marketing-audience__grid">
+            {shopTypes.map(({ icon: Icon, title, text }) => (
+              <article key={title}>
+                <Icon size={20} />
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </article>
             ))}
           </div>
         </section>
-        <section className="px-4 pb-20 sm:px-6 sm:pb-28">
-          <div className="mx-auto max-w-7xl rounded-[2rem] bg-accent p-8 text-accent-foreground sm:p-14">
-            <p className="text-xs font-bold uppercase tracking-[.2em]">
-              A clearer way to run retail
-            </p>
-            <h2 className="mt-4 max-w-2xl font-display text-4xl font-bold tracking-tight sm:text-5xl">
-              Bring your shop into one workspace.
-            </h2>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                to="/auth"
-                className="inline-flex min-h-12 items-center gap-2 rounded-full bg-[#10130c] px-6 font-semibold text-white"
-              >
-                Create an account <ArrowRight className="size-4" />
-              </Link>
-              <Link
-                to="/docs"
-                className="inline-flex min-h-12 items-center rounded-full border border-accent-foreground/30 px-6 font-semibold"
-              >
-                Read the docs
-              </Link>
-            </div>
+
+        <PricingSection />
+
+        <section className="marketing-faq" id="faq">
+          <div className="marketing-faq__intro">
+            <p className="marketing-eyebrow">Questions, answered</p>
+            <h2>Know what to expect before you start.</h2>
+            <p>Find practical answers about the platform, supported workflows and where to get help.</p>
+            <Link to="/faq" className="marketing-text-link">Visit the FAQ <ArrowRight size={15} /></Link>
+          </div>
+          <div className="marketing-faq__list">
+            {faqs.map(([question, answer]) => (
+              <details key={question}>
+                <summary>{question}<span aria-hidden="true">+</span></summary>
+                <p>{answer}</p>
+              </details>
+            ))}
           </div>
         </section>
-              <RetailVisualGallery />
+
+        <section className="marketing-final-cta">
+          <div>
+            <p className="marketing-eyebrow">Start with the essentials</p>
+            <h2>Give your shop one place to work from.</h2>
+            <p>Create your workspace, add your products and bring the everyday details together.</p>
+          </div>
+          <Link to="/auth" className="marketing-button">Start with Strap free <ArrowRight size={16} /></Link>
+        </section>
       </main>
       <SiteFooter />
+      <SeoJsonLd data={faqSchema} />
     </div>
   );
 }
 
-export const Route = createFileRoute("/landing")({ component: Landing });
+function CheckCircleIcon() {
+  return <span className="marketing-check" aria-hidden="true">✓</span>;
+}
+
+export const Route = createFileRoute("/landing")({
+  head: () => marketingHead({
+    title: "Strap — Retail POS, Inventory and Online Store Software",
+    description: "Manage sales, products, inventory, customers, staff, branches, expenses and online orders in one retail operations workspace.",
+    path: "/landing",
+  }),
+  component: Landing,
+});
