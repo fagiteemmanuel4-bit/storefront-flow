@@ -22,7 +22,7 @@ import {
   WifiOff,
   Zap,
 } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
 import { SeoJsonLd } from "@/components/site/SeoJsonLd";
@@ -44,6 +44,7 @@ const docsBreadcrumbs = breadcrumbSchema([
 ]);
 
 export const Route = createFileRoute("/docs")({
+  validateSearch: (search: Record<string, unknown>) => ({ q: typeof search.q === "string" ? search.q : "" }),
   head: () => marketingHead({
     title: "Strap Documentation — Retail POS, Inventory and Online Store Guides",
     description: "Learn how to use Strap for point of sale, inventory, customers, staff, branches, online stores, orders, reports and account security.",
@@ -118,7 +119,9 @@ function CodeBlock({ children }: { children: string }) {
 }
 
 function DocsPage() {
-  const [query, setQuery] = useState("");
+  const { q } = Route.useSearch();
+  const [query, setQuery] = useState(q);
+  useEffect(() => setQuery(q), [q]);
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return q
