@@ -506,3 +506,21 @@
   }
   .product-stage__device { transform: none !important; }
 }
+
+/* Purposeful motion: visible by default for SSR, revealed only after client observation. */
+.marketing-reveal { opacity: 1; transform: none; }
+.marketing-reveal[data-motion-ready="true"]:not(.is-visible) { opacity: 0; transform: translateY(18px); }
+.marketing-reveal.is-visible { opacity: 1; transform: translateY(0); transition: opacity .65s ease var(--reveal-delay,0ms), transform .65s cubic-bezier(.2,.7,.2,1) var(--reveal-delay,0ms); }
+.marketing-counter { display: inline-block; font-variant-numeric: tabular-nums; }
+.marketing-marquee { overflow: hidden; border-block: 1px solid var(--m-line); background: color-mix(in srgb,var(--m-surface) 75%,var(--m-bg)); }
+.marketing-marquee__track { width: max-content; display: flex; align-items: center; gap: 28px; padding-block: 17px; animation: strap-marquee 34s linear infinite; }
+.marketing-marquee__track span { display: inline-flex; align-items: center; gap: 12px; color: var(--m-muted); font-size: 10px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; white-space: nowrap; }
+.marketing-marquee__track span::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #91b525; }
+@keyframes strap-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.marketing-feature-card { transform-style: preserve-3d; }
+.marketing-feature-card:hover { transform: perspective(900px) rotateX(var(--card-tilt-x,0deg)) rotateY(var(--card-tilt-y,0deg)) translateY(-4px); }
+@media (prefers-reduced-motion: reduce) {
+  .marketing-reveal,
+  .marketing-reveal[data-motion-ready="true"]:not(.is-visible) { opacity: 1; transform: none; transition: none; }
+  .marketing-marquee__track { animation: none; }
+}
