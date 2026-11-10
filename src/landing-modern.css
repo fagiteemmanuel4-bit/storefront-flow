@@ -524,3 +524,12 @@
   .marketing-reveal[data-motion-ready="true"]:not(.is-visible) { opacity: 1; transform: none; transition: none; }
   .marketing-marquee__track { animation: none; }
 }
+
+.marketing-stats { width: min(1240px,calc(100% - 56px)); display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin: 0 auto; padding-block: 25px 72px; }
+.marketing-stats > div { display: flex; flex-direction: column; gap: 5px; padding: 18px 20px; border: 1px solid var(--m-line); border-radius: 16px; background: var(--m-surface); }
+.marketing-stats .marketing-counter { color: var(--m-text); font-family: "Bricolage Grotesque",Inter,sans-serif; font-size: clamp(2rem,3.2vw,3.2rem); font-weight: 750; line-height: 1; letter-spacing: -.06em; }
+.marketing-stats > div > span:last-child { color: var(--m-muted); font-size: 11px; font-weight: 650; }
+@media (max-width: 540px) {
+  .marketing-stats { width: calc(100% - 32px); grid-template-columns: 1fr; padding-block: 0 52px; }
+  .marketing-stats > div { flex-direction: row; align-items: baseline; justify-content: space-between; }
+}
