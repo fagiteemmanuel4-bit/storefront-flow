@@ -49,3 +49,14 @@ export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
     })),
   };
 }
+
+export function noIndexHead(title: string, description?: string) {
+  return {
+    meta: [
+      { title },
+      ...(description ? [{ name: "description", content: description }] : []),
+      { name: "robots", content: "noindex, nofollow" },
+      { name: "googlebot", content: "noindex, nofollow" },
+    ],
+  };
+}
