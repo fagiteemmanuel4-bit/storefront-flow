@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Check, Crown, LockKeyhole } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PREMIUM_FEATURES, PREMIUM_PLANS, formatNaira } from "@/lib/premiumPlans";
+import { PREMIUM_PLANS, formatNaira } from "@/lib/premiumPlans";
 
 const plans = Object.entries(PREMIUM_PLANS).map(([code, plan]) => ({
   code,
@@ -144,28 +144,6 @@ function UpgradePage() {
                 </section>
               );
             })}
-          </div>
-        </section>
-
-        <section className="mt-6 overflow-hidden rounded-[24px] border border-border bg-surface shadow-sm">
-          <div className="border-b border-border px-5 py-4 sm:px-6">
-            <h2 className="font-display text-lg font-semibold">Premium features</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              A closer look at the tools available across paid plans.
-            </p>
-          </div>
-          <div className="grid gap-x-8 divide-y divide-border sm:grid-cols-2 sm:divide-y-0 sm:px-2">
-            {PREMIUM_FEATURES.map((feature) => (
-              <div
-                key={feature}
-                className="flex items-center gap-3 px-5 py-3.5 text-sm sm:px-4 sm:[&:nth-child(n+3)]:border-t sm:[&:nth-child(n+3)]:border-border"
-              >
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent-ink">
-                  <Crown className="size-3.5" />
-                </span>
-                {feature}
-              </div>
-            ))}
           </div>
         </section>
 
