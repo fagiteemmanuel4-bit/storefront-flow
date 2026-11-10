@@ -137,8 +137,8 @@ export function PaymentsSettingsPage() {
           })}
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
-          Business includes the Stripe connection feature for eligible merchant accounts. STRAP's
-          own subscription checkout is a separate payment flow and will use Squad.
+          Stripe connection is assigned to Business for eligible merchant accounts once that integration
+          is released. STRAP's own subscription checkout is a separate payment flow and will use Squad.
         </p>
       </CardSection>
     </div>
