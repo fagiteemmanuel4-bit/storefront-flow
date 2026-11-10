@@ -38,7 +38,7 @@ Current public monthly prices are listed on the pricing page. Prices are shown i
 - [Product overview](https://storefront-flow.vercel.app/product)
 - [How it works](https://storefront-flow.vercel.app/how-it-works)
 - [Pricing](https://storefront-flow.vercel.app/pricing)
-- [Online store](https://storefront-flow.vercel.app/online-store)
+- [Online store](https://storefront-flow.vercel.app/online-store-platform)
 - [Documentation](https://storefront-flow.vercel.app/docs)
 - [Getting started](https://storefront-flow.vercel.app/getting-started)
 - [Help Centre](https://storefront-flow.vercel.app/support)
