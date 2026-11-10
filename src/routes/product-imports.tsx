@@ -8,6 +8,7 @@ export const Route = createFileRoute("/product-imports")({
     title: "Product imports — Strap catalogue tools",
     description: page.description,
     path: "/product-imports",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
