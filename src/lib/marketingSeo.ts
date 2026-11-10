@@ -24,6 +24,8 @@ export function marketingHead({
       { title },
       { name: "description", content: description },
       { name: "robots", content: indexable ? "index, follow, max-image-preview:large" : "noindex, follow" },
+      { name: "googlebot", content: indexable ? "index, follow, max-image-preview:large" : "noindex, follow" },
+      { name: "bingbot", content: indexable ? "index, follow, max-image-preview:large" : "noindex, follow" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Strap" },
       { property: "og:title", content: title },
