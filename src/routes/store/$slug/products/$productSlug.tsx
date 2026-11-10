@@ -1,3 +1,4 @@
+import { publicServerSupabase } from "@/integrations/supabase/public-server";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
@@ -43,7 +44,7 @@ type RelatedProduct = {
 export const Route = createFileRoute("/store/$slug/products/$productSlug")({
   ssr: true,
   loader: async ({ params }) => {
-    const { data, error } = await onlineSupabase.rpc("get_public_store_product", {
+    const { data, error } = await publicServerSupabase.rpc("get_public_store_product", {
       _store_slug: params.slug,
       _product_slug: params.productSlug,
     });
