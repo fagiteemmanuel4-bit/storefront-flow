@@ -630,10 +630,11 @@ function DocsPage() {
             eyebrow="Keep selling during interruptions"
           >
             <p>
-              When supported connectivity is unavailable, Strap can queue eligible sales locally
+              When connectivity is unavailable, Strap can queue eligible standard point-of-sale sales locally
               with a stable transaction identifier. The application retries synchronization when the
               device reconnects and checks for an existing transaction before replaying a queued
-              sale to reduce duplicate-sale risk.
+              sale to reduce duplicate-sale risk. Sales involving fashion variants, serialised
+              electronics or food-service kitchen tickets require an active connection.
             </p>
             <p>
               Keep the device secure and reconnect regularly. Confirm queued sales have synchronized
