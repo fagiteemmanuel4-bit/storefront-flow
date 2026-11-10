@@ -10,6 +10,7 @@ export const Route = createFileRoute("/store-security")({
     title: "Store security — Strap account and access protection",
     description: page.description,
     path: "/store-security",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
