@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { formatNaira, PREMIUM_PLANS } from "@/lib/premiumPlans";
 import {
   ArrowRight,
   BarChart3,
@@ -13,45 +14,13 @@ import {
   Zap,
 } from "lucide-react";
 
-const plans = [
-  {
-    name: "Free",
-    price: "₦0",
-    description: "Run your counter and manage the essentials.",
-    features: [
-      "POS & offline sales",
-      "Products & inventory",
-      "Customers & expenses",
-      "Basic orders & reports",
-    ],
-  },
-  {
-    name: "Business",
-    price: "₦3,000",
-    description: "Open your shop online and unlock storefront tools.",
-    featured: true,
-    features: [
-      "Everything in Free",
-      "Online Store",
-      "Storefront categories",
-      "List, compact & large layouts",
-      "Featured products",
-      "Store data export",
-    ],
-  },
-  {
-    name: "Pro",
-    price: "₦5,000",
-    description: "Advanced control for growing retail operations.",
-    features: [
-      "Everything in Business",
-      "Advanced inventory tools",
-      "Stock calculation tools",
-      "Advanced reports",
-      "Priority Pro features",
-    ],
-  },
-];
+const plans = Object.entries(PREMIUM_PLANS).map(([code, plan]) => ({
+  name: plan.name,
+  price: formatNaira(plan.price),
+  description: plan.description,
+  featured: code === "business",
+  features: plan.features,
+}));
 
 const cards = [
   [
