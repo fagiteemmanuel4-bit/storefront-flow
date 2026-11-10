@@ -1,4 +1,3 @@
-import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -24,104 +23,97 @@ import {
   Zap,
 } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
+import { toast } from "sonner";
+import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
+import { breadcrumbSchema, marketingHead, SITE_URL } from "@/lib/marketingSeo";
 
-const SITE_URL = "https://storefront-flow.vercel.app";
+const docsSchema = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "Strap Product Documentation",
+  description: "Customer guides for using Strap retail point of sale, inventory, teams, branches, online stores, security and supported integrations.",
+  author: { "@type": "Organization", name: "Kryonara" },
+  publisher: { "@type": "Organization", name: "Kryonara", url: SITE_URL },
+  mainEntityOfPage: `${SITE_URL}/docs`,
+  inLanguage: "en-NG",
+};
+const docsBreadcrumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Documentation", path: "/docs" },
+]);
 
 export const Route = createFileRoute("/docs")({
-  head: () => ({
-    meta: [
-      { title: "Strap Documentation — Retail POS, Inventory, Online Store & Commerce" },
-      {
-        name: "description",
-        content:
-          "Learn how to use Strap for retail POS, inventory, products, customers, staff, branches, online stores, orders, reports, security, and everyday shop operations.",
-      },
-      {
-        name: "keywords",
-        content:
-          "Strap documentation, retail POS guide, inventory management guide, online store guide, shop management, ecommerce operations, Shopify alternative, Wix alternative",
-      },
-      {
-        name: "robots",
-        content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
-      },
-      { property: "og:title", content: "Strap Documentation — Learn the commerce platform" },
-      {
-        property: "og:description",
-        content:
-          "Practical guides for products, inventory, POS, customers, staff, online storefronts, orders, reports and security in Strap.",
-      },
-      { property: "og:url", content: `${SITE_URL}/docs` },
-    ],
-    links: [{ rel: "canonical", href: `${SITE_URL}/docs` }],
+  head: () => marketingHead({
+    title: "Strap Documentation — Retail POS, Inventory and Online Store Guides",
+    description: "Learn how to use Strap for point of sale, inventory, customers, staff, branches, online stores, orders, reports and account security.",
+    path: "/docs",
   }),
   component: DocsPage,
 });
 
-type Item = { id: string; label: string; group: string };
-const sections: Array<{ group: string; items: Array<{ id: string; label: string }> }> = [
-  {
-    group: "Start here",
-    items: [
-      { id: "overview", label: "Overview" },
-      { id: "quickstart", label: "Quickstart" },
-      { id: "workspace", label: "Your workspace" },
-    ],
-  },
-  {
-    group: "Run your shop",
-    items: [
-      { id: "products", label: "Products & inventory" },
-      { id: "pos", label: "Point of sale" },
-      { id: "customers", label: "Customers" },
-      { id: "staff", label: "Staff & roles" },
-      { id: "branches", label: "Branches" },
-      { id: "expenses", label: "Expenses & reports" },
-    ],
-  },
-  {
-    group: "Sell online",
-    items: [
-      { id: "storefront", label: "Online storefront" },
-      { id: "catalogue", label: "Catalogue" },
-      { id: "orders", label: "Orders & fulfillment" },
-      { id: "builder", label: "Store builder" },
-    ],
-  },
-  {
-    group: "Account & security",
-    items: [
-      { id: "account", label: "Account & sign in" },
-      { id: "security", label: "Security" },
-      { id: "privacy", label: "Privacy & data" },
-      { id: "theme", label: "Theme & display" },
-    ],
-  },
-  {
-    group: "Developers",
-    items: [
-      { id: "ai-agents", label: "AI agents & MCP" },
-      { id: "source", label: "Source code access" },
-      { id: "architecture", label: "Technical architecture" },
-    ],
-  },
-  {
-    group: "Help",
-    items: [
-      { id: "troubleshooting", label: "Troubleshooting" },
-      { id: "faq", label: "FAQ" },
-    ],
-  },
+type Item = { id: string; label: string; group: string; keywords: string };
+const sections: Array<{ group: string; items: Array<{ id: string; label: string; keywords: string }> }> = [
+  { group: "Overview", items: [{ id: "overview", label: "Overview", keywords: "platform retail operations workspace" }] },
+  { group: "Start here", items: [
+    { id: "quickstart", label: "Quickstart", keywords: "setup first sale create store profile onboarding" },
+    { id: "concepts", label: "Core concepts", keywords: "workspace branch product transaction stock role access" },
+    { id: "workspace", label: "Your workspace", keywords: "dashboard navigation store context" },
+  ] },
+  { group: "Guides", items: [
+    { id: "products", label: "Products & inventory", keywords: "catalogue sku barcode quantities low stock stock adjustments" },
+    { id: "pos", label: "Point of sale", keywords: "checkout register cart payments receipt scanner" },
+    { id: "customers", label: "Customers", keywords: "customer records purchase history" },
+    { id: "staff", label: "Staff & roles", keywords: "owner manager cashier permissions invitations" },
+    { id: "branches", label: "Branches", keywords: "locations transfers stock" },
+    { id: "expenses", label: "Expenses & reports", keywords: "costs revenue sales performance reports" },
+    { id: "receipts", label: "Receipts and printing", keywords: "receipt paper printer branding copies" },
+    { id: "offline", label: "Offline sales", keywords: "offline synchronization queue reconnect" },
+  ] },
+  { group: "Online commerce", items: [
+    { id: "storefront", label: "Online storefront", keywords: "public store share catalogue ecommerce" },
+    { id: "catalogue", label: "Online catalogue", keywords: "categories product pages featured products" },
+    { id: "orders", label: "Orders and fulfilment", keywords: "incoming orders status customer orders" },
+    { id: "builder", label: "Store builder", keywords: "design layout storefront theme" },
+  ] },
+  { group: "Account and security", items: [
+    { id: "account", label: "Account and sign in", keywords: "email otp authentication profile" },
+    { id: "security", label: "Security", keywords: "password sessions access protection" },
+    { id: "privacy", label: "Privacy and data", keywords: "export delete retention personal information" },
+    { id: "theme", label: "Theme and display", keywords: "dark mode light mode appearance" },
+  ] },
+  { group: "Integrations and API", items: [
+    { id: "ai-agents", label: "AI integrations and MCP", keywords: "remote mcp oauth connected applications branch scope read write access" },
+    { id: "api", label: "API reference and access", keywords: "public api endpoint integration mcp supported interface" },
+    { id: "connected-apps", label: "Connected applications", keywords: "permissions revoke authorization access audit" },
+  ] },
+  { group: "Support", items: [
+    { id: "troubleshooting", label: "Troubleshooting", keywords: "problems missing products scanner order" },
+    { id: "faq", label: "Frequently asked questions", keywords: "common questions help" },
+    { id: "support", label: "Contact support", keywords: "help centre support contact feedback" },
+  ] },
 ];
 const searchItems: Item[] = sections.flatMap((section) =>
   section.items.map((item) => ({ ...item, group: section.group })),
 );
 
 function CodeBlock({ children }: { children: string }) {
+  async function copyCode() {
+    try {
+      await navigator.clipboard.writeText(children);
+      toast.success("Copied to clipboard");
+    } catch {
+      toast.error("Copy is not available in this browser");
+    }
+  }
   return (
-    <pre className="my-5 overflow-x-auto rounded-xl border border-border bg-foreground p-5 text-[13px] leading-6 text-background">
-      <code>{children}</code>
-    </pre>
+    <div className="my-5 overflow-hidden rounded-xl border border-border bg-foreground text-background">
+      <div className="flex items-center justify-between gap-4 border-b border-background/15 px-4 py-2.5">
+        <span className="text-[10px] font-bold uppercase tracking-[.14em] text-background/55">Integration endpoint</span>
+        <button type="button" onClick={() => void copyCode()} className="rounded-md border border-background/20 px-3 py-1.5 text-xs font-semibold text-background hover:bg-background/10" aria-label="Copy integration endpoint">Copy</button>
+      </div>
+      <pre className="overflow-x-auto p-4 text-[13px] leading-6"><code>{children}</code></pre>
+    </div>
   );
 }
 
@@ -130,7 +122,7 @@ function DocsPage() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return q
-      ? searchItems.filter((item) => `${item.label} ${item.group}`.toLowerCase().includes(q))
+      ? searchItems.filter((item) => `${item.label} ${item.group} ${item.keywords}`.toLowerCase().includes(q))
       : [];
   }, [query]);
 
