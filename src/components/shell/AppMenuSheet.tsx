@@ -339,8 +339,6 @@ export function AppMenuSheet({
               </div>
             </section>
             <div className="my-5 border-t border-border/70" />
-
-            <div className="my-5 border-t border-border/70" />
             <section>
               <p className="px-2 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
                 More
