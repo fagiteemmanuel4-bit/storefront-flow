@@ -10,6 +10,7 @@ export const Route = createFileRoute("/payments-and-transactions")({
     title: "Payments and transactions — Strap retail records",
     description: page.description,
     path: "/payments-and-transactions",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
