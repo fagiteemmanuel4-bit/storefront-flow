@@ -419,3 +419,78 @@
     }
   }
 }
+
+
+/* Dark-first onboarding skin. Keep every wizard control legible and consistent. */
+:root.dark .sa {
+  --sa-bg: #000000;
+  --sa-surface: #111113;
+  --sa-line: #29292d;
+  --sa-mut: #a1a1aa;
+  --sa-text: #f5f5f7;
+  --sa-ph: #777780;
+  --sa-btn: #c6f432;
+  --sa-btn-t: #090a06;
+  --sa-btn-h: #d8f18a;
+  --sa-hover: #202024;
+  background: #000;
+  color: #f5f5f7;
+}
+:root.dark .sa-r { background: #000; }
+:root.dark .sa-in,
+:root.dark .sa select,
+:root.dark .sa textarea {
+  border-color: #303036 !important;
+  background: #111113 !important;
+  color: #f5f5f7 !important;
+}
+:root.dark .sa-in::placeholder { color: #777780; }
+:root.dark .sa .sa-b:not(.p) {
+  border-color: #303036;
+  background: #111113;
+  color: #f5f5f7;
+}
+:root.dark .sa .sa-b.p { background: #c6f432; color: #090a06; }
+:root.dark .sa .sa-or::before,
+:root.dark .sa .sa-or::after { background: #303036; }
+:root.dark .sa .sa-ck { color: #a1a1aa; }
+:root.dark .sa .sa-ck a { color: #c6f432; }
+:root.dark .ob-opt,
+:root.dark .ob-panel,
+:root.dark .ob-stat,
+:root.dark .ob-seg {
+  border-color: #303036;
+  background: #111113;
+  color: #f5f5f7;
+}
+:root.dark .ob-opt[aria-pressed="true"] {
+  border-color: #c6f432;
+  background: #1a210c;
+  color: #f5f5f7;
+}
+:root.dark .ob-opt[aria-pressed="true"] .ob-chip,
+:root.dark .ob-opt[aria-pressed="true"] .ob-tick {
+  background: #c6f432;
+  border-color: #c6f432;
+  color: #090a06;
+}
+:root.dark .ob-prog { background: #25252b; }
+:root.dark .ob-prog i { background: #c6f432; }
+:root.dark .ob-seg button { color: #a1a1aa; }
+:root.dark .ob-seg button[aria-pressed="true"] {
+  background: #c6f432;
+  color: #090a06;
+}
+:root.dark .ob-nav {
+  border-color: #29292d;
+  background: #000;
+}
+:root.dark .ob-sw { background: #3a3a42; }
+:root.dark .ob-sw[aria-checked="true"] { background: #c6f432; }
+:root.dark .ob-sw[aria-checked="true"]::after { background: #090a06; }
+:root.dark .ob select:focus-visible,
+:root.dark .ob .ob-opt:focus-visible,
+:root.dark .ob .ob-sw:focus-visible {
+  outline-color: #c6f432;
+}
+:root.dark .ob select option { background: #111113; color: #f5f5f7; }
