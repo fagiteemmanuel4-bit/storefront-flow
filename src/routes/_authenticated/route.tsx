@@ -1,3 +1,4 @@
+import { noIndexHead } from "@/lib/marketingSeo";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreProvider } from "@/components/shell/StoreProvider";
@@ -7,6 +8,7 @@ import { RouteLoadingOverlay } from "@/components/shell/RouteLoadingOverlay";
 import { isPaidArea } from "@/lib/plan-access";
 
 export const Route = createFileRoute("/_authenticated")({
+  head: () => noIndexHead("Strap workspace", "Private retail workspace for authorised users."),
   ssr: false,
   beforeLoad: async ({ location }) => {
     const { data, error } = await supabase.auth.getUser();
