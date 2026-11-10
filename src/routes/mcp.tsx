@@ -1,5 +1,6 @@
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
-import { marketingHead } from "@/lib/marketingSeo";
+import { marketingHead, breadcrumbSchema } from "@/lib/marketingSeo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Boxes, CheckCircle2, LockKeyhole, ShieldCheck, Workflow } from "lucide-react";
 
