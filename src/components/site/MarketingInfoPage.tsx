@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/site/MarketingMotion";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, ChevronRight, type LucideIcon } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
@@ -36,7 +37,7 @@ export function MarketingInfoPage({ page }: { page: MarketingPage }) {
           <span aria-current="page">{page.eyebrow.toLowerCase()}</span>
         </div>
 
-        <section className="marketing-info-hero">
+        <Reveal><section className="marketing-info-hero">
           <div className="marketing-info-hero__copy">
             <span className="marketing-kicker"><HeroIcon size={15} /> {page.eyebrow}</span>
             <h1>{page.title} <span>{page.highlight}</span></h1>
@@ -51,9 +52,9 @@ export function MarketingInfoPage({ page }: { page: MarketingPage }) {
             <img src={page.image} alt={page.imageAlt} loading="eager" fetchPriority="high" decoding="async" />
             <figcaption>Strap for everyday retail operations</figcaption>
           </figure>
-        </section>
+        </section></Reveal>
 
-        <section className="marketing-info-sections">
+        <Reveal><section className="marketing-info-sections">
           <div className="marketing-section-heading">
             <p className="marketing-eyebrow">A connected workflow</p>
             <h2>Everything has a place in the way your shop runs.</h2>
@@ -72,9 +73,9 @@ export function MarketingInfoPage({ page }: { page: MarketingPage }) {
               </article>
             ))}
           </div>
-        </section>
+        </section></Reveal>
 
-        <section className="marketing-steps-section">
+        <Reveal><section className="marketing-steps-section">
           <div className="marketing-section-heading">
             <p className="marketing-eyebrow">How it fits together</p>
             <h2>A practical path from setup to everyday use.</h2>
@@ -87,9 +88,9 @@ export function MarketingInfoPage({ page }: { page: MarketingPage }) {
               </li>
             ))}
           </ol>
-        </section>
+        </section></Reveal>
 
-        <section className="marketing-info-cta">
+        <Reveal><section className="marketing-info-cta">
           <div>
             <p className="marketing-eyebrow">One connected workspace</p>
             <h2>Bring the moving parts of retail together.</h2>
@@ -99,7 +100,7 @@ export function MarketingInfoPage({ page }: { page: MarketingPage }) {
             <Link to="/product" className="marketing-button marketing-button--quiet">Explore Strap</Link>
             <Link to="/auth" className="marketing-button">Create a free account <ArrowRight size={16} /></Link>
           </div>
-        </section>
+        </section></Reveal>
       </main>
       <SiteFooter />
     </div>
