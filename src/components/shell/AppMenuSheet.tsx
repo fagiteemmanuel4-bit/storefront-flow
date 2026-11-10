@@ -106,6 +106,7 @@ function ActionLink({
   to:
     | "/products"
     | "/pos"
+    | "/customers"
     | "/expenses"
     | "/electronics-workspace"
     | "/food-service"
