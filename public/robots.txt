@@ -34,6 +34,8 @@ Disallow: /track
 Disallow: /onboarding
 Disallow: /connect
 Disallow: /integrations
+Disallow: /online-store
+Allow: /online-store-platform
 Disallow: /api/
 Allow: /api/sitemap
 
