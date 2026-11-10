@@ -255,87 +255,10 @@ export function AppMenuSheet({
                 Quick actions
               </p>
               <div className="grid grid-cols-2 gap-2">
-                {isElectronics ? (
-                  <>
-                    <ActionLink
-                      to="/electronics-workspace"
-                      icon={Cpu}
-                      label="Register device"
-                      onClick={close}
-                    />
-                    <ActionLink to="/pos" icon={ScanLine} label="New sale" onClick={close} />
-                    <ActionLink
-                      to="/electronics-workspace"
-                      icon={Wrench}
-                      label="Repair desk"
-                      onClick={close}
-                    />
-                    <ActionLink to="/products" icon={Package} label="Catalogue" onClick={close} />
-                  </>
-                ) : isFoodService ? (
-                  <>
-                    <ActionLink
-                      to="/food-service"
-                      icon={ChefHat}
-                      label="Kitchen & menu"
-                      onClick={close}
-                    />
-                    <ActionLink to="/pos" icon={ScanLine} label="Sell menu" onClick={close} />
-                    <ActionLink
-                      to="/food-service"
-                      icon={CookingPot}
-                      label="Recipes"
-                      onClick={close}
-                    />
-                    <ActionLink
-                      to="/food-service"
-                      icon={AlertTriangle}
-                      label="Waste log"
-                      onClick={close}
-                    />
-                  </>
-                ) : isGrocery ? (
-                  <>
-                    <ActionLink
-                      to="/grocery-inventory"
-                      icon={Boxes}
-                      label="Batch & expiry"
-                      onClick={close}
-                    />
-                    <ActionLink to="/pos" icon={ScanLine} label="Sell items" onClick={close} />
-                    <ActionLink
-                      to="/grocery-inventory"
-                      icon={Truck}
-                      label="Restock list"
-                      onClick={close}
-                    />
-                    <ActionLink to="/products" icon={Package} label="Catalogue" onClick={close} />
-                  </>
-                ) : (
-                  <>
-                    <ActionLink
-                      to="/products"
-                      icon={Plus}
-                      label={isFashion ? "Add clothing" : "Add product"}
-                      onClick={close}
-                    />
-                    
-                    
-                    
-                <MenuLink
-                  to="/customers"
-                  icon={Users}
-                  label="Customers"
-                  hint="Customer history and relationships"
-                  onClick={close}
-                />
-                <MenuLink
-                  to="/expenses"
-                  icon={ReceiptText}
-                  label="Expenses"
-                  hint="Track business spending"
-                  onClick={close}
-                />
+                <ActionLink to="/products" icon={Plus} label={isFashion ? "Add clothing" : "Add product"} onClick={close} />
+                <ActionLink to="/pos" icon={ScanLine} label="New sale" onClick={close} />
+                <ActionLink to="/customers" icon={Users} label="Customers" onClick={close} />
+                <ActionLink to="/expenses" icon={ReceiptText} label="Add expense" onClick={close} />
               </div>
             </section>
             <div className="my-5 border-t border-border/70" />
