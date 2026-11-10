@@ -1,3 +1,4 @@
+import { marketingHead } from "@/lib/marketingSeo";
 import { createFileRoute } from "@tanstack/react-router";
 import { MarketingInfoPage } from "@/components/site/MarketingInfoPage";
 import { marketingPages } from "@/components/site/marketingPages";
@@ -5,13 +6,10 @@ import { marketingPages } from "@/components/site/marketingPages";
 const page = marketingPages["gettingStarted"];
 
 export const Route = createFileRoute("/getting-started")({
-  head: () => ({
-    meta: [
-      { title: "Getting started — Strap shop setup guide" },
-      { name: "description", content: page.description },
-      { property: "og:title", content: "Getting started — Strap shop setup guide" },
-      { property: "og:description", content: page.description },
-    ],
+  head: () => marketingHead({
+    title: "Getting started — Strap shop setup guide",
+    description: page.description,
+    path: "/getting-started",
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
