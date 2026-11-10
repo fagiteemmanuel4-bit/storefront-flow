@@ -2,6 +2,8 @@ import { Reveal } from "@/components/site/MarketingMotion";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, ChevronRight, type LucideIcon } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
+import { breadcrumbSchema } from "@/lib/marketingSeo";
 
 export type MarketingSection = {
   icon: LucideIcon;
@@ -23,7 +25,7 @@ export type MarketingPage = {
   steps: string[];
 };
 
-export function MarketingInfoPage({ page }: { page: MarketingPage }) {
+export function MarketingInfoPage({ page, path }: { page: MarketingPage; path: string }) {
   const HeroIcon = page.icon;
   return (
     <div className="marketing-site min-h-screen bg-background text-foreground">
@@ -103,6 +105,11 @@ export function MarketingInfoPage({ page }: { page: MarketingPage }) {
         </section></Reveal>
       </main>
       <SiteFooter />
+      <SeoJsonLd data={breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Product", path: "/product" },
+        { name: page.eyebrow, path },
+      ])} />
     </div>
   );
 }
