@@ -10,6 +10,7 @@ export const Route = createFileRoute("/storefront-design")({
     title: "Online storefront design — Strap",
     description: page.description,
     path: "/storefront-design",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
