@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Check, Crown, Lock } from "lucide-react";
-import { formatNaira, PREMIUM_FEATURES, PREMIUM_PLANS } from "@/lib/premiumPlans";
+import { Check, Crown } from "lucide-react";
+import { formatNaira, PREMIUM_PLANS } from "@/lib/premiumPlans";
 
 export function PricingSection() {
   return (
@@ -63,25 +63,12 @@ export function PricingSection() {
                   Included
                 </p>
                 <ul className="mt-4 space-y-3">
-                  {(key === "free"
-                    ? [
-                        "POS selling and receipts",
-                        "Products and stock basics",
-                        "Customers and expenses",
-                      ]
-                    : PREMIUM_FEATURES
-                  ).map((feature) => (
+                  {plan.features.map((feature) => (
                     <li key={feature} className="flex gap-3 text-sm leading-5">
                       <Check className="mt-0.5 size-4 shrink-0" />
                       <span>{feature}</span>
                     </li>
                   ))}
-                  {key === "free" && (
-                    <li className="flex gap-3 text-sm leading-5 text-muted-foreground">
-                      <Lock className="mt-0.5 size-4 shrink-0" />
-                      <span>Online storefront — premium</span>
-                    </li>
-                  )}
                 </ul>
               </div>
             </article>
