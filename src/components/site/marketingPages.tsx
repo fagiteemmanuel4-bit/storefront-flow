@@ -131,13 +131,13 @@ export const marketingPages: Record<string, MarketingPage> = {
   },
   payments: {
     eyebrow: "PAYMENTS & TRANSACTIONS", title: "Keep payment records", highlight: "clear and consistent.",
-    description: "Record how a sale was paid and keep the transaction status easy to understand. Available payment processing depends on the providers and integrations enabled for your account.",
+    description: "Record the payment method used for each sale and keep transaction details organised. Merchant payment processing through a third-party provider is not currently enabled as a production feature.",
     image: paymentImage, imageAlt: "Contactless payment terminal at a retail checkout", icon: CreditCard, note: "Payment records in context",
     sections: [
       { icon: CreditCard, title: "Record the payment method", body: "Capture whether a transaction was paid by cash, card, transfer or another method supported by your workflow.", bullets: ["Choose the correct method", "Confirm the amount received", "Keep the transaction reference"] },
-      { icon: ShieldCheck, title: "Use providers carefully", body: "When a third-party payment provider is connected, its own service terms and privacy notice apply to its processing.", bullets: ["Use only enabled providers", "Never store full card security codes", "Check provider transaction status"] },
+      { icon: ShieldCheck, title: "Keep recording separate from processing", body: "The payment method field records how the merchant received payment outside Strap. It does not initiate or settle a card transaction.", bullets: ["Record the method actually used", "Never enter full card details into notes", "Reconcile against bank or provider statements"] },
       { icon: Receipt, title: "Reconcile the day", body: "Review recorded payments against the records from your payment provider or bank before closing the books.", bullets: ["Compare transaction references", "Investigate mismatches", "Keep supporting statements"] },
-    ], steps: ["Choose the payment method", "Confirm transaction status", "Reconcile the records"],
+    ], steps: ["Record the payment method", "Confirm the sale details", "Reconcile external payment records"],
   },
   orders: {
     eyebrow: "ONLINE ORDER MANAGEMENT", title: "Bring online orders into", highlight: "the daily workflow.",
@@ -150,7 +150,7 @@ export const marketingPages: Record<string, MarketingPage> = {
     ], steps: ["Review the new order", "Confirm stock and prepare items", "Update the customer and order record"],
   },
   storefront: {
-    eyebrow: "ONLINE STOREFRONT DESIGN", title: "Give your products a", highlight: "beautiful place to live.",
+    eyebrow: "ONLINE STOREFRONT DESIGN", title: "Give your products a", highlight: "clear place to be found.",
     description: "A useful online storefront makes it easier for customers to understand what you sell. Organise product categories, write clear descriptions and use accurate images so your catalogue feels coherent and trustworthy.",
     image: onlineImage, imageAlt: "Online retail storefront displayed on a laptop", icon: Store, note: "Your catalogue, presented clearly",
     sections: [
@@ -201,21 +201,21 @@ export const marketingPages: Record<string, MarketingPage> = {
   },
   offline: {
     eyebrow: "OFFLINE SELLING", title: "Keep your workflow ready", highlight: "when connectivity changes.",
-    description: "Connectivity can be inconsistent in busy retail environments. Strap may support temporary offline sales queuing on supported workflows, with synchronization after the device reconnects. Offline behavior should always be tested on your actual setup.",
+    description: "Eligible standard point-of-sale sales can be saved on the device when connectivity drops and queued for automatic retry after reconnection. Sales involving fashion variants, serialised electronics or food-service kitchen tickets require an active connection.",
     image: posImage, imageAlt: "Retail checkout counter with point of sale terminal", icon: WifiOff, note: "Plan for changing connectivity",
     sections: [
-      { icon: WifiOff, title: "Understand the offline boundary", body: "Offline support can vary by feature and device. Do not assume every screen or integration remains available without a connection.", bullets: ["Test the exact workflows you rely on", "Keep devices charged", "Know which actions require connectivity"] },
-      { icon: Receipt, title: "Protect queued transactions", body: "If sales are queued locally, protect the device and reconnect regularly so records can synchronize.", bullets: ["Avoid clearing browser storage", "Keep the device secure", "Check synchronization status"] },
+      { icon: WifiOff, title: "Understand the offline boundary", body: "Offline queuing is limited to eligible standard point-of-sale sales. Other workflows and connected services may require an active connection.", bullets: ["Test the exact workflows you rely on", "Keep devices charged", "Reconnect before variant, serial or food-service sales"] },
+      { icon: Receipt, title: "Protect queued transactions", body: "Queued sales are stored in the browser on the device used for checkout. Protect that device and avoid clearing its browser storage before the queue has synchronized.", bullets: ["Keep the device secure", "Avoid clearing browser storage", "Reconnect and check the queue count"] },
       { icon: Boxes, title: "Reconcile after reconnecting", body: "Multiple devices working offline can create stock conflicts. Review important sales and quantities after synchronization.", bullets: ["Check for failed syncs", "Resolve inventory differences", "Keep a reconciliation routine"] },
     ], steps: ["Prepare and test the device", "Record supported offline activity", "Reconnect and verify synchronization"],
   },
   imports: {
     eyebrow: "PRODUCT IMPORTS", title: "Bring your catalogue in", highlight: "with less repetition.",
-    description: "When product data already exists in spreadsheets or files, import workflows can reduce repetitive entry. Review imported names, prices, quantities, barcodes and images before relying on the catalogue.",
+    description: "Import product records from a prepared file, then review names, prices, quantities and identifiers before relying on the catalogue. Clean source data makes the process easier to verify.",
     image: productImage, imageAlt: "Product photography and online catalogue on a desk", icon: FileSpreadsheet, note: "A catalogue ready to organise",
     sections: [
       { icon: FileSpreadsheet, title: "Prepare clean source data", body: "Use consistent column headings and check that each row describes one product with the right price and quantity.", bullets: ["Remove duplicate rows", "Check decimal and currency formats", "Keep identifiers consistent"] },
-      { icon: Camera, title: "Review extracted content", body: "If image-assisted extraction is available, treat the output as a draft. Automated extraction can misread text, prices or product details.", bullets: ["Verify every important field", "Check product images and variants", "Correct errors before publishing"] },
+      { icon: ClipboardList, title: "Review imported records", body: "Treat imported data as a draft until product names, prices, quantities and identifiers have been checked against the source file.", bullets: ["Verify every important field", "Check product images and variants", "Correct errors before publishing"] },
       { icon: Package, title: "Publish only verified items", body: "Review the final catalogue in the workspace and confirm that the products are accurate before selling or making them visible online.", bullets: ["Check pricing and stock", "Confirm categories and SKUs", "Preview customer-facing listings"] },
     ], steps: ["Prepare the source file", "Import and verify the data", "Publish the corrected catalogue"],
   },
