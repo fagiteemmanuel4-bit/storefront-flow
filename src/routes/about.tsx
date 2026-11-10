@@ -1,8 +1,9 @@
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { Reveal } from "@/components/site/MarketingMotion";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BarChart3, Boxes, ShieldCheck, ShoppingBag, Users } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
-import { marketingHead } from "@/lib/marketingSeo";
+import { marketingHead, breadcrumbSchema } from "@/lib/marketingSeo";
 
 export const Route = createFileRoute("/about")({
   head: () => marketingHead({
@@ -102,6 +103,7 @@ function AboutPage() {
         </section></Reveal>
       </main>
       <SiteFooter />
+      <SeoJsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }, { name: "About", path: "/about" }])} />
     </div>
   );
 }
