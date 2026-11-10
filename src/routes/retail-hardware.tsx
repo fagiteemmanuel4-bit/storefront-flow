@@ -10,6 +10,7 @@ export const Route = createFileRoute("/retail-hardware")({
     title: "Retail hardware — Strap scanner and printer setup",
     description: page.description,
     path: "/retail-hardware",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
