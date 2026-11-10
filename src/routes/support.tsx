@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/site/MarketingMotion";
 import { marketingHead } from "@/lib/marketingSeo";
 import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
 import { createFileRoute, Link } from "@tanstack/react-router";
