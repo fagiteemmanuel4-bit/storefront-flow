@@ -1,9 +1,11 @@
+import { noIndexHead } from "@/lib/marketingSeo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { KeyRound, ShieldCheck, UserRound } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-export const Route = createFileRoute("/staff-login/$slug")({ component: StaffLoginPage });
+export const Route = createFileRoute("/staff-login/$slug")({
+  head: () => noIndexHead("Staff sign in — Strap", "Private staff access for a Strap workspace."), component: StaffLoginPage });
 type Profile = {
   name: string;
   role: string;
