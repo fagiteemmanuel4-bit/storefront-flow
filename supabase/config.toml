@@ -11,3 +11,21 @@ allow_dynamic_registration = true
 
 [functions.mcp]
 verify_jwt = false
+
+# Require an authenticated user for checkout initialization endpoints.
+[functions.paystack-checkout]
+verify_jwt = true
+
+[functions.korapay-create-checkout]
+verify_jwt = true
+
+# Payment providers must be able to reach signed-webhook handlers without a user JWT.
+# The handlers independently validate provider signatures and pending transaction references.
+[functions.paystack-webhook]
+verify_jwt = false
+
+[functions.korapay-webhook]
+verify_jwt = false
+
+[functions.account-security]
+verify_jwt = true
