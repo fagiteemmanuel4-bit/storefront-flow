@@ -1,164 +1,127 @@
 import { useCallback, useEffect, useState } from "react";
-import { CheckCircle2, CreditCard, ExternalLink, Loader2, RefreshCw } from "lucide-react";
+import { RefreshCw, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { CardSection } from "@/components/settings/SettingsPrimitives";
+
+const PLAN_LABELS: Record<string, string> = {
+  free: "Free",
+  business: "Business",
+  pro: "Pro",
+};
 
 export function PaymentsSettingsPage() {
   const { store, role } = useStoreContext();
   const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [plan, setPlan] = useState("starter");
-  const [amount, setAmount] = useState("5000");
-  const [busy, setBusy] = useState(false);
   const canManage = role === "owner";
+
   const load = useCallback(async () => {
-    if (!store?.id) return;
+    if (!store?.id) {
+      setSubscription(null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     const { data, error } = await (supabase as any)
       .from("store_subscriptions")
-      .select("*")
+      .select("plan_code,status,amount,currency,interval,current_period_end,expires_at")
       .eq("store_id", store.id)
       .maybeSingle();
-    if (error) toast.error(error.message);
-    setSubscription(data);
+
+    if (error) toast.error("Could not load subscription details.");
+    setSubscription(data ?? null);
     setLoading(false);
   }, [store?.id]);
+
   useEffect(() => {
     void load();
   }, [load]);
-  async function subscribe() {
-    if (!store?.id || !canManage) return;
-    setBusy(true);
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      const { data, error } = await supabase.functions.invoke("paystack-checkout", {
-        body: {
-          store_id: store.id,
-          email: user?.email,
-          amount: Number(amount),
-          currency: store.currency || "NGN",
-          purpose: "subscription",
-          plan,
-          callback_url: `${window.location.origin}/settings/payments`,
-        },
-      });
-      if (error) throw error;
-      if (!data?.authorization_url)
-        throw new Error(data?.error || "Payment provider is not configured yet.");
-      window.location.assign(data.authorization_url);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not start payment.");
-    } finally {
-      setBusy(false);
-    }
-  }
-  if (loading)
+
+  const planCode = String(subscription?.plan_code ?? "free").toLowerCase();
+  const planLabel = PLAN_LABELS[planCode] ?? "Free";
+  const status = String(subscription?.status ?? "free").replaceAll("_", " ");
+  const periodEnd = subscription?.current_period_end ?? subscription?.expires_at;
+  const amount = Number(subscription?.amount ?? 0);
+  const currency = String(subscription?.currency ?? store?.currency ?? "NGN").toUpperCase();
+  const formattedAmount = Number.isFinite(amount)
+    ? new Intl.NumberFormat("en-NG", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount)
+    : "—";
+
+  if (loading) {
     return (
       <div className="rounded-2xl border border-border p-8 text-sm text-muted-foreground">
-        Loading payment settings…
+        Loading subscription details…
       </div>
     );
+  }
+
   return (
     <div className="space-y-5">
       <CardSection
-        title="Payment provider"
-        description="Paystack is the default payment rail for NGN stores. Secret credentials stay in Supabase Edge Function secrets, never in the browser."
+        title="Current subscription"
+        description="Your STRAP plan and access status are managed securely on the server."
       >
-        <div className="flex items-center justify-between rounded-2xl border border-border bg-secondary/40 p-4">
-          <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-accent-soft text-accent-ink">
-              <CreditCard className="size-5" />
-            </span>
+        <div className="rounded-2xl border border-border bg-secondary/40 p-4">
+          <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="font-semibold">Paystack</p>
-              <p className="text-xs text-muted-foreground">
-                Hosted checkout with server-side webhook updates
-              </p>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Current plan</p>
+              <p className="mt-1 text-xl font-semibold">{planLabel}</p>
+              <p className="mt-1 text-sm capitalize text-muted-foreground">{status}</p>
             </div>
+            <span className="flex size-10 items-center justify-center rounded-xl bg-accent-soft text-accent-ink">
+              <ShieldCheck className="size-5" />
+            </span>
           </div>
-          <span className="rounded-full bg-background px-3 py-1.5 text-xs font-semibold capitalize">
-            {subscription?.status || "Not active"}
-          </span>
+          {planCode !== "free" && (
+            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t border-border pt-4 text-sm">
+              <div>
+                <p className="text-xs text-muted-foreground">Recorded price</p>
+                <p className="mt-1 font-semibold">{formattedAmount}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Billing interval</p>
+                <p className="mt-1 font-semibold capitalize">{subscription?.interval ?? "—"}</p>
+              </div>
+              {periodEnd && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Current period ends</p>
+                  <p className="mt-1 font-semibold">
+                    {new Date(periodEnd).toLocaleDateString("en-NG", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
-      </CardSection>
-      <CardSection
-        title="Subscription"
-        description="Choose a plan and start a hosted checkout. Billing state is recorded server-side."
-      >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="text-sm font-medium">
-            Plan
-            <select
-              value={plan}
-              onChange={(e) => setPlan(e.target.value)}
-              className="mt-2 h-11 w-full rounded-md border border-border bg-background px-3"
-            >
-              <option value="starter">Starter</option>
-              <option value="growth">Growth</option>
-              <option value="scale">Scale</option>
-            </select>
-          </label>
-          <label className="text-sm font-medium">
-            Amount (NGN)
-            <Input
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              inputMode="decimal"
-              className="mt-2"
-            />
-          </label>
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Button onClick={() => void subscribe()} disabled={!canManage || busy}>
-            {busy ? (
-              <Loader2 className="mr-2 size-4 animate-spin" />
-            ) : (
-              <CreditCard className="mr-2 size-4" />
-            )}
-            {busy ? "Starting checkout…" : "Start subscription checkout"}
-          </Button>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button variant="outline" onClick={() => void load()}>
             <RefreshCw className="mr-2 size-4" />
-            Refresh
+            Refresh subscription
           </Button>
-        </div>
-        {!canManage && (
-          <p className="mt-3 text-sm text-muted-foreground">
-            Only the store owner can change billing.
-          </p>
-        )}
-      </CardSection>
-      <CardSection title="Payment lifecycle">
-        <div className="space-y-3 text-sm">
-          {[
-            ["Checkout", "Hosted checkout keeps payment details out of Strap."],
-            ["Verification", "Successful charges are recorded in payment_transactions."],
-            ["Webhook", "Provider events update paid, failed and refunded state server-side."],
-          ].map(([title, desc]) => (
-            <div key={title} className="flex gap-3 rounded-xl border border-border p-3">
-              <CheckCircle2 className="mt-0.5 size-4 text-accent-ink" />
-              <div>
-                <p className="font-semibold">{title}</p>
-                <p className="mt-1 text-xs leading-5 text-muted-foreground">{desc}</p>
-              </div>
-            </div>
-          ))}
+          {!canManage && (
+            <p className="text-sm text-muted-foreground">Only the store owner can manage billing.</p>
+          )}
         </div>
       </CardSection>
-      <a
-        href="https://paystack.com"
-        target="_blank"
-        rel="noreferrer"
-        className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground"
+
+      <CardSection
+        title="Secure subscription checkout"
+        description="STRAP is preparing its Squad payment connection."
       >
-        Paystack <ExternalLink className="size-3.5" />
-      </a>
+        <div className="rounded-2xl border border-border bg-secondary/30 p-4 text-sm leading-6 text-muted-foreground">
+          Premium checkout is temporarily unavailable while the Squad integration is prepared and
+          security-tested. No payment will be initiated from this screen until the production
+          connection is configured and verified. Your store data and current plan remain available.
+        </div>
+      </CardSection>
     </div>
   );
 }
