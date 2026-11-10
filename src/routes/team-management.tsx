@@ -10,6 +10,7 @@ export const Route = createFileRoute("/team-management")({
     title: "Team management — Strap roles and staff access",
     description: page.description,
     path: "/team-management",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
