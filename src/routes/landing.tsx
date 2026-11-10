@@ -4,7 +4,6 @@ import {
   BarChart3,
   Boxes,
   ClipboardList,
-  CreditCard,
   Package,
   ScanLine,
   ShieldCheck,
