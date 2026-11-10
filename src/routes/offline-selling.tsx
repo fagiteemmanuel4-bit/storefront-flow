@@ -10,5 +10,5 @@ export const Route = createFileRoute("/offline-selling")({
     path: "/offline-selling",
     image: page.image,
   }),
-  component: () => <MarketingInfoPage page={page} />,
+  component: () => <MarketingInfoPage page={page} path="/offline-selling" />,
 });
