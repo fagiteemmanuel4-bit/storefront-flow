@@ -46,6 +46,7 @@ const STRUCTURED_DATA = {
       name: "Kryonara",
       url: SITE_URL,
       brand: { "@type": "Brand", name: "Strap" },
+      logo: `${SITE_URL}/brand/logo-mark.svg`,
     },
     {
       "@type": "WebSite",
