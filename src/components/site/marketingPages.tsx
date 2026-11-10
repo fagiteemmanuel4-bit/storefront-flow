@@ -1,6 +1,6 @@
 import {
   BarChart3, Barcode, BookOpen, Boxes, Building2, Camera, CreditCard, FileSpreadsheet,
-  Headphones, Laptop, LockKeyhole, Mail, Package, Printer, Receipt, ScanLine, ShieldCheck,
+  Headphones, Laptop, LockKeyhole, Mail, Package, Palette, Printer, Receipt, ScanLine, ShieldCheck,
   ShoppingBag, ShoppingCart, Smartphone, Store, Users, Wallet, WifiOff, Workflow, Settings2,
 } from "lucide-react";
 import type { MarketingPage } from "./MarketingInfoPage";
