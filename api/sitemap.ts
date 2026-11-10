@@ -9,7 +9,7 @@ type SitemapResponse = {
 
 const supabaseUrl = process.env["VITE_SUPABASE_URL"];
 const serviceKey = process.env["SUPABASE_SERVICE_ROLE_KEY"];
-const publicSiteUrl = (process.env["VITE_PUBLIC_SITE_URL"] || "").replace(/\/$/, "");
+const publicSiteUrl = (process.env["VITE_PUBLIC_SITE_URL"] || "https://storefront-flow.vercel.app").replace(/\/$/, "");
 
 export default async function handler(_request: unknown, response: SitemapResponse) {
   if (!supabaseUrl || !serviceKey || !publicSiteUrl) {
