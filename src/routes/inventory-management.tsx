@@ -10,6 +10,7 @@ export const Route = createFileRoute("/inventory-management")({
     title: "Inventory management — Strap retail stock control",
     description: page.description,
     path: "/inventory-management",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
