@@ -1,16 +1,13 @@
+import { marketingHead } from "@/lib/marketingSeo";
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: [
-      { title: "Terms of Service — Strap" },
-      {
-        name: "description",
-        content:
-          "Detailed terms governing Strap accounts, merchant workspaces, online stores and platform use.",
-      },
-    ],
+  head: () => marketingHead({
+    title: "Terms of Service — Strap",
+    description: "Terms governing Strap accounts, merchant workspaces, online stores and platform use.",
+    path: "/terms",
+    indexable: false,
   }),
   component: Terms,
 });
@@ -28,7 +25,7 @@ const UL = ({ children }: { children: React.ReactNode }) => (
 
 function Terms() {
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="marketing-site min-h-screen bg-surface">
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
         <div className="border-b border-border pb-8">
