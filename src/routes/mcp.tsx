@@ -250,22 +250,24 @@ function StrapMcpLearnPage() {
               to="/settings/ai-agents"
               className="rounded-xl bg-foreground px-5 py-3 text-sm font-bold text-background"
             >
-              Manage connected applications
+              Sign in to manage connected applications
             </Link>
             <Link
               to="/auth"
               className="rounded-xl border border-border px-5 py-3 text-sm font-semibold"
             >
-              Back to settings
+              Return to Strap sign in
             </Link>
           </div>
         </section>
 
-        <footer className="mt-20 border-t border-border pt-7 text-sm text-muted-foreground">
-          Strap is developed by Kryonara. MCP access is an optional integration; your core STRAP
-          workspace continues to work if you disconnect an AI client.
-        </footer>
       </div>
-    </main>
+      </main>
+      <SiteFooter />
+      <SeoJsonLd data={breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Integrations", path: "/mcp" },
+      ])} />
+    </div>
   );
 }
