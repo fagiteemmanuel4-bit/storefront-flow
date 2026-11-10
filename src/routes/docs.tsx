@@ -1,3 +1,4 @@
+import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -722,7 +723,8 @@ function DocsPage() {
           </footer>
         </article>
       </div>
-    </main>
+            <RetailVisualGallery />
+      </main>
   );
 }
 
