@@ -17,7 +17,6 @@ import {
   HelpCircle,
   LayoutDashboard,
   LockKeyhole,
-  Network,
   LogOut,
   Package,
   PanelLeftClose,
@@ -91,7 +90,6 @@ const SECONDARY_NAV = [
 ] as const;
 
 const MORE_NAV = [
-  { to: "/connect", label: "STRAP Connect", icon: Network, area: "pos" },
   { to: "/insights", label: "Insights", icon: TrendingUp, area: "reports" },
   { to: "/branches", label: "Branches", icon: GitBranch, area: "staff" },
   { to: "/stock-sense", label: "Stock Sense", icon: Boxes, area: "products" },
