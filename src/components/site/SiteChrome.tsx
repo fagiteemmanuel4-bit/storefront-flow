@@ -27,8 +27,8 @@ const COLUMNS = [
   {
     title: "Product",
     links: [
-      ["Features", "#features"],
-      ["How it works", "#how-it-works"],
+      ["Features", "/product"],
+      ["How it works", "/how-it-works"],
       ["Why Strap", "#about"],
       ["Inventory", "#inventory"],
       ["Insights", "#insights"],
@@ -39,7 +39,7 @@ const COLUMNS = [
     title: "Selling",
     links: [
       ["Fast checkout", "#checkout"],
-      ["Online store", "#online-store"],
+      ["Online store", "/online-store"],
       ["Barcode & QR scanning", "#hardware"],
       ["Receipts", "#hardware"],
       ["Hardware", "#hardware"],
@@ -61,17 +61,17 @@ const COLUMNS = [
 
 const RESOURCES = [
   ["Help Centre", "/support", CircleHelp],
-  ["Guides & documentation", "/support", BookOpen],
-  ["Getting started", "/support", Zap],
+  ["Guides & documentation", "/docs", BookOpen],
+  ["Getting started", "/how-it-works", Zap],
   ["Hardware Center", "/hardware", ScanLine],
   ["Receipt printing help", "/support", Printer],
   ["Contact support", "/support", Mail],
 ] as const;
 
 const NAV_ITEMS = [
-  ["Features", "#features"],
-  ["How it works", "#how-it-works"],
-  ["Online store", "#online-store"],
+  ["Features", "/product"],
+  ["How it works", "/how-it-works"],
+  ["Online store", "/online-store"],
   ["Insights", "#insights"],
 ] as const;
 
@@ -328,7 +328,7 @@ export function SiteFooter() {
                 Check inventory
               </a>
               <a
-                href="#online-store"
+                href="/online-store"
                 className="block text-sm text-background/60 hover:text-accent"
               >
                 Open online store
