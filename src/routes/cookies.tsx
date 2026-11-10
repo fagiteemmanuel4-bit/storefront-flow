@@ -1,19 +1,20 @@
+import { marketingHead } from "@/lib/marketingSeo";
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
 
 export const Route = createFileRoute("/cookies")({
-  head: () => ({
-    meta: [
-      { title: "Cookies & Storage Policy — Strap" },
-      { name: "description", content: "How Strap uses cookies, browser storage and offline data." },
-    ],
+  head: () => marketingHead({
+    title: "Cookies and Browser Storage Policy — Strap",
+    description: "How Strap uses cookies, browser storage and offline data to operate its retail platform.",
+    path: "/cookies",
+    indexable: false,
   }),
   component: Cookies,
 });
 
 function Cookies() {
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="marketing-site min-h-screen bg-surface">
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
         <p className="text-label-caps text-muted-foreground">Legal</p>
