@@ -29,32 +29,32 @@ const COLUMNS = [
     links: [
       ["Features", "/product"],
       ["How it works", "/how-it-works"],
-      ["Why Strap", "#about"],
-      ["Inventory", "#inventory"],
-      ["Insights", "#insights"],
-      ["Team access", "#teams"],
+      ["Why Strap", "/product#about"],
+      ["Inventory", "/product#inventory"],
+      ["Insights", "/product#insights"],
+      ["Team access", "/product#teams"],
     ],
   },
   {
     title: "Selling",
     links: [
-      ["Fast checkout", "#checkout"],
+      ["Fast checkout", "/product#checkout"],
       ["Online store", "/online-store"],
-      ["Barcode & QR scanning", "#hardware"],
-      ["Receipts", "#hardware"],
-      ["Hardware", "#hardware"],
-      ["Customer questions", "#faq"],
+      ["Barcode & QR scanning", "/product#hardware"],
+      ["Receipts", "/product#hardware"],
+      ["Hardware", "/product#hardware"],
+      ["Customer questions", "/product#faq"],
     ],
   },
   {
     title: "Operations",
     links: [
-      ["Stock management", "#inventory"],
-      ["Multiple branches", "#branches"],
-      ["Business insights", "#insights"],
-      ["Store security", "#security"],
-      ["Shop teams", "#teams"],
-      ["FAQs", "#faq"],
+      ["Stock management", "/product#inventory"],
+      ["Multiple branches", "/product#branches"],
+      ["Business insights", "/product#insights"],
+      ["Store security", "/product#security"],
+      ["Shop teams", "/product#teams"],
+      ["FAQs", "/product#faq"],
     ],
   },
 ] as const;
@@ -72,7 +72,7 @@ const NAV_ITEMS = [
   ["Features", "/product"],
   ["How it works", "/how-it-works"],
   ["Online store", "/online-store"],
-  ["Insights", "#insights"],
+  ["Insights", "/product#insights"],
 ] as const;
 
 export function SiteHeader() {
@@ -321,10 +321,10 @@ export function SiteFooter() {
           <div>
             <p className="text-label-caps text-background/40">Quick access</p>
             <div className="mt-4 space-y-3">
-              <a href="#checkout" className="block text-sm text-background/60 hover:text-accent">
+              <a href="/product#checkout" className="block text-sm text-background/60 hover:text-accent">
                 Start a sale
               </a>
-              <a href="#inventory" className="block text-sm text-background/60 hover:text-accent">
+              <a href="/product#inventory" className="block text-sm text-background/60 hover:text-accent">
                 Check inventory
               </a>
               <a
@@ -333,7 +333,7 @@ export function SiteFooter() {
               >
                 Open online store
               </a>
-              <a href="#insights" className="block text-sm text-background/60 hover:text-accent">
+              <a href="/product#insights" className="block text-sm text-background/60 hover:text-accent">
                 View insights
               </a>
             </div>
@@ -341,16 +341,16 @@ export function SiteFooter() {
           <div>
             <p className="text-label-caps text-background/40">For growing shops</p>
             <div className="mt-4 space-y-3">
-              <a href="#teams" className="block text-sm text-background/60 hover:text-accent">
+              <a href="/product#teams" className="block text-sm text-background/60 hover:text-accent">
                 Team access
               </a>
-              <a href="#branches" className="block text-sm text-background/60 hover:text-accent">
+              <a href="/product#branches" className="block text-sm text-background/60 hover:text-accent">
                 Multiple branches
               </a>
-              <a href="#hardware" className="block text-sm text-background/60 hover:text-accent">
+              <a href="/product#hardware" className="block text-sm text-background/60 hover:text-accent">
                 Hardware
               </a>
-              <a href="#security" className="block text-sm text-background/60 hover:text-accent">
+              <a href="/product#security" className="block text-sm text-background/60 hover:text-accent">
                 Security
               </a>
             </div>
@@ -447,10 +447,10 @@ export function SiteFooter() {
             <Link to="/auth" className="hover:text-background">
               Open register
             </Link>
-            <a href="#faq" className="hover:text-background">
+            <a href="/product#faq" className="hover:text-background">
               FAQ
             </a>
-            <a href="#about" className="hover:text-background">
+            <a href="/product#about" className="hover:text-background">
               About
             </a>
           </div>
