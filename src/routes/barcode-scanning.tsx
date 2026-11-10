@@ -12,5 +12,5 @@ export const Route = createFileRoute("/barcode-scanning")({
     path: "/barcode-scanning",
     image: page.image,
   }),
-  component: () => <MarketingInfoPage page={page} />,
+  component: () => <MarketingInfoPage page={page} path="/barcode-scanning" />,
 });
