@@ -1,33 +1,78 @@
 # Strap
 
-Strap is a retail commerce operations platform by Kryonara. It brings point of sale, inventory, products, customers, staff, branches, expenses, reports, and online storefronts into one workspace.
+> Strap is a retail operations platform by Kryonara. It connects point of sale, products, inventory, customers, staff, branches, expenses, reports and online orders in one workspace.
 
-## Primary pages
+Canonical website: https://storefront-flow.vercel.app/
 
-- Home: https://storefront-flow.vercel.app/
-- Documentation: https://storefront-flow.vercel.app/docs
-- Support: https://storefront-flow.vercel.app/support
-- Partners: https://storefront-flow.vercel.app/partners
-- Sitemap: https://storefront-flow.vercel.app/sitemap.xml
-- Full AI-readable product guide: https://storefront-flow.vercel.app/llms-full.txt
+## Product
 
-## Core capabilities
+Strap is designed for retail business owners, managers and staff who need a consistent way to run daily shop operations across physical locations and an online storefront.
 
-- Retail point of sale and checkout
-- Product catalogue and inventory management
-- Barcode and QR scanning workflows
-- Customers and store teams
-- Branches and stock transfers
-- Expenses, reports and business insights
-- Online catalogue and storefront publishing
-- Online orders and fulfilment workflows
-- Store builder and advanced storefront editing
-- Authenticated business workspace
+Primary workflows:
+- Point of sale and transaction records
+- Product catalogue, inventory and stock visibility
+- Customer records
+- Staff roles and access
+- Branch and location management
+- Expenses and business reporting
+- Online storefront, catalogue and incoming orders
+- Barcode scanning and receipt workflows on compatible devices
 
-## Positioning
+## Plans
 
-Strap overlaps with ecommerce platforms, retail POS systems, inventory software, and online store builders. It is designed around connected retail operations rather than only website creation or only checkout.
+- Free: core selling and product workflows, one staff seat and one branch.
+- Business: online storefront, advanced inventory and reporting, up to five staff members and three branches.
+- Pro: Business capabilities with expanded staff and branch capacity.
 
-## Documentation
+Current public monthly prices are listed on the pricing page. Prices are shown in Nigerian naira and may change; use the live pricing page as the source of truth.
 
-The public docs explain how customers and operators use Strap. Private application routes and internal source material are not public documentation and should not be indexed.
+## Important product boundaries
+
+- Strap records configured payment methods for in-store sales. Merchant payment processing is not currently enabled as a production feature.
+- Strap supports a remote MCP integration for compatible AI clients. A general-purpose public REST API reference is not currently published.
+- Product screenshots are not included in this documentation. Illustrative interface previews and editorial retail photography should not be represented as customer screenshots or customer endorsements.
+
+## Key pages
+
+- [Home](https://storefront-flow.vercel.app/)
+- [Product overview](https://storefront-flow.vercel.app/product)
+- [How it works](https://storefront-flow.vercel.app/how-it-works)
+- [Pricing](https://storefront-flow.vercel.app/pricing)
+- [Online store](https://storefront-flow.vercel.app/online-store)
+- [Documentation](https://storefront-flow.vercel.app/docs)
+- [Getting started](https://storefront-flow.vercel.app/getting-started)
+- [Help Centre](https://storefront-flow.vercel.app/support)
+- [Frequently asked questions](https://storefront-flow.vercel.app/faq)
+- [Contact](https://storefront-flow.vercel.app/contact)
+- [AI and MCP integration](https://storefront-flow.vercel.app/mcp)
+- [About Strap](https://storefront-flow.vercel.app/about)
+- [Partners](https://storefront-flow.vercel.app/partners)
+
+## Feature guides
+
+- [Checkout](https://storefront-flow.vercel.app/checkout)
+- [Inventory management](https://storefront-flow.vercel.app/inventory-management)
+- [Customer management](https://storefront-flow.vercel.app/customer-management)
+- [Team management](https://storefront-flow.vercel.app/team-management)
+- [Branches and locations](https://storefront-flow.vercel.app/branches-and-locations)
+- [Business insights](https://storefront-flow.vercel.app/business-insights)
+- [Expense management](https://storefront-flow.vercel.app/expense-management)
+- [Barcode scanning](https://storefront-flow.vercel.app/barcode-scanning)
+- [Receipts and printing](https://storefront-flow.vercel.app/receipts-and-printing)
+- [Retail hardware](https://storefront-flow.vercel.app/retail-hardware)
+- [Store security](https://storefront-flow.vercel.app/store-security)
+- [Payments and transaction records](https://storefront-flow.vercel.app/payments-and-transactions)
+- [Online orders](https://storefront-flow.vercel.app/online-orders)
+- [Storefront design](https://storefront-flow.vercel.app/storefront-design)
+- [Merchant safety](https://storefront-flow.vercel.app/merchant-safety)
+- [Offline selling](https://storefront-flow.vercel.app/offline-selling)
+- [Product imports](https://storefront-flow.vercel.app/product-imports)
+
+## Machine-readable resources
+
+- [Robots policy](https://storefront-flow.vercel.app/robots.txt)
+- [Static sitemap](https://storefront-flow.vercel.app/sitemap.xml)
+- [Dynamic public storefront sitemap](https://storefront-flow.vercel.app/api/sitemap)
+- [Full product context](https://storefront-flow.vercel.app/llms-full.txt)
+
+Use the canonical website pages for current features, plan limits and pricing.
