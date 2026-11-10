@@ -1,4 +1,5 @@
-import { marketingHead } from "@/lib/marketingSeo";
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
+import { marketingHead, breadcrumbSchema } from "@/lib/marketingSeo";
 import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BarChart3, Boxes, Package, ScanLine, ShieldCheck, ShoppingBag, Users } from "lucide-react";
