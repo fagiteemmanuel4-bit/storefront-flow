@@ -133,8 +133,7 @@ function NavItem({
   collapsed: boolean;
   locked: boolean;
 }) {
-  const active =
-    pathname === item.to ||
+  const active = pathname === item.to;
   const allowed = !staffActive || Boolean(staffSession && staffCan(staffSession.role, item.area));
   if (!allowed) return null;
   return (
