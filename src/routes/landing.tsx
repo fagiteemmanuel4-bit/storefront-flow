@@ -19,6 +19,7 @@ import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
 import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { marketingHead } from "@/lib/marketingSeo";
 import { FAQ_ITEMS, FAQ_PAGE_SCHEMA } from "@/lib/faqContent";
+import { AnimatedCounter, MagneticAnchor, Reveal } from "@/components/site/MarketingMotion";
 
 const features = [
   {
@@ -93,7 +94,7 @@ export function Landing() {
               <h1>Run your retail business from <span>one connected workspace.</span></h1>
               <p>Strap brings sales, products, inventory, customers, teams, reports and online orders together—so your business can move without disconnected tools.</p>
               <div className="marketing-hero__actions">
-                <Link to="/auth" className="marketing-button">Create a free account <ArrowRight size={16} /></Link>
+                <MagneticAnchor href="/auth" className="marketing-button">Create a free account <ArrowRight size={16} /></MagneticAnchor>
                 <Link to="/product" className="marketing-button marketing-button--outline">Explore the platform</Link>
               </div>
               <div className="marketing-hero__signals">
@@ -112,7 +113,7 @@ export function Landing() {
           </div>
         </section>
 
-        <section className="marketing-intro" id="platform">
+        <Reveal><section className="marketing-intro" id="platform">
           <div>
             <p className="marketing-eyebrow">A connected retail system</p>
             <h2>Every important part of your shop, moving together.</h2>
@@ -120,7 +121,14 @@ export function Landing() {
           <p>When a sale happens, the details should not stop at the counter. Strap connects the records and workflows that help your team serve customers, manage stock and understand the business.</p>
         </section>
 
-        <section className="marketing-feature-section" id="features">
+        </section></Reveal>
+        <div className="marketing-marquee" aria-label="Strap retail workflows">
+          <div className="marketing-marquee__track" aria-hidden="true">
+            {["Point of sale","Inventory","Customers","Teams","Branches","Online store","Reports","Expenses","Point of sale","Inventory","Customers","Teams","Branches","Online store","Reports","Expenses"].map((item,index) => <span key={index}>{item}</span>)}
+          </div>
+          <span className="sr-only">Point of sale, inventory, customers, teams, branches, online store, reports and expenses.</span>
+        </div>
+        <Reveal><section className="marketing-feature-section" id="features">
           <div className="marketing-section-heading">
             <p className="marketing-eyebrow">The platform</p>
             <h2>Built around the work behind every sale.</h2>
@@ -128,7 +136,7 @@ export function Landing() {
           </div>
           <div className="marketing-feature-grid">
             {features.map(({ icon: Icon, title, body, href, label }, index) => (
-              <article className={`marketing-feature-card marketing-feature-card--${index + 1}`} key={title}>
+              <article className={`marketing-feature-card marketing-feature-card--${index + 1}`} key={title} onPointerMove={(event) => { if (event.pointerType === "touch") return; const rect = event.currentTarget.getBoundingClientRect(); const x = (event.clientX - rect.left) / rect.width - 0.5; const y = (event.clientY - rect.top) / rect.height - 0.5; event.currentTarget.style.setProperty("--card-tilt-x", `${-y * 2.5}deg`); event.currentTarget.style.setProperty("--card-tilt-y", `${x * 3}deg`); }} onPointerLeave={(event) => { event.currentTarget.style.setProperty("--card-tilt-x", "0deg"); event.currentTarget.style.setProperty("--card-tilt-y", "0deg"); }}>
                 <div className="marketing-feature-card__top">
                   <span className="marketing-feature-card__icon"><Icon size={21} /></span>
                   <span>{label}</span>
@@ -141,7 +149,8 @@ export function Landing() {
           </div>
         </section>
 
-        <section className="marketing-showcase">
+        </section></Reveal>
+        <Reveal><section className="marketing-showcase">
           <div className="marketing-showcase__copy">
             <p className="marketing-eyebrow">See the workflow</p>
             <h2>One clear view of what is happening in your business.</h2>
@@ -158,9 +167,16 @@ export function Landing() {
           </div>
         </section>
 
-        <RetailVisualGallery />
+        </section></Reveal>
+        <Reveal><RetailVisualGallery />
 
-        <section className="marketing-workflow" id="how-it-works">
+        </Reveal>
+        <section className="marketing-stats" aria-label="Strap at a glance">
+          <div><AnimatedCounter value={20} label="feature guides" /><span>Dedicated feature guides</span></div>
+          <div><AnimatedCounter value={3} label="plans" /><span>Plan options</span></div>
+          <div><AnimatedCounter value={1} label="workspace" /><span>Connected retail workspace</span></div>
+        </section>
+        <Reveal><section className="marketing-workflow" id="how-it-works">
           <div className="marketing-section-heading">
             <p className="marketing-eyebrow">How it works</p>
             <h2>Simple to start. Structured for the work ahead.</h2>
@@ -177,7 +193,8 @@ export function Landing() {
           </ol>
         </section>
 
-        <section className="marketing-audience">
+        </section></Reveal>
+        <Reveal><section className="marketing-audience">
           <div className="marketing-section-heading">
             <p className="marketing-eyebrow">Made for everyday retail</p>
             <h2>Flexible enough for different kinds of shops.</h2>
@@ -194,9 +211,11 @@ export function Landing() {
           </div>
         </section>
 
-        <PricingSection />
+        </section></Reveal>
+        <Reveal><PricingSection />
 
-        <section className="marketing-faq" id="faq">
+        </Reveal>
+        <Reveal><section className="marketing-faq" id="faq">
           <div className="marketing-faq__intro">
             <p className="marketing-eyebrow">Questions, answered</p>
             <h2>Know what to expect before you start.</h2>
@@ -213,14 +232,15 @@ export function Landing() {
           </div>
         </section>
 
-        <section className="marketing-final-cta">
+        </section></Reveal>
+        <Reveal><section className="marketing-final-cta">
           <div>
             <p className="marketing-eyebrow">Start with the essentials</p>
             <h2>Give your shop one place to work from.</h2>
             <p>Create your workspace, add your products and bring the everyday details together.</p>
           </div>
-          <Link to="/auth" className="marketing-button">Start with Strap free <ArrowRight size={16} /></Link>
-        </section>
+          <MagneticAnchor href="/auth" className="marketing-button">Start with Strap free <ArrowRight size={16} /></MagneticAnchor>
+        </section></Reveal>
       </main>
       <SiteFooter />
       <SeoJsonLd data={FAQ_PAGE_SCHEMA} />
