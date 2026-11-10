@@ -1,13 +1,15 @@
+import { marketingHead } from "@/lib/marketingSeo";
 import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, Globe2, Package, Search, ShoppingBag, ShoppingCart, Store } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
 
 export const Route = createFileRoute("/online-store")({
-  head: () => ({ meta: [
-    { title: "Strap online store — Share your catalogue and manage orders" },
-    { name: "description", content: "Turn your Strap product catalogue into a shareable online storefront. Organise products, help customers discover your shop and manage incoming orders." },
-  ] }),
+  head: () => marketingHead({
+    title: "Strap online store — Share your catalogue and manage orders",
+    description: "Turn your Strap product catalogue into a shareable online storefront. Organise products, help customers discover your shop and manage incoming orders.",
+    path: "/online-store",
+  }),
   component: OnlineStorePage,
 });
 const benefits = [
@@ -16,7 +18,7 @@ const benefits = [
   { icon: ShoppingCart, title: "Orders connected to operations", body: "Review incoming customer orders from the same workspace you use to manage the shop, products and daily activity." },
 ];
 function OnlineStorePage() {
-  return <div className="min-h-screen bg-background text-foreground"><SiteHeader/><main>
+  return <div className="marketing-site min-h-screen bg-background text-foreground"><SiteHeader/><main>
     <section className="overflow-hidden border-b border-border bg-[radial-gradient(ellipse_at_top_right,var(--color-accent-soft),transparent_58%)]"><div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[1fr_.9fr] lg:py-28"><div><p className="text-label-caps font-bold text-accent-ink">YOUR SHOP, BEYOND THE COUNTER</p><h1 className="mt-5 max-w-3xl font-display text-4xl font-bold tracking-tight sm:text-6xl">Let customers find you <span className="text-accent-ink">online.</span></h1><p className="mt-6 max-w-xl text-base leading-8 text-muted-foreground sm:text-lg">Turn your Strap catalogue into a shareable online storefront. Present your products clearly and manage incoming orders alongside the work happening in your shop.</p><div className="mt-8 flex flex-wrap gap-3"><Link to="/auth" className="rounded-xl bg-foreground px-6 py-3.5 text-sm font-semibold text-background">Open Strap <ArrowRight className="ml-1 inline size-4"/></Link><Link to="/docs" className="rounded-xl border border-border px-6 py-3.5 text-sm font-semibold">Storefront guide</Link></div></div>
       <div className="mx-auto w-full max-w-md rounded-[2rem] border border-border bg-card p-4 shadow-2xl"><div className="rounded-[1.4rem] border border-border bg-background p-4"><div className="flex items-center justify-between"><div className="flex items-center gap-2"><span className="flex size-8 items-center justify-center rounded-full bg-foreground text-accent"><Store className="size-4"/></span><span className="text-sm font-bold">Your Store</span></div><span className="rounded-full bg-accent-soft px-2.5 py-1 text-[10px] font-bold text-accent-ink">CATALOGUE</span></div><div className="mt-5 rounded-2xl bg-muted p-5"><p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Discover the collection</p><p className="mt-2 text-2xl font-bold">Made for your everyday.</p><div className="mt-4 flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs text-muted-foreground"><Search className="size-3.5"/>Find a product</div></div><div className="mt-4 grid grid-cols-2 gap-3">{["Featured product","New arrivals"].map((item,i)=><div key={item} className="overflow-hidden rounded-xl border border-border"><div className="flex aspect-[4/3] items-center justify-center bg-accent-soft text-accent-ink">{i===0?<ShoppingBag className="size-8"/>:<Package className="size-8"/>}</div><div className="p-3"><p className="text-xs font-semibold">{item}</p><p className="mt-1 text-[10px] text-muted-foreground">Product details & price</p></div></div>)}</div><div className="mt-4 flex items-center justify-between rounded-xl bg-foreground p-3 text-background"><span className="text-xs font-semibold">Your customer-facing shop</span><CheckCircle2 className="size-4 text-accent"/></div></div></div>
     </div></section>
