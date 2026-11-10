@@ -75,6 +75,8 @@ const RESOURCES = [
   ["Frequently asked questions", "/faq", CircleHelp],
   ["Product imports", "/product-imports", Package],
   ["Offline selling", "/offline-selling", Smartphone],
+  ["Storefront design", "/storefront-design", Globe2],
+  ["Online orders", "/online-orders", ShoppingCart],
 ] as const;
 
 const NAV_ITEMS = [
