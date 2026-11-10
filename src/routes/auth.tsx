@@ -1,3 +1,4 @@
+import { noIndexHead } from "@/lib/marketingSeo";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
@@ -16,14 +17,8 @@ const FAVICON_SVG =
 const FAVICON = `data:image/svg+xml,${encodeURIComponent(FAVICON_SVG)}`;
 
 export const Route = createFileRoute("/auth")({
+  head: () => noIndexHead("Sign in to Strap", "Sign in to your Strap retail workspace."),
   ssr: false,
-  head: () => ({
-    meta: [
-      { title: "Sign in or create your shop — Strap" },
-      { name: "description", content: "Sign in to Strap or create an account for your shop." },
-    ],
-    links: [{ rel: "icon", type: "image/svg+xml", href: FAVICON }],
-  }),
   component: AuthPage,
 });
 
