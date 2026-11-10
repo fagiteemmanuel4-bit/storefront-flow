@@ -1,3 +1,4 @@
+import { noIndexHead } from "@/lib/marketingSeo";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -15,19 +16,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/customer-account")({
+  head: () => noIndexHead("Customer account — Strap", "Private customer account and order information."),
   validateSearch: (search: Record<string, unknown>) => ({
     store: typeof search.store === "string" ? search.store : "",
     order: typeof search.order === "string" ? search.order : "",
     phone: typeof search.phone === "string" ? search.phone : "",
-  }),
-  head: () => ({
-    meta: [
-      { title: "My orders — Strap" },
-      {
-        name: "description",
-        content: "Manage your temporary Strap customer account and track your orders.",
-      },
-    ],
   }),
   component: CustomerAccountPage,
 });
