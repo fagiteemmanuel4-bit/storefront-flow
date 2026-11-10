@@ -1,3 +1,5 @@
+import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
+import { marketingHead } from "@/lib/marketingSeo";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
@@ -17,7 +19,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-export const Route = createFileRoute("/partners")({ component: PartnersPage });
+export const Route = createFileRoute("/partners")({
+  head: () => marketingHead({
+    title: "Strap Partners — Business and supplier enquiries",
+    description: "Apply to join the Strap partner network as a retailer, supplier or business partner.",
+    path: "/partners",
+  }),
+  component: PartnersPage,
+});
 function PartnersPage() {
   const [user, setUser] = useState<any>(null);
   const [form, setForm] = useState({
@@ -57,7 +66,9 @@ function PartnersPage() {
     }
   }
   return (
-    <main className="min-h-screen bg-surface text-foreground">
+    <div className="marketing-site min-h-screen bg-surface text-foreground">
+      <SiteHeader />
+      <main>
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-16">
         <Link
           to="/"
@@ -188,6 +199,8 @@ function PartnersPage() {
           )}
         </section>
       </div>
-    </main>
+      </main>
+      <SiteFooter />
+    </div>
   );
 }
