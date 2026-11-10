@@ -10,6 +10,7 @@ export const Route = createFileRoute("/checkout")({
     title: "Sales & checkout — Strap point of sale",
     description: page.description,
     path: "/checkout",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
