@@ -12,5 +12,5 @@ export const Route = createFileRoute("/branches-and-locations")({
     path: "/branches-and-locations",
     image: page.image,
   }),
-  component: () => <MarketingInfoPage page={page} />,
+  component: () => <MarketingInfoPage page={page} path="/branches-and-locations" />,
 });
