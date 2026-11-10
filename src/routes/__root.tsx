@@ -8,7 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import landingCss from "../landing-modern.css?url";
 import modernAppCss from "../kudi-modern.css?url";
@@ -23,6 +23,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { NotFoundScreen } from "@/components/shell/NotFoundScreen";
 import { serializeJsonLd } from "@/lib/storefront-seo";
+import { DEFAULT_OG_IMAGE, SITE_URL } from "@/lib/marketingSeo";
+import { PREMIUM_PLANS } from "@/lib/premiumPlans";
 import { StoreFeedbackFloating } from "@/components/site/StoreFeedbackFloating";
 import { StoreCustomerAccess } from "@/components/site/StoreCustomerAccess";
 import { QuickFindHost } from "@/components/shell/QuickFind";
@@ -30,12 +32,11 @@ import { MobileNav } from "@/components/shell/MobileNav";
 import { ThemeProvider } from "@/components/shell/ThemeProvider";
 import { Button } from "@/components/ui/button";
 
-const SITE_URL = "https://storefront-flow.vercel.app";
 const SITE_TITLE = "Strap — Retail Commerce, POS, Inventory & Online Store";
 const SITE_DESCRIPTION =
   "Strap is a retail commerce platform for managing products, inventory, point of sale, customers, staff, branches, expenses, orders, reports, and online storefronts in one workspace.";
 const KEYWORDS =
-  "Strap, retail management software, retail POS, point of sale, inventory management, stock management, online store builder, ecommerce platform, ecommerce software, shop management, small business software, retail business management, Shopify alternative, Wix alternative, ecommerce Nigeria";
+  "Strap, retail management software, retail POS, point of sale, inventory management, stock management, online store, ecommerce, shop management, small business software, retail operations, ecommerce Nigeria";
 const STRUCTURED_DATA = {
   "@context": "https://schema.org",
   "@graph": [
@@ -54,6 +55,14 @@ const STRUCTURED_DATA = {
       description: SITE_DESCRIPTION,
       publisher: { "@id": `${SITE_URL}/#organization` },
       inLanguage: "en-NG",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${SITE_URL}/docs?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
     },
     {
       "@type": "SoftwareApplication",
@@ -64,6 +73,20 @@ const STRUCTURED_DATA = {
       url: SITE_URL,
       description: SITE_DESCRIPTION,
       publisher: { "@id": `${SITE_URL}/#organization` },
+      offers: {
+        "@type": "AggregateOffer",
+        priceCurrency: "NGN",
+        lowPrice: 0,
+        highPrice: 5000,
+        offerCount: 3,
+        offers: Object.values(PREMIUM_PLANS).map((plan) => ({
+          "@type": "Offer",
+          name: plan.name,
+          price: String(plan.price),
+          priceCurrency: "NGN",
+          url: `${SITE_URL}/pricing`,
+        })),
+      },
       featureList: [
         "Retail point of sale",
         "Inventory management",
@@ -171,7 +194,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "author", content: "Kryonara" },
       { name: "application-name", content: "Strap" },
       { name: "apple-mobile-web-app-title", content: "Strap" },
-      { name: "theme-color", content: "#f8fafc" },
+      { name: "theme-color", content: "#f7f8f5" },
       {
         name: "robots",
         content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
@@ -191,14 +214,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: SITE_DESCRIPTION },
       { property: "og:url", content: SITE_URL },
       { property: "og:locale", content: "en_NG" },
-      { property: "og:image", content: `${SITE_URL}/favicon.svg` },
+      { property: "og:image", content: DEFAULT_OG_IMAGE },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: SITE_TITLE },
       { name: "twitter:description", content: SITE_DESCRIPTION },
-      { name: "twitter:image", content: `${SITE_URL}/favicon.svg` },
+      { name: "twitter:image", content: DEFAULT_OG_IMAGE },
     ],
     links: [
-      { rel: "canonical", href: SITE_URL },
       { rel: "sitemap", type: "application/xml", href: `${SITE_URL}/sitemap.xml` },
       {
         rel: "alternate",
@@ -219,7 +241,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap",
       },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "apple-touch-icon", href: "/favicon.svg" },
@@ -245,28 +267,6 @@ function RootShell({ children }: { children: ReactNode }) {
         <Scripts />
       </body>
     </html>
-  );
-}
-function DomainMoveNotice() {
-  const [visible, setVisible] = useState(true);
-  if (!visible) return null;
-  return (
-    <div className="pointer-events-none fixed inset-x-0 top-[4.5rem] z-[70] flex justify-center px-3 sm:top-2">
-      <div
-        role="status"
-        className="pointer-events-auto flex w-full max-w-md items-center gap-2 rounded-xl border border-accent/20 bg-accent-soft/95 px-3 py-2 text-[11px] font-semibold text-foreground shadow-sm backdrop-blur-md"
-      >
-        <span className="min-w-0 flex-1">Strap is moving to a new domain soon</span>
-        <button
-          type="button"
-          aria-label="Dismiss domain notice"
-          onClick={() => setVisible(false)}
-          className="flex size-6 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-background/70 hover:text-foreground"
-        >
-          ×
-        </button>
-      </div>
-    </div>
   );
 }
 function RouteProgress() {
@@ -299,7 +299,6 @@ function RootComponent() {
     <ThemeProvider forceLight={forceLight}>
       <QueryClientProvider client={queryClient}>
         <RouteProgress />
-        <DomainMoveNotice />
         <Outlet />
         <QuickFindHost />
         <MobileNav />
