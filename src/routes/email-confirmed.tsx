@@ -1,16 +1,12 @@
+import { noIndexHead } from "@/lib/marketingSeo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/email-confirmed")({
+  head: () => noIndexHead("Email confirmed — Strap", "Email confirmation status for a Strap account."),
   ssr: false,
-  head: () => ({
-    meta: [
-      { title: "Email confirmed — Strap" },
-      { name: "description", content: "Your Strap email address has been confirmed." },
-    ],
-  }),
   component: EmailConfirmedPage,
 });
 
