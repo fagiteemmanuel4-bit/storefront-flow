@@ -127,54 +127,39 @@ function DocsPage() {
   }, [query]);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-50 border-b border-border/80 bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-5 sm:px-8">
-          <Link to="/" className="font-display text-xl font-bold tracking-tight">
-            Strap
-          </Link>
-          <span className="hidden h-5 w-px bg-border sm:block" />
-          <span className="hidden text-sm text-muted-foreground sm:block">Documentation</span>
-          <div className="relative ml-auto hidden w-full max-w-md md:block">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+    <div className="marketing-site min-h-screen bg-background text-foreground">
+      <SiteHeader />
+      <main>
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="marketing-breadcrumbs" aria-label="Breadcrumb">
+            <Link to="/">Home</Link><ChevronRight size={14} aria-hidden="true" /><span aria-current="page">Documentation</span>
+          </div>
+          <div className="relative py-6">
+            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <label htmlFor="docs-search" className="sr-only">Search documentation</label>
             <input
+              id="docs-search"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search the Strap guide"
-              aria-label="Search the Strap guide"
-              className="h-10 w-full rounded-lg border border-border bg-muted/40 pl-9 pr-3 text-sm outline-none focus:border-accent-ink/50"
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search guides, workflows, inventory, checkout and more"
+              aria-label="Search all Strap documentation"
+              aria-controls="docs-search-results"
+              className="h-12 w-full rounded-xl border border-border bg-card pl-11 pr-4 text-sm outline-none transition focus:border-accent-ink/60 focus:ring-2 focus:ring-accent/20"
             />
             {query && (
-              <div className="absolute mt-2 max-h-72 w-full overflow-y-auto rounded-xl border border-border bg-card p-2 shadow-xl">
-                {filtered.length ? (
-                  filtered.map((item) => (
-                    <a
-                      key={item.id}
-                      href={`#${item.id}`}
-                      onClick={() => setQuery("")}
-                      className="block rounded-lg px-3 py-2 hover:bg-muted"
-                    >
-                      <span className="block text-sm font-medium">{item.label}</span>
-                      <span className="text-xs text-muted-foreground">{item.group}</span>
-                    </a>
-                  ))
-                ) : (
-                  <p className="p-3 text-sm text-muted-foreground">No matching guide found.</p>
-                )}
+              <div id="docs-search-results" className="absolute left-0 right-0 top-[calc(100%-8px)] z-30 max-h-80 overflow-y-auto rounded-xl border border-border bg-card p-2 shadow-xl">
+                {filtered.length ? filtered.map((item) => (
+                  <a key={item.id} href={`#${item.id}`} onClick={() => setQuery("")} className="block rounded-lg px-3 py-3 hover:bg-muted">
+                    <span className="block text-sm font-semibold">{item.label}</span>
+                    <span className="text-xs text-muted-foreground">{item.group} · {item.keywords}</span>
+                  </a>
+                )) : <p className="p-3 text-sm text-muted-foreground">No matching guide found. Try a broader search term.</p>}
               </div>
             )}
           </div>
-          <Link
-            to="/auth"
-            className="hidden items-center gap-2 text-sm font-semibold text-accent-ink sm:inline-flex"
-          >
-            Open Strap <ArrowRight className="size-4" />
-          </Link>
         </div>
-      </header>
-
-      <div className="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-14">
-        <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] overflow-y-auto py-10 lg:block">
+      <div className="mx-auto grid max-w-[1440px] grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[220px_minmax(0,1fr)_190px] xl:gap-12">
+        <aside className="sticky top-20 hidden h-[calc(100vh-5rem)] overflow-y-auto py-10 lg:block">
           <nav className="space-y-6">
             {sections.map((section) => (
               <div key={section.group}>
@@ -197,7 +182,7 @@ function DocsPage() {
           </nav>
         </aside>
 
-        <article className="min-w-0 max-w-4xl px-5 py-12 sm:px-8 lg:px-0 lg:py-16">
+        <article className="min-w-0 max-w-4xl px-5 py-10 sm:px-8 lg:px-0 lg:py-12">
           <section id="overview" className="scroll-mt-24 border-b border-border pb-14">
             <div className="flex items-center gap-2 text-sm font-semibold text-accent-ink">
               <BookOpen className="size-4" /> Strap documentation
@@ -516,55 +501,30 @@ function DocsPage() {
           </DocSection>
 
           <DocSection
-            id="source"
+            id="api"
             icon={Code2}
-            title="Source code access"
-            eyebrow="For authorised developers"
+            title="API reference and supported access"
+            eyebrow="Integration availability"
           >
             <p>
-              The public documentation is primarily for learning how to use Strap. The application
-              source repository is maintained separately. If you are an authorised contributor or
-              have repository access, use the repository's normal Git workflow.
+              Strap does not currently publish a general-purpose customer API reference. The supported
+              external AI integration is Strap MCP, which uses a remote endpoint and an explicit
+              authorization flow. Access is limited by the permissions approved for each connection.
             </p>
-            <CodeBlock>{`git clone <repository-url>\ncd storefront-flow\nnpm install\nnpm run dev`}</CodeBlock>
+            <p>
+              Do not share account passwords, staff PINs or private credentials with an external
+              application. Review requested permissions before approving a connection and revoke
+              access when it is no longer needed.
+            </p>
+            <CodeBlock>https://lhizunrljottkhemdfei.supabase.co/functions/v1/mcp</CodeBlock>
             <p className="text-sm text-muted-foreground">
-              Do not publish credentials or private environment values from a local setup. Browser
-              configuration should use the publishable Supabase key; secret keys belong on trusted
-              server-side infrastructure.
+              The endpoint is intended for compatible remote MCP clients. Setup steps vary by client.
+              See the integration guide for the connection and consent workflow.
             </p>
+            <Link to="/mcp" className="mt-3 inline-flex items-center gap-2 font-semibold text-accent-ink">
+              Read the Strap MCP integration guide <ArrowRight className="size-4" />
+            </Link>
           </DocSection>
-          <DocSection
-            id="architecture"
-            icon={Boxes}
-            title="Technical architecture"
-            eyebrow="How Strap fits together"
-          >
-            <p>
-              Strap is built with React, TanStack Start, TypeScript, Vite and Supabase, and is
-              deployed through Vercel. The browser uses Supabase client integration for
-              authenticated application workflows while database access is constrained by RLS.
-              Public store routes expose customer-facing catalogue content.
-            </p>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <Feature
-                title="Frontend"
-                body="React 19, TanStack Router/Start, TypeScript and Tailwind CSS."
-              />
-              <Feature
-                title="Backend"
-                body="Supabase Auth, PostgreSQL, RLS and server-side functions where needed."
-              />
-              <Feature
-                title="Deployment"
-                body="Vercel production deployments with Git-based delivery."
-              />
-              <Feature
-                title="Public SEO"
-                body="Canonical metadata, robots.txt, sitemap.xml and crawlable storefront pages."
-              />
-            </div>
-          </DocSection>
-
           <DocSection
             id="troubleshooting"
             icon={Zap}
@@ -697,26 +657,44 @@ function DocsPage() {
             </p>
           </DocSection>
 
-          <footer className="mt-16 border-t border-border pt-8 text-sm text-muted-foreground">
+          <DocSection id="support" icon={BookOpen} title="Support" eyebrow="Get help with Strap">
             <p>
-              Strap documentation is maintained for customers, operators and authorised developers.
+              If you need help with setup or a product workflow, start with the Help Centre. For an
+              account-specific issue, sign in and use the in-app feedback option so the team can see
+              which part of the workspace you were using.
             </p>
-            <div className="mt-4 flex flex-wrap gap-4">
-              <Link to="/" className="font-semibold text-accent-ink hover:underline">
-                Strap home
-              </Link>
-              <Link to="/support" className="font-semibold text-accent-ink hover:underline">
-                Support
-              </Link>
-              <Link to="/partners" className="font-semibold text-accent-ink hover:underline">
-                Partners
-              </Link>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link to="/support" className="inline-flex items-center gap-2 rounded-lg bg-foreground px-4 py-2.5 text-sm font-semibold text-background">Visit Help Centre <ArrowRight size={15}/></Link>
+              <Link to="/contact" className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-semibold">Contact options</Link>
             </div>
-          </footer>
+          </DocSection>
+          <nav className="mt-12 grid gap-3 border-t border-border pt-8 sm:grid-cols-2" aria-label="Documentation navigation">
+            <Link to="/getting-started" className="rounded-xl border border-border p-4 hover:bg-muted/50">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Previous guide</span>
+              <span className="mt-1 block font-semibold">Getting started</span>
+            </Link>
+            <Link to="/support" className="rounded-xl border border-border p-4 text-right hover:bg-muted/50">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Next guide</span>
+              <span className="mt-1 block font-semibold">Help Centre</span>
+            </Link>
+          </nav>
         </article>
+        <aside className="sticky top-20 hidden h-[calc(100vh-5rem)] overflow-y-auto py-10 xl:block" aria-label="On this page">
+          <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[.15em] text-muted-foreground">On this page</p>
+          <nav className="space-y-1">
+            {sections.flatMap((section) => section.items).map((item) => (
+              <a key={item.id} href={`#${item.id}`} className="block rounded-md px-2 py-1.5 text-xs leading-5 text-muted-foreground hover:bg-muted hover:text-foreground">
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </aside>
       </div>
-            <RetailVisualGallery />
       </main>
+      <SiteFooter />
+      <SeoJsonLd data={docsSchema} />
+      <SeoJsonLd data={docsBreadcrumbs} />
+    </div>
   );
 }
 
@@ -724,7 +702,7 @@ function Info({ icon: Icon, title, body }: { icon: typeof Rocket; title: string;
   return (
     <div className="rounded-xl border border-border bg-card p-4">
       <Icon className="size-5 text-accent-ink" />
-      <h2 className="mt-3 font-semibold">{title}</h2>
+      <h3 className="mt-3 font-semibold">{title}</h3>
       <p className="mt-1 text-sm leading-6 text-muted-foreground">{body}</p>
     </div>
   );
