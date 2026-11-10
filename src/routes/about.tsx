@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/site/MarketingMotion";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BarChart3, Boxes, ShieldCheck, ShoppingBag, Users } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
@@ -35,7 +36,7 @@ function AboutPage() {
     <div className="marketing-site min-h-screen">
       <SiteHeader />
       <main>
-        <section className="marketing-info-hero">
+        <Reveal><section className="marketing-info-hero">
           <div className="marketing-info-hero__copy">
             <span className="marketing-kicker">ABOUT STRAP · BY KRYONARA</span>
             <h1>Retail work, brought into <span>one clear system.</span></h1>
@@ -56,9 +57,9 @@ function AboutPage() {
             />
             <figcaption>Designed around the work of everyday retail</figcaption>
           </figure>
-        </section>
+        </section></Reveal>
 
-        <section className="marketing-info-sections">
+        <Reveal><section className="marketing-info-sections">
           <div className="marketing-section-heading">
             <p className="marketing-eyebrow">Why Strap exists</p>
             <h2>Retail is more than the moment a customer pays.</h2>
@@ -73,9 +74,9 @@ function AboutPage() {
               </article>
             ))}
           </div>
-        </section>
+        </section></Reveal>
 
-        <section className="marketing-workflow">
+        <Reveal><section className="marketing-workflow">
           <div className="marketing-section-heading">
             <p className="marketing-eyebrow">One connected operation</p>
             <h2>From the counter to the wider business.</h2>
@@ -86,9 +87,9 @@ function AboutPage() {
             <article><Users size={21}/><h3>Coordinate</h3><p>Give the team clear roles and customer context.</p></article>
             <article><BarChart3 size={21}/><h3>Understand</h3><p>Review sales, expenses and business performance.</p></article>
           </div>
-        </section>
+        </section></Reveal>
 
-        <section className="marketing-info-cta">
+        <Reveal><section className="marketing-info-cta">
           <div>
             <p className="marketing-eyebrow">Built for everyday commerce</p>
             <h2>See how Strap can fit the way your shop works.</h2>
@@ -98,7 +99,7 @@ function AboutPage() {
             <Link to="/pricing" className="marketing-button marketing-button--quiet">View pricing</Link>
             <Link to="/auth" className="marketing-button">Create a free account <ArrowRight size={16}/></Link>
           </div>
-        </section>
+        </section></Reveal>
       </main>
       <SiteFooter />
     </div>
