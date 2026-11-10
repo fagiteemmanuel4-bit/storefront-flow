@@ -119,8 +119,6 @@ export function Landing() {
             <h2>Every important part of your shop, moving together.</h2>
           </div>
           <p>When a sale happens, the details should not stop at the counter. Strap connects the records and workflows that help your team serve customers, manage stock and understand the business.</p>
-        </section>
-
         </section></Reveal>
         <div className="marketing-marquee" aria-label="Strap retail workflows">
           <div className="marketing-marquee__track" aria-hidden="true">
@@ -147,8 +145,6 @@ export function Landing() {
               </article>
             ))}
           </div>
-        </section>
-
         </section></Reveal>
         <Reveal><section className="marketing-showcase">
           <div className="marketing-showcase__copy">
@@ -165,8 +161,6 @@ export function Landing() {
           <div className="marketing-showcase__preview">
             <InteractiveProductStage />
           </div>
-        </section>
-
         </section></Reveal>
         <Reveal><RetailVisualGallery />
 
@@ -191,8 +185,6 @@ export function Landing() {
               </li>
             ))}
           </ol>
-        </section>
-
         </section></Reveal>
         <Reveal><section className="marketing-audience">
           <div className="marketing-section-heading">
@@ -209,8 +201,6 @@ export function Landing() {
               </article>
             ))}
           </div>
-        </section>
-
         </section></Reveal>
         <Reveal><PricingSection />
 
@@ -230,8 +220,6 @@ export function Landing() {
               </details>
             ))}
           </div>
-        </section>
-
         </section></Reveal>
         <Reveal><section className="marketing-final-cta">
           <div>
