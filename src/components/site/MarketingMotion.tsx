@@ -23,6 +23,7 @@ export function Reveal({
     }
     const node = ref.current;
     if (!node) return;
+    node.dataset.motionReady = "true";
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -57,7 +58,7 @@ export function AnimatedCounter({
   label: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(value);
 
   useEffect(() => {
     const node = ref.current;
@@ -72,6 +73,7 @@ export function AnimatedCounter({
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting || started) return;
       started = true;
+      setCount(0);
       const start = performance.now();
       const duration = 900;
       const animate = (now: number) => {
