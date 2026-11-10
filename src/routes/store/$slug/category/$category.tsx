@@ -3,8 +3,27 @@ import { useQuery } from "@tanstack/react-query";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { formatMoney } from "@/lib/currency";
 import { publicProductPath } from "@/lib/public-store-links";
+import { marketingHead, breadcrumbSchema } from "@/lib/marketingSeo";
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 
 export const Route = createFileRoute("/store/$slug/category/$category")({
+  ssr: true,
+  loader: async ({ params }) => {
+    const category = decodeURIComponent(params.category);
+    const { data, error } = await onlineSupabase.rpc("get_public_store_category_products", {
+      _store_slug: params.slug,
+      _category: category,
+      _limit: 100,
+    });
+    if (error) throw new Error(error.message);
+    return { slug: params.slug, category, products: (data ?? []) as Product[] };
+  },
+  head: ({ loaderData }) => marketingHead({
+    title: loaderData ? `${loaderData.category} products at ${loaderData.slug}` : "Store category",
+    description: loaderData ? `Browse ${loaderData.category} products from ${loaderData.slug} online store.` : "Browse products in this store category.",
+    path: loaderData ? `/store/${encodeURIComponent(loaderData.slug)}/category/${encodeURIComponent(loaderData.category)}` : "/store",
+    image: loaderData?.products[0]?.image_url || undefined,
+  }),
   component: PublicStoreCategoryPage,
 });
 
@@ -20,7 +39,8 @@ type Product = {
 
 function PublicStoreCategoryPage() {
   const { slug, category } = Route.useParams();
-  const decodedCategory = decodeURIComponent(category);
+  const initialData = Route.useLoaderData();
+  const decodedCategory = initialData.category;
   const products = useQuery({
     queryKey: ["public-store-category", slug, decodedCategory],
     queryFn: async () => {
@@ -33,6 +53,7 @@ function PublicStoreCategoryPage() {
       return (data ?? []) as Product[];
     },
     staleTime: 30_000,
+    initialData: initialData.products,
   });
 
   return (
@@ -90,6 +111,11 @@ function PublicStoreCategoryPage() {
           ))}
         </div>
       </div>
+      <SeoJsonLd data={breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Store", path: `/store/${encodeURIComponent(slug)}` },
+        { name: decodedCategory, path: `/store/${encodeURIComponent(slug)}/category/${encodeURIComponent(decodedCategory)}` },
+      ])} />
     </main>
   );
 }
