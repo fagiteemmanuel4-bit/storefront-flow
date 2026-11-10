@@ -4,7 +4,6 @@ import {
   Bell,
   ChevronRight,
   Download,
-  ExternalLink,
   FileBarChart,
   Globe2,
   HardDrive,
@@ -412,7 +411,6 @@ export function AppMenuSheet({
                   icon={ShoppingBag}
                   label="Orders"
                   hint="Sales from every channel"
-                  badge={pendingOrders}
                   onClick={close}
                   locked={!canOnlineStore}
                 />
