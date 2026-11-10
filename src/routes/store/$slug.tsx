@@ -16,9 +16,47 @@ import { toast } from "sonner";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { formatMoney } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
+import { marketingHead, SITE_URL } from "@/lib/marketingSeo";
+import { buildStoreJsonLd, serializeJsonLd } from "@/lib/storefront-seo";
 
 export const Route = createFileRoute("/store/$slug")({
-  ssr: false,
+  ssr: true,
+  loader: async ({ params }) => {
+    const slug = params.slug.toLowerCase().trim();
+    const { data: storeData, error: storeError } = await onlineSupabase
+      .from("online_stores")
+      .select("id,store_id,slug,display_name,logo_url,display_email,display_phone,description,shipping_note,checkout_note,is_published,setup_completed")
+      .eq("slug", slug)
+      .eq("is_published", true)
+      .eq("setup_completed", true)
+      .maybeSingle();
+    if (storeError) throw new Error(storeError.message);
+    if (!storeData) throw new Error("Storefront not found");
+    const { data: merchant } = await onlineSupabase
+      .from("stores")
+      .select("currency")
+      .eq("id", storeData.store_id)
+      .maybeSingle();
+    const store = { ...storeData, currency: merchant?.currency ?? "NGN" } as Store;
+    const [{ data: catalog, error: catalogError }, { data: heroes, error: heroesError }] = await Promise.all([
+      (onlineSupabase as any).rpc("get_public_store_catalog_v2", { _slug: slug }),
+      onlineSupabase
+        .from("store_hero_banners")
+        .select("id,image_url,title,subtitle,sort_order")
+        .eq("store_id", store.store_id)
+        .eq("is_active", true)
+        .order("sort_order"),
+    ]);
+    if (catalogError) throw new Error(catalogError.message);
+    if (heroesError) throw new Error(heroesError.message);
+    return { store, catalog: (catalog ?? []) as Product[], heroes: (heroes ?? []) as Hero[] };
+  },
+  head: ({ loaderData }) => marketingHead({
+    title: loaderData ? `${loaderData.store.display_name} — Online store` : "Online store",
+    description: loaderData?.store.description || `Browse products from ${loaderData?.store.display_name ?? "this shop"}.`,
+    path: loaderData ? `/store/${encodeURIComponent(loaderData.store.slug)}` : "/store",
+    image: loaderData?.store.logo_url || undefined,
+  }),
   component: PublicStorefrontPage,
 });
 
@@ -64,6 +102,7 @@ type Hero = { id: string; image_url: string; title: string; subtitle: string; so
 
 function PublicStorefrontPage() {
   const { slug } = Route.useParams();
+  const initialData = Route.useLoaderData();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [variantPicker, setVariantPicker] = useState<Product | null>(null);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
@@ -101,6 +140,7 @@ function PublicStorefrontPage() {
       return { ...data, currency: merchant?.currency ?? "NGN" } as Store;
     },
     retry: 3,
+    initialData: initialData.store,
   });
   const store = storeQuery.data;
 
@@ -116,6 +156,7 @@ function PublicStorefrontPage() {
     },
     retry: 3,
     staleTime: 15_000,
+    initialData: initialData.catalog,
   });
 
   const heroesQuery = useQuery({
@@ -132,6 +173,7 @@ function PublicStorefrontPage() {
       return (data ?? []) as Hero[];
     },
     retry: 3,
+    initialData: initialData.heroes,
   });
 
   const catalog = catalogQuery.data ?? [];
