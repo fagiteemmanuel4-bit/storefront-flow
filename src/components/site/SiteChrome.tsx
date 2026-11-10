@@ -10,6 +10,7 @@ import {
   Globe2,
   Mail,
   Menu,
+  Package,
   Printer,
   Receipt,
   ScanLine,
@@ -274,7 +275,7 @@ export function SiteFooter() {
               {RESOURCES.map(([label, href, Icon]) => (
                 <Link
                   key={label}
-                  to={href as "/support" | "/hardware"}
+                  to={href}
                   className="flex items-center gap-2 text-sm text-background/60 hover:text-accent"
                 >
                   <Icon className="size-3.5 shrink-0" />
