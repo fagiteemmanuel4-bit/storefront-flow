@@ -236,7 +236,7 @@ export const Route = createFileRoute("/landing")({
   head: () => marketingHead({
     title: "Strap — Retail POS, Inventory and Online Store Software",
     description: "Manage sales, products, inventory, customers, staff, branches, expenses and online orders in one retail operations workspace.",
-    path: "/landing",
+    path: "/",
   }),
   component: Landing,
 });
