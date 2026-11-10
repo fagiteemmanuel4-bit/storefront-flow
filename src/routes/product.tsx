@@ -1,14 +1,15 @@
+import { marketingHead } from "@/lib/marketingSeo";
 import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BarChart3, Boxes, Package, ScanLine, ShieldCheck, ShoppingBag, Users } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
 
 export const Route = createFileRoute("/product")({
-  head: () => ({ meta: [
-    { title: "Strap product — Retail POS, inventory & commerce in one workspace" },
-    { name: "description", content: "Explore Strap point of sale, inventory, customers, staff, branches, reporting and online selling in one connected retail workspace." },
-    { property: "og:title", content: "Everything your shop needs, connected — Strap" },
-  ] }),
+  head: () => marketingHead({
+    title: "Strap product — Retail POS, inventory & commerce in one workspace",
+    description: "Explore Strap point of sale, inventory, customers, staff, branches, reporting and online selling in one connected retail workspace.",
+    path: "/product",
+  }),
   component: ProductPage,
 });
 
@@ -22,7 +23,7 @@ const features = [
 ];
 
 function ProductPage() {
-  return <div className="min-h-screen bg-background text-foreground"><SiteHeader /><main>
+  return <div className="marketing-site min-h-screen bg-background text-foreground"><SiteHeader /><main>
     <section className="border-b border-border bg-[radial-gradient(ellipse_at_top_right,var(--color-accent-soft),transparent_55%)]">
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[1fr_.9fr] lg:py-28">
         <div><p className="text-label-caps font-bold text-accent-ink">THE STRAP WORKSPACE</p><h1 className="mt-5 max-w-3xl font-display text-4xl font-bold tracking-tight sm:text-6xl">Your whole shop.<br/><span className="text-accent-ink">One clearer picture.</span></h1><p className="mt-6 max-w-xl text-base leading-8 text-muted-foreground sm:text-lg">Strap connects the everyday work of retail — selling, stock, customers, teams, reporting and online orders — in one practical workspace.</p><div className="mt-8 flex flex-wrap gap-3"><Link to="/auth" className="inline-flex items-center gap-2 rounded-xl bg-foreground px-6 py-3.5 text-sm font-semibold text-background">Open Strap <ArrowRight className="size-4"/></Link><Link to="/how-it-works" className="rounded-xl border border-border px-6 py-3.5 text-sm font-semibold">See how it works</Link></div></div>
