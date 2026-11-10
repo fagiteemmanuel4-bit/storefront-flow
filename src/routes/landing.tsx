@@ -54,7 +54,7 @@ const features = [
     icon: Store,
     title: "Online storefront",
     body: "Publish a shareable product catalogue and manage incoming online orders from the same workspace.",
-    href: "/online-store",
+    href: "/online-store-platform",
     label: "Sell beyond the counter",
   },
   {
