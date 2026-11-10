@@ -48,7 +48,11 @@ export function PaymentsSettingsPage() {
   const amount = Number(subscription?.amount ?? 0);
   const currency = String(subscription?.currency ?? store?.currency ?? "NGN").toUpperCase();
   const formattedAmount = Number.isFinite(amount)
-    ? new Intl.NumberFormat("en-NG", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount)
+    ? new Intl.NumberFormat("en-NG", {
+        style: "currency",
+        currency,
+        maximumFractionDigits: 0,
+      }).format(amount)
     : "—";
 
   if (loading) {
@@ -68,7 +72,9 @@ export function PaymentsSettingsPage() {
         <div className="rounded-2xl border border-border bg-secondary/40 p-4">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Current plan</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Current plan
+              </p>
               <p className="mt-1 text-xl font-semibold">{planLabel}</p>
               <p className="mt-1 text-sm capitalize text-muted-foreground">{status}</p>
             </div>
@@ -107,7 +113,9 @@ export function PaymentsSettingsPage() {
             Refresh subscription
           </Button>
           {!canManage && (
-            <p className="text-sm text-muted-foreground">Only the store owner can manage billing.</p>
+            <p className="text-sm text-muted-foreground">
+              Only the store owner can manage billing.
+            </p>
           )}
         </div>
       </CardSection>

@@ -19,7 +19,8 @@ Deno.serve((req: Request) => {
 
   return json(
     {
-      error: "Subscription checkout is temporarily unavailable while STRAP prepares and verifies its Squad payment integration.",
+      error:
+        "Subscription checkout is temporarily unavailable while STRAP prepares and verifies its Squad payment integration.",
       code: "SUBSCRIPTION_CHECKOUT_NOT_READY",
     },
     503,
