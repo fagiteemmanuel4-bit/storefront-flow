@@ -10,18 +10,20 @@ export function marketingHead({
   description,
   path,
   image = DEFAULT_OG_IMAGE,
+  indexable = true,
 }: {
   title: string;
   description: string;
   path: string;
   image?: string;
+  indexable?: boolean;
 }) {
   const canonical = `${SITE_URL}${path}`;
   return {
     meta: [
       { title },
       { name: "description", content: description },
-      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { name: "robots", content: indexable ? "index, follow, max-image-preview:large" : "noindex, follow" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Strap" },
       { property: "og:title", content: title },
