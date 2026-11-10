@@ -8,6 +8,7 @@ export const Route = createFileRoute("/merchant-safety")({
     title: "Merchant safety — Strap trust and reporting",
     description: page.description,
     path: "/merchant-safety",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
