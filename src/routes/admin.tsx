@@ -1,3 +1,4 @@
+import { noIndexHead } from "@/lib/marketingSeo";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +20,7 @@ import { toast } from "sonner";
 import { PlatformAnnouncementsPanel } from "@/components/admin/PlatformAnnouncementsPanel";
 
 export const Route = createFileRoute("/admin")({
+  head: () => noIndexHead("Strap administration", "Private platform administration."),
   ssr: false,
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
