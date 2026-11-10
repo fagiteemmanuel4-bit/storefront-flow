@@ -12,7 +12,7 @@ export const Route = createFileRoute("/support")({
   component: Support,
 });
 const topics = [
-  { icon: Store, title: "Getting started", text: "Create your workspace, set up your shop details and prepare your first branch.", href: "/how-it-works", action: "Follow the setup walkthrough" },
+  { icon: Store, title: "Getting started", text: "Create your workspace, set up your shop details and prepare your first branch.", href: "/getting-started", action: "Follow the setup walkthrough" },
   { icon: PackagePlus, title: "Products & catalogue", text: "Add products, keep pricing and product details organised, and prepare your catalogue.", href: "/inventory-management", action: "Read product documentation" },
   { icon: ScanLine, title: "Sales & checkout", text: "Find products, scan barcodes, build a cart, record payments and issue receipts.", href: "/checkout", action: "Explore point of sale help" },
   { icon: Boxes, title: "Stock & branches", text: "Understand stock quantities, low-stock visibility and branch-level stock operations.", href: "/branches-and-locations", action: "Learn stock management" },
