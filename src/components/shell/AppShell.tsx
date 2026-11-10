@@ -11,7 +11,6 @@ import {
   CloudUpload,
   Cpu,
   Download,
-  ExternalLink,
   GitBranch,
   HardDrive,
   HelpCircle,
@@ -27,7 +26,6 @@ import {
   ScanLine,
   Search,
   Settings,
-  ShoppingBag,
   Sparkles,
   Store,
   Trash2,
@@ -38,7 +36,6 @@ import {
   WifiOff,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { activeStoreCache } from "@/lib/active-store";
 import { getOfflineSales, removeOfflineSale } from "@/lib/offline-sales";
 import { useStoreContext } from "@/components/shell/StoreProvider";
@@ -78,13 +75,11 @@ const HOME_NAV = {
 const PRIMARY_NAV = [
   { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
   { to: "/products", label: "Products", icon: Package, area: "products" },
-  { to: "/online-store/orders", label: "Orders", icon: ShoppingBag, area: "orders" },
   { to: "/customers", label: "Customers", icon: Users, area: "customers" },
   { to: "/reports", label: "Analytics", icon: BarChart3, area: "reports" },
 ] as const;
 
 const SECONDARY_NAV = [
-  { to: "/online-store", label: "Online Store", icon: Store, area: "store" },
   { to: "/expenses", label: "Expenses", icon: ReceiptText, area: "expenses" },
   { to: "/staff", label: "Team", icon: Users, area: "staff" },
   { to: "/hardware", label: "Hardware", icon: HardDrive, area: "hardware" },
@@ -108,7 +103,6 @@ type NavItemType = {
 };
 
 function isLockedPath(path: string, tier: StrapTier) {
-  if (path.startsWith("/online-store")) return !hasEntitlement(tier, "onlineStore");
   if (path === "/reports" || path === "/insights")
     return !hasEntitlement(tier, "advancedAnalytics");
   if (path === "/stock-sense") return !hasEntitlement(tier, "stockSense");
@@ -139,11 +133,8 @@ function NavItem({
   collapsed: boolean;
   locked: boolean;
 }) {
-  if (item.to.startsWith("/online-store")) return null;
   const active =
     pathname === item.to ||
-    (item.to === "/online-store/orders" && pathname.startsWith("/online-store/orders")) ||
-    (item.to === "/online-store" && pathname.startsWith("/online-store"));
   const allowed = !staffActive || Boolean(staffSession && staffCan(staffSession.role, item.area));
   if (!allowed) return null;
   return (
@@ -204,25 +195,9 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
   const subscriptionTier: StrapTier =
     subscriptionQuery.data?.status === "active" ? subscriptionQuery.data.plan : "free";
   const canExport = hasEntitlement(subscriptionTier, "storeExport");
-  const canOnlineStore = hasEntitlement(subscriptionTier, "onlineStore");
   const canAnalytics = hasEntitlement(subscriptionTier, "advancedAnalytics");
   const canTeam = subscriptionTier !== "free";
   const canStockSense = hasEntitlement(subscriptionTier, "stockSense");
-  const storefrontQuery = useQuery({
-    queryKey: ["online-store-menu", store?.id],
-    enabled: Boolean(store?.id),
-    queryFn: async () => {
-      const { data, error } = await onlineSupabase
-        .from("online_stores")
-        .select("slug,setup_completed,is_published")
-        .eq("store_id", store!.id)
-        .maybeSingle();
-      if (error) throw new Error(error.message);
-      return data;
-    },
-  });
-  const storefront = storefrontQuery.data;
-  const storefrontPath = storefront?.slug ? "/store/" + storefront.slug : "";
   const toggleSidebar = () => {
     setSidebarCollapsed((current) => {
       const next = !current;
@@ -246,8 +221,6 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
       isFashion
         ? [
             { to: "/products", label: "Collection", icon: Package, area: "products" },
-            { to: "/online-store", label: "Storefront", icon: Store, area: "store" },
-            { to: "/online-store/orders", label: "Orders", icon: ReceiptText, area: "orders" },
             { to: "/pos", label: "Sell", icon: ScanLine, area: "pos" },
             { to: "/customers", label: "Customers", icon: Users, area: "customers" },
             { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
@@ -290,7 +263,6 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
     () =>
       isFashion
         ? [
-            ...SECONDARY_NAV.filter((item) => item.to !== "/online-store"),
             {
               to: "/fashion-returns",
               label: "Returns & exchanges",
@@ -299,7 +271,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
             },
           ]
         : isElectronics
-          ? SECONDARY_NAV.filter((item) => item.to !== "/online-store")
+          ? SECONDARY_NAV
           : SECONDARY_NAV,
     [isFashion, isElectronics],
   );
@@ -530,32 +502,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                   locked={isLockedPath(item.to, subscriptionTier)}
                 />
               ))}
-              {canManageStaff && storefront?.setup_completed && storefrontPath && (
-                <Link
-                  to={(canOnlineStore ? storefrontPath : "/upgrade") as any}
-                  title={
-                    canOnlineStore ? "Open live storefront" : "Live storefront · Business plan"
-                  }
-                  aria-label={sidebarCollapsed ? "Open live storefront" : undefined}
-                  className={cn(menuItem, "px-3", sidebarCollapsed && "justify-center px-2")}
-                >
-                  {canOnlineStore ? (
-                    <ExternalLink className="size-[18px] shrink-0" />
-                  ) : (
-                    <LockKeyhole className="size-[18px] shrink-0" />
-                  )}
-                  {!sidebarCollapsed && (
-                    <>
-                      <span className="min-w-0 flex-1 truncate">Live storefront</span>
-                      {!canOnlineStore && (
-                        <span className="rounded-full bg-[#c6f432]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase text-[#c6f432]">
-                          Business
-                        </span>
-                      )}
-                    </>
-                  )}
-                </Link>
-              )}
+
               {isElectronics && (
                 <NavItem
                   item={{
@@ -942,7 +889,6 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
         branchName={branch?.name ?? null}
         role={effectiveRole as any}
         canExport={canExport}
-        canOnlineStore={canOnlineStore}
         canAnalytics={canAnalytics}
         canTeam={canTeam}
         canStockSense={canStockSense}
