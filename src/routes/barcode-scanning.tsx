@@ -10,6 +10,7 @@ export const Route = createFileRoute("/barcode-scanning")({
     title: "Barcode scanning — Strap retail checkout",
     description: page.description,
     path: "/barcode-scanning",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
