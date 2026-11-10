@@ -5,13 +5,15 @@ import {
 } from "lucide-react";
 import type { MarketingPage } from "./MarketingInfoPage";
 
-const posImage = "https://images.unsplash.com/photo-1753803990660-2f41ebfc178d?auto=format&fit=crop&fm=jpg&q=82&w=1600";
+// All editorial photography below is sourced from Unsplash and used under the Unsplash License.
+// Keep product UI previews illustrative; do not imply stock photography is a Strap customer screenshot.
+const posImage = "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1600&q=82";
 const shelvesImage = "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1600&q=82";
 const onlineImage = "https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=1600&q=82";
 const productImage = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1600&q=82";
 const teamImage = "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1600&q=82";
 const dashboardImage = "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=82";
-const paymentImage = "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1600&q=82";
+const paymentImage = "https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&w=1600&q=82";
 const securityImage = "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1600&q=82";
 const warehouseImage = "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=82";
 const deskImage = "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1600&q=82";
