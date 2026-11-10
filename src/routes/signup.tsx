@@ -1,9 +1,11 @@
+import { noIndexHead } from "@/lib/marketingSeo";
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/signup")({ component: SignupPage });
+export const Route = createFileRoute("/signup")({
+  head: () => noIndexHead("Create a Strap account", "Create a Strap account for your retail business."), component: SignupPage });
 
 function SignupPage() {
   const navigate = useNavigate();
