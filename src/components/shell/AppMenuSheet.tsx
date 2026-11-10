@@ -72,6 +72,7 @@ function MenuLink({
   featured?: boolean;
   locked?: boolean;
 }) {
+  if (to.startsWith("/online-store")) return null;
   return (
     <Link
       to={(locked ? "/upgrade" : to) as any}
@@ -125,6 +126,7 @@ function ActionLink({
   onClick: () => void;
   locked?: boolean;
 }) {
+  if (to.startsWith("/online-store")) return null;
   return (
     <Link
       to={(locked ? "/upgrade" : to) as any}
@@ -249,7 +251,7 @@ export function AppMenuSheet({
     close();
   };
   const pendingOrders = pendingOrdersQuery.data ?? 0;
-  const storefrontPath = storefront?.slug ? `/store/${storefront.slug}` : "";
+  const storefrontPath = "";
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
@@ -470,7 +472,8 @@ export function AppMenuSheet({
               </div>
             </section>
             <div className="my-5 border-t border-border/70" />
-            <section>
+            {false && (
+<section>
               <p className="px-2 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
                 {isFashion ? "Online shop & promotion" : "Storefront"}
               </p>
@@ -522,6 +525,7 @@ export function AppMenuSheet({
                 )}
               </div>
             </section>
+)}
             <div className="my-5 border-t border-border/70" />
             <section>
               <p className="px-2 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
@@ -572,8 +576,9 @@ export function AppMenuSheet({
                   onClick={close}
                   className="group flex w-full items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-left transition hover:border-border hover:bg-secondary/70"
                 >
-                  <span className="flex size-10 items-center justify-center rounded-xl bg-secondary group-hover:bg-accent-soft">
+                  <span className="relative flex size-10 items-center justify-center rounded-xl bg-secondary group-hover:bg-accent-soft">
                     <Bell className="size-[18px]" />
+                    <span className="absolute right-1 top-1 size-2 rounded-full bg-red-500 ring-2 ring-background" aria-label="New STRAP update" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-semibold">Notifications</span>

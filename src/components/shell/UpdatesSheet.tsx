@@ -390,9 +390,12 @@ export function UpdatesSheet() {
             >
               <Bell className="size-[18px]" />
               {unread > 0 && (
-                <span className="absolute right-1 top-1 flex min-w-4 items-center justify-center rounded-full bg-foreground px-1 text-[9px] font-bold leading-4 text-background">
-                  {unread > 9 ? "9+" : unread}
-                </span>
+                <>
+                  <span className="absolute right-1 top-1 size-2 rounded-full bg-red-500 ring-2 ring-background" aria-label="Unread update" />
+                  <span className="absolute -bottom-1 -right-1 flex min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold leading-4 text-white">
+                    {unread > 9 ? "9+" : unread}
+                  </span>
+                </>
               )}
             </button>
           </PopoverTrigger>

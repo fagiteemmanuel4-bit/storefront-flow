@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   ArrowLeft,
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/customer-account")({
+  beforeLoad: () => { throw redirect({ to: "/" }); },
   validateSearch: (search: Record<string, unknown>) => ({
     store: typeof search.store === "string" ? search.store : "",
     order: typeof search.order === "string" ? search.order : "",

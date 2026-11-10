@@ -1,5 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
+export const PLATFORM_UPGRADE_MODE = true;
+
 export type PlanCode = "free" | "business" | "pro";
 export type SubscriptionState = { plan: PlanCode; status: string; interval: "month" | "year" };
 
@@ -13,6 +15,7 @@ export const PAID_AREAS = new Set([
 ]);
 
 export async function getStoreSubscription(storeId: string): Promise<SubscriptionState> {
+  if (PLATFORM_UPGRADE_MODE) return { plan: "pro", status: "active", interval: "month" };
   const { data, error } = await supabase
     .from("store_subscriptions")
     .select("plan_code,status,interval")
@@ -36,5 +39,6 @@ export function hasEntitlement(subscription: SubscriptionState, required: "busin
 }
 
 export function isPaidArea(pathname: string) {
+  if (PLATFORM_UPGRADE_MODE) return false;
   return [...PAID_AREAS].some((path) => pathname === path || pathname.startsWith(`${path}/`));
 }

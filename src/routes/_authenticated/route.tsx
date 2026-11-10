@@ -9,6 +9,10 @@ import { isPaidArea } from "@/lib/plan-access";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async ({ location }) => {
+    const hiddenDuringUpgrade = ["/online-store", "/store-editor", "/settings/online-store"];
+    if (hiddenDuringUpgrade.some((path) => location.pathname === path || location.pathname.startsWith(`${path}/`))) {
+      throw redirect({ to: "/dashboard", replace: true });
+    }
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });
     if (!data.user.email_confirmed_at) {
