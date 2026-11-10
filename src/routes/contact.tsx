@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/site/MarketingMotion";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BookOpen, Building2, LifeBuoy, MessageSquareText } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
@@ -54,7 +55,7 @@ function ContactPage() {
     <div className="marketing-site min-h-screen">
       <SiteHeader />
       <main>
-        <section className="mx-auto w-[min(1240px,calc(100%-56px))] py-16 sm:py-24">
+        <Reveal><section className="mx-auto w-[min(1240px,calc(100%-56px))] py-16 sm:py-24">
           <div className="max-w-3xl">
             <p className="marketing-eyebrow">Contact Strap</p>
             <h1 className="mt-4 font-display text-5xl font-bold leading-[.98] tracking-[-.06em] sm:text-6xl">Start with the right support channel.</h1>
@@ -70,15 +71,15 @@ function ContactPage() {
               </article>
             ))}
           </div>
-        </section>
-        <section className="marketing-info-cta">
+        </section></Reveal>
+        <Reveal><section className="marketing-info-cta">
           <div>
             <p className="marketing-eyebrow">A more useful conversation</p>
             <h2>Tell us what you are trying to get done.</h2>
             <p>For account-related issues, include the workspace and page you were using when you contact the Strap team through the in-app feedback option.</p>
           </div>
           <Link to="/auth" className="marketing-button">Open your workspace <ArrowRight size={15}/></Link>
-        </section>
+        </section></Reveal>
       </main>
       <SiteFooter />
       <SeoJsonLd data={crumbs} />
