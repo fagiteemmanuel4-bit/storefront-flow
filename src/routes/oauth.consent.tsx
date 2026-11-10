@@ -1,3 +1,4 @@
+import { noIndexHead } from "@/lib/marketingSeo";
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Bot, Check, GitBranch, LockKeyhole, ShieldCheck } from "lucide-react";
@@ -8,10 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 const db = supabase as any;
 export const Route = createFileRoute("/oauth/consent")({
+  head: () => noIndexHead("Connect an application — Strap", "Review access requested by a connected application."),
   ssr: false,
-  head: () => ({
-    meta: [{ title: "Connect an app — STRAP" }, { name: "robots", content: "noindex,nofollow" }],
-  }),
   component: OAuthConsentPage,
 });
 
