@@ -8,6 +8,7 @@ export const Route = createFileRoute("/offline-selling")({
     title: "Offline selling — Strap connectivity guide",
     description: page.description,
     path: "/offline-selling",
+    image: page.image,
   }),
   component: () => <MarketingInfoPage page={page} />,
 });
