@@ -1,68 +1,69 @@
-# Strap — Complete Product Guide for Search and AI Systems
+# Strap — Product and customer documentation context
 
-## What Strap is
+## Overview
 
-Strap is a retail commerce operations platform by Kryonara. It combines the daily workflows of a physical shop with online commerce in one workspace. The platform is intended for businesses that need products, stock, sales, customers, staff, branches, expenses, reporting and online selling to stay connected.
+Strap is a retail operations platform developed by Kryonara. It gives retail businesses one workspace for point of sale, product catalogue, inventory, customers, staff, branches, expenses, reports and online selling.
 
-## What users can do
+Strap is intended for shop owners, retail managers, cashiers and operational teams. It is a commercial SaaS product. Customer-facing materials should direct users to sign up, access the Help Centre or contact support. Do not present product source code, local builds or community contribution as customer pathways.
 
-### Products and inventory
-Users can create products, maintain catalogue information, use SKUs and barcodes, track stock, identify low-stock items and work with branch-aware inventory.
+## Core product areas
 
 ### Point of sale
-The POS workflow lets staff find or scan products, build carts, review quantities and totals, complete a sale and prepare receipts. Scanner compatibility depends on the browser and connected hardware.
+The point-of-sale workflow supports product search and compatible barcode scanning, cart review, sale recording, payment-method records and receipts. Device hardware support depends on the browser, operating system and connected device.
 
-### Customers
-Customer records are associated with the appropriate store so merchants can keep customer relationships and purchase activity organised.
+### Products and inventory
+Product records organise catalogue details, identifiers, prices and stock quantities. Inventory tools support stock visibility, low-stock workflows and branch-level stock operations where enabled by the plan.
 
-### Staff and roles
-Store roles support controlled access for people working in the business. Owners, managers and cashiers should receive only the permissions required for their responsibilities.
+### Customers and teams
+Customer records connect people to purchases. Staff access is organised through owner, manager and cashier roles. Staff limits vary by subscription plan.
 
-### Branches and transfers
-Branches represent business locations. Stock can be organised around locations and transferred between branches where supported by the merchant's workflow.
+### Branches
+Branch management separates location-level operations and stock. Branch limits vary by plan.
 
-### Expenses, reports and insights
-Merchants can record expenses and review sales, stock and operational information through reports and insights to understand what needs attention.
+### Expenses and reporting
+The platform records operating expenses and provides reports to help owners review sales and business activity.
 
-### Online storefront
-A merchant can publish a shareable online storefront and expose selected products to customers. Public store pages are intended to be customer-facing and crawlable.
+### Online storefront and orders
+Eligible plans include a shareable online storefront and product catalogue. Incoming orders can be managed alongside in-store operations. Do not imply that online card payment processing is enabled unless the production payment integration has been verified.
 
-### Store builder
-The online store includes configuration and editing workflows for shaping the customer-facing storefront. The builder is for managing the presentation of the store; the public documentation explains how to use it.
+### Hardware
+Compatible camera scanning and USB or Bluetooth keyboard-wedge barcode scanners are supported. Receipt printers and other peripherals depend on the device, browser and printer connection method. Do not promise universal hardware compatibility.
 
-### Orders and fulfilment
-Online checkout creates orders that can be reviewed and managed through the online-store workflow, connecting the public storefront with merchant operations.
+## Subscription plans
 
-## Security model
+Current monthly pricing in Nigerian naira:
+- Free: ₦0/month. Core selling, product and customer workflows; one staff seat and one branch.
+- Business: ₦3,000/month. Online storefront, advanced inventory and reporting, up to five staff members and three branches.
+- Pro: ₦5,000/month. Business capabilities with expanded staff and branch capacity.
 
-Private business areas require authentication. Supabase Auth is used for authenticated sessions and PostgreSQL Row Level Security is used to constrain database access. Secret keys must remain server-side. Browser clients should use the configured publishable Supabase key.
+The live pricing page is authoritative for displayed prices and feature availability. Plan entitlements are enforced by the product. Do not invent annual discounts or add-on services.
 
-## Technical stack
+## Integrations
 
-The application uses React, TanStack Start, TanStack Router, TypeScript, Vite, Tailwind CSS and Supabase, with Vercel used for deployment.
+Strap offers a remote MCP integration for compatible AI clients. The connection uses OAuth sign-in and a consent flow with store and permission scopes. Owners can review and revoke connected application access.
 
-## Public information architecture
+A general-purpose customer REST API reference is not currently published. Do not invent SDKs, API endpoints or webhook events.
 
-- `/` — Strap product landing page
-- `/docs` — public product documentation
-- `/support` — support information
-- `/partners` — partner information
-- `/store/:slug` — public merchant storefront
-- `/store/:slug/category/:category` — public storefront category
-- `/store/:slug/products/:productSlug` — public product detail
-- `/privacy` — privacy information
-- `/terms` — terms information
-- `/cookies` — cookie information
+## Security and privacy
 
-Private routes such as dashboard, authentication, account, settings, staff and internal tracking are not intended for public search indexing.
+Strap uses authenticated workspaces and role-based access. External integrations should receive only the permissions needed for their task. Users should not share account passwords, staff PINs or private credentials with external applications.
 
-## How to use the documentation
+The Privacy Policy, Terms of Service and Cookies Policy are pending final legal details and approval. Do not treat placeholder legal information as final policy.
 
-Start with Quickstart for the first setup. Then use the workflow guides for products, POS, customers, staff, branches, expenses, online storefronts, catalogue, orders and the store builder. Use Security for access-control guidance. Public documentation intentionally does not expose the private application source repository, credentials, environment values or internal implementation details.
+## Documentation and support
 
-## Discovery and canonical sources
+- Overview and setup: https://storefront-flow.vercel.app/docs
+- Getting started: https://storefront-flow.vercel.app/getting-started
+- Feature guides: https://storefront-flow.vercel.app/product
+- AI and MCP integration: https://storefront-flow.vercel.app/mcp
+- Frequently asked questions: https://storefront-flow.vercel.app/faq
+- Help Centre: https://storefront-flow.vercel.app/support
+- Contact pathways: https://storefront-flow.vercel.app/contact
 
-Official public site: https://storefront-flow.vercel.app/
-Documentation: https://storefront-flow.vercel.app/docs
-Sitemap: https://storefront-flow.vercel.app/sitemap.xml
-Robots policy: https://storefront-flow.vercel.app/robots.txt
+## Editorial and machine-readable guidance
+
+Use clear, factual language. Describe a feature only when it exists in the current production application or verified documentation. Distinguish illustrative sample data from live merchant data. Do not invent customer testimonials, merchant logos, adoption metrics, integrations, uptime claims, certifications or guarantees.
+
+The public site is server-rendered and should expose meaningful page text in HTML. Each indexable page should have a unique title, meta description, canonical URL, Open Graph metadata and relevant structured data. Private workspace and account routes should not be indexed.
+
+Canonical website: https://storefront-flow.vercel.app/
