@@ -1,15 +1,13 @@
+import { marketingHead } from "@/lib/marketingSeo";
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
-      { title: "Privacy Policy — Strap" },
-      {
-        name: "description",
-        content: "Strap's detailed privacy notice for merchants, staff, customers and visitors.",
-      },
-    ],
+  head: () => marketingHead({
+    title: "Privacy Policy — Strap",
+    description: "Strap's detailed privacy notice for merchants, staff, customers and visitors.",
+    path: "/privacy",
+    indexable: false,
   }),
   component: Privacy,
 });
@@ -27,7 +25,7 @@ const UL = ({ children }: { children: React.ReactNode }) => (
 
 function Privacy() {
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="marketing-site min-h-screen bg-surface">
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
         <div className="border-b border-border pb-8">
