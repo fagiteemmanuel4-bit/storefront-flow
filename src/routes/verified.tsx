@@ -1,10 +1,12 @@
+import { noIndexHead } from "@/lib/marketingSeo";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthBrand } from "@/components/auth/AuthBrand";
 import "@/strap-auth.css";
 
-export const Route = createFileRoute("/verified")({ ssr: false, component: VerifiedPage });
+export const Route = createFileRoute("/verified")({
+  head: () => noIndexHead("Account verification — Strap", "Account verification status for Strap."), ssr: false, component: VerifiedPage });
 
 function safeNext(value: string | null) {
   if (!value || !value.startsWith("/") || value.startsWith("//")) return "/auth";
