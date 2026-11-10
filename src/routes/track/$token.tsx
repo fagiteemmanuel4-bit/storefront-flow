@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { noIndexHead } from "@/lib/marketingSeo";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, Clock3, Package, Truck, XCircle } from "lucide-react";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { formatMoney } from "@/lib/currency";
 
-export const Route = createFileRoute("/track/$token")({ ssr: false, component: OrderTrackingPage });
+export const Route = createFileRoute("/track/$token")({ ssr: false, head: () => noIndexHead("Order tracking — Strap"), component: OrderTrackingPage });
 
 type Tracking = {
   found: boolean;
