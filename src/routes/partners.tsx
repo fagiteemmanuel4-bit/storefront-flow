@@ -1,7 +1,7 @@
 import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
 import { marketingHead, breadcrumbSchema } from "@/lib/marketingSeo";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   ArrowLeft,
@@ -14,7 +14,6 @@ import {
   Truck,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
