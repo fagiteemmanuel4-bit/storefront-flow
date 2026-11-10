@@ -284,8 +284,8 @@ function AuthPage() {
           </svg>
           <StrapLogo />
           <div className="strap-auth-hero">
-            <h2>Run the shop. Don’t run after the paperwork.</h2>
-            <p>Your business deserves a system you can trust.</p>
+            <h2>Your shop. Your sales. Your next move.</h2>
+            <p>Everything you need to run your business, in one place.</p>
           </div>
           <small className="strap-auth-copy">© 2026 Strap by Kryonara</small>
         </aside>

@@ -7,9 +7,9 @@ const KEY = "strap-theme";
 function readLocal(): Theme {
   try {
     const value = localStorage.getItem(KEY);
-    return value === "light" || value === "dark" || value === "system" ? value : "light";
+    return value === "light" || value === "dark" || value === "system" ? value : "dark";
   } catch {
-    return "light";
+    return "dark";
   }
 }
 function apply(theme: Theme) {
@@ -46,7 +46,7 @@ export function ThemeProvider({
     let cancelled = false;
     void supabase.auth.getUser().then(async ({ data }) => {
       if (!data.user) {
-        if (!cancelled) setTheme("light");
+        if (!cancelled) setTheme("dark");
         return;
       }
       if (cancelled) return;
@@ -57,7 +57,7 @@ export function ThemeProvider({
         .maybeSingle();
       const value = profile?.theme_preference as Theme | undefined;
       if (!cancelled)
-        setTheme(value === "light" || value === "dark" || value === "system" ? value : "light");
+        setTheme(value === "light" || value === "dark" || value === "system" ? value : "dark");
     });
     return () => {
       cancelled = true;
@@ -65,7 +65,7 @@ export function ThemeProvider({
   }, []);
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") setTheme("light");
+      if (event === "SIGNED_OUT") setTheme("dark");
     });
     return () => data.subscription.unsubscribe();
   }, []);

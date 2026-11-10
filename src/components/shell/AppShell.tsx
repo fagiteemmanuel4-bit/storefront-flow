@@ -17,7 +17,6 @@ import {
   HelpCircle,
   LayoutDashboard,
   LockKeyhole,
-  Network,
   LogOut,
   Package,
   PanelLeftClose,
@@ -91,7 +90,6 @@ const SECONDARY_NAV = [
 ] as const;
 
 const MORE_NAV = [
-  { to: "/connect", label: "STRAP Connect", icon: Network, area: "pos" },
   { to: "/insights", label: "Insights", icon: TrendingUp, area: "reports" },
   { to: "/branches", label: "Branches", icon: GitBranch, area: "staff" },
   { to: "/stock-sense", label: "Stock Sense", icon: Boxes, area: "products" },
@@ -421,10 +419,6 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
     await supabase.auth.signOut();
     void navigate({ to: "/auth", replace: true });
   }
-  if (pathname === "/connect-supplier-setup") {
-    return <div className="min-h-[100dvh] w-full overflow-hidden bg-background">{children}</div>;
-  }
-
   return (
     <div className="kudi-app-shell min-h-[100dvh] overflow-x-hidden bg-background lg:pb-0">
       {routeLoading && (
