@@ -77,7 +77,7 @@ export function InteractiveProductStage() {
         </div>
 
         <div className="product-stage__app">
-          <aside className="product-stage__sidebar" aria-label="Preview navigation">
+          <aside className="product-stage__sidebar" aria-hidden="true">
             <span className="product-stage__store"><Store size={15} /> Northside Market</span>
             <span className="product-stage__nav product-stage__nav--active"><BarChart3 size={15} /> Overview</span>
             <span className="product-stage__nav"><ShoppingBag size={15} /> Sales</span>
@@ -107,7 +107,9 @@ export function InteractiveProductStage() {
                   type="button"
                   role="tab"
                   aria-selected={tab === value}
+                  id={`strap-preview-tab-${value}`}
                   aria-controls="strap-preview-panel"
+                  tabIndex={tab === value ? 0 : -1}
                   onClick={() => setTab(value)}
                   className={tab === value ? "is-active" : ""}
                 >
@@ -116,7 +118,7 @@ export function InteractiveProductStage() {
               ))}
             </div>
 
-            <div id="strap-preview-panel" className="product-stage__panel" role="tabpanel">
+            <div id="strap-preview-panel" className="product-stage__panel" role="tabpanel" aria-labelledby={`strap-preview-tab-${tab}`}>
               {tab === "overview" && (
                 <>
                   <div className="product-stage__metrics">
