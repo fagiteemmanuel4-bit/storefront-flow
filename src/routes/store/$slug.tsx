@@ -1,3 +1,4 @@
+import { publicServerSupabase } from "@/integrations/supabase/public-server";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/store/$slug")({
   ssr: true,
   loader: async ({ params }) => {
     const slug = params.slug.toLowerCase().trim();
-    const { data: storeData, error: storeError } = await onlineSupabase
+    const { data: storeData, error: storeError } = await publicServerSupabase
       .from("online_stores")
       .select("id,store_id,slug,display_name,logo_url,display_email,display_phone,description,shipping_note,checkout_note,is_published,setup_completed")
       .eq("slug", slug)
@@ -32,15 +33,15 @@ export const Route = createFileRoute("/store/$slug")({
       .maybeSingle();
     if (storeError) throw new Error(storeError.message);
     if (!storeData) throw new Error("Storefront not found");
-    const { data: merchant } = await onlineSupabase
+    const { data: merchant } = await publicServerSupabase
       .from("stores")
       .select("currency")
       .eq("id", storeData.store_id)
       .maybeSingle();
     const store = { ...storeData, currency: merchant?.currency ?? "NGN" } as Store;
     const [{ data: catalog, error: catalogError }, { data: heroes, error: heroesError }] = await Promise.all([
-      (onlineSupabase as any).rpc("get_public_store_catalog_v2", { _slug: slug }),
-      onlineSupabase
+      (publicServerSupabase as any).rpc("get_public_store_catalog_v2", { _slug: slug }),
+      publicServerSupabase
         .from("store_hero_banners")
         .select("id,image_url,title,subtitle,sort_order")
         .eq("store_id", store.store_id)
