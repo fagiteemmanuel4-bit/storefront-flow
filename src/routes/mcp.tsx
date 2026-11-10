@@ -1,24 +1,22 @@
+import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
+import { marketingHead } from "@/lib/marketingSeo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Boxes, CheckCircle2, LockKeyhole, ShieldCheck, Workflow } from "lucide-react";
 
 export const Route = createFileRoute("/mcp")({
-  head: () => ({
-    meta: [
-      { title: "STRAP MCP — Manage your AI assistant connections" },
-      {
-        name: "description",
-        content:
-          "Learn how STRAP MCP connects AI applications securely, with per-connection branch scopes, read permissions, write permissions and revocation.",
-      },
-    ],
+  head: () => marketingHead({
+    title: "Strap MCP — Connect AI assistants to your retail workspace",
+    description: "Learn how Strap MCP connects supported AI clients with scoped store access, permissions and connection controls.",
+    path: "/mcp",
   }),
   component: StrapMcpLearnPage,
 });
 
 function StrapMcpLearnPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border">
+    <div className="marketing-site min-h-screen">
+      <SiteHeader />
+      <main className="bg-background text-foreground">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <Link to="/" className="flex items-center gap-3">
             <img src="/favicon.svg" alt="STRAP" className="size-9" />
@@ -35,7 +33,7 @@ function StrapMcpLearnPage() {
       <div className="mx-auto max-w-5xl px-5 pb-20 pt-14 sm:pt-20">
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-3 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
-            <span className="size-2 rounded-full bg-emerald-500" /> STRAP MCP SERVER IS LIVE
+            <span className="size-2 rounded-full bg-emerald-500" /> Strap MCP SERVER IS LIVE
           </div>
           <h1 className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-6xl">
             Your store data. Your AI assistant. Your rules.
@@ -48,7 +46,7 @@ function StrapMcpLearnPage() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              to="/settings/ai-agents"
+              to="/auth"
               className="rounded-xl bg-[#c6f432] px-5 py-3 text-sm font-bold text-[#0e1116]"
             >
               Configure AI access
@@ -233,7 +231,7 @@ function StrapMcpLearnPage() {
           <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground">
             STRAP MCP uses a remote Streamable HTTP endpoint. Add the endpoint in an AI client that
             supports remote MCP servers and OAuth authentication. The client will guide you through
-            STRAP sign-in and a consent screen where you choose the store, branches and permissions
+            Strap sign-in and a consent screen where you choose the store, branches and permissions
             for that connection. Existing connections can be edited in Settings → Connected
             applications without removing the client first. Availability and setup steps vary by AI
             provider and subscription.
@@ -254,7 +252,7 @@ function StrapMcpLearnPage() {
               Manage connected applications
             </Link>
             <Link
-              to="/settings"
+              to="/auth"
               className="rounded-xl border border-border px-5 py-3 text-sm font-semibold"
             >
               Back to settings
@@ -263,7 +261,7 @@ function StrapMcpLearnPage() {
         </section>
 
         <footer className="mt-20 border-t border-border pt-7 text-sm text-muted-foreground">
-          STRAP is developed by Kryonara. MCP access is an optional integration; your core STRAP
+          Strap is developed by Kryonara. MCP access is an optional integration; your core STRAP
           workspace continues to work if you disconnect an AI client.
         </footer>
       </div>
