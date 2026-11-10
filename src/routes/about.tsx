@@ -1,3 +1,4 @@
+import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Bot, PlayCircle, ShieldCheck, Store, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -75,7 +76,8 @@ function AboutPage() {
           </Link>
         </div>
       </div>
-    </main>
+            <RetailVisualGallery />
+      </main>
   );
 }
 function Value({ icon: Icon, title, text }: { icon: typeof Store; title: string; text: string }) {
