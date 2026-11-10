@@ -19,6 +19,7 @@ import { PricingSection } from "@/components/site/PricingSection";
 import { RetailVisualGallery } from "@/components/site/RetailVisualGallery";
 import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { marketingHead } from "@/lib/marketingSeo";
+import { FAQ_ITEMS, FAQ_PAGE_SCHEMA } from "@/lib/faqContent";
 
 const features = [
   {
@@ -78,26 +79,6 @@ const shopTypes = [
   { icon: Package, title: "Electronics and accessories", text: "Keep product identifiers, inventory and customer records together." },
   { icon: Wallet, title: "Food service and specialty retail", text: "Connect daily selling, stock and operating costs." },
 ];
-
-const faqs = [
-  ["What is Strap?", "Strap is a retail operations platform that connects point of sale, products, inventory, customers, staff, branches, expenses, reports and online selling in one workspace."],
-  ["Can I use Strap on a phone and a computer?", "Yes. Strap is designed for use across mobile, tablet and desktop screens. Device and browser capabilities can vary for hardware workflows."],
-  ["Can I scan products at the counter?", "Strap supports camera scanning on compatible devices and compatible USB or Bluetooth keyboard-wedge barcode scanners."],
-  ["Can I manage more than one branch?", "Yes. Branch management is available on eligible plans, with branch limits depending on the selected plan."],
-  ["Can I sell online with Strap?", "Yes. Business and Pro plans include an online storefront and catalogue workflow for publishing products and managing incoming orders."],
-  ["Does Strap process online card payments?", "Merchant payment processing is not currently enabled as a production feature. The product can record configured payment methods for in-store sales."],
-  ["How do I get help?", "Visit the Help Centre for setup instructions and product guides, or use the in-app feedback option to report an issue."],
-];
-
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map(([question, answer]) => ({
-    "@type": "Question",
-    name: question,
-    acceptedAnswer: { "@type": "Answer", text: answer },
-  })),
-};
 
 export function Landing() {
   return (
@@ -224,7 +205,7 @@ export function Landing() {
             <Link to="/faq" className="marketing-text-link">Visit the FAQ <ArrowRight size={15} /></Link>
           </div>
           <div className="marketing-faq__list">
-            {faqs.map(([question, answer]) => (
+            {FAQ_ITEMS.map(({ question, answer }) => (
               <details key={question}>
                 <summary>{question}<span aria-hidden="true">+</span></summary>
                 <p>{answer}</p>
@@ -243,7 +224,7 @@ export function Landing() {
         </section>
       </main>
       <SiteFooter />
-      <SeoJsonLd data={faqSchema} />
+      <SeoJsonLd data={FAQ_PAGE_SCHEMA} />
     </div>
   );
 }
