@@ -26,7 +26,7 @@ export const PREMIUM_PLANS = {
       "Everything in Free",
       "Online storefront and public catalog",
       "Storefront categories and product layouts",
-      "Stripe connection for eligible merchant accounts",
+      "Stripe connection for eligible merchant accounts (coming soon)",
       "Staff and team controls",
       "Advanced stock tools and data export",
     ],
