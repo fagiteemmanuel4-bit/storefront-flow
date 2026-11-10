@@ -1,3 +1,4 @@
+import { publicServerSupabase } from "@/integrations/supabase/public-server";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/store/$slug/category/$category")({
   ssr: true,
   loader: async ({ params }) => {
     const category = decodeURIComponent(params.category);
-    const { data, error } = await onlineSupabase.rpc("get_public_store_category_products", {
+    const { data, error } = await publicServerSupabase.rpc("get_public_store_category_products", {
       _store_slug: params.slug,
       _category: category,
       _limit: 100,
