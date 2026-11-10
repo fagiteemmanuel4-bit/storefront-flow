@@ -33,6 +33,7 @@ const COLUMNS = [
       ["Inventory", "/inventory-management"],
       ["Insights", "/business-insights"],
       ["Team access", "/team-management"],
+      ["Customer records", "/customer-management"],
     ],
   },
   {
@@ -40,6 +41,8 @@ const COLUMNS = [
     links: [
       ["Fast checkout", "/checkout"],
       ["Online store", "/online-store"],
+      ["Online orders", "/online-orders"],
+      ["Storefront design", "/storefront-design"],
       ["Barcode & QR scanning", "/barcode-scanning"],
       ["Receipts", "/receipts-and-printing"],
       ["Hardware", "/retail-hardware"],
@@ -55,6 +58,7 @@ const COLUMNS = [
       ["Store security", "/store-security"],
       ["Shop teams", "/team-management"],
       ["FAQs", "/faq"],
+      ["Expenses", "/expense-management"],
     ],
   },
 ] as const;
@@ -63,9 +67,13 @@ const RESOURCES = [
   ["Help Centre", "/support", CircleHelp],
   ["Guides & documentation", "/docs", BookOpen],
   ["Getting started", "/getting-started", Zap],
+  ["Payments & transactions", "/payments-and-transactions", CreditCard],
   ["Hardware Center", "/retail-hardware", ScanLine],
   ["Receipt printing help", "/receipts-and-printing", Printer],
   ["Contact support", "/contact", Mail],
+  ["Frequently asked questions", "/faq", CircleHelp],
+  ["Product imports", "/product-imports", Package],
+  ["Offline selling", "/offline-selling", Smartphone],
 ] as const;
 
 const NAV_ITEMS = [
