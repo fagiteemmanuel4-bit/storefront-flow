@@ -10,6 +10,7 @@ export const Route = createFileRoute("/about")({
     title: "About Strap — Retail operations software by Kryonara",
     description: "Learn about Strap, the retail operations platform from Kryonara that connects selling, inventory, teams, reporting and online commerce.",
     path: "/about",
+    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1400&q=82",
   }),
   component: AboutPage,
 });
