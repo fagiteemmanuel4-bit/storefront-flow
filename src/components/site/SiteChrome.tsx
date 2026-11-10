@@ -30,7 +30,7 @@ const footerGroups = [
   {
     title: "Online commerce",
     links: [
-      ["Online store", "/online-store"],
+      ["Online store", "/online-store-platform"],
       ["Online orders", "/online-orders"],
       ["Storefront design", "/storefront-design"],
       ["Payments and transactions", "/payments-and-transactions"],
@@ -78,7 +78,7 @@ export function SiteHeader() {
           <Link to="/product">Product</Link>
           <Link to="/how-it-works">How it works</Link>
           <Link to="/pricing">Pricing</Link>
-          <Link to="/online-store">Online store</Link>
+          <Link to="/online-store-platform">Online store</Link>
           <Link to="/docs">Resources</Link>
         </nav>
 
@@ -105,7 +105,7 @@ export function SiteHeader() {
           <Link to="/product" onClick={closeMenu}>Product</Link>
           <Link to="/how-it-works" onClick={closeMenu}>How it works</Link>
           <Link to="/pricing" onClick={closeMenu}>Pricing</Link>
-          <Link to="/online-store" onClick={closeMenu}>Online store</Link>
+          <Link to="/online-store-platform" onClick={closeMenu}>Online store</Link>
           <Link to="/docs" onClick={closeMenu}>Documentation</Link>
           <Link to="/support" onClick={closeMenu}>Help Centre</Link>
           <Link to="/auth" onClick={closeMenu} className="marketing-mobile-nav__cta">Start free <ArrowRight size={15} /></Link>
