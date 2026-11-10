@@ -1,5 +1,6 @@
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
-import { marketingHead } from "@/lib/marketingSeo";
+import { marketingHead, breadcrumbSchema } from "@/lib/marketingSeo";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
@@ -201,6 +202,7 @@ function PartnersPage() {
       </div>
       </main>
       <SiteFooter />
+      <SeoJsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Partners", path: "/partners" }])} />
     </div>
   );
 }
