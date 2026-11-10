@@ -2,45 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Check, Crown, LockKeyhole } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PREMIUM_FEATURES, formatNaira } from "@/lib/premiumPlans";
+import { PREMIUM_FEATURES, PREMIUM_PLANS, formatNaira } from "@/lib/premiumPlans";
 
-const plans = [
-  {
-    code: "free",
-    name: "Free",
-    monthly: 0,
-    yearly: 0,
-    description: "The essentials for getting a shop running.",
-    features: ["POS selling", "Product catalogue", "Customer records", "Core trading workspace"],
-  },
-  {
-    code: "business",
-    name: "Business",
-    monthly: 3000,
-    yearly: 28800,
-    description: "Online selling and tools for a growing shop.",
-    features: [
-      "Everything in Free",
-      "Online store",
-      "Staff & permissions",
-      "Multiple branches",
-      "Data export",
-    ],
-  },
-  {
-    code: "pro",
-    name: "Pro",
-    monthly: 5000,
-    yearly: 48000,
-    description: "Deeper control for teams and multi-location operations.",
-    features: [
-      "Everything in Business",
-      "Advanced inventory",
-      "Advanced reports",
-      "More operational controls",
-    ],
-  },
-];
+const plans = Object.entries(PREMIUM_PLANS).map(([code, plan]) => ({
+  code,
+  name: plan.name,
+  monthly: plan.price,
+  yearly: plan.yearlyPrice,
+  description: plan.description,
+  features: plan.features,
+}));
 
 export const Route = createFileRoute("/_authenticated/upgrade")({ component: UpgradePage });
 
