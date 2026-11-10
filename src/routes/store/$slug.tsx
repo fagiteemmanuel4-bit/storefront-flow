@@ -334,6 +334,24 @@ function PublicStorefrontPage() {
       </main>
     );
   const activeHero = heroes[heroIndex];
+  const storeCanonical = `${SITE_URL}/store/${encodeURIComponent(store.slug)}`;
+  const storeJsonLd = buildStoreJsonLd({
+    name: store.display_name,
+    slug: store.slug,
+    description: store.description,
+    logoUrl: store.logo_url,
+    phone: store.display_phone,
+    email: store.display_email,
+    url: storeCanonical,
+  });
+  const storeBreadcrumbs = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Strap", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: store.display_name, item: storeCanonical },
+    ],
+  };
 
   return (
     <main className="storefront-shell min-h-screen bg-background">
@@ -797,6 +815,8 @@ function PublicStorefrontPage() {
           </div>
         </div>
       )}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(storeJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(storeBreadcrumbs) }} />
     </main>
   );
 }
