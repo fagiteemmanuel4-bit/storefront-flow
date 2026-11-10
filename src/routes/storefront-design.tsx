@@ -12,5 +12,5 @@ export const Route = createFileRoute("/storefront-design")({
     path: "/storefront-design",
     image: page.image,
   }),
-  component: () => <MarketingInfoPage page={page} />,
+  component: () => <MarketingInfoPage page={page} path="/storefront-design" />,
 });
