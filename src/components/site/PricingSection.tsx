@@ -40,8 +40,7 @@ const plans = [
       "Everything in Business",
       "Unlimited staff members",
       "Unlimited branches",
-      "Advanced inventory and reporting tools",
-      "Storefront layouts and featured products",
+      "Expanded operational capacity for larger teams",
     ],
   },
 ];
