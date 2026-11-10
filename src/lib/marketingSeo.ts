@@ -59,6 +59,7 @@ export function noIndexHead(title: string, description?: string) {
       ...(description ? [{ name: "description", content: description }] : []),
       { name: "robots", content: "noindex, nofollow" },
       { name: "googlebot", content: "noindex, nofollow" },
+      { name: "bingbot", content: "noindex, nofollow" },
     ],
   };
 }
