@@ -12,5 +12,5 @@ export const Route = createFileRoute("/store-security")({
     path: "/store-security",
     image: page.image,
   }),
-  component: () => <MarketingInfoPage page={page} />,
+  component: () => <MarketingInfoPage page={page} path="/store-security" />,
 });
