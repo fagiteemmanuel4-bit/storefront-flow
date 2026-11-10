@@ -5,6 +5,7 @@ import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { formatMoney } from "@/lib/currency";
 import { buildProductJsonLd, buildStoreJsonLd, serializeJsonLd } from "@/lib/storefront-seo";
 import { Button } from "@/components/ui/button";
+import { marketingHead, SITE_URL } from "@/lib/marketingSeo";
 
 type PublicProduct = {
   store_id: string;
@@ -41,11 +42,28 @@ type RelatedProduct = {
 
 export const Route = createFileRoute("/store/$slug/products/$productSlug")({
   ssr: true,
+  loader: async ({ params }) => {
+    const { data, error } = await onlineSupabase.rpc("get_public_store_product", {
+      _store_slug: params.slug,
+      _product_slug: params.productSlug,
+    });
+    if (error) throw new Error(error.message);
+    const row = Array.isArray(data) ? data[0] : data;
+    if (!row) throw new Error("Product not found");
+    return row as PublicProduct;
+  },
+  head: ({ loaderData }) => marketingHead({
+    title: loaderData ? `${loaderData.product_name} — ${loaderData.store_name}` : "Product details",
+    description: loaderData?.product_description || `View ${loaderData?.product_name ?? "this product"} from ${loaderData?.store_name ?? "this store"}.`,
+    path: loaderData ? `/store/${encodeURIComponent(loaderData.store_slug)}/products/${encodeURIComponent(loaderData.product_slug)}` : "/store",
+    image: loaderData?.product_image_url || undefined,
+  }),
   component: PublicProductPage,
 });
 
 function PublicProductPage() {
   const { slug, productSlug } = Route.useParams();
+  const initialProduct = Route.useLoaderData();
   const query = useQuery({
     queryKey: ["public-store-product", slug, productSlug],
     queryFn: async () => {
@@ -59,6 +77,7 @@ function PublicProductPage() {
       return row as PublicProduct;
     },
     retry: false,
+    initialData: initialProduct,
   });
 
   const relatedQuery = useQuery({
@@ -124,7 +143,7 @@ function PublicProductPage() {
       ? product.product_image_urls
       : [product.product_image_url].filter(Boolean)
   ) as string[];
-  const canonical = `/store/${encodeURIComponent(product.store_slug)}/products/${encodeURIComponent(product.product_slug)}`;
+  const canonical = `${SITE_URL}/store/${encodeURIComponent(product.store_slug)}/products/${encodeURIComponent(product.product_slug)}`;
   const productJsonLd = buildProductJsonLd({
     name: product.product_name,
     description: product.product_description ?? undefined,
@@ -140,8 +159,19 @@ function PublicProductPage() {
     name: product.store_name,
     description: product.store_description ?? undefined,
     logoUrl: product.store_logo_url ?? undefined,
-    url: `/store/${encodeURIComponent(product.store_slug)}`,
+    url: `${SITE_URL}/store/${encodeURIComponent(product.store_slug)}`,
   });
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: product.store_name, item: `${SITE_URL}/store/${encodeURIComponent(product.store_slug)}` },
+      { "@type": "ListItem", position: 3, name: product.product_name, item: canonical },
+    ],
+  };
+
+
 
   return (
     <main className="min-h-screen bg-background">
@@ -153,6 +183,7 @@ function PublicProductPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(storeJsonLd) }}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }} />
       <header className="border-b border-border bg-surface/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 lg:px-8">
           <Link
