@@ -17,6 +17,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/lib/format";
 
+import { ScreenHelpInfo } from "@/components/support/ScreenHelpInfo";
+
 export const Route = createFileRoute("/_authenticated/notifications")({
   component: NotificationsPage,
 });
@@ -206,6 +208,14 @@ function NotificationsPage() {
   return (
     <AppShell title="Notifications">
       <div className="mx-auto max-w-4xl space-y-5">
+        <ScreenHelpInfo
+          title="Notification Dispatch Center"
+          description="Real-time security alerts, order triggers, stock velocity warnings, and system announcements."
+          tips={[
+            "Critical inventory alerts notify your team automatically when thresholds are crossed.",
+            "Account suspension flags or security warnings appear instantly at the top of this feed.",
+          ]}
+        />
         <section className="surface-card overflow-hidden">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-5 sm:px-6">
             <div className="min-w-0">

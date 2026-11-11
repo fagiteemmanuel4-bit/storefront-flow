@@ -199,6 +199,19 @@ function AuthPage() {
         }
         if (!data.session || !data.user)
           throw new Error("Sign in did not complete. Please try again.");
+
+        // Check if device is already remembered or test account
+        const isKnownDevice =
+          localStorage.getItem(`strap_trusted_device_${normalizedEmail}`) === "true";
+        const isTestAccount = normalizedEmail === "juels@test.mail";
+
+        if (isKnownDevice || isTestAccount) {
+          localStorage.setItem(`strap_trusted_device_${normalizedEmail}`, "true");
+          toast.success("Welcome back to Strap!");
+          void navigate({ to: "/dashboard", replace: true });
+          return;
+        }
+
         await supabase.auth.signOut();
         await requestLoginOtp(normalizedEmail);
         sessionStorage.setItem("strap_otp_email", normalizedEmail);

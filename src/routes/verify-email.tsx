@@ -67,6 +67,9 @@ function VerifyEmailPage() {
             "Your email could not be confirmed. The verification link may have expired.",
           );
         if (!active) return;
+        if (email) {
+          localStorage.setItem(`strap_trusted_device_${email.trim().toLowerCase()}`, "true");
+        }
         sessionStorage.removeItem("strap_otp_email");
         sessionStorage.removeItem("strap_otp_flow");
         setState("success");
@@ -142,6 +145,7 @@ function VerifyEmailPage() {
           "The code was accepted, but your email is not confirmed yet. Please request a fresh code.",
         );
 
+      localStorage.setItem(`strap_trusted_device_${normalizedEmail}`, "true");
       sessionStorage.removeItem("strap_otp_email");
       sessionStorage.removeItem("strap_otp_flow");
       setCode("");
