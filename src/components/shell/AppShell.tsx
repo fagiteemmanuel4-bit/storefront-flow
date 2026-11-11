@@ -409,7 +409,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
   const moreActive = MORE_NAV.some(
     (item) => pathname === item.to || pathname.startsWith(item.to + "/"),
   );
-  const initials = (store?.name ?? "S").slice(0, 2).toUpperCase();
+  const initials = "ST";
   const menuItem =
     "flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-[#d5d8de] transition hover:bg-white/[0.07] hover:text-white";
   async function handleSignOut() {
@@ -714,7 +714,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 <>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-semibold text-white">
-                      {store?.name ?? "Your shop"}
+                      Workspace
                     </span>
                     <span className="block truncate text-xs text-[#8a919e]">
                       {branch?.name ?? "Main branch"}
@@ -859,11 +859,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
               className="mb-6 flex min-w-0 flex-col gap-4 border-b border-border/70 pb-5 sm:flex-row sm:items-center sm:justify-between lg:mb-8"
             >
               <div className="min-w-0">
-                <p className="max-w-full truncate text-xs text-muted-foreground">
-                  {store?.name ?? "Loading shop"}
-                  {branch ? " · " + branch.name : ""}
-                  {staffActive ? " · " + staffSession!.name : ""}
-                </p>
+                {(branch || staffActive) && <p className="max-w-full truncate text-xs text-muted-foreground">{branch?.name ?? ""}{staffActive ? (branch ? " · " : "") + staffSession!.name : ""}</p>}
                 <h1 className="mt-1 truncate font-display text-2xl font-bold leading-tight tracking-tight sm:text-3xl">
                   {title}
                 </h1>

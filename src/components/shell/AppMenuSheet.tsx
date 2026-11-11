@@ -149,13 +149,13 @@ function StoreMark({ store }: { store: StoreRow | null }) {
     settings && typeof settings === "object" && !Array.isArray(settings) && "logoUrl" in settings
       ? String((settings as Record<string, unknown>).logoUrl ?? "")
       : "";
-  const initials = (store?.name ?? "S").trim().slice(0, 2).toUpperCase();
+  const initials = "ST";
   return (
     <span className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-foreground text-background font-display text-sm font-bold shadow-lg ring-1 ring-black/5">
       {logoUrl ? (
         <img
           src={logoUrl}
-          alt={`${store?.name ?? "Store"} logo`}
+          alt="Store logo"
           className="size-full object-cover"
         />
       ) : (
@@ -230,7 +230,7 @@ export function AppMenuSheet({
                   </span>
                 </div>
                 <p className="mt-1 truncate text-xs text-muted-foreground">
-                  {store?.name ?? "Your shop"}
+                  
                   {branchName ? ` · ${branchName}` : ""} ·{" "}
                   {staffActive ? `${staffActive.name} · ${staffActive.role}` : (role ?? "member")}
                 </p>

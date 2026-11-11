@@ -1033,7 +1033,7 @@ function PosPage() {
                       className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm hover:bg-secondary"
                       onClick={() => recallSale(name)}
                     >
-                      <span className="truncate">{name}</span>
+                      <span className="truncate text-base font-semibold">{name}</span>
                       <RotateCcw className="size-3.5 shrink-0" />
                     </button>
                   ))}
@@ -1174,19 +1174,19 @@ function PosPage() {
         {cart.length > 0 && (
           <div className="fixed inset-x-3 bottom-[calc(84px+env(safe-area-inset-bottom))] z-40 mx-auto max-w-[430px] sm:inset-x-4 lg:hidden">
             <Button
-              className="h-[60px] w-full rounded-2xl border border-[#0E1116] bg-[#0E1116] px-5 text-sm text-white shadow-[0_14px_32px_rgba(0,0,0,.28)] hover:bg-[#242a33] hover:text-white active:scale-[.99]"
+              className="h-[68px] w-full rounded-[26px] border-0 bg-[#C6F432] px-5 text-[#101010] shadow-[0_12px_30px_rgba(25,35,10,.20)] hover:bg-[#b9ed28] hover:text-[#101010] active:scale-[.99]"
               onClick={() => setCartOpen(true)}
             >
               <span className="flex min-w-0 items-center gap-2">
-                <ShoppingCart className="size-4 shrink-0" />
-                <span className="truncate">
+                <ShoppingCart className="size-6 shrink-0" />
+                <span className="truncate text-base font-semibold">
                   {cart.reduce((n, l) => n + l.quantity, 0)}{" "}
                   {cart.reduce((n, l) => n + l.quantity, 0) === 1 ? "item" : "items"}
                 </span>
               </span>
-              <span className="numeric ml-auto text-base font-extrabold text-[#C6F432]">
+              <span className="ml-auto flex shrink-0 flex-col items-end"><span className="text-[10px] font-semibold uppercase tracking-[.12em] text-[#29320f]/70">Total</span><span className="numeric text-lg font-extrabold tracking-tight text-[#101010]">
                 {formatMoney(total, currency)}
-              </span>
+              </span></span>
             </Button>
           </div>
         )}
