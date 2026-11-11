@@ -196,6 +196,11 @@ export function StrapMcpSettingsPage() {
   useEffect(() => {
     void load();
   }, [load]);
+  useEffect(() => {
+    if (!editing) return;
+    const reveal = window.setTimeout(() => setEditorLoading(false), 420);
+    return () => window.clearTimeout(reveal);
+  }, [editing]);
 
   const copyEndpoint = async () => {
     try {
