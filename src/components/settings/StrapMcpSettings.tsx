@@ -460,7 +460,16 @@ export function StrapMcpSettingsPage() {
                   </div>
                 </div>
                 {isEditing && (
-                  <div className="mt-5 space-y-5 border-t border-border pt-5">
+                  <BottomSheet open={isEditing} onOpenChange={(open) => { if (!open) setEditing(null); }}>
+                    <BottomSheetContent className="mx-auto flex max-h-[90dvh] w-full max-w-3xl flex-col overflow-y-auto rounded-t-[30px] border-border bg-background p-0">
+                      <BottomSheetHeader className="sticky top-0 z-10 border-b border-border bg-background px-5 py-4 text-left sm:px-7">
+                        <BottomSheetTitle>{grant.client.name || "Connected application"} access</BottomSheetTitle>
+                        <BottomSheetDescription>Choose exactly what this application can access and change in your store.</BottomSheetDescription>
+                      </BottomSheetHeader>
+                      {editorLoading ? (
+                        <div className="flex min-h-56 items-center justify-center"><span className="size-10 animate-spin rounded-full border-[4px] border-[#C6F432]/25 border-t-[#C6F432]" role="status" aria-label="Loading access settings" /></div>
+                      ) : (
+                      <div className="space-y-5 px-5 py-5 pb-[calc(28px+env(safe-area-inset-bottom))] sm:px-7">
                     <div>
                       <h5 className="font-semibold">Connection access</h5>
                       <div className="mt-3 flex items-center justify-between gap-4 rounded-xl border border-border bg-surface p-4">
@@ -609,7 +618,9 @@ export function StrapMcpSettingsPage() {
                         {savingId === grant.client.id ? "Saving…" : "Save permissions"}
                       </Button>
                     </div>
-                  </div>
+                      </div>
+                    </BottomSheetContent>
+                  </BottomSheet>
                 )}
               </article>
             );
