@@ -1179,7 +1179,7 @@ function PosPage() {
             >
               <span className="flex min-w-0 items-center gap-2">
                 <ShoppingCart className="size-6 shrink-0" />
-                <span className="truncate">
+                <span className="truncate text-base font-semibold">
                   {cart.reduce((n, l) => n + l.quantity, 0)}{" "}
                   {cart.reduce((n, l) => n + l.quantity, 0) === 1 ? "item" : "items"}
                 </span>
