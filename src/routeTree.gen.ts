@@ -34,7 +34,6 @@ import { Route as AuthenticatedCustomersRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedElectronicsWorkspaceRouteImport } from './routes/_authenticated/electronics-workspace'
 import { Route as AuthenticatedExpensesRouteImport } from './routes/_authenticated/expenses'
-import { Route as AuthenticatedExtensionsRouteImport } from './routes/_authenticated/extensions'
 import { Route as AuthenticatedFashionReturnsRouteImport } from './routes/_authenticated/fashion-returns'
 import { Route as AuthenticatedFeatureDiscoveryRouteImport } from './routes/_authenticated/feature-discovery'
 import { Route as AuthenticatedFoodServiceRouteImport } from './routes/_authenticated/food-service'
@@ -210,11 +209,6 @@ const AuthenticatedElectronicsWorkspaceRoute =
 const AuthenticatedExpensesRoute = AuthenticatedExpensesRouteImport.update({
   id: '/expenses',
   path: '/expenses',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedExtensionsRoute = AuthenticatedExtensionsRouteImport.update({
-  id: '/extensions',
-  path: '/extensions',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedFashionReturnsRoute =
@@ -526,7 +520,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/electronics-workspace': typeof AuthenticatedElectronicsWorkspaceRoute
   '/expenses': typeof AuthenticatedExpensesRoute
-  '/extensions': typeof AuthenticatedExtensionsRoute
   '/fashion-returns': typeof AuthenticatedFashionReturnsRoute
   '/feature-discovery': typeof AuthenticatedFeatureDiscoveryRoute
   '/food-service': typeof AuthenticatedFoodServiceRoute
@@ -603,7 +596,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/electronics-workspace': typeof AuthenticatedElectronicsWorkspaceRoute
   '/expenses': typeof AuthenticatedExpensesRoute
-  '/extensions': typeof AuthenticatedExtensionsRoute
   '/fashion-returns': typeof AuthenticatedFashionReturnsRoute
   '/feature-discovery': typeof AuthenticatedFeatureDiscoveryRoute
   '/food-service': typeof AuthenticatedFoodServiceRoute
@@ -681,7 +673,6 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/electronics-workspace': typeof AuthenticatedElectronicsWorkspaceRoute
   '/_authenticated/expenses': typeof AuthenticatedExpensesRoute
-  '/_authenticated/extensions': typeof AuthenticatedExtensionsRoute
   '/_authenticated/fashion-returns': typeof AuthenticatedFashionReturnsRoute
   '/_authenticated/feature-discovery': typeof AuthenticatedFeatureDiscoveryRoute
   '/_authenticated/food-service': typeof AuthenticatedFoodServiceRoute
@@ -760,7 +751,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/electronics-workspace'
     | '/expenses'
-    | '/extensions'
     | '/fashion-returns'
     | '/feature-discovery'
     | '/food-service'
@@ -837,7 +827,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/electronics-workspace'
     | '/expenses'
-    | '/extensions'
     | '/fashion-returns'
     | '/feature-discovery'
     | '/food-service'
@@ -914,7 +903,6 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/electronics-workspace'
     | '/_authenticated/expenses'
-    | '/_authenticated/extensions'
     | '/_authenticated/fashion-returns'
     | '/_authenticated/feature-discovery'
     | '/_authenticated/food-service'
@@ -1167,13 +1155,6 @@ declare module '@tanstack/react-router' {
       path: '/expenses'
       fullPath: '/expenses'
       preLoaderRoute: typeof AuthenticatedExpensesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/extensions': {
-      id: '/_authenticated/extensions'
-      path: '/extensions'
-      fullPath: '/extensions'
-      preLoaderRoute: typeof AuthenticatedExtensionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/fashion-returns': {
@@ -1598,7 +1579,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedElectronicsWorkspaceRoute: typeof AuthenticatedElectronicsWorkspaceRoute
   AuthenticatedExpensesRoute: typeof AuthenticatedExpensesRoute
-  AuthenticatedExtensionsRoute: typeof AuthenticatedExtensionsRoute
   AuthenticatedFashionReturnsRoute: typeof AuthenticatedFashionReturnsRoute
   AuthenticatedFeatureDiscoveryRoute: typeof AuthenticatedFeatureDiscoveryRoute
   AuthenticatedFoodServiceRoute: typeof AuthenticatedFoodServiceRoute
@@ -1637,7 +1617,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedElectronicsWorkspaceRoute:
     AuthenticatedElectronicsWorkspaceRoute,
   AuthenticatedExpensesRoute: AuthenticatedExpensesRoute,
-  AuthenticatedExtensionsRoute: AuthenticatedExtensionsRoute,
   AuthenticatedFashionReturnsRoute: AuthenticatedFashionReturnsRoute,
   AuthenticatedFeatureDiscoveryRoute: AuthenticatedFeatureDiscoveryRoute,
   AuthenticatedFoodServiceRoute: AuthenticatedFoodServiceRoute,
