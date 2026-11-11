@@ -287,7 +287,7 @@ function VerifyEmailPage() {
                   role="group"
                   aria-label={`${OTP_LENGTH}-digit verification code`}
                   onPaste={(event) => {
-                    const pasted = event.clipboardData.getData("text").replace(/\\D/g, "").slice(0, OTP_LENGTH);
+                    const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, OTP_LENGTH);
                     if (!pasted) return;
                     event.preventDefault();
                     setCode(pasted);
