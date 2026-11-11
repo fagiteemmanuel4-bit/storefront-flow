@@ -65,6 +65,7 @@ import { BusinessCalculatorFab } from "@/components/pos/BusinessCalculatorFab";
 import { getBusinessMode } from "@/lib/business-modes";
 import { getStoreSubscription } from "@/lib/plan-access";
 import { hasEntitlement, type StrapTier } from "@/lib/commerceEntitlements";
+import { ContextualSupportDrawer } from "@/components/support/ContextualSupportDrawer";
 
 const HOME_NAV = {
   to: "/dashboard",
@@ -938,7 +939,10 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
               </div>
             </header>
 
-            <div className="min-w-0">{children}</div>
+            <div className="min-w-0">
+              {children}
+              <ContextualSupportDrawer />
+            </div>
           </main>
         </div>
       </div>
