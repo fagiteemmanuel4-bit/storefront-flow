@@ -19,10 +19,21 @@ export type EntitlementKey =
 
 export const STRAP_TIERS: Record<StrapTier, Record<EntitlementKey, boolean | number>> = {
   free: {
-    onlineStore: true, advancedInventory: true, staff: -1, branches: -1,
-    advancedAnalytics: true, loyalty: true, discounts: true, purchaseOrders: true,
-    stockTransfers: true, merchantPayments: false, aiAssistant: false,
-    storeExport: true, stockSense: true, storefrontLayouts: true, featuredProducts: true,
+    onlineStore: true,
+    advancedInventory: true,
+    staff: -1,
+    branches: -1,
+    advancedAnalytics: true,
+    loyalty: true,
+    discounts: true,
+    purchaseOrders: true,
+    stockTransfers: true,
+    merchantPayments: false,
+    aiAssistant: false,
+    storeExport: true,
+    stockSense: true,
+    storefrontLayouts: true,
+    featuredProducts: true,
   },
   business: {
     onlineStore: true,

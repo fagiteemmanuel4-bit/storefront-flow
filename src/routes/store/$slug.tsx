@@ -18,7 +18,9 @@ import { formatMoney } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/store/$slug")({
-  beforeLoad: () => { throw redirect({ to: "/" }); },
+  beforeLoad: () => {
+    throw redirect({ to: "/" });
+  },
   ssr: false,
   component: PublicStorefrontPage,
 });

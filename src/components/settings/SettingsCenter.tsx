@@ -242,7 +242,9 @@ const meta: Record<Section, { title: string; description: string }> = {
 
 function groupedNav() {
   const groups = new Map<string, NavItem[]>();
-  for (const item of SETTINGS_NAV.filter((item) => item.path !== "/settings/online-store" && item.path !== "/settings/appearance"))
+  for (const item of SETTINGS_NAV.filter(
+    (item) => item.path !== "/settings/online-store" && item.path !== "/settings/appearance",
+  ))
     groups.set(item.group, [...(groups.get(item.group) ?? []), item]);
   return [...groups.entries()];
 }

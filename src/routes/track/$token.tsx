@@ -4,7 +4,13 @@ import { CheckCircle2, Clock3, Package, Truck, XCircle } from "lucide-react";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { formatMoney } from "@/lib/currency";
 
-export const Route = createFileRoute("/track/$token")({ beforeLoad: () => { throw redirect({ to: "/" }); }, ssr: false, component: OrderTrackingPage });
+export const Route = createFileRoute("/track/$token")({
+  beforeLoad: () => {
+    throw redirect({ to: "/" });
+  },
+  ssr: false,
+  component: OrderTrackingPage,
+});
 
 type Tracking = {
   found: boolean;

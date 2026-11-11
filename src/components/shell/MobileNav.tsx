@@ -79,7 +79,10 @@ export function MobileNav() {
           className="relative flex h-11 min-h-11 items-center justify-center rounded-2xl p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground active:scale-[.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           <Grid2X2 className="size-5" strokeWidth={2.15} aria-hidden="true" />
-          <span className="absolute right-2 top-2 size-2 rounded-full bg-red-500 ring-2 ring-background" aria-label="New STRAP update" />
+          <span
+            className="absolute right-2 top-2 size-2 rounded-full bg-red-500 ring-2 ring-background"
+            aria-label="New STRAP update"
+          />
         </button>
       </div>
     </nav>

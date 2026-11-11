@@ -431,7 +431,7 @@ export function AppMenuSheet({
               </div>
             </section>
             <div className="my-5 border-t border-border/70" />
-            
+
             <div className="my-5 border-t border-border/70" />
             <section>
               <p className="px-2 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
@@ -484,7 +484,10 @@ export function AppMenuSheet({
                 >
                   <span className="relative flex size-10 items-center justify-center rounded-xl bg-secondary group-hover:bg-accent-soft">
                     <Bell className="size-[18px]" />
-                    <span className="absolute right-1 top-1 size-2 rounded-full bg-red-500 ring-2 ring-background" aria-label="New STRAP update" />
+                    <span
+                      className="absolute right-1 top-1 size-2 rounded-full bg-red-500 ring-2 ring-background"
+                      aria-label="New STRAP update"
+                    />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-semibold">Notifications</span>
