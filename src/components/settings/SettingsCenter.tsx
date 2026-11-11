@@ -446,7 +446,7 @@ export function SettingsSectionPage({ section }: { section: Section }) {
       {section === "checkout" && <AdvancedToggles group="checkout" title="Checkout & sales" rows={checkoutRows} />}
       {section === "inventory" && <Inventory />}
       {section === "payments" && <Payments />}
-      {section === "password" && <Password />}
+      {section === "password" && <PasswordOtp />}
       {section === "sessions" && <Sessions />}
       {section === "advanced" && <Advanced />}
     </div>
