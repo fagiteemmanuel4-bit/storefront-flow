@@ -634,6 +634,7 @@ export function StrapMcpSettingsPage() {
                       </Button>
                     </div>
                       </div>
+                      )}
                       </>
                     </BottomSheetContent>
                   </BottomSheet>
