@@ -632,7 +632,6 @@ export function StrapMcpSettingsPage() {
                         {savingId === grant.client.id ? "Saving…" : "Save permissions"}
                       </Button>
                     </div>
-                      </div>
                     </BottomSheetContent>
                   </BottomSheet>
                 )}
