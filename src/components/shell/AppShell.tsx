@@ -882,7 +882,10 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
           >
             <header
               data-tour="page-heading"
-              className="mb-6 flex min-w-0 flex-col gap-4 border-b border-border/70 pb-5 sm:flex-row sm:items-center sm:justify-between lg:mb-8"
+              className={cn(
+                "mb-5 flex min-w-0 items-center justify-between gap-3 border-b border-border/70 pb-4 sm:mb-6 sm:pb-5 lg:mb-8",
+                pathname === "/pos" ? "flex-row" : "flex-col sm:flex-row sm:items-center sm:justify-between",
+              )}
             >
               <div className="min-w-0">
                 {(branch || staffActive) && (
@@ -900,6 +903,17 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                   <div className="hidden lg:block">
                     <BusinessCalculatorFab className="shrink-0" />
                   </div>
+                )}
+                {pathname === "/pos" && (
+                  <Link
+                    to="/dashboard"
+                    aria-label="Go to dashboard"
+                    title="Dashboard"
+                    className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-border bg-background px-3 text-xs font-semibold text-foreground transition hover:border-accent/50 hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:h-11 sm:px-3.5 sm:text-sm"
+                  >
+                    <LayoutDashboard className="size-4" aria-hidden="true" />
+                    <span>Dashboard</span>
+                  </Link>
                 )}
                 {pathname === "/pos" && (
                   <button
