@@ -308,7 +308,7 @@ function CardSection({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-border bg-background p-5 sm:p-6">
+    <section className="rounded-[26px] border border-border/70 bg-background p-5 shadow-[0_8px_28px_rgba(15,23,42,.035)] sm:p-6">
       <div className="mb-5">
         <h3 className="font-semibold">{title}</h3>
         {description && (
@@ -360,7 +360,7 @@ function Field({
     <label className="block text-sm font-medium">
       {label}
       <Input
-        className="mt-2"
+        className="mt-2 h-11 rounded-xl border-border bg-background shadow-sm focus-visible:ring-accent/20"
         type={type}
         value={value}
         placeholder={placeholder}
@@ -387,7 +387,7 @@ function SelectField({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-2 h-10 w-full rounded-md border border-border bg-background px-3 text-sm"
+        className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3.5 text-sm shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
       >
         {options.map((option) => (
           <option key={option}>{option}</option>
@@ -408,7 +408,7 @@ function ToggleRow({
   onChange: (value: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-5 rounded-xl border border-border p-4">
+    <div className="flex items-center justify-between gap-5 rounded-2xl border border-border/70 bg-background p-4 transition-colors hover:bg-secondary/30">
       <div>
         <p className="text-sm font-semibold">{label}</p>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">{description}</p>
@@ -430,7 +430,7 @@ function SaveBar({
 }) {
   if (!dirty) return null;
   return (
-    <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-2xl border border-border bg-background/95 p-3 shadow-xl backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+    <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-[22px] border border-border/80 bg-background/95 p-3 shadow-[0_12px_40px_rgba(15,23,42,.14)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
       <span className="text-sm font-medium">Unsaved changes</span>
       <div className="flex gap-2">
         <Button variant="ghost" onClick={discard} disabled={saving}>
@@ -631,7 +631,6 @@ function StoreProfile() {
     const next = {
       name: store.name ?? "",
       description: s.description ?? "",
-      businessType: s.businessType ?? "",
       email: s.contact?.email ?? profile?.email ?? "",
       phone: s.contact?.phone ?? "",
       whatsapp: s.contact?.whatsapp ?? "",
@@ -659,7 +658,6 @@ function StoreProfile() {
       const settings = {
         ...(store.storefront_settings ?? {}),
         description: form.description,
-        businessType: form.businessType,
         contact: {
           email: form.email,
           phone: form.phone,
@@ -708,26 +706,9 @@ function StoreProfile() {
             onChange={(v) => update("name", v)}
           />
           <Field
-            label="Business type"
-            value={form.businessType}
-            onChange={(v) => update("businessType", v)}
-            placeholder="e.g. Fashion retail"
-          />
-          <Field
             label="Description"
             value={form.description}
             onChange={(v) => update("description", v)}
-          />
-          <Detail label="Store ID" value={store.id} />
-          <Detail
-            label="Owner"
-            value={
-              role === "owner" ? profile?.full_name || profile?.email || "Owner" : "Store owner"
-            }
-          />
-          <Detail
-            label="Date created"
-            value={store.created_at ? new Date(store.created_at).toLocaleDateString() : "Unknown"}
           />
         </div>
       </CardSection>
@@ -1847,23 +1828,6 @@ function Advanced() {
         ["socialSharing", "Social sharing"],
       ],
     },
-    {
-      key: "developer",
-      title: "Developer",
-      rows: [
-        ["apiAccess", "API access"],
-        ["webhooks", "Webhooks"],
-      ],
-    },
-    {
-      key: "experimental",
-      title: "Experimental",
-      rows: [
-        ["loyaltyPoints", "Loyalty points"],
-        ["discountCodes", "Discount codes"],
-        ["aiAutomation", "AI automation"],
-      ],
-    },
   ];
   const [values, setValues] = useState<any>({});
   const [initial, setInitial] = useState<any>({});
@@ -1911,26 +1875,6 @@ function Advanced() {
           ))}
         </CardSection>
       ))}
-      <CardSection
-        title="Developer controls"
-        description="No fake API key or webhook manager is created here."
-      >
-        <div className="grid gap-3">
-          <div className="rounded-xl border border-border p-4">
-            <p className="font-semibold">API access</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              The existing Strap data model is preserved; this Settings rebuild does not invent an
-              API-key management system.
-            </p>
-          </div>
-          <div className="rounded-xl border border-border p-4">
-            <p className="font-semibold">Webhooks</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              No dedicated webhook manager is exposed until the production backend supports one.
-            </p>
-          </div>
-        </div>
-      </CardSection>
       {!canManage && <ReadOnly />}
       <SaveBar
         dirty={dirty && canManage}
