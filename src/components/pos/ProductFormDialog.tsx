@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus, Package, Plus, ScanLine, X } from "lucide-react";
+import { ArrowLeft, ImagePlus, Package, Plus, ScanLine, X } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -78,6 +78,7 @@ export function ProductFormDialog({
   const [piecePrice, setPiecePrice] = useState("0");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [showExtraDetails, setShowExtraDetails] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [shelfId, setShelfId] = useState("none");
   const [newShelf, setNewShelf] = useState("");
@@ -109,6 +110,7 @@ export function ProductFormDialog({
     let cancelled = false;
     const p = product as any;
     setErrors({});
+    setShowExtraDetails(Boolean(product?.barcode || product?.sku || product?.category || isFashion));
     setName(product?.name ?? "");
     setSku(product?.sku ?? "");
     setBarcode(product?.barcode ?? "");
@@ -530,16 +532,23 @@ export function ProductFormDialog({
   return (
     <>
       <BottomSheet open={open} onOpenChange={onOpenChange}>
-        <BottomSheetContent className="mx-auto w-full max-w-lg">
-          <BottomSheetHeader>
-            <BottomSheetTitle>{product ? "Edit product" : "Add product"}</BottomSheetTitle>
+        <BottomSheetContent className="mx-auto flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col overflow-y-auto rounded-none p-0">
+          <BottomSheetHeader className="sticky top-0 z-10 border-b border-border bg-background px-4 py-3">
+            <div className="flex items-center gap-3">
+              <Button type="button" variant="ghost" size="icon" className="shrink-0 rounded-xl" onClick={() => onOpenChange(false)} aria-label="Back to products">
+                <ArrowLeft className="size-5" />
+              </Button>
+              <div className="min-w-0">
+                <BottomSheetTitle>{product ? "Edit product" : "Add product"}</BottomSheetTitle>
             <BottomSheetDescription>
               {isFashion
                 ? "Photograph each style, set the price, and track stock by exact size and colour."
                 : "Stock is stored as individual pieces so Strap can safely sell either a pack or individual pieces."}
             </BottomSheetDescription>
+              </div>
+            </div>
           </BottomSheetHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 px-4 pb-[calc(24px+env(safe-area-inset-bottom))]">
             <Field label="Name" error={errors.name}>
               <Input
                 value={name}
@@ -588,7 +597,6 @@ export function ProductFormDialog({
                     <input
                       type="file"
                       accept="image/*"
-                      capture="environment"
                       multiple
                       className="hidden"
                       onChange={(e) => chooseImages(e.target.files)}
@@ -600,6 +608,12 @@ export function ProductFormDialog({
                 Up to 6 images. Each image must be under 5 MB.
               </p>
             </Field>
+            <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-border px-3 py-2.5 text-sm font-semibold">
+              <input type="checkbox" checked={showExtraDetails} onChange={(event) => setShowExtraDetails(event.target.checked)} className="size-4 accent-[#C6F432]" />
+              Add optional product details
+              <span className="ml-auto text-xs font-normal text-muted-foreground">{showExtraDetails ? "Shown" : "Hidden"}</span>
+            </label>
+            {showExtraDetails && <div className="space-y-4">
             {!isFashion && (
               <Field label="Barcode" error={errors.barcode}>
                 <div className="flex gap-2">
@@ -797,6 +811,7 @@ export function ProductFormDialog({
                 </Field>
               </section>
             )}
+</div>}
             <div className="grid gap-4 sm:grid-cols-2">
               <Field
                 label={packMode ? "Opening stock (pieces)" : "Stock at this location"}
