@@ -21,7 +21,6 @@ import {
   Menu,
   Store,
   Users,
-  WalletCards,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
@@ -194,47 +193,47 @@ const meta: Record<Section, { title: string; description: string }> = {
 
 export function SettingsLayout() {
   const location = useLocation();
-  const { store } = useStoreContext();
   const [navOpen, setNavOpen] = useState(location.pathname === "/settings");
   const SettingsLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
-    <div className="flex min-h-full flex-col gap-2">
-      <nav aria-label="Settings navigation" className="grid gap-2">
-        {SETTINGS_NAV.map((item) => {
-          const Icon = item.icon;
-          const active =
-            location.pathname === item.path ||
-            (item.path === "/settings/receipts" &&
-              ["/settings/checkout", "/settings/inventory", "/settings/payments"].includes(
-                location.pathname,
-              )) ||
-            (item.path === "/settings/staff" && location.pathname === "/settings/notifications") ||
-            (item.path === "/settings/password" && location.pathname === "/settings/sessions");
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={onNavigate}
-              className={`group flex min-h-12 items-center gap-3 rounded-xl border px-3 py-2.5 transition ${active ? "border-accent bg-accent-soft text-accent-ink" : "border-border/80 bg-background text-foreground hover:border-accent/50 hover:bg-secondary"}`}
-            >
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-secondary">
-                <Icon className="size-4" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] font-semibold">{item.title}</span>
-                <span className="mt-0.5 block truncate text-[10px] text-muted-foreground">
-                  {item.description}
-                </span>
-              </span>
-              <ChevronRight className="size-4 shrink-0 opacity-50" />
-            </Link>
-          );
-        })}
-      </nav>
-      <div className="mt-auto pt-4">
+    <div className="flex min-h-full flex-col">
+      {(["Workspace", "Account"] as const).map((group) => (
+        <div key={group} className="mb-5 last:mb-0">
+          <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/75">{group}</p>
+          <nav aria-label={`${group} settings`} className="grid gap-1.5">
+            {SETTINGS_NAV.filter((item) => item.group === group).map((item) => {
+              const Icon = item.icon;
+              const active =
+                location.pathname === item.path ||
+                (item.path === "/settings/receipts" && ["/settings/checkout", "/settings/inventory", "/settings/payments"].includes(location.pathname)) ||
+                (item.path === "/settings/staff" && location.pathname === "/settings/notifications") ||
+                (item.path === "/settings/password" && location.pathname === "/settings/sessions");
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={onNavigate}
+                  aria-current={active ? "page" : undefined}
+                  className={`group flex min-h-[58px] items-center gap-3 rounded-2xl border px-3 py-2.5 transition-all duration-200 ${active ? "border-[#c6f432]/70 bg-[#c6f432]/15 text-foreground shadow-sm" : "border-transparent bg-background text-foreground hover:border-border hover:bg-secondary/70"}`}
+                >
+                  <span className={`flex size-9 shrink-0 items-center justify-center rounded-xl transition-colors ${active ? "bg-[#c6f432] text-[#111713]" : "bg-secondary text-muted-foreground group-hover:text-foreground"}`}>
+                    <Icon className="size-[17px]" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[13px] font-semibold">{item.title}</span>
+                    <span className="mt-0.5 block truncate text-[10px] leading-4 text-muted-foreground">{item.description}</span>
+                  </span>
+                  <ChevronRight className={`size-4 shrink-0 transition-transform ${active ? "translate-x-0 opacity-80" : "-translate-x-1 opacity-30 group-hover:translate-x-0 group-hover:opacity-60"}`} />
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      ))}
+      <div className="mt-auto border-t border-border/70 pt-4">
         <Link
           to="/dashboard"
           onClick={onNavigate}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#C6F432] px-4 py-3 text-sm font-bold text-[#0E1116] transition hover:bg-[#b6e52c]"
+          className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#C6F432] px-4 py-3 text-sm font-bold text-[#0E1116] shadow-[0_5px_16px_rgba(159,207,30,.2)] transition hover:-translate-y-0.5 hover:bg-[#b6e52c]"
         >
           <ArrowRight className="size-4 rotate-180" />
           Go back to dashboard
@@ -243,36 +242,29 @@ export function SettingsLayout() {
     </div>
   );
   return (
-    <AppShell title={store?.name ?? "Settings"}>
-      <div className="settings-workspace mx-auto grid max-w-7xl min-w-0 gap-5 lg:grid-cols-[250px_minmax(0,1fr)]">
-        <aside className="hidden min-h-[calc(100dvh-9rem)] flex-col lg:sticky lg:top-24 lg:flex">
+    <AppShell title="Settings">
+      <div className="settings-workspace mx-auto grid max-w-7xl min-w-0 items-start gap-5 lg:grid-cols-[270px_minmax(0,1fr)]">
+        <aside className="hidden min-h-[calc(100dvh-9rem)] flex-col rounded-[26px] border border-border/70 bg-background p-3 shadow-[0_12px_38px_rgba(15,23,42,.06)] lg:sticky lg:top-24 lg:flex">
           <SettingsLinks />
         </aside>
         <main className="settings-detail min-w-0">
           <div className="mb-4 flex items-center justify-between gap-3 lg:hidden">
             <Sheet open={navOpen} onOpenChange={setNavOpen}>
               <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="shrink-0 rounded-xl"
-                  aria-label="Open settings menu"
-                >
+                <Button variant="outline" size="icon" className="size-11 shrink-0 rounded-2xl border-border bg-background shadow-sm" aria-label="Open settings menu">
                   <Menu className="size-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent
-                side="left"
-                className="flex w-[min(90vw,360px)] flex-col overflow-y-auto p-4"
-              >
-                <SheetHeader className="mb-4 text-left">
-                  <SheetTitle className="font-display text-lg">
-                    {store?.name ?? "Settings"}
-                  </SheetTitle>
+              <SheetContent side="left" className="flex w-[min(90vw,370px)] flex-col overflow-y-auto border-r border-border bg-background p-4">
+                <SheetHeader className="mb-5 text-left">
+                  <SheetTitle className="font-display text-lg font-bold">Settings</SheetTitle>
                 </SheetHeader>
                 <SettingsLinks onNavigate={() => setNavOpen(false)} />
               </SheetContent>
             </Sheet>
+            <Link to="/dashboard" className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6F432] px-4 text-xs font-bold text-[#0E1116] shadow-sm">
+              <ArrowRight className="size-3.5 rotate-180" /> Dashboard
+            </Link>
           </div>
           <Outlet />
         </main>
@@ -516,7 +508,10 @@ export function SettingsSectionPage({ section }: { section: Section }) {
   const m = meta[section];
   return (
     <div className="space-y-5">
-      {m.description && <p className="text-sm leading-6 text-muted-foreground">{m.description}</p>}
+      <div className="border-b border-border/70 pb-5">
+        <h1 className="font-display text-2xl font-bold tracking-tight sm:text-[28px]">{m.title}</h1>
+        {m.description && <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{m.description}</p>}
+      </div>
       {section === "store-profile" && (
         <>
           <StoreProfile />
@@ -528,7 +523,6 @@ export function SettingsSectionPage({ section }: { section: Section }) {
           <Receipts />
           <AdvancedToggles group="checkout" title="Checkout & sales" rows={checkoutRows} />
           <Inventory />
-          <Payments />
         </>
       )}
       {section === "team" && (
@@ -556,7 +550,6 @@ export function SettingsSectionPage({ section }: { section: Section }) {
         <AdvancedToggles group="checkout" title="Checkout & sales" rows={checkoutRows} />
       )}
       {section === "inventory" && <Inventory />}
-      {section === "payments" && <Payments />}
       {section === "password" && <PasswordOtp />}
       {section === "sessions" && <Sessions />}
       {section === "advanced" && <Advanced />}
@@ -1668,18 +1661,6 @@ function Security() {
           fabricate security events or device metadata.
         </p>
       </CardSection>
-    </div>
-  );
-}
-
-function Payments() {
-  return (
-    <div className="rounded-2xl border border-dashed border-border p-8 text-center sm:p-12">
-      <WalletCards className="mx-auto size-8 text-muted-foreground" />
-      <h3 className="mt-4 text-xl font-bold">Payments — Coming Soon</h3>
-      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
-        We're preparing secure payment infrastructure for Strap businesses.
-      </p>
     </div>
   );
 }
