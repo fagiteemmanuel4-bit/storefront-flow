@@ -4,7 +4,6 @@ import {
   AlertTriangle,
   ArrowRight,
   Bell,
-  ChevronRight,
   Globe2,
   Package,
   Plus,
