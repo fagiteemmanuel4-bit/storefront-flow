@@ -110,7 +110,9 @@ export function ProductFormDialog({
     let cancelled = false;
     const p = product as any;
     setErrors({});
-    setShowExtraDetails(Boolean(product?.barcode || product?.sku || product?.category || isFashion));
+    setShowExtraDetails(
+      Boolean(product?.barcode || product?.sku || product?.category || isFashion),
+    );
     setName(product?.name ?? "");
     setSku(product?.sku ?? "");
     setBarcode(product?.barcode ?? "");
@@ -535,20 +537,30 @@ export function ProductFormDialog({
         <BottomSheetContent className="mx-auto flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col overflow-y-auto rounded-none p-0">
           <BottomSheetHeader className="sticky top-0 z-10 border-b border-border bg-background px-4 py-3">
             <div className="flex items-center gap-3">
-              <Button type="button" variant="ghost" size="icon" className="shrink-0 rounded-xl" onClick={() => onOpenChange(false)} aria-label="Back to products">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="shrink-0 rounded-xl"
+                onClick={() => onOpenChange(false)}
+                aria-label="Back to products"
+              >
                 <ArrowLeft className="size-5" />
               </Button>
               <div className="min-w-0">
                 <BottomSheetTitle>{product ? "Edit product" : "Add product"}</BottomSheetTitle>
-            <BottomSheetDescription>
-              {isFashion
-                ? "Photograph each style, set the price, and track stock by exact size and colour."
-                : "Stock is stored as individual pieces so Strap can safely sell either a pack or individual pieces."}
-            </BottomSheetDescription>
+                <BottomSheetDescription>
+                  {isFashion
+                    ? "Photograph each style, set the price, and track stock by exact size and colour."
+                    : "Stock is stored as individual pieces so Strap can safely sell either a pack or individual pieces."}
+                </BottomSheetDescription>
               </div>
             </div>
           </BottomSheetHeader>
-          <form onSubmit={handleSubmit} className="space-y-4 px-4 pb-[calc(24px+env(safe-area-inset-bottom))]">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 px-4 pb-[calc(24px+env(safe-area-inset-bottom))]"
+          >
             <Field label="Name" error={errors.name}>
               <Input
                 value={name}
@@ -609,209 +621,218 @@ export function ProductFormDialog({
               </p>
             </Field>
             <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-border px-3 py-2.5 text-sm font-semibold">
-              <input type="checkbox" checked={showExtraDetails} onChange={(event) => setShowExtraDetails(event.target.checked)} className="size-4 accent-[#C6F432]" />
+              <input
+                type="checkbox"
+                checked={showExtraDetails}
+                onChange={(event) => setShowExtraDetails(event.target.checked)}
+                className="size-4 accent-[#C6F432]"
+              />
               Add optional product details
-              <span className="ml-auto text-xs font-normal text-muted-foreground">{showExtraDetails ? "Shown" : "Hidden"}</span>
+              <span className="ml-auto text-xs font-normal text-muted-foreground">
+                {showExtraDetails ? "Shown" : "Hidden"}
+              </span>
             </label>
-            {showExtraDetails && <div className="space-y-4">
-            {!isFashion && (
-              <Field label="Barcode" error={errors.barcode}>
-                <div className="flex gap-2">
-                  <Input
-                    value={barcode}
-                    onChange={(e) => setBarcode(e.target.value)}
-                    className="h-12"
-                    maxLength={60}
-                    placeholder="Scan or type"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-12 shrink-0"
-                    onClick={() => setScanning(true)}
-                  >
-                    <ScanLine className="size-4" /> Scan
-                  </Button>
-                </div>
-              </Field>
-            )}
-            {!isFashion && (
-              <Field label="Selling format">
-                <button
-                  type="button"
-                  onClick={() => setPackMode((v) => !v)}
-                  className={`flex w-full items-center justify-between rounded-xl border p-3 text-left ${packMode ? "border-foreground bg-secondary" : "border-border"}`}
-                >
-                  <span className="flex items-center gap-3">
-                    <Package className="size-5" />
-                    <span>
-                      <span className="block font-semibold">Sell by pack and piece</span>
-                      <span className="block text-xs text-muted-foreground">
-                        Example: 12 pieces per pack, with separate prices.
+            {showExtraDetails && (
+              <div className="space-y-4">
+                {!isFashion && (
+                  <Field label="Barcode" error={errors.barcode}>
+                    <div className="flex gap-2">
+                      <Input
+                        value={barcode}
+                        onChange={(e) => setBarcode(e.target.value)}
+                        className="h-12"
+                        maxLength={60}
+                        placeholder="Scan or type"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="h-12 shrink-0"
+                        onClick={() => setScanning(true)}
+                      >
+                        <ScanLine className="size-4" /> Scan
+                      </Button>
+                    </div>
+                  </Field>
+                )}
+                {!isFashion && (
+                  <Field label="Selling format">
+                    <button
+                      type="button"
+                      onClick={() => setPackMode((v) => !v)}
+                      className={`flex w-full items-center justify-between rounded-xl border p-3 text-left ${packMode ? "border-foreground bg-secondary" : "border-border"}`}
+                    >
+                      <span className="flex items-center gap-3">
+                        <Package className="size-5" />
+                        <span>
+                          <span className="block font-semibold">Sell by pack and piece</span>
+                          <span className="block text-xs text-muted-foreground">
+                            Example: 12 pieces per pack, with separate prices.
+                          </span>
+                        </span>
                       </span>
-                    </span>
-                  </span>
-                  <span
-                    className={`rounded-full px-2.5 py-1 text-xs font-bold ${packMode ? "bg-foreground text-background" : "bg-secondary text-muted-foreground"}`}
-                  >
-                    {packMode ? "On" : "Off"}
-                  </span>
-                </button>
-              </Field>
-            )}
-            {packMode && !isFashion && (
-              <div className="rounded-2xl border border-border bg-secondary/50 p-4">
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <Field label="Pieces per pack" error={errors.unitsPerPack}>
-                    <Input
-                      value={unitsPerPack}
-                      onChange={(e) => setUnitsPerPack(e.target.value)}
-                      className="h-11"
-                      inputMode="numeric"
-                      placeholder="12"
-                    />
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-xs font-bold ${packMode ? "bg-foreground text-background" : "bg-secondary text-muted-foreground"}`}
+                      >
+                        {packMode ? "On" : "Off"}
+                      </span>
+                    </button>
                   </Field>
-                  <Field label="Price per pack" error={errors.packPrice}>
-                    <Input
-                      value={packPrice}
-                      onChange={(e) => setPackPrice(e.target.value)}
-                      className="h-11"
-                      inputMode="decimal"
-                      placeholder="5000"
-                    />
-                  </Field>
-                  <Field label="Price per piece" error={errors.piecePrice}>
-                    <Input
-                      value={piecePrice}
-                      onChange={(e) => setPiecePrice(e.target.value)}
-                      className="h-11"
-                      inputMode="decimal"
-                      placeholder="500"
-                    />
-                  </Field>
-                </div>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Enter opening stock below as total pieces. Example: 10 packs × 12 pieces = 120
-                  pieces. Strap will display it as 10 packs and 0 loose pieces.
-                </p>
-              </div>
-            )}
-            {!isFashion && (
-              <Field label="Shelf">
-                {addingShelf ? (
-                  <div className="flex gap-2">
-                    <Input
-                      value={newShelf}
-                      onChange={(e) => setNewShelf(e.target.value)}
-                      className="h-12"
-                      maxLength={60}
-                      placeholder="e.g. Drinks"
-                    />
-                    <Button
-                      type="button"
-                      className="h-12 shrink-0"
-                      disabled={creatingShelf}
-                      onClick={() => void handleCreateShelf()}
-                    >
-                      {creatingShelf ? "Saving…" : "Save"}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="h-12 shrink-0"
-                      onClick={() => setAddingShelf(false)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex gap-2">
-                    <Select value={shelfId} onValueChange={setShelfId}>
-                      <SelectTrigger className="h-12 flex-1">
-                        <SelectValue placeholder="No shelf" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">No shelf</SelectItem>
-                        {shelves.map((shelf) => (
-                          <SelectItem key={shelf.id} value={shelf.id}>
-                            {shelf.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="h-12 shrink-0"
-                      onClick={() => setAddingShelf(true)}
-                    >
-                      <Plus className="size-4" /> New
-                    </Button>
+                )}
+                {packMode && !isFashion && (
+                  <div className="rounded-2xl border border-border bg-secondary/50 p-4">
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      <Field label="Pieces per pack" error={errors.unitsPerPack}>
+                        <Input
+                          value={unitsPerPack}
+                          onChange={(e) => setUnitsPerPack(e.target.value)}
+                          className="h-11"
+                          inputMode="numeric"
+                          placeholder="12"
+                        />
+                      </Field>
+                      <Field label="Price per pack" error={errors.packPrice}>
+                        <Input
+                          value={packPrice}
+                          onChange={(e) => setPackPrice(e.target.value)}
+                          className="h-11"
+                          inputMode="decimal"
+                          placeholder="5000"
+                        />
+                      </Field>
+                      <Field label="Price per piece" error={errors.piecePrice}>
+                        <Input
+                          value={piecePrice}
+                          onChange={(e) => setPiecePrice(e.target.value)}
+                          className="h-11"
+                          inputMode="decimal"
+                          placeholder="500"
+                        />
+                      </Field>
+                    </div>
+                    <p className="mt-3 text-xs text-muted-foreground">
+                      Enter opening stock below as total pieces. Example: 10 packs × 12 pieces = 120
+                      pieces. Strap will display it as 10 packs and 0 loose pieces.
+                    </p>
                   </div>
                 )}
-              </Field>
-            )}
-            {isFashion && (
-              <section className="space-y-3 rounded-2xl border border-border bg-secondary/35 p-4">
-                <div>
-                  <p className="text-sm font-semibold">Style details</p>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                    Separate options with commas. Record one stock row per size and colour below,
-                    using “Size | Colour | Quantity”.
-                  </p>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Field label="Available sizes">
-                    <Input
-                      value={sizes}
-                      onChange={(e) => setSizes(e.target.value)}
-                      className="h-12"
-                      placeholder="XS, S, M, L, XL"
-                    />
+                {!isFashion && (
+                  <Field label="Shelf">
+                    {addingShelf ? (
+                      <div className="flex gap-2">
+                        <Input
+                          value={newShelf}
+                          onChange={(e) => setNewShelf(e.target.value)}
+                          className="h-12"
+                          maxLength={60}
+                          placeholder="e.g. Drinks"
+                        />
+                        <Button
+                          type="button"
+                          className="h-12 shrink-0"
+                          disabled={creatingShelf}
+                          onClick={() => void handleCreateShelf()}
+                        >
+                          {creatingShelf ? "Saving…" : "Save"}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="h-12 shrink-0"
+                          onClick={() => setAddingShelf(false)}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Select value={shelfId} onValueChange={setShelfId}>
+                          <SelectTrigger className="h-12 flex-1">
+                            <SelectValue placeholder="No shelf" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">No shelf</SelectItem>
+                            {shelves.map((shelf) => (
+                              <SelectItem key={shelf.id} value={shelf.id}>
+                                {shelf.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="h-12 shrink-0"
+                          onClick={() => setAddingShelf(true)}
+                        >
+                          <Plus className="size-4" /> New
+                        </Button>
+                      </div>
+                    )}
                   </Field>
-                  <Field label="Available colours">
-                    <Input
-                      value={colors}
-                      onChange={(e) => setColors(e.target.value)}
-                      className="h-12"
-                      placeholder="Black, Cream, Blue"
-                    />
-                  </Field>
-                </div>
-                <Field label="Material / fabric">
-                  <Input
-                    value={material}
-                    onChange={(e) => setMaterial(e.target.value)}
-                    className="h-12"
-                    maxLength={120}
-                    placeholder="e.g. Cotton, linen, denim"
-                  />
-                </Field>
-                <Field label="Style notes">
-                  <Input
-                    value={styleNotes}
-                    onChange={(e) => setStyleNotes(e.target.value)}
-                    className="h-12"
-                    maxLength={240}
-                    placeholder="Fit, occasion, care instructions…"
-                  />
-                </Field>
-                <Field label="Stock by size and colour">
-                  <textarea
-                    value={variantInventory}
-                    onChange={(e) => setVariantInventory(e.target.value)}
-                    rows={5}
-                    className="field min-h-28 w-full resize-y rounded-xl px-3 py-2.5 text-sm"
-                    placeholder={"S | Black | 3\nM | Black | 5\nS | Cream | 2"}
-                  />
-                  <p className="text-xs leading-5 text-muted-foreground">
-                    One combination per line. Quantities are specific to this branch. If you leave
-                    this blank, Strap uses the total stock field above.
-                  </p>
-                </Field>
-              </section>
+                )}
+                {isFashion && (
+                  <section className="space-y-3 rounded-2xl border border-border bg-secondary/35 p-4">
+                    <div>
+                      <p className="text-sm font-semibold">Style details</p>
+                      <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                        Separate options with commas. Record one stock row per size and colour
+                        below, using “Size | Colour | Quantity”.
+                      </p>
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Field label="Available sizes">
+                        <Input
+                          value={sizes}
+                          onChange={(e) => setSizes(e.target.value)}
+                          className="h-12"
+                          placeholder="XS, S, M, L, XL"
+                        />
+                      </Field>
+                      <Field label="Available colours">
+                        <Input
+                          value={colors}
+                          onChange={(e) => setColors(e.target.value)}
+                          className="h-12"
+                          placeholder="Black, Cream, Blue"
+                        />
+                      </Field>
+                    </div>
+                    <Field label="Material / fabric">
+                      <Input
+                        value={material}
+                        onChange={(e) => setMaterial(e.target.value)}
+                        className="h-12"
+                        maxLength={120}
+                        placeholder="e.g. Cotton, linen, denim"
+                      />
+                    </Field>
+                    <Field label="Style notes">
+                      <Input
+                        value={styleNotes}
+                        onChange={(e) => setStyleNotes(e.target.value)}
+                        className="h-12"
+                        maxLength={240}
+                        placeholder="Fit, occasion, care instructions…"
+                      />
+                    </Field>
+                    <Field label="Stock by size and colour">
+                      <textarea
+                        value={variantInventory}
+                        onChange={(e) => setVariantInventory(e.target.value)}
+                        rows={5}
+                        className="field min-h-28 w-full resize-y rounded-xl px-3 py-2.5 text-sm"
+                        placeholder={"S | Black | 3\nM | Black | 5\nS | Cream | 2"}
+                      />
+                      <p className="text-xs leading-5 text-muted-foreground">
+                        One combination per line. Quantities are specific to this branch. If you
+                        leave this blank, Strap uses the total stock field above.
+                      </p>
+                    </Field>
+                  </section>
+                )}
+              </div>
             )}
-</div>}
             <div className="grid gap-4 sm:grid-cols-2">
               <Field
                 label={packMode ? "Opening stock (pieces)" : "Stock at this location"}

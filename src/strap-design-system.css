@@ -921,7 +921,6 @@ body:has(main input#verification-code) button[type="submit"]:disabled {
   color: #0e1116 !important;
 }
 
-
 /* Dark-first auth and onboarding presentation, aligned with the supplied mobile reference. */
 :root.dark .strap-auth-main {
   --a-bg: #000000;
@@ -933,27 +932,37 @@ body:has(main input#verification-code) button[type="submit"]:disabled {
   background: #000 !important;
   color: #f5f5f7 !important;
 }
-:root.dark .strap-auth-form-panel { background: #000 !important; }
+:root.dark .strap-auth-form-panel {
+  background: #000 !important;
+}
 :root.dark .strap-auth-main .strap-field {
   border-color: #29292d !important;
   background: #09090b !important;
   color: #f5f5f7 !important;
   border-radius: 14px !important;
 }
-:root.dark .strap-auth-main .strap-field::placeholder { color: #777780 !important; }
+:root.dark .strap-auth-main .strap-field::placeholder {
+  color: #777780 !important;
+}
 :root.dark .strap-auth-main .strap-btn-primary {
   border-color: #c6f432 !important;
   background: #c6f432 !important;
   color: #090a06 !important;
 }
-:root.dark .strap-auth-main .strap-btn-primary:hover { background: #d8f18a !important; }
+:root.dark .strap-auth-main .strap-btn-primary:hover {
+  background: #d8f18a !important;
+}
 :root.dark .strap-auth-main .strap-btn-ghost {
   border-color: #29292d !important;
   background: #050506 !important;
   color: #f5f5f7 !important;
 }
-:root.dark .strap-auth-main .strap-terms a { color: #c6f432 !important; }
-:root.dark .strap-auth-main .strap-check { border-color: #a1a1aa !important; }
+:root.dark .strap-auth-main .strap-terms a {
+  color: #c6f432 !important;
+}
+:root.dark .strap-auth-main .strap-check {
+  border-color: #a1a1aa !important;
+}
 :root.dark .strap-auth-main .strap-check[data-state="checked"] {
   background: #c6f432 !important;
   border-color: #c6f432 !important;
@@ -982,12 +991,21 @@ body:has(main input#verification-code) button[type="submit"]:disabled {
     text-align: center;
     background: #000 !important;
   }
-  .strap-auth-aside .strap-logo { justify-content: center; }
-  .strap-auth-aside .strap-logo-mark {
-    width: 46px; height: 46px; border-width: 2.5px;
+  .strap-auth-aside .strap-logo {
+    justify-content: center;
   }
-  .strap-auth-aside .strap-logo-mark::after { width: 18px; height: 18px; }
-  .strap-auth-aside .strap-logo-word { font-size: 27px; }
+  .strap-auth-aside .strap-logo-mark {
+    width: 46px;
+    height: 46px;
+    border-width: 2.5px;
+  }
+  .strap-auth-aside .strap-logo-mark::after {
+    width: 18px;
+    height: 18px;
+  }
+  .strap-auth-aside .strap-logo-word {
+    font-size: 27px;
+  }
   .strap-auth-aside .strap-auth-hero {
     display: block !important;
     max-width: 620px;
@@ -1006,22 +1024,43 @@ body:has(main input#verification-code) button[type="submit"]:disabled {
     font-size: 16px;
   }
   .strap-auth-aside .strap-auth-copy,
-  .strap-auth-aside > .strap-auth-rings { display: none !important; }
+  .strap-auth-aside > .strap-auth-rings {
+    display: none !important;
+  }
   .strap-auth-form-panel {
     flex: 0 0 auto;
     align-items: flex-end !important;
     padding: 22px 28px max(28px, env(safe-area-inset-bottom)) !important;
     background: #000 !important;
   }
-  .strap-auth-box { max-width: 560px; }
-  .strap-auth-title { font-size: 30px !important; }
-  .strap-auth-form { gap: 14px; margin: 20px 0; }
-  .strap-auth-main .strap-field { min-height: 56px; height: 56px !important; font-size: 18px !important; }
-  .strap-auth-main .strap-btn { min-height: 56px; height: 56px; border-radius: 999px !important; font-size: 17px !important; }
-  .strap-auth-main .strap-btn-ghost { border-radius: 999px !important; }
-  .strap-auth-main .strap-or { margin-top: 18px; }
+  .strap-auth-box {
+    max-width: 560px;
+  }
+  .strap-auth-title {
+    font-size: 30px !important;
+  }
+  .strap-auth-form {
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .strap-auth-main .strap-field {
+    min-height: 56px;
+    height: 56px !important;
+    font-size: 18px !important;
+  }
+  .strap-auth-main .strap-btn {
+    min-height: 56px;
+    height: 56px;
+    border-radius: 999px !important;
+    font-size: 17px !important;
+  }
+  .strap-auth-main .strap-btn-ghost {
+    border-radius: 999px !important;
+  }
+  .strap-auth-main .strap-or {
+    margin-top: 18px;
+  }
 }
-
 
 /* ==========================================================================
    STRAP WORKSPACE SKIN — based on the supplied strap.zip prototype.
@@ -1110,13 +1149,18 @@ html.dark .kudi-app-shell {
   background: #000000 !important;
   color: #ffffff !important;
 }
-.kudi-app-shell body { background: transparent !important; }
+.kudi-app-shell body {
+  background: transparent !important;
+}
 .kudi-app-shell h1,
 .kudi-app-shell h2,
 .kudi-app-shell h3,
 .kudi-app-shell h4,
 .kudi-app-shell h5,
-.kudi-app-shell h6 { font-family: Inter, ui-sans-serif, system-ui, sans-serif !important; letter-spacing: -0.025em !important; }
+.kudi-app-shell h6 {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  letter-spacing: -0.025em !important;
+}
 .kudi-app-shell .surface-card,
 .kudi-app-shell .storefront-card,
 .kudi-app-shell [class*="bg-surface"],
@@ -1125,18 +1169,28 @@ html.dark .kudi-app-shell {
   border-color: var(--border) !important;
   box-shadow: none !important;
 }
-.kudi-app-shell .surface-card:hover { border-color: var(--border) !important; }
+.kudi-app-shell .surface-card:hover {
+  border-color: var(--border) !important;
+}
 .kudi-app-shell [data-tour="desktop-sidebar"] {
   background: var(--sidebar) !important;
   color: var(--sidebar-foreground) !important;
   border-color: var(--sidebar-border) !important;
 }
-.kudi-app-shell [data-tour="desktop-sidebar"] .text-white { color: var(--sidebar-foreground) !important; }
+.kudi-app-shell [data-tour="desktop-sidebar"] .text-white {
+  color: var(--sidebar-foreground) !important;
+}
 .kudi-app-shell [data-tour="desktop-sidebar"] .text-\[\#b4bac6\],
 .kudi-app-shell [data-tour="desktop-sidebar"] .text-\[\#8a919e\],
-.kudi-app-shell [data-tour="desktop-sidebar"] .text-\[\#9aa1ae\] { color: var(--muted-foreground) !important; }
-.kudi-app-shell [data-tour="desktop-sidebar"] .border-white\/10 { border-color: var(--border) !important; }
-.kudi-app-shell [data-tour="desktop-sidebar"] [class*="bg-white/"] { background: var(--secondary) !important; }
+.kudi-app-shell [data-tour="desktop-sidebar"] .text-\[\#9aa1ae\] {
+  color: var(--muted-foreground) !important;
+}
+.kudi-app-shell [data-tour="desktop-sidebar"] .border-white\/10 {
+  border-color: var(--border) !important;
+}
+.kudi-app-shell [data-tour="desktop-sidebar"] [class*="bg-white/"] {
+  background: var(--secondary) !important;
+}
 .kudi-app-shell [data-tour="desktop-sidebar"] a[aria-current="page"] {
   background: var(--primary) !important;
   color: var(--primary-foreground) !important;
@@ -1145,7 +1199,10 @@ html.dark .kudi-app-shell {
   background: var(--secondary) !important;
   color: var(--foreground) !important;
 }
-.kudi-app-shell [data-tour="desktop-sidebar"] .bg-\[\#c6f432\] { background: var(--primary) !important; color: var(--primary-foreground) !important; }
+.kudi-app-shell [data-tour="desktop-sidebar"] .bg-\[\#c6f432\] {
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+}
 .kudi-app-shell > div > div > main {
   max-width: 1440px !important;
   border: 0 !important;
@@ -1156,7 +1213,9 @@ html.dark .kudi-app-shell {
 .kudi-app-shell > div > div > main > header {
   border-color: var(--border) !important;
 }
-.kudi-app-shell > div > div > main > header h1 { font-weight: 600 !important; }
+.kudi-app-shell > div > div > main > header h1 {
+  font-weight: 600 !important;
+}
 .kudi-app-shell [data-slot="card"],
 .kudi-app-shell .rounded-2xl.border,
 .kudi-app-shell .rounded-xl.border {
@@ -1193,7 +1252,9 @@ html.dark .kudi-app-shell .strap-mobile-nav-dock {
   background: #c6f432 !important;
   color: #101010 !important;
 }
-.kudi-app-shell .strap-mobile-nav-dock button { color: var(--foreground) !important; }
+.kudi-app-shell .strap-mobile-nav-dock button {
+  color: var(--foreground) !important;
+}
 .kudi-app-shell [data-slot="sheet-content"],
 [data-slot="sheet-content"],
 [data-slot="dialog-content"] {
@@ -1212,7 +1273,9 @@ html.dark [data-slot="dialog-content"] {
 }
 .kudi-app-shell .bg-background\/95,
 .kudi-app-shell .bg-surface\/85,
-.kudi-app-shell .bg-card\/90 { background: var(--background) !important; }
+.kudi-app-shell .bg-card\/90 {
+  background: var(--background) !important;
+}
 .kudi-app-shell [class*="backdrop-blur"],
 .kudi-app-shell [style*="backdrop-filter"],
 .kudi-app-shell [style*="backdrop-filter"] * {
@@ -1231,11 +1294,20 @@ html.dark [data-slot="dialog-content"] {
 }
 .kudi-app-shell .strap-route-progress,
 .kudi-app-shell .strap-route-progress::after,
-.kudi-app-shell .strap-spinner { animation: none !important; }
-.kudi-app-shell [class*="shadow-"] { box-shadow: none !important; }
-.kudi-app-shell :focus-visible { outline: 2px solid #c6f432 !important; outline-offset: 2px; }
+.kudi-app-shell .strap-spinner {
+  animation: none !important;
+}
+.kudi-app-shell [class*="shadow-"] {
+  box-shadow: none !important;
+}
+.kudi-app-shell :focus-visible {
+  outline: 2px solid #c6f432 !important;
+  outline-offset: 2px;
+}
 @media (max-width: 1023px) {
-  .kudi-app-shell > div > div { padding-top: 12px !important; }
+  .kudi-app-shell > div > div {
+    padding-top: 12px !important;
+  }
   .kudi-app-shell > div > div > main {
     min-height: calc(100dvh - 24px) !important;
     padding: 8px 0 24px !important;
@@ -1245,7 +1317,6 @@ html.dark [data-slot="dialog-content"] {
     padding-bottom: 16px !important;
   }
 }
-
 
 /* Final polish for the new workspace: dense, calm, tactile, and static. */
 .kudi-app-shell .surface-card,
@@ -1293,8 +1364,12 @@ html.dark .kudi-app-shell .bg-accent-soft,
 html.dark .kudi-app-shell .bg-warning-soft {
   background: #1b2408 !important;
 }
-.kudi-app-shell .text-accent-ink { color: #435500 !important; }
-html.dark .kudi-app-shell .text-accent-ink { color: #c6f432 !important; }
+.kudi-app-shell .text-accent-ink {
+  color: #435500 !important;
+}
+html.dark .kudi-app-shell .text-accent-ink {
+  color: #c6f432 !important;
+}
 .kudi-app-shell .strap-mobile-nav-dock,
 .kudi-app-shell [data-tour="desktop-sidebar"] {
   backdrop-filter: none !important;
@@ -1314,8 +1389,12 @@ html.dark .kudi-app-shell .text-accent-ink { color: #c6f432 !important; }
   transition: none !important;
 }
 
-body:has(.kudi-app-shell) { background: #ffffff !important; }
-html.dark body:has(.kudi-app-shell) { background: #000000 !important; }
+body:has(.kudi-app-shell) {
+  background: #ffffff !important;
+}
+html.dark body:has(.kudi-app-shell) {
+  background: #000000 !important;
+}
 .kudi-app-shell .bg-white,
 .kudi-app-shell .bg-\[\#fff\],
 .kudi-app-shell .bg-\[\#ffffff\] {
@@ -1327,7 +1406,9 @@ html.dark body:has(.kudi-app-shell) { background: #000000 !important; }
   background-color: var(--surface) !important;
 }
 .kudi-app-shell [data-slot="sheet-overlay"],
-.kudi-app-shell [data-slot="dialog-overlay"] { background: rgb(0 0 0 / 0.48) !important; }
+.kudi-app-shell [data-slot="dialog-overlay"] {
+  background: rgb(0 0 0 / 0.48) !important;
+}
 
 /* Portal-mounted menus and selects do not inherit workspace-scoped tokens. */
 [data-slot="select-content"],

@@ -393,11 +393,26 @@
   }
 }
 @media (max-width: 520px) {
-  .sa-r { padding: 24px 14px 32px; }
-  .sa-box { max-width: 100%; }
-  .sa-otp { width: 100%; gap: clamp(2px, 1.2vw, 6px); }
-  .sa-otp .sep { width: clamp(3px, 1.4vw, 6px); margin: 0; }
-  .sa-otp .sa-in { min-width: 0; height: clamp(42px, 11vw, 52px); min-height: clamp(42px, 11vw, 52px); font-size: clamp(14px, 4.3vw, 20px); }
+  .sa-r {
+    padding: 24px 14px 32px;
+  }
+  .sa-box {
+    max-width: 100%;
+  }
+  .sa-otp {
+    width: 100%;
+    gap: clamp(2px, 1.2vw, 6px);
+  }
+  .sa-otp .sep {
+    width: clamp(3px, 1.4vw, 6px);
+    margin: 0;
+  }
+  .sa-otp .sa-in {
+    min-width: 0;
+    height: clamp(42px, 11vw, 52px);
+    min-height: clamp(42px, 11vw, 52px);
+    font-size: clamp(14px, 4.3vw, 20px);
+  }
 }
 @media (max-width: 420px) {
   .sa-otp {
@@ -534,4 +549,6 @@
 :root.dark .sa-box .sa-mut,
 :root.dark .sa-box .sa-alt,
 :root.dark .sa-box .sa-alt a,
-:root.dark .sa-box .sa-alt button { color: #ffffff; }
+:root.dark .sa-box .sa-alt button {
+  color: #ffffff;
+}

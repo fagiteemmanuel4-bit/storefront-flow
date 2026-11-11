@@ -67,6 +67,7 @@ import { Route as AuthenticatedOnlineStoreCatalogRouteImport } from './routes/_a
 import { Route as AuthenticatedOnlineStoreOrdersRouteImport } from './routes/_authenticated/online-store/orders'
 import { Route as AuthenticatedOnlineStoreSetupRouteImport } from './routes/_authenticated/online-store/setup'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedSettingsAdvancedRouteImport } from './routes/_authenticated/settings/advanced'
 import { Route as AuthenticatedSettingsAiAgentsRouteImport } from './routes/_authenticated/settings/ai-agents'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsCheckoutRouteImport } from './routes/_authenticated/settings/checkout'
@@ -391,6 +392,12 @@ const AuthenticatedSettingsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRoute,
   } as any)
+const AuthenticatedSettingsAdvancedRoute =
+  AuthenticatedSettingsAdvancedRouteImport.update({
+    id: '/advanced',
+    path: '/advanced',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
 const AuthenticatedSettingsAiAgentsRoute =
   AuthenticatedSettingsAiAgentsRouteImport.update({
     id: '/ai-agents',
@@ -550,6 +557,7 @@ export interface FileRoutesByFullPath {
   '/online-store/catalog': typeof AuthenticatedOnlineStoreCatalogRoute
   '/online-store/orders': typeof AuthenticatedOnlineStoreOrdersRoute
   '/online-store/setup': typeof AuthenticatedOnlineStoreSetupRoute
+  '/settings/advanced': typeof AuthenticatedSettingsAdvancedRoute
   '/settings/ai-agents': typeof AuthenticatedSettingsAiAgentsRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/checkout': typeof AuthenticatedSettingsCheckoutRoute
@@ -625,6 +633,7 @@ export interface FileRoutesByTo {
   '/online-store/catalog': typeof AuthenticatedOnlineStoreCatalogRoute
   '/online-store/orders': typeof AuthenticatedOnlineStoreOrdersRoute
   '/online-store/setup': typeof AuthenticatedOnlineStoreSetupRoute
+  '/settings/advanced': typeof AuthenticatedSettingsAdvancedRoute
   '/settings/ai-agents': typeof AuthenticatedSettingsAiAgentsRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/checkout': typeof AuthenticatedSettingsCheckoutRoute
@@ -703,6 +712,7 @@ export interface FileRoutesById {
   '/_authenticated/online-store/catalog': typeof AuthenticatedOnlineStoreCatalogRoute
   '/_authenticated/online-store/orders': typeof AuthenticatedOnlineStoreOrdersRoute
   '/_authenticated/online-store/setup': typeof AuthenticatedOnlineStoreSetupRoute
+  '/_authenticated/settings/advanced': typeof AuthenticatedSettingsAdvancedRoute
   '/_authenticated/settings/ai-agents': typeof AuthenticatedSettingsAiAgentsRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/checkout': typeof AuthenticatedSettingsCheckoutRoute
@@ -781,6 +791,7 @@ export interface FileRouteTypes {
     | '/online-store/catalog'
     | '/online-store/orders'
     | '/online-store/setup'
+    | '/settings/advanced'
     | '/settings/ai-agents'
     | '/settings/appearance'
     | '/settings/checkout'
@@ -856,6 +867,7 @@ export interface FileRouteTypes {
     | '/online-store/catalog'
     | '/online-store/orders'
     | '/online-store/setup'
+    | '/settings/advanced'
     | '/settings/ai-agents'
     | '/settings/appearance'
     | '/settings/checkout'
@@ -933,6 +945,7 @@ export interface FileRouteTypes {
     | '/_authenticated/online-store/catalog'
     | '/_authenticated/online-store/orders'
     | '/_authenticated/online-store/setup'
+    | '/_authenticated/settings/advanced'
     | '/_authenticated/settings/ai-agents'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/checkout'
@@ -1387,6 +1400,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRoute
     }
+    '/_authenticated/settings/advanced': {
+      id: '/_authenticated/settings/advanced'
+      path: '/advanced'
+      fullPath: '/settings/advanced'
+      preLoaderRoute: typeof AuthenticatedSettingsAdvancedRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
     '/_authenticated/settings/ai-agents': {
       id: '/_authenticated/settings/ai-agents'
       path: '/ai-agents'
@@ -1525,6 +1545,7 @@ const AuthenticatedSettingsSessionsRouteWithChildren =
   )
 
 interface AuthenticatedSettingsRouteChildren {
+  AuthenticatedSettingsAdvancedRoute: typeof AuthenticatedSettingsAdvancedRoute
   AuthenticatedSettingsAiAgentsRoute: typeof AuthenticatedSettingsAiAgentsRoute
   AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
   AuthenticatedSettingsCheckoutRoute: typeof AuthenticatedSettingsCheckoutRoute
@@ -1543,6 +1564,7 @@ interface AuthenticatedSettingsRouteChildren {
 }
 
 const AuthenticatedSettingsRouteChildren: AuthenticatedSettingsRouteChildren = {
+  AuthenticatedSettingsAdvancedRoute: AuthenticatedSettingsAdvancedRoute,
   AuthenticatedSettingsAiAgentsRoute: AuthenticatedSettingsAiAgentsRoute,
   AuthenticatedSettingsAppearanceRoute: AuthenticatedSettingsAppearanceRoute,
   AuthenticatedSettingsCheckoutRoute: AuthenticatedSettingsCheckoutRoute,

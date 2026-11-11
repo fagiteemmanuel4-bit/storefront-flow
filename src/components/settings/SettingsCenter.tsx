@@ -67,19 +67,70 @@ type NavItem = {
 };
 
 export const SETTINGS_NAV: NavItem[] = [
-  { path: "/settings/store-profile", title: "Store profile", description: "Store identity, regional preferences and display", icon: Store, group: "Workspace" },
-  { path: "/settings/receipts", title: "Commerce", description: "Receipts, checkout, sales, inventory and payments", icon: Receipt, group: "Workspace" },
-  { path: "/settings/staff", title: "Staff & notifications", description: "Team access, permissions and operational alerts", icon: Users, group: "Workspace" },
-  { path: "/settings/ai-agents", title: "Integrations", description: "Connected applications and authorised access", icon: Bot, group: "Workspace" },
-  { path: "/settings/security", title: "Security", description: "Account protection and security preferences", icon: ShieldCheck, group: "Account" },
-  { path: "/settings/password", title: "Password & sessions", description: "Change password and manage active sessions", icon: KeyRound, group: "Account" },
-  { path: "/settings/advanced", title: "Advanced", description: "Operational and developer controls", icon: SlidersHorizontal, group: "Account" },
+  {
+    path: "/settings/store-profile",
+    title: "Store profile",
+    description: "Store identity, regional preferences and display",
+    icon: Store,
+    group: "Workspace",
+  },
+  {
+    path: "/settings/receipts",
+    title: "Commerce",
+    description: "Receipts, checkout, sales, inventory and payments",
+    icon: Receipt,
+    group: "Workspace",
+  },
+  {
+    path: "/settings/staff",
+    title: "Staff & notifications",
+    description: "Team access, permissions and operational alerts",
+    icon: Users,
+    group: "Workspace",
+  },
+  {
+    path: "/settings/ai-agents",
+    title: "Integrations",
+    description: "Connected applications and authorised access",
+    icon: Bot,
+    group: "Workspace",
+  },
+  {
+    path: "/settings/security",
+    title: "Security",
+    description: "Account protection and security preferences",
+    icon: ShieldCheck,
+    group: "Account",
+  },
+  {
+    path: "/settings/password",
+    title: "Password & sessions",
+    description: "Change password and manage active sessions",
+    icon: KeyRound,
+    group: "Account",
+  },
+  {
+    path: "/settings/advanced",
+    title: "Advanced",
+    description: "Operational and developer controls",
+    icon: SlidersHorizontal,
+    group: "Account",
+  },
 ];
 
 const meta: Record<Section, { title: string; description: string }> = {
-  commerce: { title: "Commerce", description: "Manage receipts, checkout, sales, stock and payments." },
-  team: { title: "Staff & notifications", description: "Manage team access and store notifications." },
-  account: { title: "Password & sessions", description: "Change your password and manage active sign-in sessions." },
+  commerce: {
+    title: "Commerce",
+    description: "Manage receipts, checkout, sales, stock and payments.",
+  },
+  team: {
+    title: "Staff & notifications",
+    description: "Manage team access and store notifications.",
+  },
+  account: {
+    title: "Password & sessions",
+    description: "Change your password and manage active sign-in sessions.",
+  },
   "store-profile": {
     title: "Store profile",
     description: "Manage the business identity and regional information used across Strap.",
@@ -150,17 +201,29 @@ export function SettingsLayout() {
       <nav aria-label="Settings navigation" className="grid gap-2">
         {SETTINGS_NAV.map((item) => {
           const Icon = item.icon;
-          const active = location.pathname === item.path ||
-            (item.path === "/settings/receipts" && ["/settings/checkout", "/settings/inventory", "/settings/payments"].includes(location.pathname)) ||
+          const active =
+            location.pathname === item.path ||
+            (item.path === "/settings/receipts" &&
+              ["/settings/checkout", "/settings/inventory", "/settings/payments"].includes(
+                location.pathname,
+              )) ||
             (item.path === "/settings/staff" && location.pathname === "/settings/notifications") ||
             (item.path === "/settings/password" && location.pathname === "/settings/sessions");
           return (
-            <Link key={item.path} to={item.path} onClick={onNavigate}
-              className={`group flex min-h-12 items-center gap-3 rounded-xl border px-3 py-2.5 transition ${active ? "border-accent bg-accent-soft text-accent-ink" : "border-border/80 bg-background text-foreground hover:border-accent/50 hover:bg-secondary"}`}>
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-secondary"><Icon className="size-4" /></span>
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={onNavigate}
+              className={`group flex min-h-12 items-center gap-3 rounded-xl border px-3 py-2.5 transition ${active ? "border-accent bg-accent-soft text-accent-ink" : "border-border/80 bg-background text-foreground hover:border-accent/50 hover:bg-secondary"}`}
+            >
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-secondary">
+                <Icon className="size-4" />
+              </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[13px] font-semibold">{item.title}</span>
-                <span className="mt-0.5 block truncate text-[10px] text-muted-foreground">{item.description}</span>
+                <span className="mt-0.5 block truncate text-[10px] text-muted-foreground">
+                  {item.description}
+                </span>
               </span>
               <ChevronRight className="size-4 shrink-0 opacity-50" />
             </Link>
@@ -168,8 +231,13 @@ export function SettingsLayout() {
         })}
       </nav>
       <div className="mt-auto pt-4">
-        <Link to="/dashboard" onClick={onNavigate} className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#C6F432] px-4 py-3 text-sm font-bold text-[#0E1116] transition hover:bg-[#b6e52c]">
-          <ArrowRight className="size-4 rotate-180" />Go back to dashboard
+        <Link
+          to="/dashboard"
+          onClick={onNavigate}
+          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#C6F432] px-4 py-3 text-sm font-bold text-[#0E1116] transition hover:bg-[#b6e52c]"
+        >
+          <ArrowRight className="size-4 rotate-180" />
+          Go back to dashboard
         </Link>
       </div>
     </div>
@@ -177,14 +245,31 @@ export function SettingsLayout() {
   return (
     <AppShell title={store?.name ?? "Settings"}>
       <div className="settings-workspace mx-auto grid max-w-7xl min-w-0 gap-5 lg:grid-cols-[250px_minmax(0,1fr)]">
-        <aside className="hidden min-h-[calc(100dvh-9rem)] flex-col lg:sticky lg:top-24 lg:flex"><SettingsLinks /></aside>
+        <aside className="hidden min-h-[calc(100dvh-9rem)] flex-col lg:sticky lg:top-24 lg:flex">
+          <SettingsLinks />
+        </aside>
         <main className="settings-detail min-w-0">
           <div className="mb-4 flex items-center justify-between gap-3 lg:hidden">
-            
             <Sheet open={navOpen} onOpenChange={setNavOpen}>
-              <SheetTrigger asChild><Button variant="outline" size="icon" className="shrink-0 rounded-xl" aria-label="Open settings menu"><Menu className="size-4" /></Button></SheetTrigger>
-              <SheetContent side="left" className="flex w-[min(90vw,360px)] flex-col overflow-y-auto p-4">
-                <SheetHeader className="mb-4 text-left"><SheetTitle className="font-display text-lg">{store?.name ?? "Settings"}</SheetTitle></SheetHeader>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="shrink-0 rounded-xl"
+                  aria-label="Open settings menu"
+                >
+                  <Menu className="size-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                side="left"
+                className="flex w-[min(90vw,360px)] flex-col overflow-y-auto p-4"
+              >
+                <SheetHeader className="mb-4 text-left">
+                  <SheetTitle className="font-display text-lg">
+                    {store?.name ?? "Settings"}
+                  </SheetTitle>
+                </SheetHeader>
                 <SettingsLinks onNavigate={() => setNavOpen(false)} />
               </SheetContent>
             </Sheet>
@@ -432,18 +517,44 @@ export function SettingsSectionPage({ section }: { section: Section }) {
   return (
     <div className="space-y-5">
       {m.description && <p className="text-sm leading-6 text-muted-foreground">{m.description}</p>}
-      {section === "store-profile" && <><StoreProfile /><Appearance /></>}
-      {section === "commerce" && <><Receipts /><AdvancedToggles group="checkout" title="Checkout & sales" rows={checkoutRows} /><Inventory /><Payments /></>}
-      {section === "team" && <><Staff /><AdvancedToggles group="notifications" title="Notifications" rows={notificationRows} /></>}
+      {section === "store-profile" && (
+        <>
+          <StoreProfile />
+          <Appearance />
+        </>
+      )}
+      {section === "commerce" && (
+        <>
+          <Receipts />
+          <AdvancedToggles group="checkout" title="Checkout & sales" rows={checkoutRows} />
+          <Inventory />
+          <Payments />
+        </>
+      )}
+      {section === "team" && (
+        <>
+          <Staff />
+          <AdvancedToggles group="notifications" title="Notifications" rows={notificationRows} />
+        </>
+      )}
       {section === "security" && <Security />}
-      {section === "account" && <><PasswordOtp /><Sessions /></>}
+      {section === "account" && (
+        <>
+          <PasswordOtp />
+          <Sessions />
+        </>
+      )}
       {section === "appearance" && <Appearance />}
       {section === "theme" && <ThemePreferences />}
       {section === "staff" && <Staff />}
-      {section === "notifications" && <AdvancedToggles group="notifications" title="Notifications" rows={notificationRows} />}
+      {section === "notifications" && (
+        <AdvancedToggles group="notifications" title="Notifications" rows={notificationRows} />
+      )}
       {section === "receipts" && <Receipts />}
       {section === "online-store" && <OnlineStore />}
-      {section === "checkout" && <AdvancedToggles group="checkout" title="Checkout & sales" rows={checkoutRows} />}
+      {section === "checkout" && (
+        <AdvancedToggles group="checkout" title="Checkout & sales" rows={checkoutRows} />
+      )}
       {section === "inventory" && <Inventory />}
       {section === "payments" && <Payments />}
       {section === "password" && <PasswordOtp />}
