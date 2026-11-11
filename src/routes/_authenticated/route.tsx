@@ -72,16 +72,16 @@ function AuthenticatedLayout() {
       return;
     }
 
-    // Also inspect store_members / profiles table if accessible
-    void supabase
-      .from("profiles")
-      .select("status,status_reason")
-      .eq("id", user.id)
+    // Also inspect staff_accounts or user metadata for suspension / ban
+    void (supabase as any)
+      .from("staff_accounts")
+      .select("is_active")
+      .eq("user_id", user.id)
       .maybeSingle()
-      .then(({ data }) => {
-        if (data?.status === "banned" || data?.status === "suspended") {
-          setAccountStatus(data.status);
-          setStatusReason(data.status_reason ?? undefined);
+      .then(({ data }: { data: { is_active?: boolean } | null }) => {
+        if (data && data.is_active === false) {
+          setAccountStatus("suspended");
+          setStatusReason("Your staff account has been suspended by store administration.");
         }
       });
   }, [user]);
