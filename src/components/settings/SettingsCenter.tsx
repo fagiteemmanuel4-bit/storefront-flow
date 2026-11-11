@@ -36,6 +36,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { useTheme } from "@/components/shell/ThemeProvider";
 import { ReceiptSettingsPanel } from "@/components/settings/ReceiptSettingsPanel";
+import { PasswordOtp } from "@/components/settings/PasswordOtp";
 
 const db = supabase as any;
 
@@ -76,6 +77,9 @@ export const SETTINGS_NAV: NavItem[] = [
 ];
 
 const meta: Record<Section, { title: string; description: string }> = {
+  commerce: { title: "Commerce", description: "Manage receipts, checkout, sales, stock and payments." },
+  team: { title: "Staff & notifications", description: "Manage team access and store notifications." },
+  account: { title: "Password & sessions", description: "Change your password and manage active sign-in sessions." },
   "store-profile": {
     title: "Store profile",
     description: "Manage the business identity and regional information used across Strap.",
@@ -137,12 +141,6 @@ const meta: Record<Section, { title: string; description: string }> = {
   },
 };
 
-function groupedNav() {
-  const groups = new Map<string, NavItem[]>();
-  for (const item of SETTINGS_NAV) groups.set(item.group, [...(groups.get(item.group) ?? []), item]);
-  return [...groups.entries()];
-}
-
 export function SettingsLayout() {
   const location = useLocation();
   const { store } = useStoreContext();
@@ -182,7 +180,7 @@ export function SettingsLayout() {
         <aside className="hidden min-h-[calc(100dvh-9rem)] flex-col lg:sticky lg:top-24 lg:flex"><SettingsLinks /></aside>
         <main className="settings-detail min-w-0">
           <div className="mb-4 flex items-center justify-between gap-3 lg:hidden">
-            <h1 className="min-w-0 truncate text-lg font-bold">{store?.name ?? "Settings"}</h1>
+            
             <Sheet open={navOpen} onOpenChange={setNavOpen}>
               <SheetTrigger asChild><Button variant="outline" size="icon" className="shrink-0 rounded-xl" aria-label="Open settings menu"><Menu className="size-4" /></Button></SheetTrigger>
               <SheetContent side="left" className="flex w-[min(90vw,360px)] flex-col overflow-y-auto p-4">
@@ -434,11 +432,11 @@ export function SettingsSectionPage({ section }: { section: Section }) {
   return (
     <div className="space-y-5">
       {m.description && <p className="text-sm leading-6 text-muted-foreground">{m.description}</p>}
-      {section === "store-profile" && <><StoreProfile /><ThemePreferences /><Appearance /></>}
+      {section === "store-profile" && <><StoreProfile /><Appearance /></>}
       {section === "commerce" && <><Receipts /><AdvancedToggles group="checkout" title="Checkout & sales" rows={checkoutRows} /><Inventory /><Payments /></>}
       {section === "team" && <><Staff /><AdvancedToggles group="notifications" title="Notifications" rows={notificationRows} /></>}
       {section === "security" && <Security />}
-      {section === "account" && <><Password /><Sessions /></>}
+      {section === "account" && <><PasswordOtp /><Sessions /></>}
       {section === "appearance" && <Appearance />}
       {section === "theme" && <ThemePreferences />}
       {section === "staff" && <Staff />}
@@ -1571,128 +1569,6 @@ function Payments() {
       </p>
     </div>
   );
-}
-
-function Password() {
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [sent, setSent] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
-  const [busy, setBusy] = useState(false);
-  useEffect(() => {
-    void supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
-  }, []);
-  useEffect(() => {
-    if (!cooldown) return;
-    const t = window.setInterval(() => setCooldown((n) => Math.max(0, n - 1)), 1000);
-    return () => window.clearInterval(t);
-  }, [cooldown]);
-  const score = passwordStrength(newPassword);
-  const request = async () => {
-    if (!email) return;
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: false },
-    });
-    setBusy(false);
-    if (error) toast.error(error.message);
-    else {
-      setSent(true);
-      setCooldown(60);
-      toast.success("OTP sent to your verified email.");
-    }
-  };
-  const verify = async () => {
-    if (!/^\d{6}$/.test(otp)) return toast.error("Enter the 6-digit OTP.");
-    if (score < 3) return toast.error("Choose a stronger password.");
-    if (newPassword !== confirm) return toast.error("Passwords do not match.");
-    setBusy(true);
-    const { error: ve } = await supabase.auth.verifyOtp({ email, token: otp, type: "email" });
-    if (ve) {
-      setBusy(false);
-      return toast.error(ve.message);
-    }
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    setBusy(false);
-    if (error) toast.error(error.message);
-    else {
-      setSent(false);
-      setOtp("");
-      setNewPassword("");
-      setConfirm("");
-      toast.success("Password changed successfully.");
-    }
-  };
-  return (
-    <div className="space-y-5">
-      <CardSection
-        title="Request OTP"
-        description={`A one-time code will be sent to ${email || "your verified email"}.`}
-      >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="font-semibold">Step 1 — verify your email</p>
-            <p className="text-sm text-muted-foreground">Use the real Supabase email OTP flow.</p>
-          </div>
-          <Button onClick={() => void request()} disabled={busy || cooldown > 0}>
-            {cooldown ? `Resend in ${cooldown}s` : sent ? "Resend OTP" : "Request OTP"}
-          </Button>
-        </div>
-      </CardSection>
-      <CardSection
-        title="Verify and change password"
-        description="Step 2 — verify the OTP, then update the authenticated Supabase user."
-      >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            label="OTP"
-            value={otp}
-            onChange={(v) => setOtp(v.replace(/\D/g, "").slice(0, 6))}
-            placeholder="6-digit code"
-            disabled={!sent}
-          />
-          <div />
-          <Field
-            label="New password"
-            value={newPassword}
-            onChange={setNewPassword}
-            type="password"
-            disabled={!sent}
-          />
-          <Field
-            label="Confirm password"
-            value={confirm}
-            onChange={setConfirm}
-            type="password"
-            disabled={!sent}
-          />
-        </div>
-        <div className="mt-4 rounded-xl border border-border p-4">
-          <div className="flex justify-between text-xs">
-            <span className="font-semibold">Password strength</span>
-            <span>{["Very weak", "Weak", "Fair", "Strong", "Very strong"][score]}</span>
-          </div>
-          <div className="mt-2 h-1.5 rounded-full bg-secondary">
-            <div className="h-full rounded-full bg-accent" style={{ width: `${score * 25}%` }} />
-          </div>
-        </div>
-        <Button className="mt-5" onClick={() => void verify()} disabled={!sent || busy}>
-          {busy ? "Verifying…" : "Verify OTP & change password"}
-        </Button>
-      </CardSection>
-    </div>
-  );
-}
-function passwordStrength(value: string) {
-  let s = 0;
-  if (value.length >= 8) s++;
-  if (/[A-Z]/.test(value) && /[a-z]/.test(value)) s++;
-  if (/\d/.test(value)) s++;
-  if (/[^A-Za-z0-9]/.test(value)) s++;
-  return s;
 }
 
 function Sessions() {
