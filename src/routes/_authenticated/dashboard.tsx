@@ -134,20 +134,39 @@ function DashboardPage() {
   return (
     <AppShell title={isFashion ? "Fashion studio" : "Today's trading"}>
       <div className="space-y-6 pb-8">
-        <div className="flex flex-wrap gap-2.5">
+        <div className="grid gap-3 sm:grid-cols-2">
           <Link
             to={isFashion ? "/products" : "/pos"}
-            className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 dark:bg-[#c6f432] dark:text-[#0e1116]"
+            className="flex min-h-28 items-center justify-between gap-4 rounded-[26px] bg-black px-5 py-5 text-left text-white"
           >
-            {isFashion ? <Package className="size-4" /> : <ScanLine className="size-4" />}
-            {isFashion ? "Manage collection" : "Sell now"}
+            <span className="flex min-w-0 items-center gap-3">
+              <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#c6f432] text-black">
+                {isFashion ? <Package className="size-5" /> : <ScanLine className="size-5" />}
+              </span>
+              <span className="min-w-0">
+                <span className="block text-base font-semibold">
+                  {isFashion ? "Manage collection" : "Open Point of Sale"}
+                </span>
+                <span className="mt-1 block text-sm text-white/70">
+                  {isFashion ? "Update products and variants" : "Scan, sell and take payment"}
+                </span>
+              </span>
+            </span>
+            <ArrowRight className="size-5 shrink-0" />
           </Link>
           <Link
             to="/products"
-            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-5 text-sm font-semibold transition hover:border-foreground/40"
+            className="flex min-h-28 items-center gap-3 rounded-[26px] border border-border bg-surface px-5 py-5 text-sm font-semibold"
           >
-            <Plus className="size-4" />
-            Add product
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink">
+              <Plus className="size-5" />
+            </span>
+            <span>
+              <span className="block text-base">Add product</span>
+              <span className="mt-1 block text-sm font-normal text-muted-foreground">
+                Build your catalogue
+              </span>
+            </span>
           </Link>
         </div>
 
