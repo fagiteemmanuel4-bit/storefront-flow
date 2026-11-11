@@ -37,7 +37,13 @@ import { useStoreContext } from "@/components/shell/StoreProvider";
 import { useTheme } from "@/components/shell/ThemeProvider";
 import { ReceiptSettingsPanel } from "@/components/settings/ReceiptSettingsPanel";
 import { PasswordOtp } from "@/components/settings/PasswordOtp";
-import { BottomSheet, BottomSheetContent, BottomSheetDescription, BottomSheetHeader, BottomSheetTitle } from "@/components/ui/bottom-sheet";
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from "@/components/ui/bottom-sheet";
 
 const db = supabase as any;
 
@@ -342,12 +348,23 @@ function CardSection({
   }, [open]);
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}
-        className="group flex w-full items-center gap-4 rounded-[24px] border border-border/70 bg-background p-5 text-left shadow-[0_8px_28px_rgba(15,23,42,.035)] transition hover:-translate-y-0.5 hover:border-[#C6F432]/60 hover:shadow-[0_14px_34px_rgba(15,23,42,.08)] sm:p-6">
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        className="group flex w-full items-center gap-4 rounded-[24px] border border-border/70 bg-background p-5 text-left shadow-[0_8px_28px_rgba(15,23,42,.035)] transition hover:-translate-y-0.5 hover:border-[#C6F432]/60 hover:shadow-[0_14px_34px_rgba(15,23,42,.08)] sm:p-6"
+      >
         <span className="min-w-0 flex-1">
           <span className="block font-semibold">{title}</span>
-          {description && <span className="mt-1 block text-sm leading-5 text-muted-foreground">{description}</span>}
-          <span className="mt-3 block text-xs font-semibold text-muted-foreground">Tap to manage settings</span>
+          {description && (
+            <span className="mt-1 block text-sm leading-5 text-muted-foreground">
+              {description}
+            </span>
+          )}
+          <span className="mt-3 block text-xs font-semibold text-muted-foreground">
+            Tap to manage settings
+          </span>
         </span>
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary transition group-hover:bg-[#C6F432] group-hover:text-[#111713]">
           <ChevronDown className="size-4" />
@@ -361,10 +378,16 @@ function CardSection({
           </BottomSheetHeader>
           {revealing ? (
             <div className="flex min-h-56 items-center justify-center">
-              <span className="size-10 animate-spin rounded-full border-[4px] border-[#C6F432]/25 border-t-[#C6F432]" role="status" aria-label="Loading settings" />
+              <span
+                className="size-10 animate-spin rounded-full border-[4px] border-[#C6F432]/25 border-t-[#C6F432]"
+                role="status"
+                aria-label="Loading settings"
+              />
             </div>
           ) : (
-            <div className="space-y-5 px-5 py-5 pb-[calc(28px+env(safe-area-inset-bottom))] sm:px-7">{children}</div>
+            <div className="space-y-5 px-5 py-5 pb-[calc(28px+env(safe-area-inset-bottom))] sm:px-7">
+              {children}
+            </div>
           )}
         </BottomSheetContent>
       </BottomSheet>

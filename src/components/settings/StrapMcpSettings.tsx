@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bot, Check, Copy, ExternalLink, GitBranch, ShieldCheck, Trash2 } from "lucide-react";
-import { BottomSheet, BottomSheetContent, BottomSheetDescription, BottomSheetHeader, BottomSheetTitle } from "@/components/ui/bottom-sheet";
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from "@/components/ui/bottom-sheet";
 import { toast } from "sonner";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
@@ -109,10 +115,25 @@ const WRITE_OPTIONS: Array<{ key: keyof AccessConfig; title: string; description
 ];
 
 function getConnectedAppLogo(grant: OAuthGrant): string | null {
-  const client = grant.client as OAuthGrant["client"] & { logo_uri?: string | null; logo_url?: string | null };
+  const client = grant.client as OAuthGrant["client"] & {
+    logo_uri?: string | null;
+    logo_url?: string | null;
+  };
   if (client.logo_uri || client.logo_url) return client.logo_uri || client.logo_url || null;
   const name = (client.name || "").toLowerCase();
-  const providers: Array<[string, string]> = [["chatgpt", "openai.com"], ["openai", "openai.com"], ["claude", "claude.ai"], ["anthropic", "anthropic.com"], ["gemini", "gemini.google.com"], ["perplexity", "perplexity.ai"], ["cursor", "cursor.com"], ["copilot", "copilot.microsoft.com"], ["microsoft", "microsoft.com"], ["google", "google.com"], ["zapier", "zapier.com"]];
+  const providers: Array<[string, string]> = [
+    ["chatgpt", "openai.com"],
+    ["openai", "openai.com"],
+    ["claude", "claude.ai"],
+    ["anthropic", "anthropic.com"],
+    ["gemini", "gemini.google.com"],
+    ["perplexity", "perplexity.ai"],
+    ["cursor", "cursor.com"],
+    ["copilot", "copilot.microsoft.com"],
+    ["microsoft", "microsoft.com"],
+    ["google", "google.com"],
+    ["zapier", "zapier.com"],
+  ];
   const match = providers.find(([label]) => name.includes(label));
   return match ? "https://www.google.com/s2/favicons?domain=" + match[1] + "&sz=128" : null;
 }
@@ -411,7 +432,15 @@ export function StrapMcpSettingsPage() {
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                   <div className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-2">
-                    {getConnectedAppLogo(grant) ? <img src={getConnectedAppLogo(grant)!} alt="" className="size-full object-contain" /> : <Bot className="size-5 text-slate-700" />}
+                    {getConnectedAppLogo(grant) ? (
+                      <img
+                        src={getConnectedAppLogo(grant)!}
+                        alt=""
+                        className="size-full object-contain"
+                      />
+                    ) : (
+                      <Bot className="size-5 text-slate-700" />
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -474,167 +503,188 @@ export function StrapMcpSettingsPage() {
                   </div>
                 </div>
                 {isEditing && (
-                  <BottomSheet open={isEditing} onOpenChange={(open) => { if (!open) setEditing(null); }}>
+                  <BottomSheet
+                    open={isEditing}
+                    onOpenChange={(open) => {
+                      if (!open) setEditing(null);
+                    }}
+                  >
                     <BottomSheetContent className="mx-auto flex max-h-[90dvh] w-full max-w-3xl flex-col overflow-y-auto rounded-t-[30px] border-border bg-background p-0">
                       <>
-                      <BottomSheetHeader className="sticky top-0 z-10 border-b border-border bg-background px-5 py-4 text-left sm:px-7">
-                        <BottomSheetTitle>{grant.client.name || "Connected application"} access</BottomSheetTitle>
-                        <BottomSheetDescription>Choose exactly what this application can access and change in your store.</BottomSheetDescription>
-                      </BottomSheetHeader>
-                      {editorLoading ? (
-                        <div className="flex min-h-56 items-center justify-center"><span className="size-10 animate-spin rounded-full border-[4px] border-[#C6F432]/25 border-t-[#C6F432]" role="status" aria-label="Loading access settings" /></div>
-                      ) : (
-                      <div className="space-y-5 px-5 py-5 pb-[calc(28px+env(safe-area-inset-bottom))] sm:px-7">
-                    <div>
-                      <h5 className="font-semibold">Connection access</h5>
-                      <div className="mt-3 flex items-center justify-between gap-4 rounded-xl border border-border bg-surface p-4">
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold">
-                            Allow this application to access STRAP
-                          </p>
-                          <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                            Pause all data access without disconnecting the application. You can
-                            turn it back on at any time.
-                          </p>
-                        </div>
-                        <Switch
-                          checked={config.enabled}
-                          disabled={!canManage}
-                          onCheckedChange={(value) =>
-                            updateDraft(grant.client.id, { enabled: value })
-                          }
-                          aria-label="Enable application access"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <h5 className="font-semibold">Branch access</h5>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Choose where this application can read branch-level information and change
-                        stock.
-                      </p>
-                      <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface p-3">
-                        <Checkbox
-                          checked={allBranches}
-                          disabled={!canManage || !config.enabled}
-                          onCheckedChange={(checked) =>
-                            updateDraft(grant.client.id, {
-                              allowed_branch_ids: checked === true ? null : [],
-                            })
-                          }
-                        />
-                        <span className="text-sm font-semibold">All branches</span>
-                      </label>
-                      {branches.length > 0 ? (
-                        <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                          {branches.map((branch) => (
-                            <label
-                              key={branch.id}
-                              className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface p-3"
-                            >
-                              <Checkbox
-                                checked={
-                                  allBranches ||
-                                  (config.allowed_branch_ids ?? []).includes(branch.id)
-                                }
-                                disabled={!canManage || !config.enabled || allBranches}
-                                onCheckedChange={(checked) => {
-                                  const current = config.allowed_branch_ids ?? [];
-                                  const next =
-                                    checked === true
-                                      ? [...current.filter((id) => id !== branch.id), branch.id]
-                                      : current.filter((id) => id !== branch.id);
-                                  updateDraft(grant.client.id, { allowed_branch_ids: next });
+                        <BottomSheetHeader className="sticky top-0 z-10 border-b border-border bg-background px-5 py-4 text-left sm:px-7">
+                          <BottomSheetTitle>
+                            {grant.client.name || "Connected application"} access
+                          </BottomSheetTitle>
+                          <BottomSheetDescription>
+                            Choose exactly what this application can access and change in your
+                            store.
+                          </BottomSheetDescription>
+                        </BottomSheetHeader>
+                        {editorLoading ? (
+                          <div className="flex min-h-56 items-center justify-center">
+                            <span
+                              className="size-10 animate-spin rounded-full border-[4px] border-[#C6F432]/25 border-t-[#C6F432]"
+                              role="status"
+                              aria-label="Loading access settings"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-5 px-5 py-5 pb-[calc(28px+env(safe-area-inset-bottom))] sm:px-7">
+                            <div>
+                              <h5 className="font-semibold">Connection access</h5>
+                              <div className="mt-3 flex items-center justify-between gap-4 rounded-xl border border-border bg-surface p-4">
+                                <div className="min-w-0">
+                                  <p className="text-sm font-semibold">
+                                    Allow this application to access STRAP
+                                  </p>
+                                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                                    Pause all data access without disconnecting the application. You
+                                    can turn it back on at any time.
+                                  </p>
+                                </div>
+                                <Switch
+                                  checked={config.enabled}
+                                  disabled={!canManage}
+                                  onCheckedChange={(value) =>
+                                    updateDraft(grant.client.id, { enabled: value })
+                                  }
+                                  aria-label="Enable application access"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <h5 className="font-semibold">Branch access</h5>
+                              <p className="mt-1 text-xs text-muted-foreground">
+                                Choose where this application can read branch-level information and
+                                change stock.
+                              </p>
+                              <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface p-3">
+                                <Checkbox
+                                  checked={allBranches}
+                                  disabled={!canManage || !config.enabled}
+                                  onCheckedChange={(checked) =>
+                                    updateDraft(grant.client.id, {
+                                      allowed_branch_ids: checked === true ? null : [],
+                                    })
+                                  }
+                                />
+                                <span className="text-sm font-semibold">All branches</span>
+                              </label>
+                              {branches.length > 0 ? (
+                                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                                  {branches.map((branch) => (
+                                    <label
+                                      key={branch.id}
+                                      className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface p-3"
+                                    >
+                                      <Checkbox
+                                        checked={
+                                          allBranches ||
+                                          (config.allowed_branch_ids ?? []).includes(branch.id)
+                                        }
+                                        disabled={!canManage || !config.enabled || allBranches}
+                                        onCheckedChange={(checked) => {
+                                          const current = config.allowed_branch_ids ?? [];
+                                          const next =
+                                            checked === true
+                                              ? [
+                                                  ...current.filter((id) => id !== branch.id),
+                                                  branch.id,
+                                                ]
+                                              : current.filter((id) => id !== branch.id);
+                                          updateDraft(grant.client.id, {
+                                            allowed_branch_ids: next,
+                                          });
+                                        }}
+                                      />
+                                      <GitBranch className="size-4 shrink-0 text-muted-foreground" />
+                                      <span className="text-sm">{branch.name}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="mt-3 rounded-xl border border-dashed border-border p-3 text-sm text-muted-foreground">
+                                  No branches are available for this store yet.
+                                </p>
+                              )}
+                            </div>
+                            <div>
+                              <h5 className="font-semibold">Read permissions</h5>
+                              <div className="mt-2 divide-y divide-border">
+                                {READ_OPTIONS.map((option) => (
+                                  <div
+                                    key={option.key}
+                                    className="flex items-center justify-between gap-4 py-3"
+                                  >
+                                    <div>
+                                      <p className="text-sm font-semibold">{option.title}</p>
+                                      <p className="mt-1 text-xs text-muted-foreground">
+                                        {option.description}
+                                      </p>
+                                    </div>
+                                    <Switch
+                                      checked={Boolean(config[option.key])}
+                                      disabled={!canManage || !config.enabled}
+                                      onCheckedChange={(value) =>
+                                        updateDraft(grant.client.id, { [option.key]: value })
+                                      }
+                                      aria-label={option.title}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <h5 className="font-semibold">Write permissions</h5>
+                              <div className="mt-2 divide-y divide-border">
+                                {WRITE_OPTIONS.map((option) => (
+                                  <div
+                                    key={option.key}
+                                    className="flex items-center justify-between gap-4 py-3"
+                                  >
+                                    <div>
+                                      <p className="text-sm font-semibold">{option.title}</p>
+                                      <p className="mt-1 text-xs text-muted-foreground">
+                                        {option.description}
+                                      </p>
+                                    </div>
+                                    <Switch
+                                      checked={Boolean(config[option.key])}
+                                      disabled={!canManage}
+                                      onCheckedChange={(value) =>
+                                        updateDraft(grant.client.id, { [option.key]: value })
+                                      }
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
+                              <Button
+                                variant="ghost"
+                                disabled={savingId === grant.client.id}
+                                onClick={() => {
+                                  setDrafts((current) => ({
+                                    ...current,
+                                    [grant.client.id]:
+                                      baselineDrafts[grant.client.id] ?? UNCONFIGURED_ACCESS,
+                                  }));
+                                  setEditing(null);
                                 }}
-                              />
-                              <GitBranch className="size-4 shrink-0 text-muted-foreground" />
-                              <span className="text-sm">{branch.name}</span>
-                            </label>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="mt-3 rounded-xl border border-dashed border-border p-3 text-sm text-muted-foreground">
-                          No branches are available for this store yet.
-                        </p>
-                      )}
-                    </div>
-                    <div>
-                      <h5 className="font-semibold">Read permissions</h5>
-                      <div className="mt-2 divide-y divide-border">
-                        {READ_OPTIONS.map((option) => (
-                          <div
-                            key={option.key}
-                            className="flex items-center justify-between gap-4 py-3"
-                          >
-                            <div>
-                              <p className="text-sm font-semibold">{option.title}</p>
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                {option.description}
-                              </p>
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                onClick={() => void saveAccess(grant)}
+                                disabled={!canManage || savingId === grant.client.id}
+                                className="gap-2"
+                              >
+                                <Check className="size-4" />
+                                {savingId === grant.client.id ? "Saving…" : "Save permissions"}
+                              </Button>
                             </div>
-                            <Switch
-                              checked={Boolean(config[option.key])}
-                              disabled={!canManage || !config.enabled}
-                              onCheckedChange={(value) =>
-                                updateDraft(grant.client.id, { [option.key]: value })
-                              }
-                              aria-label={option.title}
-                            />
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h5 className="font-semibold">Write permissions</h5>
-                      <div className="mt-2 divide-y divide-border">
-                        {WRITE_OPTIONS.map((option) => (
-                          <div
-                            key={option.key}
-                            className="flex items-center justify-between gap-4 py-3"
-                          >
-                            <div>
-                              <p className="text-sm font-semibold">{option.title}</p>
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                {option.description}
-                              </p>
-                            </div>
-                            <Switch
-                              checked={Boolean(config[option.key])}
-                              disabled={!canManage}
-                              onCheckedChange={(value) =>
-                                updateDraft(grant.client.id, { [option.key]: value })
-                              }
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
-                      <Button
-                        variant="ghost"
-                        disabled={savingId === grant.client.id}
-                        onClick={() => {
-                          setDrafts((current) => ({
-                            ...current,
-                            [grant.client.id]:
-                              baselineDrafts[grant.client.id] ?? UNCONFIGURED_ACCESS,
-                          }));
-                          setEditing(null);
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={() => void saveAccess(grant)}
-                        disabled={!canManage || savingId === grant.client.id}
-                        className="gap-2"
-                      >
-                        <Check className="size-4" />
-                        {savingId === grant.client.id ? "Saving…" : "Save permissions"}
-                      </Button>
-                    </div>
-                      </div>
-                      )}
+                        )}
                       </>
                     </BottomSheetContent>
                   </BottomSheet>

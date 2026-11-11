@@ -19,28 +19,20 @@ The endpoint uses `withOAuthProtectedResource()` and `withSupabase({ auth: "user
 ## Available tools
 
 Identity and discovery:
+
 1. `strap_whoami`
 2. `strap_list_stores`
 3. `strap_get_store_profile`
 4. `strap_list_branches`
 
-Read:
-5. `strap_search_products` (includes product `image_url`)
-6. `strap_get_low_stock`
-7. `strap_get_sales`
-8. `strap_get_expenses`
-9. `strap_search_customers`
-10. `strap_get_ai_access`
+Read: 5. `strap_search_products` (includes product `image_url`) 6. `strap_get_low_stock` 7. `strap_get_sales` 8. `strap_get_expenses` 9. `strap_search_customers` 10. `strap_get_ai_access`
 
-Writes (connected app must be explicitly granted the relevant permission; caller must be a store owner or manager):
-11. `strap_create_product`
-12. `strap_update_product`
-13. `strap_set_branch_stock`
-14. `strap_upload_image`
+Writes (connected app must be explicitly granted the relevant permission; caller must be a store owner or manager): 11. `strap_create_product` 12. `strap_update_product` 13. `strap_set_branch_stock` 14. `strap_upload_image`
 
 ## Image upload
 
 `strap_upload_image` uploads a product image to the existing public `connect-product-images` bucket. The tool accepts:
+
 - `store_id`: the accessible STRAP store UUID.
 - `image_base64`: raw base64 bytes, without a data-URL prefix.
 - `mime_type`: `image/jpeg`, `image/png`, `image/webp`, or `image/avif`.

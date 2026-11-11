@@ -730,7 +730,9 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
 
         const normalizedBase64 = image_base64.replace(/\s/g, "");
         if (!/^[A-Za-z0-9+/]+={0,2}$/.test(normalizedBase64) || normalizedBase64.length % 4 !== 0) {
-          throw new Error("image_base64 must contain valid raw base64 data without a data URL prefix.");
+          throw new Error(
+            "image_base64 must contain valid raw base64 data without a data URL prefix.",
+          );
         }
         const binary = atob(normalizedBase64);
         const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
@@ -744,11 +746,16 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           String.fromCharCode(...bytes.slice(start, start + length));
         const validSignature =
           (mime_type === "image/jpeg" && startsWith(0xff, 0xd8, 0xff)) ||
-          (mime_type === "image/png" && startsWith(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)) ||
+          (mime_type === "image/png" &&
+            startsWith(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)) ||
           (mime_type === "image/webp" && ascii(0, 4) === "RIFF" && ascii(8, 4) === "WEBP") ||
-          (mime_type === "image/avif" && ascii(4, 4) === "ftyp" && /^(avif|avis)$/.test(ascii(8, 4)));
+          (mime_type === "image/avif" &&
+            ascii(4, 4) === "ftyp" &&
+            /^(avif|avis)$/.test(ascii(8, 4)));
         if (!validSignature) {
-          throw new Error("The image bytes do not match the supplied JPEG, PNG, WebP or AVIF MIME type.");
+          throw new Error(
+            "The image bytes do not match the supplied JPEG, PNG, WebP or AVIF MIME type.",
+          );
         }
 
         let product: { id: string; name: string } | null = null;
@@ -771,7 +778,8 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           "image/avif": "avif",
         }[mime_type];
         // Storage policies require the first folder to match auth.uid().
-        const uploadedPath = auth.user.id + "/" + store_id + "/" + crypto.randomUUID() + "." + extension;
+        const uploadedPath =
+          auth.user.id + "/" + store_id + "/" + crypto.randomUUID() + "." + extension;
         const { data: upload, error: uploadError } = await supabase.storage
           .from("connect-product-images")
           .upload(uploadedPath, bytes, {
@@ -797,7 +805,9 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           if (error || !data) {
             await supabase.storage.from("connect-product-images").remove([uploadedPath]);
             if (error) throw error;
-            throw new Error("The image uploaded, but the product could not be updated. No image was retained.");
+            throw new Error(
+              "The image uploaded, but the product could not be updated. No image was retained.",
+            );
           }
           updatedProduct = data;
         }
@@ -816,7 +826,12 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
         return result({
           success: true,
           image_url: publicUrl,
-          storage: { bucket: "connect-product-images", path: uploadedPath, size_bytes: bytes.byteLength, mime_type },
+          storage: {
+            bucket: "connect-product-images",
+            path: uploadedPath,
+            size_bytes: bytes.byteLength,
+            mime_type,
+          },
           ...(updatedProduct ? { product: updatedProduct } : {}),
           ...(auditWarning ? { audit_warning: auditWarning } : {}),
         });
