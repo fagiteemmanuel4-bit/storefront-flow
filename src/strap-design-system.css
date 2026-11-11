@@ -1447,7 +1447,6 @@ html.dark [data-slot="context-menu-item"]:focus {
   color: #111111 !important;
 }
 
-
 /* ==========================================================================
    PREMIUM AUTH EXPERIENCE — refined Strap sign-in / sign-up presentation.
    Scoped to the authentication routes; no auth logic or workspace styles change.
@@ -1463,18 +1462,19 @@ html.dark [data-slot="context-menu-item"]:focus {
   place-items: center;
   padding: clamp(14px, 2.8vw, 42px) !important;
   background:
-    radial-gradient(ellipse at 8% 8%, rgb(198 244 50 / 0.10), transparent 34%),
-    #f3f4f0 !important;
+    radial-gradient(ellipse at 8% 8%, rgb(198 244 50 / 0.1), transparent 34%), #f3f4f0 !important;
 }
 .strap-auth-card {
   width: min(100%, 1480px);
   min-height: min(880px, calc(100dvh - clamp(28px, 5.6vw, 84px)));
   overflow: hidden;
-  grid-template-columns: minmax(0, 1.06fr) minmax(440px, .94fr);
+  grid-template-columns: minmax(0, 1.06fr) minmax(440px, 0.94fr);
   border: 1px solid rgb(16 19 13 / 0.07);
   border-radius: 30px;
   background: #fbfcf9;
-  box-shadow: 0 32px 90px rgb(20 27 12 / 0.12), 0 3px 12px rgb(20 27 12 / 0.05);
+  box-shadow:
+    0 32px 90px rgb(20 27 12 / 0.12),
+    0 3px 12px rgb(20 27 12 / 0.05);
 }
 .strap-auth-aside {
   isolation: isolate;
@@ -1482,8 +1482,7 @@ html.dark [data-slot="context-menu-item"]:focus {
   padding: clamp(38px, 5.4vw, 82px);
   background:
     radial-gradient(ellipse at 82% 76%, rgb(198 244 50 / 0.13), transparent 32%),
-    radial-gradient(ellipse at 12% 12%, rgb(255 255 255 / 0.055), transparent 38%),
-    #0c100b;
+    radial-gradient(ellipse at 12% 12%, rgb(255 255 255 / 0.055), transparent 38%), #0c100b;
 }
 .strap-auth-aside::after {
   position: absolute;
@@ -1498,7 +1497,7 @@ html.dark [data-slot="context-menu-item"]:focus {
   bottom: -250px;
   width: min(820px, 92%);
   height: auto;
-  opacity: .78;
+  opacity: 0.78;
 }
 .strap-auth-aside .strap-logo {
   gap: 13px;
@@ -1514,7 +1513,7 @@ html.dark [data-slot="context-menu-item"]:focus {
 }
 .strap-auth-aside .strap-logo-word {
   font-size: 25px;
-  letter-spacing: -.045em;
+  letter-spacing: -0.045em;
 }
 .strap-auth-hero {
   max-width: 600px;
@@ -1523,8 +1522,8 @@ html.dark [data-slot="context-menu-item"]:focus {
 .strap-auth-hero h2 {
   max-width: 580px;
   font-size: clamp(42px, 5.1vw, 72px);
-  line-height: .99;
-  letter-spacing: -.055em;
+  line-height: 0.99;
+  letter-spacing: -0.055em;
   text-wrap: balance;
 }
 .strap-auth-hero p {
@@ -1536,7 +1535,7 @@ html.dark [data-slot="context-menu-item"]:focus {
 }
 .strap-auth-copy {
   color: #858d7c;
-  letter-spacing: .025em;
+  letter-spacing: 0.025em;
 }
 .strap-auth-form-panel {
   min-width: 0;
@@ -1549,7 +1548,7 @@ html.dark [data-slot="context-menu-item"]:focus {
 .strap-auth-title {
   margin-bottom: 12px;
   font-size: clamp(36px, 3.2vw, 44px);
-  letter-spacing: -.055em;
+  letter-spacing: -0.055em;
 }
 .strap-auth-sub {
   color: #747b70 !important;
@@ -1566,7 +1565,7 @@ html.dark [data-slot="context-menu-item"]:focus {
   color: #333a2e !important;
   font-size: 13px !important;
   font-weight: 650 !important;
-  letter-spacing: .005em;
+  letter-spacing: 0.005em;
 }
 .strap-auth-main .strap-field {
   height: 58px !important;
@@ -1576,8 +1575,13 @@ html.dark [data-slot="context-menu-item"]:focus {
   border-radius: 17px !important;
   background: #f6f8f3 !important;
   color: #141811 !important;
-  box-shadow: inset 0 1px 1px rgb(20 27 12 / .025), 0 1px 2px rgb(20 27 12 / .025) !important;
-  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease !important;
+  box-shadow:
+    inset 0 1px 1px rgb(20 27 12 / 0.025),
+    0 1px 2px rgb(20 27 12 / 0.025) !important;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease !important;
 }
 .strap-auth-main .strap-field::placeholder {
   color: #9aa093 !important;
@@ -1586,7 +1590,9 @@ html.dark [data-slot="context-menu-item"]:focus {
 .strap-auth-main .strap-field:focus-visible {
   border-color: #a9c83e !important;
   background: #fff !important;
-  box-shadow: 0 0 0 4px rgb(198 244 50 / .18), 0 2px 8px rgb(20 27 12 / .035) !important;
+  box-shadow:
+    0 0 0 4px rgb(198 244 50 / 0.18),
+    0 2px 8px rgb(20 27 12 / 0.035) !important;
 }
 .strap-auth-main .strap-pw .strap-field {
   padding-right: 60px !important;
@@ -1617,19 +1623,22 @@ html.dark [data-slot="context-menu-item"]:focus {
   border-radius: 17px !important;
   font-size: 15px !important;
   font-weight: 700 !important;
-  letter-spacing: .005em;
-  transition: transform .18s ease, box-shadow .18s ease, background .18s ease !important;
+  letter-spacing: 0.005em;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease !important;
 }
 .strap-auth-main .strap-btn-primary {
   border: 1px solid #11170a !important;
   background: #11170a !important;
   color: #fafff0 !important;
-  box-shadow: 0 9px 20px rgb(17 23 10 / .13) !important;
+  box-shadow: 0 9px 20px rgb(17 23 10 / 0.13) !important;
 }
 .strap-auth-main .strap-btn-primary:hover:not(:disabled) {
   transform: translateY(-1px) !important;
   background: #222d12 !important;
-  box-shadow: 0 13px 25px rgb(17 23 10 / .17) !important;
+  box-shadow: 0 13px 25px rgb(17 23 10 / 0.17) !important;
 }
 .strap-auth-main .strap-btn-ghost {
   height: 56px;
@@ -1648,7 +1657,7 @@ html.dark [data-slot="context-menu-item"]:focus {
   color: #9a9f94;
   font-size: 12px;
   font-weight: 650;
-  letter-spacing: .12em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 .strap-auth-main .strap-or::before,
@@ -1696,15 +1705,16 @@ html.dark [data-slot="context-menu-item"]:focus {
   --a-field: #11150f;
   --a-hover: #1b2115;
   background:
-    radial-gradient(ellipse at 92% 12%, rgb(198 244 50 / .055), transparent 34%),
-    #080a07 !important;
+    radial-gradient(ellipse at 92% 12%, rgb(198 244 50 / 0.055), transparent 34%), #080a07 !important;
   color: #f7f8f4 !important;
 }
 :root.dark .strap-auth-card,
 .dark .strap-auth-card {
   border-color: #242b1e;
   background: #0d100b;
-  box-shadow: 0 32px 90px rgb(0 0 0 / .4), 0 2px 12px rgb(0 0 0 / .25);
+  box-shadow:
+    0 32px 90px rgb(0 0 0 / 0.4),
+    0 2px 12px rgb(0 0 0 / 0.25);
 }
 :root.dark .strap-auth-form-panel,
 .dark .strap-auth-form-panel {
@@ -1727,7 +1737,7 @@ html.dark [data-slot="context-menu-item"]:focus {
   border-color: #30372b !important;
   background: #141910 !important;
   color: #ffffff !important;
-  box-shadow: inset 0 1px 1px rgb(255 255 255 / .025) !important;
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 0.025) !important;
 }
 :root.dark .strap-auth-main .strap-field::placeholder,
 .dark .strap-auth-main .strap-field::placeholder {
@@ -1739,7 +1749,7 @@ html.dark [data-slot="context-menu-item"]:focus {
 .dark .strap-auth-main .strap-field:focus-visible {
   border-color: #a8cf34 !important;
   background: #171d12 !important;
-  box-shadow: 0 0 0 4px rgb(198 244 50 / .13) !important;
+  box-shadow: 0 0 0 4px rgb(198 244 50 / 0.13) !important;
 }
 :root.dark .strap-auth-main .strap-eye,
 .dark .strap-auth-main .strap-eye {
@@ -1762,7 +1772,7 @@ html.dark [data-slot="context-menu-item"]:focus {
   border-color: #c6f432 !important;
   background: #c6f432 !important;
   color: #10140a !important;
-  box-shadow: 0 9px 22px rgb(198 244 50 / .12) !important;
+  box-shadow: 0 9px 22px rgb(198 244 50 / 0.12) !important;
 }
 :root.dark .strap-auth-main .strap-btn-primary:hover:not(:disabled),
 .dark .strap-auth-main .strap-btn-primary:hover:not(:disabled) {
@@ -1826,8 +1836,7 @@ html.dark [data-slot="context-menu-item"]:focus {
     text-align: left;
     align-items: flex-start;
     background:
-      radial-gradient(ellipse at 82% 85%, rgb(198 244 50 / .12), transparent 42%),
-      #0c100b !important;
+      radial-gradient(ellipse at 82% 85%, rgb(198 244 50 / 0.12), transparent 42%), #0c100b !important;
   }
   .strap-auth-aside .strap-logo {
     justify-content: flex-start;
@@ -1853,7 +1862,7 @@ html.dark [data-slot="context-menu-item"]:focus {
     max-width: 520px;
     font-size: clamp(32px, 8vw, 46px);
     line-height: 1.02;
-    letter-spacing: -.05em;
+    letter-spacing: -0.05em;
   }
   .strap-auth-aside .strap-auth-hero p {
     max-width: 370px;
@@ -1868,7 +1877,7 @@ html.dark [data-slot="context-menu-item"]:focus {
     flex: 1 0 auto;
     align-items: flex-start !important;
     padding: 30px 26px max(34px, env(safe-area-inset-bottom)) !important;
-    border-top: 1px solid rgb(255 255 255 / .07);
+    border-top: 1px solid rgb(255 255 255 / 0.07);
     border-radius: 26px 26px 0 0;
     background: #0d100b !important;
   }
@@ -1916,6 +1925,6 @@ html.dark [data-slot="context-menu-item"]:focus {
   .strap-auth-main *,
   .strap-auth-main *::before,
   .strap-auth-main *::after {
-    transition-duration: .01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
