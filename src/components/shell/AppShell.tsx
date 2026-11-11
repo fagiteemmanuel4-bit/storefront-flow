@@ -859,7 +859,12 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
               className="mb-6 flex min-w-0 flex-col gap-4 border-b border-border/70 pb-5 sm:flex-row sm:items-center sm:justify-between lg:mb-8"
             >
               <div className="min-w-0">
-                {(branch || staffActive) && <p className="max-w-full truncate text-xs text-muted-foreground">{branch?.name ?? ""}{staffActive ? (branch ? " · " : "") + staffSession!.name : ""}</p>}
+                {(branch || staffActive) && (
+                  <p className="max-w-full truncate text-xs text-muted-foreground">
+                    {branch?.name ?? ""}
+                    {staffActive ? (branch ? " · " : "") + staffSession!.name : ""}
+                  </p>
+                )}
                 <h1 className="mt-1 truncate font-display text-2xl font-bold leading-tight tracking-tight sm:text-3xl">
                   {title}
                 </h1>

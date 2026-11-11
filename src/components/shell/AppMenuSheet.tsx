@@ -153,11 +153,7 @@ function StoreMark({ store }: { store: StoreRow | null }) {
   return (
     <span className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-foreground text-background font-display text-sm font-bold shadow-lg ring-1 ring-black/5">
       {logoUrl ? (
-        <img
-          src={logoUrl}
-          alt="Store logo"
-          className="size-full object-cover"
-        />
+        <img src={logoUrl} alt="Store logo" className="size-full object-cover" />
       ) : (
         initials
       )}
@@ -230,7 +226,6 @@ export function AppMenuSheet({
                   </span>
                 </div>
                 <p className="mt-1 truncate text-xs text-muted-foreground">
-                  
                   {branchName ? ` · ${branchName}` : ""} ·{" "}
                   {staffActive ? `${staffActive.name} · ${staffActive.role}` : (role ?? "member")}
                 </p>

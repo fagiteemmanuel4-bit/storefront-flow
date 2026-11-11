@@ -1184,9 +1184,14 @@ function PosPage() {
                   {cart.reduce((n, l) => n + l.quantity, 0) === 1 ? "item" : "items"}
                 </span>
               </span>
-              <span className="ml-auto flex shrink-0 flex-col items-end"><span className="text-[10px] font-semibold uppercase tracking-[.12em] text-[#29320f]/70">Total</span><span className="numeric text-lg font-extrabold tracking-tight text-[#101010]">
-                {formatMoney(total, currency)}
-              </span></span>
+              <span className="ml-auto flex shrink-0 flex-col items-end">
+                <span className="text-[10px] font-semibold uppercase tracking-[.12em] text-[#29320f]/70">
+                  Total
+                </span>
+                <span className="numeric text-lg font-extrabold tracking-tight text-[#101010]">
+                  {formatMoney(total, currency)}
+                </span>
+              </span>
             </Button>
           </div>
         )}
