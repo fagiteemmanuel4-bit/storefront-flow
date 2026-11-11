@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PaymentsSettingsPage } from "@/components/settings/PaymentsSettingsPage";
-
+import { SettingsSectionPage } from "@/components/settings/SettingsCenter";
 export const Route = createFileRoute("/_authenticated/settings/payments")({
-  component: PaymentsSettingsPage,
+  component: () => <SettingsSectionPage section="commerce" />,
 });

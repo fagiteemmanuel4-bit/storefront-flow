@@ -34,13 +34,16 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
-import { BUSINESS_MODES, getBusinessMode } from "@/lib/business-modes";
 import { useTheme } from "@/components/shell/ThemeProvider";
 import { ReceiptSettingsPanel } from "@/components/settings/ReceiptSettingsPanel";
+import { PasswordOtp } from "@/components/settings/PasswordOtp";
 
 const db = supabase as any;
 
 type Section =
+  | "commerce"
+  | "team"
+  | "account"
   | "store-profile"
   | "appearance"
   | "theme"
@@ -64,121 +67,19 @@ type NavItem = {
 };
 
 export const SETTINGS_NAV: NavItem[] = [
-  {
-    path: "/settings",
-    title: "Settings home",
-    description: "Overview of store and account controls",
-    icon: SlidersHorizontal,
-    group: "General",
-  },
-  {
-    path: "/settings/store-profile",
-    title: "Store profile",
-    description: "Business identity, contact and regional settings",
-    icon: Store,
-    group: "Store",
-  },
-  {
-    path: "/settings/appearance",
-    title: "Store appearance",
-    description: "Branding, typography and storefront style",
-    icon: Palette,
-    group: "Store",
-  },
-  {
-    path: "/settings/theme",
-    title: "Theme & display",
-    description: "Choose light, dark or system appearance for Strap",
-    icon: Laptop,
-    group: "Preferences",
-  },
-  {
-    path: "/settings/online-store",
-    title: "Strap Online Store",
-    description: "Enable, disable and configure Strap's built-in storefront",
-    icon: Globe2,
-    group: "Preferences",
-  },
-  {
-    path: "/settings/receipts",
-    title: "Receipts",
-    description: "Receipt identity, content and printing",
-    icon: Receipt,
-    group: "Commerce",
-  },
-  {
-    path: "/settings/checkout",
-    title: "Checkout & sales",
-    description: "Checkout, discounts, tax and POS behaviour",
-    icon: CreditCard,
-    group: "Commerce",
-  },
-  {
-    path: "/settings/inventory",
-    title: "Inventory",
-    description: "Stock, valuation, branches and alerts",
-    icon: Database,
-    group: "Commerce",
-  },
-  {
-    path: "/settings/payments",
-    title: "Payments",
-    description: "Secure payment infrastructure",
-    icon: WalletCards,
-    group: "Commerce",
-  },
-  {
-    path: "/settings/staff",
-    title: "Staff & permissions",
-    description: "Team members, roles and access",
-    icon: Users,
-    group: "Team",
-  },
-  {
-    path: "/settings/notifications",
-    title: "Notifications",
-    description: "Operational notification preferences",
-    icon: Bell,
-    group: "Team",
-  },
-  {
-    path: "/settings/ai-agents",
-    title: "Connected applications",
-    description: "Manage authorised third-party apps, permissions and revocation",
-    icon: Bot,
-    group: "Integrations",
-  },
-  {
-    path: "/settings/security",
-    title: "Security",
-    description: "Account protection and sessions",
-    icon: ShieldCheck,
-    group: "Security",
-  },
-  {
-    path: "/settings/password",
-    title: "Change password",
-    description: "Verify email and change password",
-    icon: KeyRound,
-    group: "Account",
-  },
-  {
-    path: "/settings/sessions",
-    title: "Active sessions",
-    description: "Review and revoke authenticated sessions",
-    icon: Laptop,
-    group: "Account",
-  },
-  {
-    path: "/settings/advanced",
-    title: "Advanced",
-    description: "Deeper operational and developer controls",
-    icon: SlidersHorizontal,
-    group: "Advanced",
-  },
+  { path: "/settings/store-profile", title: "Store profile", description: "Store identity, regional preferences and display", icon: Store, group: "Workspace" },
+  { path: "/settings/receipts", title: "Commerce", description: "Receipts, checkout, sales, inventory and payments", icon: Receipt, group: "Workspace" },
+  { path: "/settings/staff", title: "Staff & notifications", description: "Team access, permissions and operational alerts", icon: Users, group: "Workspace" },
+  { path: "/settings/ai-agents", title: "Integrations", description: "Connected applications and authorised access", icon: Bot, group: "Workspace" },
+  { path: "/settings/security", title: "Security", description: "Account protection and security preferences", icon: ShieldCheck, group: "Account" },
+  { path: "/settings/password", title: "Password & sessions", description: "Change password and manage active sessions", icon: KeyRound, group: "Account" },
+  { path: "/settings/advanced", title: "Advanced", description: "Operational and developer controls", icon: SlidersHorizontal, group: "Account" },
 ];
 
 const meta: Record<Section, { title: string; description: string }> = {
+  commerce: { title: "Commerce", description: "Manage receipts, checkout, sales, stock and payments." },
+  team: { title: "Staff & notifications", description: "Manage team access and store notifications." },
+  account: { title: "Password & sessions", description: "Change your password and manage active sign-in sessions." },
   "store-profile": {
     title: "Store profile",
     description: "Manage the business identity and regional information used across Strap.",
@@ -240,92 +141,56 @@ const meta: Record<Section, { title: string; description: string }> = {
   },
 };
 
-function groupedNav() {
-  const groups = new Map<string, NavItem[]>();
-  for (const item of SETTINGS_NAV.filter(
-    (item) => item.path !== "/settings/online-store" && item.path !== "/settings/appearance",
-  ))
-    groups.set(item.group, [...(groups.get(item.group) ?? []), item]);
-  return [...groups.entries()];
-}
-
 export function SettingsLayout() {
   const location = useLocation();
-  const [navOpen, setNavOpen] = useState(false);
-  const activeItem =
-    SETTINGS_NAV.find((item) => item.path === location.pathname) ?? SETTINGS_NAV[0];
+  const { store } = useStoreContext();
+  const [navOpen, setNavOpen] = useState(location.pathname === "/settings");
   const SettingsLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
-    <nav aria-label="Settings navigation" className="space-y-3">
-      {groupedNav().map(([group, items]) => (
-        <div key={group}>
-          <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-            {group}
-          </p>
-          <div className="grid gap-1">
-            {items.map((item) => {
-              const Icon = item.icon;
-              const active = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={onNavigate}
-                  className={`group flex min-h-11 items-center gap-2.5 rounded-xl px-3 py-2 transition ${active ? "bg-accent-soft text-accent-ink" : "text-muted-foreground hover:bg-secondary hover:text-foreground"}`}
-                >
-                  <Icon className="size-4 shrink-0" />
-                  <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">
-                    {item.title}
-                  </span>
-                  <ChevronRight
-                    className={`size-3.5 ${active ? "opacity-100" : "opacity-0 group-hover:opacity-60"}`}
-                  />
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      ))}
-    </nav>
+    <div className="flex min-h-full flex-col gap-2">
+      <nav aria-label="Settings navigation" className="grid gap-2">
+        {SETTINGS_NAV.map((item) => {
+          const Icon = item.icon;
+          const active = location.pathname === item.path ||
+            (item.path === "/settings/receipts" && ["/settings/checkout", "/settings/inventory", "/settings/payments"].includes(location.pathname)) ||
+            (item.path === "/settings/staff" && location.pathname === "/settings/notifications") ||
+            (item.path === "/settings/password" && location.pathname === "/settings/sessions");
+          return (
+            <Link key={item.path} to={item.path} onClick={onNavigate}
+              className={`group flex min-h-12 items-center gap-3 rounded-xl border px-3 py-2.5 transition ${active ? "border-accent bg-accent-soft text-accent-ink" : "border-border/80 bg-background text-foreground hover:border-accent/50 hover:bg-secondary"}`}>
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-secondary"><Icon className="size-4" /></span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[13px] font-semibold">{item.title}</span>
+                <span className="mt-0.5 block truncate text-[10px] text-muted-foreground">{item.description}</span>
+              </span>
+              <ChevronRight className="size-4 shrink-0 opacity-50" />
+            </Link>
+          );
+        })}
+      </nav>
+      <div className="mt-auto pt-4">
+        <Link to="/dashboard" onClick={onNavigate} className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#C6F432] px-4 py-3 text-sm font-bold text-[#0E1116] transition hover:bg-[#b6e52c]">
+          <ArrowRight className="size-4 rotate-180" />Go back to dashboard
+        </Link>
+      </div>
+    </div>
   );
   return (
-    <AppShell title="Settings">
-      <div className="settings-workspace mx-auto max-w-7xl space-y-4">
-        <header className="flex items-center justify-between gap-3 border-b border-border pb-3">
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent-ink">
-              Strap settings
-            </p>
-            <h1 className="mt-1 truncate font-display text-2xl font-bold tracking-tight">
-              {activeItem.title === "Settings home" ? "Settings" : activeItem.title}
-            </h1>
-            <p className="mt-1 hidden text-sm text-muted-foreground sm:block">
-              {activeItem.description}
-            </p>
+    <AppShell title={store?.name ?? "Settings"}>
+      <div className="settings-workspace mx-auto grid max-w-7xl min-w-0 gap-5 lg:grid-cols-[250px_minmax(0,1fr)]">
+        <aside className="hidden min-h-[calc(100dvh-9rem)] flex-col lg:sticky lg:top-24 lg:flex"><SettingsLinks /></aside>
+        <main className="settings-detail min-w-0">
+          <div className="mb-4 flex items-center justify-between gap-3 lg:hidden">
+            
+            <Sheet open={navOpen} onOpenChange={setNavOpen}>
+              <SheetTrigger asChild><Button variant="outline" size="icon" className="shrink-0 rounded-xl" aria-label="Open settings menu"><Menu className="size-4" /></Button></SheetTrigger>
+              <SheetContent side="left" className="flex w-[min(90vw,360px)] flex-col overflow-y-auto p-4">
+                <SheetHeader className="mb-4 text-left"><SheetTitle className="font-display text-lg">{store?.name ?? "Settings"}</SheetTitle></SheetHeader>
+                <SettingsLinks onNavigate={() => setNavOpen(false)} />
+              </SheetContent>
+            </Sheet>
           </div>
-          <Sheet open={navOpen} onOpenChange={setNavOpen}>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="shrink-0 gap-2 rounded-xl px-3">
-                <Menu className="size-4" />
-                All settings
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[min(88vw,340px)] overflow-y-auto p-4">
-              <SheetHeader className="mb-4 text-left">
-                <SheetTitle className="font-display text-xl">Settings</SheetTitle>
-                <p className="text-xs text-muted-foreground">Choose a section to manage</p>
-              </SheetHeader>
-              <SettingsLinks onNavigate={() => setNavOpen(false)} />
-            </SheetContent>
-          </Sheet>
-        </header>
-        <div className="grid min-w-0 gap-5 lg:grid-cols-[220px_minmax(0,1fr)]">
-          <aside className="hidden h-fit rounded-2xl border border-border/70 bg-surface/60 p-2 lg:sticky lg:top-24 lg:block">
-            <SettingsLinks />
-          </aside>
-          <main className="settings-detail min-w-0">
-            <Outlet />
-          </main>
-        </div>
+          <Outlet />
+        </main>
       </div>
     </AppShell>
   );
@@ -559,77 +424,29 @@ async function persistAdvanced(
 }
 
 export function SettingsHome() {
-  const { store } = useStoreContext();
-  return (
-    <div className="space-y-6">
-      <Header
-        title="Control centre"
-        description="Every major settings category has its own route, data model and save behaviour."
-        badge={store?.name ?? "Your store"}
-      />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {SETTINGS_NAV.filter((item) => item.path !== "/settings").map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className="group rounded-2xl border border-border bg-background p-5 transition hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-sm"
-            >
-              <div className="flex items-start justify-between">
-                <span className="flex size-10 items-center justify-center rounded-xl bg-accent-soft text-accent-ink">
-                  <Icon className="size-5" />
-                </span>
-                <ChevronRight className="size-4 text-muted-foreground group-hover:translate-x-1" />
-              </div>
-              <h3 className="mt-4 font-semibold">{item.title}</h3>
-              <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{item.description}</p>
-            </Link>
-          );
-        })}
-      </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        <CardSection
-          title="Real persistence"
-          description="Production settings use the existing Supabase store, storefront, online-store, security and advanced-settings structures."
-        >
-          <p className="text-sm leading-6 text-muted-foreground">
-            Form changes remain in memory until saved, then are reloaded from Supabase after the
-            write.
-          </p>
-        </CardSection>
-        <CardSection title="Payments remain on hold">
-          <p className="text-sm leading-6 text-muted-foreground">
-            Payments are Coming Soon. No Stripe, Paystack, Flutterwave or other processor is
-            connected from Settings.
-          </p>
-        </CardSection>
-      </div>
-    </div>
-  );
+  return <SettingsSectionPage section="store-profile" />;
 }
 
 export function SettingsSectionPage({ section }: { section: Section }) {
   const m = meta[section];
   return (
-    <div className="space-y-6">
-      <Header title={m.title} description={m.description} />
-      {section === "store-profile" && <StoreProfile />}
+    <div className="space-y-5">
+      {m.description && <p className="text-sm leading-6 text-muted-foreground">{m.description}</p>}
+      {section === "store-profile" && <><StoreProfile /><Appearance /></>}
+      {section === "commerce" && <><Receipts /><AdvancedToggles group="checkout" title="Checkout & sales" rows={checkoutRows} /><Inventory /><Payments /></>}
+      {section === "team" && <><Staff /><AdvancedToggles group="notifications" title="Notifications" rows={notificationRows} /></>}
+      {section === "security" && <Security />}
+      {section === "account" && <><PasswordOtp /><Sessions /></>}
       {section === "appearance" && <Appearance />}
       {section === "theme" && <ThemePreferences />}
       {section === "staff" && <Staff />}
-      {section === "notifications" && (
-        <AdvancedToggles group="notifications" title="Notifications" rows={notificationRows} />
-      )}{" "}
+      {section === "notifications" && <AdvancedToggles group="notifications" title="Notifications" rows={notificationRows} />}
       {section === "receipts" && <Receipts />}
       {section === "online-store" && <OnlineStore />}
-      {section === "checkout" && (
-        <AdvancedToggles group="checkout" title="Checkout & sales" rows={checkoutRows} />
-      )}{" "}
+      {section === "checkout" && <AdvancedToggles group="checkout" title="Checkout & sales" rows={checkoutRows} />}
       {section === "inventory" && <Inventory />}
-      {section === "security" && <Security />}
       {section === "payments" && <Payments />}
-      {section === "password" && <Password />}
+      {section === "password" && <PasswordOtp />}
       {section === "sessions" && <Sessions />}
       {section === "advanced" && <Advanced />}
     </div>
@@ -711,9 +528,6 @@ function StoreProfile() {
       name: store.name ?? "",
       description: s.description ?? "",
       businessType: s.businessType ?? "",
-      businessMode: getBusinessMode(
-        s.businessMode ?? s.onboarding?.businessType ?? store.business_type ?? store.businessType,
-      ).key,
       email: s.contact?.email ?? profile?.email ?? "",
       phone: s.contact?.phone ?? "",
       whatsapp: s.contact?.whatsapp ?? "",
@@ -742,7 +556,6 @@ function StoreProfile() {
         ...(store.storefront_settings ?? {}),
         description: form.description,
         businessType: form.businessType,
-        businessMode: form.businessMode,
         contact: {
           email: form.email,
           phone: form.phone,
@@ -781,89 +594,8 @@ function StoreProfile() {
       setSaving(false);
     }
   };
-  const selectedMode = getBusinessMode(form.businessMode);
   return (
     <div className="space-y-5">
-      <CardSection
-        title="Business mode"
-        description="Choose the workflows that best fit this business. You can change this later without affecting existing sales or stock."
-      >
-        <div className="grid gap-3 sm:grid-cols-2">
-          {BUSINESS_MODES.map((mode) => {
-            const active = form.businessMode === mode.key;
-            return (
-              <button
-                key={mode.key}
-                type="button"
-                onClick={() => update("businessMode", mode.key)}
-                disabled={role !== "owner" && role !== "manager"}
-                aria-pressed={active}
-                className={`group rounded-2xl border p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60 ${active ? "border-foreground bg-foreground text-background shadow-sm" : "border-border bg-surface hover:border-foreground/20"}`}
-              >
-                <span className="flex items-start gap-3">
-                  <span
-                    className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${active ? "bg-accent text-accent-foreground" : "bg-accent-soft text-accent-ink"}`}
-                  >
-                    <Store className="size-5" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-center gap-2">
-                      <span className="font-semibold">{mode.label}</span>
-                      {active && <Check className="size-4 shrink-0 text-accent" />}
-                    </span>
-                    <span
-                      className={`mt-1 block text-xs leading-5 ${active ? "text-background/65" : "text-muted-foreground"}`}
-                    >
-                      {mode.description}
-                    </span>
-                    <span
-                      className={`mt-2 block text-[10px] font-semibold uppercase tracking-[.12em] ${active ? "text-background/45" : "text-muted-foreground"}`}
-                    >
-                      {mode.eyebrow}
-                    </span>
-                  </span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-        <div className="mt-5 rounded-2xl border border-border bg-secondary/30 p-4">
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="font-semibold">{selectedMode.label} workflow guide</p>
-              <p className="mt-1 text-xs leading-5 text-muted-foreground">{selectedMode.bestFor}</p>
-            </div>
-            <span className="mt-1 inline-flex w-fit rounded-full bg-background px-2.5 py-1 text-[10px] font-semibold text-muted-foreground">
-              {selectedMode.workflows.filter((workflow) => workflow.status === "available").length}{" "}
-              available ·{" "}
-              {selectedMode.workflows.filter((workflow) => workflow.status === "planned").length}{" "}
-              planned
-            </span>
-          </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {selectedMode.workflows.map((workflow) => (
-              <div
-                key={workflow.title}
-                className="rounded-xl border border-border bg-background p-3"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-sm font-semibold">{workflow.title}</p>
-                  <span
-                    className={`shrink-0 rounded-full px-2 py-1 text-[9px] font-bold uppercase tracking-wide ${workflow.status === "available" ? "bg-accent-soft text-accent-ink" : "bg-secondary text-muted-foreground"}`}
-                  >
-                    {workflow.status === "available" ? "Available" : "Planned"}
-                  </span>
-                </div>
-                <p className="mt-1.5 text-xs leading-5 text-muted-foreground">{workflow.detail}</p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 text-[11px] leading-5 text-muted-foreground">
-            Planned items are a roadmap, not active features. Choosing a mode only personalises
-            guidance and shortcuts; it does not change your existing transactions or stock.
-          </p>
-        </div>
-      </CardSection>
       <CardSection title="Business identity">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
@@ -954,6 +686,7 @@ function StoreProfile() {
           />
         </div>
       </CardSection>
+      <ThemePreferences />
       {role !== "owner" && role !== "manager" && <ReadOnly />}
       <SaveBar
         dirty={dirty && (role === "owner" || role === "manager")}
@@ -1838,128 +1571,6 @@ function Payments() {
       </p>
     </div>
   );
-}
-
-function Password() {
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [sent, setSent] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
-  const [busy, setBusy] = useState(false);
-  useEffect(() => {
-    void supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
-  }, []);
-  useEffect(() => {
-    if (!cooldown) return;
-    const t = window.setInterval(() => setCooldown((n) => Math.max(0, n - 1)), 1000);
-    return () => window.clearInterval(t);
-  }, [cooldown]);
-  const score = passwordStrength(newPassword);
-  const request = async () => {
-    if (!email) return;
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: false },
-    });
-    setBusy(false);
-    if (error) toast.error(error.message);
-    else {
-      setSent(true);
-      setCooldown(60);
-      toast.success("OTP sent to your verified email.");
-    }
-  };
-  const verify = async () => {
-    if (!/^\d{6}$/.test(otp)) return toast.error("Enter the 6-digit OTP.");
-    if (score < 3) return toast.error("Choose a stronger password.");
-    if (newPassword !== confirm) return toast.error("Passwords do not match.");
-    setBusy(true);
-    const { error: ve } = await supabase.auth.verifyOtp({ email, token: otp, type: "email" });
-    if (ve) {
-      setBusy(false);
-      return toast.error(ve.message);
-    }
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    setBusy(false);
-    if (error) toast.error(error.message);
-    else {
-      setSent(false);
-      setOtp("");
-      setNewPassword("");
-      setConfirm("");
-      toast.success("Password changed successfully.");
-    }
-  };
-  return (
-    <div className="space-y-5">
-      <CardSection
-        title="Request OTP"
-        description={`A one-time code will be sent to ${email || "your verified email"}.`}
-      >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="font-semibold">Step 1 — verify your email</p>
-            <p className="text-sm text-muted-foreground">Use the real Supabase email OTP flow.</p>
-          </div>
-          <Button onClick={() => void request()} disabled={busy || cooldown > 0}>
-            {cooldown ? `Resend in ${cooldown}s` : sent ? "Resend OTP" : "Request OTP"}
-          </Button>
-        </div>
-      </CardSection>
-      <CardSection
-        title="Verify and change password"
-        description="Step 2 — verify the OTP, then update the authenticated Supabase user."
-      >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            label="OTP"
-            value={otp}
-            onChange={(v) => setOtp(v.replace(/\D/g, "").slice(0, 6))}
-            placeholder="6-digit code"
-            disabled={!sent}
-          />
-          <div />
-          <Field
-            label="New password"
-            value={newPassword}
-            onChange={setNewPassword}
-            type="password"
-            disabled={!sent}
-          />
-          <Field
-            label="Confirm password"
-            value={confirm}
-            onChange={setConfirm}
-            type="password"
-            disabled={!sent}
-          />
-        </div>
-        <div className="mt-4 rounded-xl border border-border p-4">
-          <div className="flex justify-between text-xs">
-            <span className="font-semibold">Password strength</span>
-            <span>{["Very weak", "Weak", "Fair", "Strong", "Very strong"][score]}</span>
-          </div>
-          <div className="mt-2 h-1.5 rounded-full bg-secondary">
-            <div className="h-full rounded-full bg-accent" style={{ width: `${score * 25}%` }} />
-          </div>
-        </div>
-        <Button className="mt-5" onClick={() => void verify()} disabled={!sent || busy}>
-          {busy ? "Verifying…" : "Verify OTP & change password"}
-        </Button>
-      </CardSection>
-    </div>
-  );
-}
-function passwordStrength(value: string) {
-  let s = 0;
-  if (value.length >= 8) s++;
-  if (/[A-Z]/.test(value) && /[a-z]/.test(value)) s++;
-  if (/\d/.test(value)) s++;
-  if (/[^A-Za-z0-9]/.test(value)) s++;
-  return s;
 }
 
 function Sessions() {

@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PasswordOtp } from "@/components/settings/PasswordOtp";
-
+import { SettingsSectionPage } from "@/components/settings/SettingsCenter";
 export const Route = createFileRoute("/_authenticated/settings/password")({
-  component: PasswordOtp,
+  component: () => <SettingsSectionPage section="account" />,
 });

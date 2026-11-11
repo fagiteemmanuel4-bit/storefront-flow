@@ -286,6 +286,14 @@ function VerifyEmailPage() {
                   className="sa-otp"
                   role="group"
                   aria-label={`${OTP_LENGTH}-digit verification code`}
+                  onPaste={(event) => {
+                    const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, OTP_LENGTH);
+                    if (!pasted) return;
+                    event.preventDefault();
+                    setCode(pasted);
+                    focusBox(Math.min(pasted.length, OTP_LENGTH - 1));
+                    if (pasted.length === OTP_LENGTH) void verifyCode(undefined, pasted);
+                  }}
                 >
                   {boxes.map((digit, i) => (
                     <span key={i} style={{ display: "contents" }}>

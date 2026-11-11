@@ -782,7 +782,7 @@ function PosPage() {
                     {formatMoney(Number(line.product.price), currency)} each
                   </p>
                 </div>
-                <span className="numeric text-sm font-bold">
+                <span className="numeric text-sm font-bold text-[#C6F432] dark:text-[#C6F432]">
                   {formatMoney(lineUnitPrice(line) * line.quantity, currency)}
                 </span>
                 <Button
