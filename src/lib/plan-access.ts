@@ -37,8 +37,8 @@ export async function getStoreSubscription(storeId: string): Promise<Subscriptio
   const status = data?.status ?? "inactive";
   const expiresAt =
     status === "trialing"
-      ? data?.trial_ends_at ?? null
-      : data?.expires_at ?? data?.current_period_end ?? null;
+      ? (data?.trial_ends_at ?? null)
+      : (data?.expires_at ?? data?.current_period_end ?? null);
 
   return {
     plan,
