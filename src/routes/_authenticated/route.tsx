@@ -5,6 +5,8 @@ import { WelcomeTour } from "@/components/shell/WelcomeTour";
 import { StrapReviewPrompt } from "@/components/site/StrapReviewPrompt";
 import { RouteLoadingOverlay } from "@/components/shell/RouteLoadingOverlay";
 import { isPaidArea } from "@/lib/plan-access";
+import { AccountStatusModal, type AccountStatus } from "@/components/auth/AccountStatusModal";
+import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -54,9 +56,40 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedLayout() {
   const { user } = Route.useRouteContext();
+  const [accountStatus, setAccountStatus] = useState<AccountStatus>("active");
+  const [statusReason, setStatusReason] = useState<string | undefined>();
+
+  useEffect(() => {
+    // Check user metadata or profile status for suspension / ban enforcement
+    const metaStatus = (user.user_metadata?.account_status || user.app_metadata?.account_status) as
+      AccountStatus | undefined;
+    const metaReason = (user.user_metadata?.status_reason || user.app_metadata?.status_reason) as
+      string | undefined;
+
+    if (metaStatus === "banned" || metaStatus === "suspended") {
+      setAccountStatus(metaStatus);
+      setStatusReason(metaReason);
+      return;
+    }
+
+    // Also inspect staff_accounts or user metadata for suspension / ban
+    void (supabase as any)
+      .from("staff_accounts")
+      .select("is_active")
+      .eq("user_id", user.id)
+      .maybeSingle()
+      .then(({ data }: { data: { is_active?: boolean } | null }) => {
+        if (data && data.is_active === false) {
+          setAccountStatus("suspended");
+          setStatusReason("Your staff account has been suspended by store administration.");
+        }
+      });
+  }, [user]);
+
   return (
     <StoreProvider userId={user.id}>
       <RouteLoadingOverlay />
+      <AccountStatusModal status={accountStatus} reason={statusReason} />
       <Outlet />
       <WelcomeTour />
       <StrapReviewPrompt />

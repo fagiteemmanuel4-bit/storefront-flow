@@ -56,9 +56,9 @@ export function Landing() {
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-muted-foreground">
                 <span className="size-2 rounded-full bg-accent" /> Retail management by Kryonara
               </span>
-              <h1 className="mt-7 max-w-3xl font-display text-5xl font-bold leading-[.98] tracking-[-.06em] sm:text-7xl">
+              <h1 className="mt-7 max-w-3xl font-display text-5xl font-bold leading-[.98] tracking-[-.06em] text-foreground sm:text-7xl">
                 Run your business.{" "}
-                <span className="relative inline-block">
+                <span className="relative inline-block text-foreground">
                   Not around it.
                   <span className="absolute -bottom-1 left-0 -z-0 h-3 w-full bg-accent/70" />
                 </span>
