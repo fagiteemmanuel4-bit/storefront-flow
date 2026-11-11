@@ -594,7 +594,9 @@ function StoreProfile() {
       setSaving(false);
     }
   };
-      <CardSection title="Business identity">      <CardSection title="Business identity">
+  return (
+    <div className="space-y-5">
+      <CardSection title="Business identity">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
             label="Store / business name"
