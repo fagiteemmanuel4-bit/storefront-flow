@@ -21,7 +21,6 @@ export function MobileNav() {
     "/settings",
     "/stock-sense",
     "/profile",
-    "/extensions",
     "/notifications",
     "/help",
     "/feature-discovery",
