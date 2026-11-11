@@ -954,7 +954,7 @@ function PosPage() {
   return (
     <AppShell title={isFashion ? "Fashion sales" : "Sell"}>
       <div data-tour="sell" className="pos-sell-page min-w-0">
-        <section className="pos-search-panel rounded-2xl border border-border bg-surface p-3 shadow-[0_1px_2px_rgba(0,0,0,.03)]">
+        <section className="pos-search-panel rounded-[22px] border border-border/80 bg-surface p-3 shadow-sm sm:rounded-[26px] sm:p-4">
           <div className="relative min-w-0">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -965,7 +965,7 @@ function PosPage() {
                   ? "Search clothing by name or category"
                   : "Search products, name or barcode"
               }
-              className="h-14 rounded-2xl border-border bg-background pl-10 text-base shadow-none"
+              className="h-12 rounded-xl border-border/80 bg-background pl-10 text-[15px] shadow-none transition focus-visible:ring-2 focus-visible:ring-accent/40 sm:h-[54px] sm:rounded-2xl sm:text-base"
             />
           </div>
           <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2.5">
@@ -1098,13 +1098,13 @@ function PosPage() {
                         } else addToCart(product);
                       }}
                       className={cn(
-                        "group relative flex min-h-[142px] min-w-0 flex-col items-start overflow-hidden rounded-2xl border bg-surface p-4 text-left shadow-[0_1px_2px_rgba(0,0,0,.025)] transition duration-150",
+                        "group relative flex min-h-[150px] min-w-0 flex-col items-start overflow-hidden rounded-[20px] border bg-card p-3.5 text-left shadow-sm transition duration-150 sm:min-h-[164px] sm:rounded-[22px] sm:p-4",
                         out
-                          ? "cursor-not-allowed border-border opacity-60"
-                          : "border-border hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-lift active:translate-y-0",
+                          ? "cursor-not-allowed border-border bg-secondary/35 opacity-65"
+                          : "border-border/80 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
                       )}
                     >
-                      <span className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-lg bg-secondary text-muted-foreground opacity-0 transition group-hover:opacity-100">
+                      <span className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-lg bg-accent-soft text-accent-ink opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
                         <Plus className="size-3.5" />
                       </span>
                       {isFashion && product.image_url && (
@@ -1117,20 +1117,20 @@ function PosPage() {
                           />
                         </span>
                       )}
-                      <span className="line-clamp-2 pr-6 text-sm font-semibold leading-5">
+                      <span className="line-clamp-2 min-h-10 pr-7 text-[13px] font-semibold leading-5 text-card-foreground sm:text-sm">
                         {product.name}
                       </span>
-                      <span className="numeric mt-auto text-lg font-bold tracking-tight text-accent-ink">
+                      <span className="numeric mt-auto pt-3 text-base font-bold tracking-tight text-accent-ink sm:text-lg">
                         {formatMoney(Number(product.price), currency)}
                       </span>
                       <span
                         className={cn(
-                          "mt-1 text-[11px] font-medium",
+                          "mt-2 inline-flex rounded-full px-2 py-1 text-[10px] font-semibold sm:text-[11px]",
                           out
-                            ? "text-destructive"
+                            ? "bg-destructive/10 text-destructive"
                             : low
-                              ? "text-amber-700"
-                              : "text-muted-foreground",
+                              ? "bg-warning-soft text-accent-ink"
+                              : "bg-secondary text-muted-foreground",
                         )}
                       >
                         {out
