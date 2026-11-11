@@ -6,6 +6,7 @@ import {
   Bot,
   Check,
   ChevronRight,
+  ChevronDown,
   CircleHelp,
   CreditCard,
   Database,
@@ -36,6 +37,7 @@ import { useStoreContext } from "@/components/shell/StoreProvider";
 import { useTheme } from "@/components/shell/ThemeProvider";
 import { ReceiptSettingsPanel } from "@/components/settings/ReceiptSettingsPanel";
 import { PasswordOtp } from "@/components/settings/PasswordOtp";
+import { BottomSheet, BottomSheetContent, BottomSheetDescription, BottomSheetHeader, BottomSheetTitle } from "@/components/ui/bottom-sheet";
 
 const db = supabase as any;
 
@@ -330,18 +332,46 @@ function CardSection({
   description?: string;
   children: ReactNode;
 }) {
+  const [open, setOpen] = useState(false);
+  const [revealing, setRevealing] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    setRevealing(true);
+    const reveal = window.setTimeout(() => setRevealing(false), 360);
+    return () => window.clearTimeout(reveal);
+  }, [open]);
   return (
-    <section className="rounded-[26px] border border-border/70 bg-background p-5 shadow-[0_8px_28px_rgba(15,23,42,.035)] sm:p-6">
-      <div className="mb-5">
-        <h3 className="font-semibold">{title}</h3>
-        {description && (
-          <p className="mt-1 text-sm leading-5 text-muted-foreground">{description}</p>
-        )}
-      </div>
-      {children}
-    </section>
+    <>
+      <button type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}
+        className="group flex w-full items-center gap-4 rounded-[24px] border border-border/70 bg-background p-5 text-left shadow-[0_8px_28px_rgba(15,23,42,.035)] transition hover:-translate-y-0.5 hover:border-[#C6F432]/60 hover:shadow-[0_14px_34px_rgba(15,23,42,.08)] sm:p-6">
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold">{title}</span>
+          {description && <span className="mt-1 block text-sm leading-5 text-muted-foreground">{description}</span>}
+          <span className="mt-3 block text-xs font-semibold text-muted-foreground">Tap to manage settings</span>
+        </span>
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary transition group-hover:bg-[#C6F432] group-hover:text-[#111713]">
+          <ChevronDown className="size-4" />
+        </span>
+      </button>
+      <BottomSheet open={open} onOpenChange={setOpen}>
+        <BottomSheetContent className="mx-auto flex max-h-[90dvh] w-full max-w-3xl flex-col overflow-y-auto rounded-t-[30px] border-border bg-background p-0">
+          <BottomSheetHeader className="sticky top-0 z-10 border-b border-border bg-background px-5 py-4 text-left sm:px-7">
+            <BottomSheetTitle>{title}</BottomSheetTitle>
+            {description && <BottomSheetDescription>{description}</BottomSheetDescription>}
+          </BottomSheetHeader>
+          {revealing ? (
+            <div className="flex min-h-56 items-center justify-center">
+              <span className="size-10 animate-spin rounded-full border-[4px] border-[#C6F432]/25 border-t-[#C6F432]" role="status" aria-label="Loading settings" />
+            </div>
+          ) : (
+            <div className="space-y-5 px-5 py-5 pb-[calc(28px+env(safe-area-inset-bottom))] sm:px-7">{children}</div>
+          )}
+        </BottomSheetContent>
+      </BottomSheet>
+    </>
   );
 }
+
 function Loading() {
   return (
     <div className="rounded-2xl border border-border p-8 text-sm text-muted-foreground">

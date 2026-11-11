@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bot, Check, Copy, ExternalLink, GitBranch, ShieldCheck, Trash2 } from "lucide-react";
+import { BottomSheet, BottomSheetContent, BottomSheetDescription, BottomSheetHeader, BottomSheetTitle } from "@/components/ui/bottom-sheet";
 import { toast } from "sonner";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
@@ -107,6 +108,15 @@ const WRITE_OPTIONS: Array<{ key: keyof AccessConfig; title: string; description
   },
 ];
 
+function getConnectedAppLogo(grant: OAuthGrant): string | null {
+  const client = grant.client as OAuthGrant["client"] & { logo_uri?: string | null; logo_url?: string | null };
+  if (client.logo_uri || client.logo_url) return client.logo_uri || client.logo_url || null;
+  const name = (client.name || "").toLowerCase();
+  const providers: Array<[string, string]> = [["chatgpt", "openai.com"], ["openai", "openai.com"], ["claude", "claude.ai"], ["anthropic", "anthropic.com"], ["gemini", "gemini.google.com"], ["perplexity", "perplexity.ai"], ["cursor", "cursor.com"], ["copilot", "copilot.microsoft.com"], ["microsoft", "microsoft.com"], ["google", "google.com"], ["zapier", "zapier.com"]];
+  const match = providers.find(([label]) => name.includes(label));
+  return match ? "https://www.google.com/s2/favicons?domain=" + match[1] + "&sz=128" : null;
+}
+
 export function StrapMcpSettingsPage() {
   const { store, branches, role, userId } = useStoreContext();
   const canManage = role === "owner" || role === "manager";
@@ -115,6 +125,7 @@ export function StrapMcpSettingsPage() {
   const [drafts, setDrafts] = useState<Record<string, AccessConfig>>({});
   const [baselineDrafts, setBaselineDrafts] = useState<Record<string, AccessConfig>>({});
   const [editing, setEditing] = useState<string | null>(null);
+  const [editorLoading, setEditorLoading] = useState(false);
   const [audit, setAudit] = useState<AuditRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -194,6 +205,11 @@ export function StrapMcpSettingsPage() {
   useEffect(() => {
     void load();
   }, [load]);
+  useEffect(() => {
+    if (!editing) return;
+    const reveal = window.setTimeout(() => setEditorLoading(false), 420);
+    return () => window.clearTimeout(reveal);
+  }, [editing]);
 
   const copyEndpoint = async () => {
     try {
@@ -394,8 +410,8 @@ export function StrapMcpSettingsPage() {
                 className="rounded-2xl border border-border bg-background p-5 sm:p-6"
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-secondary">
-                    <Bot className="size-5" />
+                  <div className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-2">
+                    {getConnectedAppLogo(grant) ? <img src={getConnectedAppLogo(grant)!} alt="" className="size-full object-contain" /> : <Bot className="size-5 text-slate-700" />}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -436,6 +452,7 @@ export function StrapMcpSettingsPage() {
                       disabled={!canManage}
                       onClick={() => {
                         setEditing(isEditing ? null : grant.client.id);
+                        if (!isEditing) setEditorLoading(true);
                         setDrafts((current) => ({
                           ...current,
                           [grant.client.id]:
@@ -457,7 +474,17 @@ export function StrapMcpSettingsPage() {
                   </div>
                 </div>
                 {isEditing && (
-                  <div className="mt-5 space-y-5 border-t border-border pt-5">
+                  <BottomSheet open={isEditing} onOpenChange={(open) => { if (!open) setEditing(null); }}>
+                    <BottomSheetContent className="mx-auto flex max-h-[90dvh] w-full max-w-3xl flex-col overflow-y-auto rounded-t-[30px] border-border bg-background p-0">
+                      <>
+                      <BottomSheetHeader className="sticky top-0 z-10 border-b border-border bg-background px-5 py-4 text-left sm:px-7">
+                        <BottomSheetTitle>{grant.client.name || "Connected application"} access</BottomSheetTitle>
+                        <BottomSheetDescription>Choose exactly what this application can access and change in your store.</BottomSheetDescription>
+                      </BottomSheetHeader>
+                      {editorLoading ? (
+                        <div className="flex min-h-56 items-center justify-center"><span className="size-10 animate-spin rounded-full border-[4px] border-[#C6F432]/25 border-t-[#C6F432]" role="status" aria-label="Loading access settings" /></div>
+                      ) : (
+                      <div className="space-y-5 px-5 py-5 pb-[calc(28px+env(safe-area-inset-bottom))] sm:px-7">
                     <div>
                       <h5 className="font-semibold">Connection access</h5>
                       <div className="mt-3 flex items-center justify-between gap-4 rounded-xl border border-border bg-surface p-4">
@@ -606,7 +633,11 @@ export function StrapMcpSettingsPage() {
                         {savingId === grant.client.id ? "Saving…" : "Save permissions"}
                       </Button>
                     </div>
-                  </div>
+                      </div>
+                      )}
+                      </>
+                    </BottomSheetContent>
+                  </BottomSheet>
                 )}
               </article>
             );
