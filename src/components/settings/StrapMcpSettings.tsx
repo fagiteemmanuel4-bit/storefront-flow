@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bot, Check, Copy, ExternalLink, GitBranch, ShieldCheck, Trash2 } from "lucide-react";
+import { BottomSheet, BottomSheetContent, BottomSheetDescription, BottomSheetHeader, BottomSheetTitle } from "@/components/ui/bottom-sheet";
 import { toast } from "sonner";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
@@ -115,6 +116,7 @@ export function StrapMcpSettingsPage() {
   const [drafts, setDrafts] = useState<Record<string, AccessConfig>>({});
   const [baselineDrafts, setBaselineDrafts] = useState<Record<string, AccessConfig>>({});
   const [editing, setEditing] = useState<string | null>(null);
+  const [editorLoading, setEditorLoading] = useState(false);
   const [audit, setAudit] = useState<AuditRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -436,6 +438,7 @@ export function StrapMcpSettingsPage() {
                       disabled={!canManage}
                       onClick={() => {
                         setEditing(isEditing ? null : grant.client.id);
+                        if (!isEditing) setEditorLoading(true);
                         setDrafts((current) => ({
                           ...current,
                           [grant.client.id]:
