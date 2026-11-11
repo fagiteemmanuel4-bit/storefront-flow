@@ -9,7 +9,7 @@ import { isPaidArea } from "@/lib/plan-access";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async ({ location }) => {
-    const hiddenDuringUpgrade = ["/online-store", "/store-editor", "/settings/online-store"];
+    const hiddenDuringUpgrade = ["/online-store", "/store-editor", "/settings/online-store", "/settings/appearance"];
     if (hiddenDuringUpgrade.some((path) => location.pathname === path || location.pathname.startsWith(`${path}/`))) {
       throw redirect({ to: "/dashboard", replace: true });
     }

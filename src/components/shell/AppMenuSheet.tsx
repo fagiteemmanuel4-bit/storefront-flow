@@ -4,7 +4,6 @@ import {
   Bell,
   ChevronRight,
   Download,
-  ExternalLink,
   FileBarChart,
   Globe2,
   HardDrive,
@@ -28,12 +27,10 @@ import {
   Boxes,
   Truck,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ExportDataDialog } from "@/components/shell/ExportDataDialog";
 import { DeleteStoreDialog } from "@/components/shell/DeleteStoreDialog";
-import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { cn } from "@/lib/utils";
 import type { StoreRow, StoreRole } from "@/lib/pos-types";
 import { clearStaffSession, getStaffSession } from "@/lib/staff-session";
@@ -204,54 +201,17 @@ export function AppMenuSheet({
   const isElectronics = businessMode.key === "electronics";
   const isFoodService = businessMode.key === "food-service";
   const isGrocery = businessMode.key === "grocery-provision";
-  const storefrontQuery = useQuery({
-    queryKey: ["online-store-menu", store?.id],
-    enabled: Boolean(store?.id),
-    queryFn: async () => {
-      const { data, error } = await onlineSupabase
-        .from("online_stores")
-        .select("slug,setup_completed,is_published")
-        .eq("store_id", store!.id)
-        .maybeSingle();
-      if (error) throw new Error(error.message);
-      return data;
-    },
-  });
-  const pendingOrdersQuery = useQuery({
-    queryKey: ["online-orders-pending", store?.id],
-    enabled: Boolean(store?.id && storefrontQuery.data?.setup_completed),
-    queryFn: async () => {
-      const { count, error } = await onlineSupabase
-        .from("online_orders")
-        .select("id", { count: "exact", head: true })
-        .eq("store_id", store!.id)
-        .eq("status", "pending");
-      if (error) throw new Error(error.message);
-      return count ?? 0;
-    },
-  });
-  const storefront = storefrontQuery.data;
   useEffect(() => {
-    const handler = () => {
-      void storefrontQuery.refetch();
-      void pendingOrdersQuery.refetch();
-      setStaffActive(getStaffSession(store?.id));
-    };
-    window.addEventListener("kudi-storefront-updated", handler);
+    const handler = () => setStaffActive(getStaffSession(store?.id));
     window.addEventListener("kudi-staff-session-changed", handler);
-    return () => {
-      window.removeEventListener("kudi-storefront-updated", handler);
-      window.removeEventListener("kudi-staff-session-changed", handler);
-    };
-  }, [store?.id, storefrontQuery, pendingOrdersQuery]);
+    return () => window.removeEventListener("kudi-staff-session-changed", handler);
+  }, [store?.id]);
   const close = () => onOpenChange(false);
   const endStaffSession = () => {
     clearStaffSession();
     setStaffActive(null);
     close();
   };
-  const pendingOrders = pendingOrdersQuery.data ?? 0;
-  const storefrontPath = "";
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
@@ -451,7 +411,6 @@ export function AppMenuSheet({
                   icon={ShoppingBag}
                   label="Orders"
                   hint="Sales from every channel"
-                  badge={pendingOrders}
                   onClick={close}
                   locked={!canOnlineStore}
                 />
@@ -472,60 +431,7 @@ export function AppMenuSheet({
               </div>
             </section>
             <div className="my-5 border-t border-border/70" />
-            {false && (
-<section>
-              <p className="px-2 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                {isFashion ? "Online shop & promotion" : "Storefront"}
-              </p>
-              <div className="space-y-1.5">
-                {canManageStaff && (
-                  <MenuLink
-                    to="/online-store"
-                    icon={Store}
-                    label="Online Store"
-                    hint="Manage your public storefront"
-                    onClick={close}
-                    featured
-                    locked={!canOnlineStore}
-                  />
-                )}
-                {storefront?.setup_completed && (
-                  <>
-                    {
-                      <MenuLink
-                        to="/online-store/catalog"
-                        icon={Globe2}
-                        label="Catalog"
-                        hint="Publish and organise products"
-                        onClick={close}
-                        locked={!canOnlineStore}
-                      />
-                    }{" "}
-                    {storefrontPath && (
-                      <a
-                        href={storefrontPath}
-                        onClick={close}
-                        className="group flex w-full items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition hover:border-border hover:bg-secondary/70"
-                      >
-                        <span className="flex size-10 items-center justify-center rounded-xl bg-secondary group-hover:bg-accent-soft">
-                          <ExternalLink className="size-[18px]" />
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-sm font-semibold">Live storefront</span>
-                          <span className="mt-0.5 block truncate text-xs text-muted-foreground">
-                            {storefront.is_published
-                              ? "Open your live store"
-                              : "Storefront needs attention"}
-                          </span>
-                        </span>
-                        <ExternalLink className="size-4 text-muted-foreground" />
-                      </a>
-                    )}
-                  </>
-                )}
-              </div>
-            </section>
-)}
+            
             <div className="my-5 border-t border-border/70" />
             <section>
               <p className="px-2 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
