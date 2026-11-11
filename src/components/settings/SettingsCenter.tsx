@@ -198,14 +198,20 @@ export function SettingsLayout() {
     <div className="flex min-h-full flex-col">
       {(["Workspace", "Account"] as const).map((group) => (
         <div key={group} className="mb-5 last:mb-0">
-          <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/75">{group}</p>
+          <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/75">
+            {group}
+          </p>
           <nav aria-label={`${group} settings`} className="grid gap-1.5">
             {SETTINGS_NAV.filter((item) => item.group === group).map((item) => {
               const Icon = item.icon;
               const active =
                 location.pathname === item.path ||
-                (item.path === "/settings/receipts" && ["/settings/checkout", "/settings/inventory", "/settings/payments"].includes(location.pathname)) ||
-                (item.path === "/settings/staff" && location.pathname === "/settings/notifications") ||
+                (item.path === "/settings/receipts" &&
+                  ["/settings/checkout", "/settings/inventory", "/settings/payments"].includes(
+                    location.pathname,
+                  )) ||
+                (item.path === "/settings/staff" &&
+                  location.pathname === "/settings/notifications") ||
                 (item.path === "/settings/password" && location.pathname === "/settings/sessions");
               return (
                 <Link
@@ -215,14 +221,20 @@ export function SettingsLayout() {
                   aria-current={active ? "page" : undefined}
                   className={`group flex min-h-[58px] items-center gap-3 rounded-2xl border px-3 py-2.5 transition-all duration-200 ${active ? "border-[#c6f432]/70 bg-[#c6f432]/15 text-foreground shadow-sm" : "border-transparent bg-background text-foreground hover:border-border hover:bg-secondary/70"}`}
                 >
-                  <span className={`flex size-9 shrink-0 items-center justify-center rounded-xl transition-colors ${active ? "bg-[#c6f432] text-[#111713]" : "bg-secondary text-muted-foreground group-hover:text-foreground"}`}>
+                  <span
+                    className={`flex size-9 shrink-0 items-center justify-center rounded-xl transition-colors ${active ? "bg-[#c6f432] text-[#111713]" : "bg-secondary text-muted-foreground group-hover:text-foreground"}`}
+                  >
                     <Icon className="size-[17px]" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[13px] font-semibold">{item.title}</span>
-                    <span className="mt-0.5 block truncate text-[10px] leading-4 text-muted-foreground">{item.description}</span>
+                    <span className="mt-0.5 block truncate text-[10px] leading-4 text-muted-foreground">
+                      {item.description}
+                    </span>
                   </span>
-                  <ChevronRight className={`size-4 shrink-0 transition-transform ${active ? "translate-x-0 opacity-80" : "-translate-x-1 opacity-30 group-hover:translate-x-0 group-hover:opacity-60"}`} />
+                  <ChevronRight
+                    className={`size-4 shrink-0 transition-transform ${active ? "translate-x-0 opacity-80" : "-translate-x-1 opacity-30 group-hover:translate-x-0 group-hover:opacity-60"}`}
+                  />
                 </Link>
               );
             })}
@@ -251,18 +263,29 @@ export function SettingsLayout() {
           <div className="mb-4 flex items-center justify-between gap-3 lg:hidden">
             <Sheet open={navOpen} onOpenChange={setNavOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="size-11 shrink-0 rounded-2xl border-border bg-background shadow-sm" aria-label="Open settings menu">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="size-11 shrink-0 rounded-2xl border-border bg-background shadow-sm"
+                  aria-label="Open settings menu"
+                >
                   <Menu className="size-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="flex w-[min(90vw,370px)] flex-col overflow-y-auto border-r border-border bg-background p-4">
+              <SheetContent
+                side="left"
+                className="flex w-[min(90vw,370px)] flex-col overflow-y-auto border-r border-border bg-background p-4"
+              >
                 <SheetHeader className="mb-5 text-left">
                   <SheetTitle className="font-display text-lg font-bold">Settings</SheetTitle>
                 </SheetHeader>
                 <SettingsLinks onNavigate={() => setNavOpen(false)} />
               </SheetContent>
             </Sheet>
-            <Link to="/dashboard" className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6F432] px-4 text-xs font-bold text-[#0E1116] shadow-sm">
+            <Link
+              to="/dashboard"
+              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6F432] px-4 text-xs font-bold text-[#0E1116] shadow-sm"
+            >
               <ArrowRight className="size-3.5 rotate-180" /> Dashboard
             </Link>
           </div>
@@ -510,7 +533,9 @@ export function SettingsSectionPage({ section }: { section: Section }) {
     <div className="space-y-5">
       <div className="border-b border-border/70 pb-5">
         <h1 className="font-display text-2xl font-bold tracking-tight sm:text-[28px]">{m.title}</h1>
-        {m.description && <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{m.description}</p>}
+        {m.description && (
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{m.description}</p>
+        )}
       </div>
       {section === "store-profile" && (
         <>
