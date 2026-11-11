@@ -1929,7 +1929,6 @@ html.dark [data-slot="context-menu-item"]:focus {
   }
 }
 
-
 /* AUTH COLOR SYSTEM — cohesive forest / sage palette for both themes.
    Keep the brand panel consistent; let the form surface follow the active theme. */
 .strap-auth-main {
@@ -1943,46 +1942,77 @@ html.dark [data-slot="context-menu-item"]:focus {
   --a-accent: #416b50;
   --a-accent-hover: #31583f;
   --a-accent-soft: #eaf2e9;
-  background: radial-gradient(ellipse at 8% 8%, rgb(111 153 113 / 0.10), transparent 36%), var(--a-bg) !important;
+  background:
+    radial-gradient(ellipse at 8% 8%, rgb(111 153 113 / 0.1), transparent 36%), var(--a-bg) !important;
   color: var(--a-ink) !important;
 }
 .strap-auth-card {
   border-color: #e1e8df !important;
   background: var(--a-surface) !important;
-  box-shadow: 0 28px 80px rgb(31 54 37 / 0.10), 0 2px 10px rgb(31 54 37 / 0.04) !important;
+  box-shadow:
+    0 28px 80px rgb(31 54 37 / 0.1),
+    0 2px 10px rgb(31 54 37 / 0.04) !important;
 }
 .strap-auth-aside,
 .strap-auth-main .strap-auth-aside {
-  background: radial-gradient(ellipse at 82% 76%, rgb(158 190 128 / 0.16), transparent 36%), #172b20 !important;
+  background:
+    radial-gradient(ellipse at 82% 76%, rgb(158 190 128 / 0.16), transparent 36%), #172b20 !important;
   color: #f6f8f3 !important;
 }
-.strap-auth-aside .strap-logo { color: #f6f8f3 !important; }
-.strap-auth-aside .strap-logo-mark { --logo-ring: #c7d9b8; }
-.strap-auth-hero p { color: #c1cec1 !important; }
-.strap-auth-copy { color: #9eaf9e !important; }
-.strap-auth-form-panel { background: var(--a-surface) !important; }
-.strap-auth-title, .strap-auth-main .strap-label { color: var(--a-ink) !important; }
-.strap-auth-sub, .strap-auth-main .strap-auth-alt, .strap-auth-main .strap-terms { color: var(--a-mut) !important; }
+.strap-auth-aside .strap-logo {
+  color: #f6f8f3 !important;
+}
+.strap-auth-aside .strap-logo-mark {
+  --logo-ring: #c7d9b8;
+}
+.strap-auth-hero p {
+  color: #c1cec1 !important;
+}
+.strap-auth-copy {
+  color: #9eaf9e !important;
+}
+.strap-auth-form-panel {
+  background: var(--a-surface) !important;
+}
+.strap-auth-title,
+.strap-auth-main .strap-label {
+  color: var(--a-ink) !important;
+}
+.strap-auth-sub,
+.strap-auth-main .strap-auth-alt,
+.strap-auth-main .strap-terms {
+  color: var(--a-mut) !important;
+}
 .strap-auth-main .strap-field {
   border-color: var(--a-line) !important;
   background: var(--a-field) !important;
   color: var(--a-ink) !important;
 }
-.strap-auth-main .strap-field::placeholder { color: #89968b !important; }
+.strap-auth-main .strap-field::placeholder {
+  color: #89968b !important;
+}
 .strap-auth-main .strap-field:focus,
 .strap-auth-main .strap-field:focus-visible {
   border-color: #78977b !important;
   background: #ffffff !important;
   box-shadow: 0 0 0 4px rgb(91 132 96 / 0.16) !important;
 }
-.strap-auth-main .strap-eye { color: #617266 !important; }
-.strap-auth-main .strap-eye:hover { background: var(--a-hover) !important; }
+.strap-auth-main .strap-eye {
+  color: #617266 !important;
+}
+.strap-auth-main .strap-eye:hover {
+  background: var(--a-hover) !important;
+}
 .strap-auth-main .strap-link,
 .strap-auth-main .strap-auth-alt .strap-link,
-.strap-auth-main .strap-terms a { color: var(--a-accent) !important; }
+.strap-auth-main .strap-terms a {
+  color: var(--a-accent) !important;
+}
 .strap-auth-main .strap-link:hover,
 .strap-auth-main .strap-auth-alt .strap-link:hover,
-.strap-auth-main .strap-terms a:hover { color: var(--a-accent-hover) !important; }
+.strap-auth-main .strap-terms a:hover {
+  color: var(--a-accent-hover) !important;
+}
 .strap-auth-main .strap-btn-primary {
   border-color: #203b2a !important;
   background: #203b2a !important;
@@ -2002,10 +2032,16 @@ html.dark [data-slot="context-menu-item"]:focus {
   background: var(--a-hover) !important;
   border-color: #c7d5c7 !important;
 }
-.strap-auth-main .strap-or { color: #89968b !important; }
+.strap-auth-main .strap-or {
+  color: #89968b !important;
+}
 .strap-auth-main .strap-or::before,
-.strap-auth-main .strap-or::after { background: var(--a-line) !important; }
-.strap-auth-main .strap-check { border-color: #aebcaf !important; }
+.strap-auth-main .strap-or::after {
+  background: var(--a-line) !important;
+}
+.strap-auth-main .strap-check {
+  border-color: #aebcaf !important;
+}
 .strap-auth-main .strap-notice {
   border-color: #d6e5d2 !important;
   background: #f0f6ed !important;
@@ -2030,7 +2066,8 @@ html.dark .strap-auth-main,
   --a-accent: #b7d3ae;
   --a-accent-hover: #d0e4c8;
   --a-accent-soft: #203126;
-  background: radial-gradient(ellipse at 92% 12%, rgb(126 164 119 / 0.09), transparent 36%), var(--a-bg) !important;
+  background:
+    radial-gradient(ellipse at 92% 12%, rgb(126 164 119 / 0.09), transparent 36%), var(--a-bg) !important;
   color: var(--a-ink) !important;
 }
 html.dark .strap-auth-card,
@@ -2042,13 +2079,17 @@ html.dark .strap-auth-card,
 }
 html.dark .strap-auth-form-panel,
 :root.dark .strap-auth-form-panel,
-.dark .strap-auth-form-panel { background: var(--a-surface) !important; }
+.dark .strap-auth-form-panel {
+  background: var(--a-surface) !important;
+}
 html.dark .strap-auth-title,
 :root.dark .strap-auth-title,
 .dark .strap-auth-title,
 html.dark .strap-auth-main .strap-label,
 :root.dark .strap-auth-main .strap-label,
-.dark .strap-auth-main .strap-label { color: #f1f5ef !important; }
+.dark .strap-auth-main .strap-label {
+  color: #f1f5ef !important;
+}
 html.dark .strap-auth-sub,
 :root.dark .strap-auth-sub,
 .dark .strap-auth-sub,
@@ -2057,7 +2098,9 @@ html.dark .strap-auth-main .strap-auth-alt,
 .dark .strap-auth-main .strap-auth-alt,
 html.dark .strap-auth-main .strap-terms,
 :root.dark .strap-auth-main .strap-terms,
-.dark .strap-auth-main .strap-terms { color: #a5b2a6 !important; }
+.dark .strap-auth-main .strap-terms {
+  color: #a5b2a6 !important;
+}
 html.dark .strap-auth-main .strap-field,
 :root.dark .strap-auth-main .strap-field,
 .dark .strap-auth-main .strap-field {
@@ -2067,7 +2110,9 @@ html.dark .strap-auth-main .strap-field,
 }
 html.dark .strap-auth-main .strap-field::placeholder,
 :root.dark .strap-auth-main .strap-field::placeholder,
-.dark .strap-auth-main .strap-field::placeholder { color: #849487 !important; }
+.dark .strap-auth-main .strap-field::placeholder {
+  color: #849487 !important;
+}
 html.dark .strap-auth-main .strap-field:focus,
 html.dark .strap-auth-main .strap-field:focus-visible,
 :root.dark .strap-auth-main .strap-field:focus,
@@ -2080,10 +2125,14 @@ html.dark .strap-auth-main .strap-field:focus-visible,
 }
 html.dark .strap-auth-main .strap-eye,
 :root.dark .strap-auth-main .strap-eye,
-.dark .strap-auth-main .strap-eye { color: #c2d0c2 !important; }
+.dark .strap-auth-main .strap-eye {
+  color: #c2d0c2 !important;
+}
 html.dark .strap-auth-main .strap-eye:hover,
 :root.dark .strap-auth-main .strap-eye:hover,
-.dark .strap-auth-main .strap-eye:hover { background: #26382a !important; }
+.dark .strap-auth-main .strap-eye:hover {
+  background: #26382a !important;
+}
 html.dark .strap-auth-main .strap-link,
 html.dark .strap-auth-main .strap-auth-alt .strap-link,
 html.dark .strap-auth-main .strap-terms a,
@@ -2092,7 +2141,9 @@ html.dark .strap-auth-main .strap-terms a,
 :root.dark .strap-auth-main .strap-terms a,
 .dark .strap-auth-main .strap-link,
 .dark .strap-auth-main .strap-auth-alt .strap-link,
-.dark .strap-auth-main .strap-terms a { color: #b7d3ae !important; }
+.dark .strap-auth-main .strap-terms a {
+  color: #b7d3ae !important;
+}
 html.dark .strap-auth-main .strap-btn-primary,
 :root.dark .strap-auth-main .strap-btn-primary,
 .dark .strap-auth-main .strap-btn-primary {
@@ -2103,7 +2154,9 @@ html.dark .strap-auth-main .strap-btn-primary,
 }
 html.dark .strap-auth-main .strap-btn-primary:hover:not(:disabled),
 :root.dark .strap-auth-main .strap-btn-primary:hover:not(:disabled),
-.dark .strap-auth-main .strap-btn-primary:hover:not(:disabled) { background: #c9dfc0 !important; }
+.dark .strap-auth-main .strap-btn-primary:hover:not(:disabled) {
+  background: #c9dfc0 !important;
+}
 html.dark .strap-auth-main .strap-btn-ghost,
 :root.dark .strap-auth-main .strap-btn-ghost,
 .dark .strap-auth-main .strap-btn-ghost {
@@ -2113,13 +2166,17 @@ html.dark .strap-auth-main .strap-btn-ghost,
 }
 html.dark .strap-auth-main .strap-btn-ghost:hover:not(:disabled),
 :root.dark .strap-auth-main .strap-btn-ghost:hover:not(:disabled),
-.dark .strap-auth-main .strap-btn-ghost:hover:not(:disabled) { background: #223329 !important; }
+.dark .strap-auth-main .strap-btn-ghost:hover:not(:disabled) {
+  background: #223329 !important;
+}
 html.dark .strap-auth-main .strap-or::before,
 html.dark .strap-auth-main .strap-or::after,
 :root.dark .strap-auth-main .strap-or::before,
 :root.dark .strap-auth-main .strap-or::after,
 .dark .strap-auth-main .strap-or::before,
-.dark .strap-auth-main .strap-or::after { background: #304234 !important; }
+.dark .strap-auth-main .strap-or::after {
+  background: #304234 !important;
+}
 html.dark .strap-auth-main .strap-notice,
 :root.dark .strap-auth-main .strap-notice,
 .dark .strap-auth-main .strap-notice {
@@ -2132,26 +2189,39 @@ html.dark .strap-auth-main a:focus-visible,
 :root.dark .strap-auth-main button:focus-visible,
 :root.dark .strap-auth-main a:focus-visible,
 .dark .strap-auth-main button:focus-visible,
-.dark .strap-auth-main a:focus-visible { outline-color: #a9c9a2 !important; }
+.dark .strap-auth-main a:focus-visible {
+  outline-color: #a9c9a2 !important;
+}
 
 /* Mobile overrides must follow the selected theme rather than forcing dark mode. */
 @media (max-width: 860px) {
-  .strap-auth-main { background: var(--a-bg) !important; }
-  .strap-auth-card { background: var(--a-bg) !important; }
+  .strap-auth-main {
+    background: var(--a-bg) !important;
+  }
+  .strap-auth-card {
+    background: var(--a-bg) !important;
+  }
   .strap-auth-form-panel {
     border-top-color: var(--a-line) !important;
     background: var(--a-surface) !important;
   }
   .strap-auth-aside {
-    background: radial-gradient(ellipse at 82% 85%, rgb(158 190 128 / 0.14), transparent 42%), #172b20 !important;
+    background:
+      radial-gradient(ellipse at 82% 85%, rgb(158 190 128 / 0.14), transparent 42%), #172b20 !important;
   }
   html.dark .strap-auth-main,
   :root.dark .strap-auth-main,
-  .dark .strap-auth-main { background: var(--a-bg) !important; }
+  .dark .strap-auth-main {
+    background: var(--a-bg) !important;
+  }
   html.dark .strap-auth-card,
   :root.dark .strap-auth-card,
-  .dark .strap-auth-card { background: var(--a-bg) !important; }
+  .dark .strap-auth-card {
+    background: var(--a-bg) !important;
+  }
   html.dark .strap-auth-form-panel,
   :root.dark .strap-auth-form-panel,
-  .dark .strap-auth-form-panel { background: var(--a-surface) !important; }
+  .dark .strap-auth-form-panel {
+    background: var(--a-surface) !important;
+  }
 }
