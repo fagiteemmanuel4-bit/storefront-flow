@@ -28,17 +28,20 @@ AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
 const AlertDialogContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <AlertDialogPortal>
     <AlertDialogOverlay />
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-1.5rem)] max-w-md max-h-[calc(100dvh-1.5rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-3xl border border-border bg-background p-5 shadow-float duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:p-6",
+        "strap-dialog-sheet fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-50 mx-auto grid max-h-[min(88dvh,760px)] w-auto max-w-md gap-4 overflow-y-auto rounded-[28px] border border-border/80 bg-background p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-[0_24px_80px_-18px_rgba(10,15,25,0.42)] sm:inset-x-4 sm:p-6",
         className,
       )}
       {...props}
-    />
+    >
+      <div aria-hidden="true" className="mx-auto -mt-1 mb-1 h-1.5 w-11 shrink-0 rounded-full bg-muted-foreground/25" />
+      {children}
+    </AlertDialogPrimitive.Content>
   </AlertDialogPortal>
 ));
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
