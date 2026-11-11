@@ -92,7 +92,6 @@ const MORE_NAV = [
   { to: "/insights", label: "Insights", icon: TrendingUp, area: "reports" },
   { to: "/branches", label: "Branches", icon: GitBranch, area: "staff" },
   { to: "/stock-sense", label: "Stock Sense", icon: Boxes, area: "products" },
-  { to: "/extensions", label: "Extensions", icon: Puzzle, area: "pos" },
   { to: "/activity", label: "Activity", icon: Activity, area: "pos" },
   { to: "/profile", label: "Profile", icon: UserRound, area: "pos" },
 ] as const;
