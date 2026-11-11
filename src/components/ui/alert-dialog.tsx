@@ -39,7 +39,10 @@ const AlertDialogContent = React.forwardRef<
       )}
       {...props}
     >
-      <div aria-hidden="true" className="mx-auto -mt-1 mb-1 h-1.5 w-11 shrink-0 rounded-full bg-muted-foreground/25" />
+      <div
+        aria-hidden="true"
+        className="mx-auto -mt-1 mb-1 h-1.5 w-11 shrink-0 rounded-full bg-muted-foreground/25"
+      />
       {children}
     </AlertDialogPrimitive.Content>
   </AlertDialogPortal>
