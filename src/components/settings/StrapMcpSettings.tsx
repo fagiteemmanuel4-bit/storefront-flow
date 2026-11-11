@@ -108,6 +108,15 @@ const WRITE_OPTIONS: Array<{ key: keyof AccessConfig; title: string; description
   },
 ];
 
+function getConnectedAppLogo(grant: OAuthGrant): string | null {
+  const client = grant.client as OAuthGrant["client"] & { logo_uri?: string | null; logo_url?: string | null };
+  if (client.logo_uri || client.logo_url) return client.logo_uri || client.logo_url || null;
+  const name = (client.name || "").toLowerCase();
+  const providers: Array<[string, string]> = [["chatgpt", "openai.com"], ["openai", "openai.com"], ["claude", "claude.ai"], ["anthropic", "anthropic.com"], ["gemini", "gemini.google.com"], ["perplexity", "perplexity.ai"], ["cursor", "cursor.com"], ["copilot", "copilot.microsoft.com"], ["microsoft", "microsoft.com"], ["google", "google.com"], ["zapier", "zapier.com"]];
+  const match = providers.find(([label]) => name.includes(label));
+  return match ? "https://www.google.com/s2/favicons?domain=" + match[1] + "&sz=128" : null;
+}
+
 export function StrapMcpSettingsPage() {
   const { store, branches, role, userId } = useStoreContext();
   const canManage = role === "owner" || role === "manager";
@@ -401,8 +410,8 @@ export function StrapMcpSettingsPage() {
                 className="rounded-2xl border border-border bg-background p-5 sm:p-6"
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-secondary">
-                    <Bot className="size-5" />
+                  <div className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-2">
+                    {getConnectedAppLogo(grant) ? <img src={getConnectedAppLogo(grant)!} alt="" className="size-full object-contain" /> : <Bot className="size-5 text-slate-700" />}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
