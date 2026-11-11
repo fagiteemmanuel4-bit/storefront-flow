@@ -8,6 +8,8 @@ import {
   Package,
   Plus,
   Search,
+  MoreVertical,
+  ScanLine,
   Share2,
   SlidersHorizontal,
   Trash2,
@@ -24,6 +26,7 @@ import { errorMessage } from "@/lib/format";
 import { canManageCatalog, type ProductWithStock } from "@/lib/pos-types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
   BottomSheet,
   BottomSheetContent,
@@ -171,8 +174,7 @@ function ProductsPage() {
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
     return products.filter((p) => {
-      const text =
-        `${p.name} ${p.category ?? ""} ${isFashion ? "" : `${p.sku ?? ""} ${p.barcode ?? ""}`}`.toLowerCase();
+      const text = [p.name, p.category, (p as any).description, (p as any).brand, (p as any).manufacturer, p.sku, p.barcode, (p as any).unit, (p as any).shelf_name].filter(Boolean).join(" ").toLowerCase();
       if (term && !text.includes(term)) return false;
       if (filter === "low") return p.quantity > 0 && p.quantity <= p.low_stock_threshold;
       if (filter === "out") return p.quantity < 1;
@@ -310,8 +312,23 @@ function ProductsPage() {
     }
   }
   return (
-    <AppShell title={isFashion ? "Fashion catalogue" : "Products"}>
-      <div className="space-y-5">
+    <AppShell title="">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="font-display text-xl font-bold tracking-tight">{isFashion ? "Fashion catalogue" : "Products"}</h1>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="size-10 rounded-xl" aria-label="Product actions">
+                <MoreVertical className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-52 rounded-xl">
+              {!isFashion && <DropdownMenuItem onSelect={() => setScanOpen(true)}><ScanLine className="mr-2 size-4" />Scan barcode</DropdownMenuItem>}
+              {canManage && <DropdownMenuItem onSelect={() => void navigate({ to: "/product-import" })}><Upload className="mr-2 size-4" />Import products</DropdownMenuItem>}
+              {canManage && <DropdownMenuItem onSelect={() => { setEditing(null); setFormOpen(true); }}><Plus className="mr-2 size-4" />{isFashion ? "Add clothing" : "Add product"}</DropdownMenuItem>}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <div className="relative min-w-0 flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -321,38 +338,10 @@ function ProductsPage() {
               placeholder={
                 isFashion ? "Search styles, names or categories" : "Search products, SKU or barcode"
               }
-              className="h-12 pl-9"
+              className="h-12 rounded-xl pl-9 pr-10"
             />
           </div>
-          <div className="flex flex-wrap gap-2">
-            {!isFashion && (
-              <Button variant="outline" className="h-12" onClick={() => setScanOpen(true)}>
-                Scan barcode
-              </Button>
-            )}
-            {canManage && (
-              <>
-                <Button
-                  variant="outline"
-                  className="h-12"
-                  onClick={() => void navigate({ to: "/product-import" })}
-                >
-                  <Upload className="mr-2 size-4" />
-                  Import products
-                </Button>
-                <Button
-                  className="h-12 rounded-xl border border-[#C6F432] bg-[#C6F432] text-[#0E1116] shadow-sm transition hover:-translate-y-0.5 hover:border-[#b0dc20] hover:bg-[#b0dc20] hover:shadow-md"
-                  onClick={() => {
-                    setEditing(null);
-                    setFormOpen(true);
-                  }}
-                >
-                  <Plus className="mr-2 size-4" />
-                  {isFashion ? "Add clothing" : "Add product"}
-                </Button>
-              </>
-            )}
-          </div>
+          {search && <button type="button" onClick={() => setSearch("")} className="shrink-0 rounded-xl border border-border px-3 text-xs font-semibold text-muted-foreground hover:bg-secondary">Clear search</button>}
         </div>
         <div className="flex gap-2 overflow-x-auto pb-1" role="tablist">
           {(
