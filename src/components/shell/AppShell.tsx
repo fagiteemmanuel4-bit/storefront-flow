@@ -24,7 +24,6 @@ import {
   Puzzle,
   ReceiptText,
   ScanLine,
-  Search,
   Settings,
   ShoppingBag,
   Sparkles,
@@ -154,8 +153,8 @@ function NavItem({
         "group relative flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors",
         collapsed && "justify-center px-2",
         active
-          ? "bg-[#c6f432] font-semibold text-[#0e1116]"
-          : "text-[#b4bac6] hover:bg-white/[0.07] hover:text-white",
+          ? "border-[#c6f432]/50 bg-[#c6f432] font-bold text-[#0e1116] shadow-[0_5px_16px_rgba(198,244,50,.18)]"
+          : "text-[#b4bac6] hover:border-white/10 hover:bg-white/[0.07] hover:text-white",
       )}
     >
       <item.icon className="size-[18px] shrink-0" />
@@ -483,7 +482,17 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 Workspace
               </p>
             )}
-            <nav className="space-y-0.5" aria-label="Primary navigation">
+            <nav className="space-y-1" aria-label="Primary navigation">
+              {primaryNav[0] && (
+                <NavItem
+                  item={primaryNav[0]}
+                  pathname={pathname}
+                  staffActive={staffActive}
+                  staffSession={staffSession}
+                  collapsed={sidebarCollapsed}
+                  locked={isLockedPath(primaryNav[0].to, subscriptionTier)}
+                />
+              )}
               <NavItem
                 item={HOME_NAV}
                 pathname={pathname}
@@ -492,7 +501,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 collapsed={sidebarCollapsed}
                 locked={false}
               />
-              {primaryNav.map((item) => (
+              {primaryNav.slice(1).map((item) => (
                 <NavItem
                   key={item.to}
                   item={item}
@@ -886,19 +895,6 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                     <ScanLine className="size-[18px]" aria-hidden />
                   </button>
                 )}
-                <button
-                  type="button"
-                  data-tour="quick-find"
-                  aria-label="Search"
-                  title="Search Strap (Ctrl/⌘ K)"
-                  className="hidden h-11 min-w-[12rem] shrink-0 items-center gap-2 rounded-xl border border-border bg-surface px-3.5 text-sm text-muted-foreground transition hover:border-foreground/40 hover:text-foreground lg:flex"
-                >
-                  <Search className="size-4" aria-hidden />
-                  <span>Search</span>
-                  <kbd className="ml-auto rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold">
-                    ⌘K
-                  </kbd>
-                </button>
                 <div data-tour="updates" className="hidden shrink-0 lg:flex">
                   <UpdatesSheet />
                 </div>
