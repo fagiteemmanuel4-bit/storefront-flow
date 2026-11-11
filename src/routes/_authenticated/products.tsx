@@ -460,12 +460,12 @@ function ProductsPage() {
                   >
                     <div className="flex min-w-0 flex-1 items-center gap-3 lg:flex-initial">
                       <span className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary">
-                        {isFashion && p.image_url ? (
+                        {p.image_url ? (
                           <img
                             src={p.image_url}
                             alt=""
                             loading="lazy"
-                            className="size-full object-cover"
+                            className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                         ) : (
                           <Package className="size-5 text-muted-foreground" />
