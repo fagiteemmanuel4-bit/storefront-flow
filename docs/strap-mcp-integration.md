@@ -1,85 +1,78 @@
 # STRAP MCP integration
 
-Status: implementation scaffold committed on `feat/strap-mcp-integration`; the authenticated MCP Edge Function is deployed to Kudi (version 1, ACTIVE). OAuth provider configuration and end-to-end authorization testing remain pending.
+Status: live on Kudi Supabase project `lhizunrljottkhemdfei`. The authenticated MCP Edge Function is ACTIVE at version 11.
 
-## Confirmed target
+## Endpoint and architecture
 
-- STRAP production Supabase project: `Kudi` / `lhizunrljottkhemdfei`.
-- The app's browser configuration in `src/integrations/supabase/config.ts` already points to this project.
-- The earlier `supabase/config.toml` project reference was stale; this branch now aligns it to Kudi.
-- Production frontend: `https://storefront-flow.vercel.app`.
+- MCP endpoint: `https://lhizunrljottkhemdfei.supabase.co/functions/v1/mcp`
+- STRAP production frontend: `https://storefront-flow.vercel.app`
+- Source of truth: `supabase/functions/mcp/index.ts` and `supabase/functions/mcp/deno.json`
 
-## Architecture
+ChatGPT or another supported MCP client
+→ Supabase Edge Function
+→ Supabase OAuth 2.1 middleware
+→ caller-scoped Supabase client
+→ existing Postgres RLS and Storage policies.
 
-ChatGPT (supported plan, web)
-→ Supabase Edge Function: `https://lhizunrljottkhemdfei.supabase.co/functions/v1/mcp`
-→ Supabase OAuth 2.1 authorization server
-→ authenticated MCP request pipeline
-→ Supabase client scoped to the caller's JWT
-→ existing Postgres RLS policies.
+The endpoint uses `withOAuthProtectedResource()` and `withSupabase({ auth: "user" })`. Gateway `verify_jwt = false` is required so OAuth metadata and challenge requests reach the middleware; protected tool calls still require a valid OAuth user token. Merchant operations never use the service-role key.
 
-The MCP endpoint uses `@supabase/server`'s `withOAuthProtectedResource()` and `withSupabase({ auth: 'user' })` middleware. OAuth discovery runs before the auth gate; all tool queries use the authenticated user's client. The Edge Function gateway must have `verify_jwt = false` so unauthenticated OAuth metadata requests can reach the middleware. This does NOT make the tools public: `withSupabase({ auth: 'user' })` enforces user-token validation before the handler runs.
+## Available tools
 
-The consent UI is a separate STRAP route at `/oauth/consent`, but it uses the existing STRAP account and Supabase Auth. It is not a second password database. The login/OTP flow preserves the OAuth authorization request and returns the merchant to the consent screen.
-
-## Implemented on the branch
-
-- `supabase/functions/mcp/index.ts`: authenticated, stateless Streamable HTTP MCP endpoint.
-- `supabase/functions/mcp/deno.json`: pinned Deno npm imports.
-- `src/routes/oauth.consent.tsx`: separate OAuth approval/denial screen.
-- `src/routes/auth.tsx` and `src/routes/verify-email.tsx`: preserve MCP consent return path through STRAP's email OTP login.
-- `supabase/config.toml`: points to Kudi, sets Auth Site URL and OAuth consent path, enables OAuth server and dynamic registration, and sets the MCP Edge Function gateway to defer JWT validation to the Supabase middleware.
-- Supabase Edge Function `mcp`: deployed to Kudi as version 1, ACTIVE, with `verify_jwt = false`; the function's own Supabase OAuth middleware validates every protected request.
-
-## Initial read-only tools
-
+Identity and discovery:
 1. `strap_whoami`
 2. `strap_list_stores`
 3. `strap_get_store_profile`
 4. `strap_list_branches`
-5. `strap_search_products`
+
+Read:
+5. `strap_search_products` (includes product `image_url`)
 6. `strap_get_low_stock`
 7. `strap_get_sales`
 8. `strap_get_expenses`
 9. `strap_search_customers`
+10. `strap_get_ai_access`
 
-All store-specific tools first verify that the caller can see the requested store through RLS. Query sizes are capped. Customer search is name-only and returns only limited contact and loyalty fields. The initial version has no write tools.
+Writes (connected app must be explicitly granted the relevant permission; caller must be a store owner or manager):
+11. `strap_create_product`
+12. `strap_update_product`
+13. `strap_set_branch_stock`
+14. `strap_upload_image`
 
-## Database security inspection
+## Image upload
 
-The following tables have RLS enabled and member-scoped SELECT policies in Kudi: `stores`, `store_members`, `products`, `sales`, `sale_items`, `customers`, `branches`, `branch_stock`, and `expenses`. The inspected policies use `auth.uid()` and membership/role helper functions such as `private.is_store_member` and `private.has_store_role`.
+`strap_upload_image` uploads a product image to the existing public `connect-product-images` bucket. The tool accepts:
+- `store_id`: the accessible STRAP store UUID.
+- `image_base64`: raw base64 bytes, without a data-URL prefix.
+- `mime_type`: `image/jpeg`, `image/png`, `image/webp`, or `image/avif`.
+- `product_id` (optional): attach the uploaded image to an existing product in the same store.
 
-The security advisor also reports existing project-wide findings: 20 SECURITY DEFINER functions executable by `anon`, 45 executable by `authenticated`, and 9 RLS-enabled tables without policies. These are pre-existing database findings, not introduced by this MCP branch. The MCP tools do not call these SECURITY DEFINER RPCs; they use direct, read-only table queries under the caller's JWT. Review the findings before broader release.
+Images are limited to 8 MiB. The function checks the actual file signature against the declared MIME type before upload. Paths are scoped under the authenticated user's ID and store ID to satisfy the bucket's owner-folder Storage policies. Uploads use unique object names (no overwrite). When `product_id` is supplied, the tool updates `products.image_url`, returns the public URL and updated product, and writes an audit event. If the product update fails, the uploaded object is removed.
 
-## Important ChatGPT access limitation
+Image uploads require the connected application's existing `allow_product_writes` grant and owner/manager role. No new permission toggle or database migration is required. The image bucket is public-read by design; writes remain authenticated and owner-folder scoped.
 
-OpenAI's current help documentation says custom MCP connections and full MCP support are available on ChatGPT Business and Enterprise/Edu. Pro supports custom MCP with read/fetch permissions. Free is not listed as eligible. Custom MCP setup is web-only, not Android mobile. Therefore, this endpoint can be built and independently tested, but this user's Free ChatGPT account cannot currently attach it. Re-check plan eligibility before the connection step.
+## Access controls and audit
 
-## Remaining production setup
+- Each OAuth client has an individual `mcp_client_access_settings` consent record.
+- Store access is checked with the caller-scoped Supabase client and RLS.
+- Product and stock writes are disabled unless explicitly enabled for that connected app.
+- Write operations require a STRAP store owner or manager and are audited through `record_mcp_action`.
+- Optional branch restrictions are enforced for branch-scoped operations.
+- Tool output is bounded; internal product cost and margin fields are not returned.
+- No service-role key is used for merchant data or Storage operations.
 
-1. Confirm the Auth Site URL is `https://storefront-flow.vercel.app` in Kudi's Authentication → URL Configuration.
-2. In Kudi's Authentication → OAuth Server, enable OAuth 2.1 and dynamic client registration, and set Authorization Path to `/oauth/consent`.
-3. Ensure JWT signing uses ES256 or RS256. The MCP middleware rejects legacy HS256 tokens.
-4. Review OAuth client registrations and grants; dynamic registration is convenient but should be monitored and revocable.
-5. Deploy the frontend branch to a preview and test the consent/login/OTP return flow.
-6. Run the repository build, lint, type checks, and MCP Inspector handshake tests.
-7. The `mcp` Edge Function is already deployed (version 1, ACTIVE) with gateway JWT verification disabled only because the function itself enforces OAuth middleware.
-8. Still to test: verify unauthenticated requests receive a 401 OAuth challenge and protected-resource metadata, then verify valid tokens only see stores allowed by RLS.
-9. Connect from ChatGPT web only after using an eligible plan.
+## ChatGPT access limitation
 
-## Security requirements
+Custom MCP connection availability depends on the ChatGPT plan and is configured from ChatGPT web. Confirm current plan eligibility before attempting to connect the endpoint; mobile apps may not expose the setup flow.
 
-- Never use the service-role key for merchant queries.
-- Never accept a client-supplied store ID as proof of access; check it through the caller-scoped client.
-- Keep tools read-only in v1.
-- Keep tool output bounded and avoid exposing unnecessary customer PII.
-- Do not log bearer tokens, refresh tokens, or sensitive customer data.
-- Test with at least two users from different stores to prove cross-store isolation.
-- Add write tools only after role checks, explicit confirmation, idempotency, audit logging, and review of the relevant business RPCs.
+## Operational notes
+
+- Deploy the Edge Function from `supabase/functions/mcp` with `deno.json` as its import map.
+- Keep the deployed function and repository source synchronized.
+- Test OAuth challenge/metadata, authenticated tool discovery, denied permissions, allowed uploads, invalid MIME signatures, oversize images, cross-store product IDs, and product image URL persistence after each deployment.
+- Do not log bearer tokens, refresh tokens, base64 image payloads, or sensitive customer data.
 
 ## References
 
-- OpenAI custom MCP connection requirements: https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt
-- Supabase MCP deployment and authenticated Edge Function pipeline: https://supabase.com/docs/guides/ai-tools/byo-mcp
-- Supabase OAuth 2.1 setup: https://supabase.com/docs/guides/auth/oauth-server/getting-started
+- Supabase Storage uploads: https://supabase.com/docs/guides/storage/uploads/standard-uploads
+- Supabase JavaScript Storage upload: https://supabase.com/docs/reference/javascript/file-buckets-upload
 - Supabase MCP authentication: https://supabase.com/docs/guides/auth/oauth-server/mcp-authentication

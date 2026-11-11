@@ -15,6 +15,7 @@ type UserSupabase = {
   };
   from: (table: string) => any;
   rpc: (fn: string, args: Record<string, unknown>) => Promise<{ error: Error | null }>;
+  storage: any;
 };
 
 const MAX_LIMIT = 100;
@@ -315,7 +316,7 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           supabase
             .from("products")
             .select(
-              "id,store_id,name,sku,barcode,category,price,is_active,low_stock_threshold,units_per_pack,pack_price,piece_price",
+              "id,store_id,name,sku,barcode,category,price,image_url,is_active,low_stock_threshold,units_per_pack,pack_price,piece_price",
             )
             .eq("store_id", store_id)
             .eq("is_active", true);
@@ -699,6 +700,124 @@ function registerTools(server: McpServer, supabase: UserSupabase, clientId: stri
           success: true,
           product: data,
           updated_fields: Object.keys(changes),
+          ...(auditWarning ? { audit_warning: auditWarning } : {}),
+        });
+      } catch (error) {
+        return toolError(error);
+      }
+    },
+  );
+
+  server.registerTool(
+    "strap_upload_image",
+    {
+      title: "Upload a product image",
+      description:
+        "Upload an image to STRAP Storage and optionally attach it to an existing product. Supply the raw base64 image bytes (without a data: prefix), an allowed MIME type, and the store_id. Supports JPEG, PNG, WebP and AVIF up to 8 MB. Attaching or uploading requires this connected app to have product-write permission and the connected STRAP user to be a store owner or manager. Returns a public image URL.",
+      inputSchema: {
+        store_id: z.string().uuid(),
+        image_base64: z.string().min(16).max(11_184_812),
+        mime_type: z.enum(["image/jpeg", "image/png", "image/webp", "image/avif"]),
+        product_id: z.string().uuid().optional(),
+      },
+    },
+    async ({ store_id, image_base64, mime_type, product_id }) => {
+      try {
+        await requirePermission(store_id, "allow_product_writes");
+        const { data: auth, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        if (!auth.user) throw new Error("Your STRAP login could not be verified.");
+
+        const normalizedBase64 = image_base64.replace(/\s/g, "");
+        if (!/^[A-Za-z0-9+/]+={0,2}$/.test(normalizedBase64) || normalizedBase64.length % 4 !== 0) {
+          throw new Error("image_base64 must contain valid raw base64 data without a data URL prefix.");
+        }
+        const binary = atob(normalizedBase64);
+        const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+        if (bytes.byteLength === 0 || bytes.byteLength > 8 * 1024 * 1024) {
+          throw new Error("Images must be smaller than or equal to 8 MB.");
+        }
+
+        const startsWith = (...signature: number[]) =>
+          signature.every((value, index) => bytes[index] === value);
+        const ascii = (start: number, length: number) =>
+          String.fromCharCode(...bytes.slice(start, start + length));
+        const validSignature =
+          (mime_type === "image/jpeg" && startsWith(0xff, 0xd8, 0xff)) ||
+          (mime_type === "image/png" && startsWith(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)) ||
+          (mime_type === "image/webp" && ascii(0, 4) === "RIFF" && ascii(8, 4) === "WEBP") ||
+          (mime_type === "image/avif" && ascii(4, 4) === "ftyp" && /^(avif|avis)$/.test(ascii(8, 4)));
+        if (!validSignature) {
+          throw new Error("The image bytes do not match the supplied JPEG, PNG, WebP or AVIF MIME type.");
+        }
+
+        let product: { id: string; name: string } | null = null;
+        if (product_id) {
+          const { data, error } = await supabase
+            .from("products")
+            .select("id,name")
+            .eq("id", product_id)
+            .eq("store_id", store_id)
+            .maybeSingle();
+          if (error) throw error;
+          if (!data) throw new Error("Product not found in this store.");
+          product = data;
+        }
+
+        const extension = {
+          "image/jpeg": "jpg",
+          "image/png": "png",
+          "image/webp": "webp",
+          "image/avif": "avif",
+        }[mime_type];
+        // Storage policies require the first folder to match auth.uid().
+        const uploadedPath = auth.user.id + "/" + store_id + "/" + crypto.randomUUID() + "." + extension;
+        const { data: upload, error: uploadError } = await supabase.storage
+          .from("connect-product-images")
+          .upload(uploadedPath, bytes, {
+            contentType: mime_type,
+            cacheControl: "31536000",
+            upsert: false,
+          });
+        if (uploadError) throw uploadError;
+
+        const publicUrl = supabase.storage
+          .from("connect-product-images")
+          .getPublicUrl(upload.path ?? uploadedPath).data.publicUrl;
+
+        let updatedProduct: unknown = null;
+        if (product) {
+          const { data, error } = await supabase
+            .from("products")
+            .update({ image_url: publicUrl })
+            .eq("id", product.id)
+            .eq("store_id", store_id)
+            .select("id,name,image_url,updated_at")
+            .maybeSingle();
+          if (error || !data) {
+            await supabase.storage.from("connect-product-images").remove([uploadedPath]);
+            if (error) throw error;
+            throw new Error("The image uploaded, but the product could not be updated. No image was retained.");
+          }
+          updatedProduct = data;
+        }
+
+        const auditWarning = product
+          ? await recordMcpAction(
+              supabase,
+              store_id,
+              "product.image_uploaded",
+              "product",
+              product.id,
+              "Uploaded and attached a product image: " + product.name,
+            )
+          : null;
+
+        return result({
+          success: true,
+          image_url: publicUrl,
+          storage: { bucket: "connect-product-images", path: uploadedPath, size_bytes: bytes.byteLength, mime_type },
+          ...(updatedProduct ? { product: updatedProduct } : {}),
           ...(auditWarning ? { audit_warning: auditWarning } : {}),
         });
       } catch (error) {
