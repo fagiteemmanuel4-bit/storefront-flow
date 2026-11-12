@@ -268,6 +268,8 @@ function AuthPage() {
         toast.error(
           errorMessage(error, "That didn't work. Please check your details and try again."),
         );
+        setCaptchaToken(null);
+        setCaptchaResetKey((value) => value + 1);
       } finally {
         setBusy(false);
       }
@@ -290,6 +292,8 @@ function AuthPage() {
       setMode("signin");
     } catch (error) {
       toast.error(errorMessage(error, "We couldn't update your password."));
+      setCaptchaToken(null);
+      setCaptchaResetKey((value) => value + 1);
     } finally {
       setBusy(false);
     }
