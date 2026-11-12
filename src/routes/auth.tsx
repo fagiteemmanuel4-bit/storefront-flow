@@ -215,16 +215,22 @@ function AuthPage() {
         if (!data.session || !data.user)
           throw new Error("Sign in did not complete. Please try again.");
 
-        // Check if device is already remembered or test account
-        const isKnownDevice =
-          localStorage.getItem(`strap_trusted_device_${normalizedEmail}`) === "true";
-        const isTestAccount = normalizedEmail === "juels@test.mail";
-
-        if (isKnownDevice || isTestAccount) {
-          localStorage.setItem(`strap_trusted_device_${normalizedEmail}`, "true");
-          toast.success("Welcome back to Strap!");
-          void navigate({ to: "/dashboard", replace: true });
-          return;
+        // A remembered device is trusted only when the server validates its opaque token.
+        const deviceToken = localStorage.getItem("strap_trusted_device_token");
+        if (deviceToken) {
+          const { data: deviceStatus, error: deviceError } = await supabase.functions.invoke(
+            "trusted-device",
+            { body: { action: "check", token: deviceToken } },
+          );
+          if (!deviceError && deviceStatus?.trusted === true) {
+            if (deviceStatus.risk === "medium") {
+              toast.message("New network detected. Your device is still recognized.");
+            }
+            toast.success("Welcome back to Strap!");
+            void navigate({ to: "/dashboard", replace: true });
+            return;
+          }
+          if (deviceError) console.warn("Trusted-device check failed; requiring email verification.");
         }
 
         await supabase.auth.signOut();
