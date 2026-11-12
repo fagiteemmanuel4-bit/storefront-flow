@@ -341,12 +341,13 @@ function AuthPage() {
             <p className="strap-auth-sub">{subtitle}</p>
 
             {(mode === "signin" || mode === "signup") && (
-              <div className="strap-oauth-actions">
+              <div style={{ display: "grid", gap: 14, marginBottom: 18 }}>
                 <Button
                   type="button"
                   disabled={busy}
                   onClick={() => void handleGoogleSignIn()}
                   className="strap-btn strap-btn-google"
+                  style={{ width: "100%", minHeight: 48, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, border: "1px solid var(--color-border)", background: "var(--color-surface)", color: "var(--color-foreground)" }}
                 >
                   <svg aria-hidden="true" viewBox="0 0 48 48" width="19" height="19">
                     <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.04 13.22l7.98 6.19C11.93 13.72 17.48 9.5 24 9.5Z" />
@@ -356,7 +357,7 @@ function AuthPage() {
                   </svg>
                   Continue with Google
                 </Button>
-                <div className="strap-auth-divider"><span>or continue with email</span></div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--color-muted-foreground)", fontSize: 12 }}><span style={{ height: 1, flex: 1, background: "var(--color-border)" }} /><span>or continue with email</span><span style={{ height: 1, flex: 1, background: "var(--color-border)" }} /></div>
               </div>
             )}
 
