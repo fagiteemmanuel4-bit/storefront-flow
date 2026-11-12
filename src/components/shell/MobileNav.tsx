@@ -30,7 +30,13 @@ export function MobileNav() {
     "/grocery-inventory",
   ].some((route) => pathname.startsWith(route));
   // Keep the dashboard intentionally distraction-free; navigation remains available on every other page.
-  if (pathname === "/dashboard" || pathname.startsWith("/customers") || !visible || pathname.startsWith("/settings")) return null;
+  if (
+    pathname === "/dashboard" ||
+    pathname.startsWith("/customers") ||
+    !visible ||
+    pathname.startsWith("/settings")
+  )
+    return null;
   const openSharedSearch = () => window.dispatchEvent(new Event("strap-open-quick-find"));
   const openSharedMenu = () => window.dispatchEvent(new Event("strap-open-mobile-menu"));
   return (

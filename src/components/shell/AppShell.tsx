@@ -169,7 +169,15 @@ function NavItem({
   );
 }
 
-export function AppShell({ title, children, headerActions }: { title: string; children: ReactNode; headerActions?: ReactNode }) {
+export function AppShell({
+  title,
+  children,
+  headerActions,
+}: {
+  title: string;
+  children: ReactNode;
+  headerActions?: ReactNode;
+}) {
   const { store, branch, branches, memberships, role, setActiveStore, setActiveBranch, isLoading } =
     useStoreContext();
   const navigate = useNavigate();
@@ -876,7 +884,12 @@ export function AppShell({ title, children, headerActions }: { title: string; ch
           sidebarCollapsed ? "lg:pl-[4.75rem]" : "lg:pl-[15.5rem]",
         )}
       >
-        <div className={cn("px-3 pt-3 sm:px-4 lg:px-8 lg:pb-12 lg:pt-6", pathname.startsWith("/customers") ? "pb-5" : "pb-24")}>
+        <div
+          className={cn(
+            "px-3 pt-3 sm:px-4 lg:px-8 lg:pb-12 lg:pt-6",
+            pathname.startsWith("/customers") ? "pb-5" : "pb-24",
+          )}
+        >
           <main
             data-tour="main-content"
             className="mx-auto min-h-[calc(100dvh-1.5rem)] w-full max-w-[1360px] rounded-[22px] border border-border/80 bg-surface/85 px-4 py-5 shadow-sm sm:px-6 lg:min-h-0 lg:rounded-none lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:shadow-none"
