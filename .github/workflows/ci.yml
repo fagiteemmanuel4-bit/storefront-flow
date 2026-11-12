@@ -27,8 +27,15 @@ jobs:
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Type-check Supabase MCP Edge Function
-        run: deno check --no-lock --node-modules-dir=auto supabase/functions/mcp/index.ts
+      - name: Type-check every Supabase Edge Function
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            echo "::group::Deno check $file"
+            deno check --no-lock --node-modules-dir=auto "$file"
+            echo "::endgroup::"
+          done < <(find supabase/functions -mindepth 2 -maxdepth 2 -type f -name 'index.ts' -print0 | sort -z)
       - name: Verify patched dependency lockfiles
         run: node scripts/check-dependency-patches.mjs
       - name: Format source consistently
