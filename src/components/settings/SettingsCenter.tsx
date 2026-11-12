@@ -1277,48 +1277,6 @@ function Staff() {
                 Remove
               </Button>
             )}
-            <Button
-              variant="ghost"
-              disabled
-              title="The existing staff API does not expose a safe PIN reset operation"
-            >
-              Reset access
-            </Button>
-          </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Reset access is intentionally disabled rather than pretending to perform a PIN reset.
-          </p>
-        </Modal>
-      )}
-      {creating && (
-        <Modal onClose={() => setCreating(false)}>
-          <h3 className="text-xl font-bold">Add staff</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Create the account through the existing atomic staff RPC.
-          </p>
-          <div className="mt-5 space-y-4">
-            <Field label="Name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
-            <SelectField
-              label="Role"
-              value={form.role}
-              onChange={(v) => setForm({ ...form, role: v })}
-              options={["manager", "cashier", "inventory", "sales", "viewer"]}
-            />
-            <Field
-              label="PIN"
-              value={form.pin}
-              onChange={(v) => setForm({ ...form, pin: v.replace(/\D/g, "").slice(0, 6) })}
-              type="password"
-              placeholder="4–6 digits"
-            />
-          </div>
-          <div className="mt-6 flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setCreating(false)} disabled={busy}>
-              Cancel
-            </Button>
-            <Button onClick={() => void create()} disabled={busy}>
-              {busy ? "Creating…" : "Create staff"}
-            </Button>
           </div>
         </Modal>
       )}
