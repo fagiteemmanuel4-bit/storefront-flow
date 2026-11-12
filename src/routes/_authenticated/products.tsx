@@ -329,7 +329,48 @@ function ProductsPage() {
     }
   }
   return (
-    <AppShell title={isFashion ? "Fashion catalogue" : "Products"}>
+    <AppShell
+      title={isFashion ? "Fashion catalogue" : "Products"}
+      headerActions={
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-11 shrink-0 rounded-xl border border-border bg-surface hover:bg-secondary"
+              aria-label="Product actions"
+            >
+              <MoreVertical className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52 rounded-xl">
+            {!isFashion && (
+              <DropdownMenuItem onSelect={() => setScanOpen(true)}>
+                <ScanLine className="mr-2 size-4" />
+                Scan barcode
+              </DropdownMenuItem>
+            )}
+            {canManage && (
+              <DropdownMenuItem onSelect={() => void navigate({ to: "/product-import" })}>
+                <Upload className="mr-2 size-4" />
+                Import products
+              </DropdownMenuItem>
+            )}
+            {canManage && (
+              <DropdownMenuItem
+                onSelect={() => {
+                  setEditing(null);
+                  setFormOpen(true);
+                }}
+              >
+                <Plus className="mr-2 size-4" />
+                {isFashion ? "Add clothing" : "Add product"}
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      }
+    >
       <div className="space-y-4">
         <section
           aria-label="Find products"
@@ -356,43 +397,7 @@ function ProductsPage() {
               Clear
             </button>
           )}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-11 shrink-0 rounded-xl border border-border bg-surface hover:bg-secondary"
-                aria-label="Product actions"
-              >
-                <MoreVertical className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52 rounded-xl">
-              {!isFashion && (
-                <DropdownMenuItem onSelect={() => setScanOpen(true)}>
-                  <ScanLine className="mr-2 size-4" />
-                  Scan barcode
-                </DropdownMenuItem>
-              )}
-              {canManage && (
-                <DropdownMenuItem onSelect={() => void navigate({ to: "/product-import" })}>
-                  <Upload className="mr-2 size-4" />
-                  Import products
-                </DropdownMenuItem>
-              )}
-              {canManage && (
-                <DropdownMenuItem
-                  onSelect={() => {
-                    setEditing(null);
-                    setFormOpen(true);
-                  }}
-                >
-                  <Plus className="mr-2 size-4" />
-                  {isFashion ? "Add clothing" : "Add product"}
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          
         </section>
         <div className="flex gap-2 overflow-x-auto pb-1" role="tablist">
           {(

@@ -169,7 +169,7 @@ function NavItem({
   );
 }
 
-export function AppShell({ title, children }: { title: string; children: ReactNode }) {
+export function AppShell({ title, children, headerActions }: { title: string; children: ReactNode; headerActions?: ReactNode }) {
   const { store, branch, branches, memberships, role, setActiveStore, setActiveBranch, isLoading } =
     useStoreContext();
   const navigate = useNavigate();
@@ -876,7 +876,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
           sidebarCollapsed ? "lg:pl-[4.75rem]" : "lg:pl-[15.5rem]",
         )}
       >
-        <div className="px-3 pb-24 pt-3 sm:px-4 lg:px-8 lg:pb-12 lg:pt-6">
+        <div className={cn("px-3 pt-3 sm:px-4 lg:px-8 lg:pb-12 lg:pt-6", pathname.startsWith("/customers") ? "pb-5" : "pb-24")}>
           <main
             data-tour="main-content"
             className="mx-auto min-h-[calc(100dvh-1.5rem)] w-full max-w-[1360px] rounded-[22px] border border-border/80 bg-surface/85 px-4 py-5 shadow-sm sm:px-6 lg:min-h-0 lg:rounded-none lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:shadow-none"
@@ -884,13 +884,10 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
             <header
               data-tour="page-heading"
               className={cn(
-                "mb-5 flex min-w-0 items-center justify-between gap-3 border-b border-border/70 pb-4 sm:mb-6 sm:pb-5 lg:mb-8",
-                pathname === "/pos" || pathname === "/dashboard" || pathname === "/products"
-                  ? "flex-row items-center text-left"
-                  : "flex-col sm:flex-row sm:items-center sm:justify-between",
+                "mb-5 flex min-w-0 flex-row items-center justify-between gap-3 border-b border-border/70 pb-4 text-left sm:mb-6 sm:pb-5 lg:mb-8",
               )}
             >
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 {(branch || staffActive) && (
                   <p className="max-w-full truncate text-xs text-muted-foreground">
                     {branch?.name ?? ""}
@@ -901,7 +898,19 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                   {title}
                 </h1>
               </div>
-              <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
+              <div className="flex shrink-0 items-center gap-2">
+                {headerActions}
+                {pathname !== "/dashboard" && (
+                  <Link
+                    to="/dashboard"
+                    aria-label="Go to dashboard"
+                    title="Dashboard"
+                    className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-border bg-background px-3 text-xs font-semibold text-foreground transition hover:border-accent/50 hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:h-11 sm:px-3.5 sm:text-sm"
+                  >
+                    <LayoutDashboard className="size-4" aria-hidden="true" />
+                    <span>Dashboard</span>
+                  </Link>
+                )}
                 {pathname === "/dashboard" && (
                   <button
                     type="button"
@@ -914,32 +923,10 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                     <Menu className="size-5" strokeWidth={2.25} aria-hidden="true" />
                   </button>
                 )}
-                {pathname === "/products" && (
-                  <Link
-                    to="/dashboard"
-                    aria-label="Go to dashboard"
-                    title="Dashboard"
-                    className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-border bg-background px-3 text-xs font-semibold text-foreground transition hover:border-accent/50 hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:h-11 sm:px-3.5 sm:text-sm"
-                  >
-                    <LayoutDashboard className="size-4" aria-hidden="true" />
-                    <span>Dashboard</span>
-                  </Link>
-                )}
                 {pathname === "/pos" && (
                   <div className="hidden lg:block">
                     <BusinessCalculatorFab className="shrink-0" />
                   </div>
-                )}
-                {pathname === "/pos" && (
-                  <Link
-                    to="/dashboard"
-                    aria-label="Go to dashboard"
-                    title="Dashboard"
-                    className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-border bg-background px-3 text-xs font-semibold text-foreground transition hover:border-accent/50 hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:h-11 sm:px-3.5 sm:text-sm"
-                  >
-                    <LayoutDashboard className="size-4" aria-hidden="true" />
-                    <span>Dashboard</span>
-                  </Link>
                 )}
                 {pathname === "/pos" && (
                   <button
