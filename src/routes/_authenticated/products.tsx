@@ -358,7 +358,10 @@ function ProductsPage() {
                 Import products
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem disabled className="mt-1 border-t border-border/70 pt-2 opacity-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-100">
+            <DropdownMenuItem
+              disabled
+              className="mt-1 border-t border-border/70 pt-2 opacity-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-100"
+            >
               <Puzzle className="mr-2 size-4 text-muted-foreground" />
               <span className="flex-1 text-muted-foreground">Import from plugins</span>
               <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-accent-ink">
