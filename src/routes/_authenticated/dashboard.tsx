@@ -142,7 +142,7 @@ function DashboardPage() {
   return (
     <AppShell title="Dashboard">
       <div className="mx-auto w-full max-w-[1440px] space-y-6 pb-10 sm:space-y-7">
-        <section className="relative isolate overflow-hidden rounded-[28px] border border-border/80 bg-[linear-gradient(135deg,hsl(var(--card))_0%,hsl(var(--card))_62%,color-mix(in_oklch,var(--color-accent)_8%,hsl(var(--card)))_100%)] shadow-[0_18px_55px_rgba(15,23,42,.06)] ring-1 ring-foreground/[0.025] sm:rounded-[32px]">
+        <section className="relative isolate overflow-hidden rounded-[28px] border border-border/80 bg-[linear-gradient(135deg,var(--card)_0%,var(--card)_62%,color-mix(in_oklch,var(--color-accent)_8%,var(--card))_100%)] shadow-[0_18px_55px_rgba(15,23,42,.06)] ring-1 ring-foreground/[0.025] sm:rounded-[32px]">
           <div className="pointer-events-none absolute -right-24 -top-32 -z-10 size-[360px] rounded-full border-[42px] border-accent/[0.055]" />
           <div className="pointer-events-none absolute -right-10 top-0 -z-10 h-full w-2/3 bg-[radial-gradient(ellipse_at_top_right,color-mix(in_oklch,var(--color-accent)_18%,transparent),transparent_70%)]" />
           <div className="grid gap-7 p-5 sm:p-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:p-9">
