@@ -173,7 +173,7 @@ function DashboardPage() {
               </Link>
             </div>
           </div>
-          <div className="grid grid-cols-3 divide-x divide-border border-t border-border bg-background/65">
+          <div className="grid min-w-0 grid-cols-3 divide-x divide-border border-t border-border bg-background/65">
             <QuickStat
               icon={<ShoppingBag className="size-4" />}
               label="Sales today"
@@ -412,13 +412,13 @@ function QuickStat({
   value: string;
 }) {
   return (
-    <div className="flex min-w-0 items-center gap-2.5 px-3 py-3.5 sm:gap-3 sm:px-6 sm:py-4">
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-secondary text-muted-foreground sm:size-9">
+    <div className="flex min-w-0 items-center gap-2 px-2 py-3.5 sm:gap-3 sm:px-6 sm:py-4">
+      <span className="hidden size-8 shrink-0 items-center justify-center rounded-xl bg-secondary text-muted-foreground sm:flex sm:size-9">
         {icon}
       </span>
       <div className="min-w-0">
         <p className="numeric text-lg font-bold leading-none sm:text-xl">{value}</p>
-        <p className="mt-1 truncate text-[10px] font-medium text-muted-foreground sm:text-xs">
+        <p className="mt-1 truncate text-[9px] font-medium text-muted-foreground sm:text-xs">
           {label}
         </p>
       </div>
