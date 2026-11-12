@@ -348,43 +348,43 @@ function ProductsPage() {
               <LayoutDashboard className="size-4" aria-hidden="true" />
               <span>Dashboard</span>
             </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="size-10 rounded-xl"
-                aria-label="Product actions"
-              >
-                <MoreVertical className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52 rounded-xl">
-              {!isFashion && (
-                <DropdownMenuItem onSelect={() => setScanOpen(true)}>
-                  <ScanLine className="mr-2 size-4" />
-                  Scan barcode
-                </DropdownMenuItem>
-              )}
-              {canManage && (
-                <DropdownMenuItem onSelect={() => void navigate({ to: "/product-import" })}>
-                  <Upload className="mr-2 size-4" />
-                  Import products
-                </DropdownMenuItem>
-              )}
-              {canManage && (
-                <DropdownMenuItem
-                  onSelect={() => {
-                    setEditing(null);
-                    setFormOpen(true);
-                  }}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="size-10 rounded-xl"
+                  aria-label="Product actions"
                 >
-                  <Plus className="mr-2 size-4" />
-                  {isFashion ? "Add clothing" : "Add product"}
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                  <MoreVertical className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52 rounded-xl">
+                {!isFashion && (
+                  <DropdownMenuItem onSelect={() => setScanOpen(true)}>
+                    <ScanLine className="mr-2 size-4" />
+                    Scan barcode
+                  </DropdownMenuItem>
+                )}
+                {canManage && (
+                  <DropdownMenuItem onSelect={() => void navigate({ to: "/product-import" })}>
+                    <Upload className="mr-2 size-4" />
+                    Import products
+                  </DropdownMenuItem>
+                )}
+                {canManage && (
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      setEditing(null);
+                      setFormOpen(true);
+                    }}
+                  >
+                    <Plus className="mr-2 size-4" />
+                    {isFashion ? "Add clothing" : "Add product"}
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
