@@ -340,7 +340,9 @@ function ProductsPage() {
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder={isFashion ? "Search styles or categories" : "Search products, SKU or barcode"}
+            placeholder={
+              isFashion ? "Search styles or categories" : "Search products, SKU or barcode"
+            }
             aria-label="Search products"
             className="h-11 min-w-0 flex-1 appearance-none border-0 bg-transparent px-1 text-sm font-medium text-foreground outline-none placeholder:text-muted-foreground focus:outline-none focus:ring-0 sm:text-[15px]"
           />
