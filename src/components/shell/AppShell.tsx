@@ -884,8 +884,8 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
               data-tour="page-heading"
               className={cn(
                 "mb-5 flex min-w-0 items-center justify-between gap-3 border-b border-border/70 pb-4 sm:mb-6 sm:pb-5 lg:mb-8",
-                pathname === "/pos"
-                  ? "flex-row"
+                pathname === "/pos" || pathname === "/dashboard"
+                  ? "flex-row items-center text-left"
                   : "flex-col sm:flex-row sm:items-center sm:justify-between",
               )}
             >
