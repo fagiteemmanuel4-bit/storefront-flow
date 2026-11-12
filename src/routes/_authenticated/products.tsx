@@ -333,82 +333,86 @@ function ProductsPage() {
   return (
     <AppShell title="">
       <div className="space-y-4">
-        <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3">
-          <h1 className="min-w-0 truncate font-display text-xl font-bold tracking-tight sm:text-2xl">
-            {isFashion ? "Fashion catalogue" : "Products"}
-          </h1>
-          <div className="flex shrink-0 items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => void navigate({ to: "/dashboard" })}
-              className="h-9 gap-1.5 rounded-xl px-2.5 text-xs font-semibold sm:px-3 sm:text-sm"
-            >
-              <LayoutDashboard className="size-4" aria-hidden="true" />
-              <span>Dashboard</span>
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+        <section className="rounded-[24px] border border-border/80 bg-surface p-3 shadow-sm sm:rounded-[26px] sm:p-4">
+          <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex min-w-0 items-center justify-between gap-2">
+              <h1 className="min-w-0 truncate font-display text-xl font-bold tracking-tight sm:text-2xl">
+                {isFashion ? "Fashion catalogue" : "Products"}
+              </h1>
+              <div className="flex shrink-0 items-center gap-2">
                 <Button
+                  type="button"
                   variant="outline"
-                  size="icon"
-                  className="size-10 rounded-xl"
-                  aria-label="Product actions"
+                  size="sm"
+                  onClick={() => void navigate({ to: "/dashboard" })}
+                  className="h-9 gap-1.5 rounded-xl px-2.5 text-xs font-semibold sm:h-10 sm:px-3 sm:text-sm"
                 >
-                  <MoreVertical className="size-4" />
+                  <LayoutDashboard className="size-4" aria-hidden="true" />
+                  <span>Dashboard</span>
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52 rounded-xl">
-                {!isFashion && (
-                  <DropdownMenuItem onSelect={() => setScanOpen(true)}>
-                    <ScanLine className="mr-2 size-4" />
-                    Scan barcode
-                  </DropdownMenuItem>
-                )}
-                {canManage && (
-                  <DropdownMenuItem onSelect={() => void navigate({ to: "/product-import" })}>
-                    <Upload className="mr-2 size-4" />
-                    Import products
-                  </DropdownMenuItem>
-                )}
-                {canManage && (
-                  <DropdownMenuItem
-                    onSelect={() => {
-                      setEditing(null);
-                      setFormOpen(true);
-                    }}
-                  >
-                    <Plus className="mr-2 size-4" />
-                    {isFashion ? "Add clothing" : "Add product"}
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="size-9 rounded-xl sm:size-10"
+                      aria-label="Product actions"
+                    >
+                      <MoreVertical className="size-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-52 rounded-xl">
+                    {!isFashion && (
+                      <DropdownMenuItem onSelect={() => setScanOpen(true)}>
+                        <ScanLine className="mr-2 size-4" />
+                        Scan barcode
+                      </DropdownMenuItem>
+                    )}
+                    {canManage && (
+                      <DropdownMenuItem onSelect={() => void navigate({ to: "/product-import" })}>
+                        <Upload className="mr-2 size-4" />
+                        Import products
+                      </DropdownMenuItem>
+                    )}
+                    {canManage && (
+                      <DropdownMenuItem
+                        onSelect={() => {
+                          setEditing(null);
+                          setFormOpen(true);
+                        }}
+                      >
+                        <Plus className="mr-2 size-4" />
+                        {isFashion ? "Add clothing" : "Add product"}
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+            <div className="relative min-w-0 flex-1 lg:max-w-[520px]">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={
+                  isFashion ? "Search styles, names or categories" : "Search products, SKU or barcode"
+                }
+                aria-label="Search products"
+                className="h-11 rounded-xl border-border/80 bg-background pl-10 pr-10 text-sm shadow-none transition focus-visible:ring-2 focus-visible:ring-accent/40 sm:h-12 sm:rounded-2xl sm:text-[15px]"
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => setSearch("")}
+                  aria-label="Clear product search"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md px-1 text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-          <div className="relative min-w-0 flex-1">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={
-                isFashion ? "Search styles, names or categories" : "Search products, SKU or barcode"
-              }
-              className="h-12 rounded-xl pl-9 pr-10"
-            />
-          </div>
-          {search && (
-            <button
-              type="button"
-              onClick={() => setSearch("")}
-              className="shrink-0 rounded-xl border border-border px-3 text-xs font-semibold text-muted-foreground hover:bg-secondary"
-            >
-              Clear search
-            </button>
-          )}
-        </div>
+        </section>
         <div className="flex gap-2 overflow-x-auto pb-1" role="tablist">
           {(
             [
