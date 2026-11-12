@@ -87,7 +87,18 @@ Deno.serve(async (req: Request) => {
         },
       );
       if (historyError) throw historyError;
-      return json({ sessions: normalizedSessions, ipHistory: ipHistory ?? [] });
+      const { data: securityEvents, error: eventsError } = await supabase
+        .from("auth_security_events")
+        .select("id,event_type,risk_level,ip_address,user_agent_family,created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(25);
+      if (eventsError) throw eventsError;
+      return json({
+        sessions: normalizedSessions,
+        ipHistory: ipHistory ?? [],
+        securityEvents: securityEvents ?? [],
+      });
     }
 
     if (action === "revoke") {
