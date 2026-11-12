@@ -25,7 +25,6 @@ import { formatMoney } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
 import { canManageCatalog, type ProductWithStock } from "@/lib/pos-types";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
