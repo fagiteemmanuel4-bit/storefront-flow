@@ -68,6 +68,8 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const [pendingOtpEmail, setPendingOtpEmail] = useState<string | null>(null);
 
   // Keep the browser tab icon in sync with the Strap logo.
   useEffect(() => {
@@ -127,6 +129,23 @@ function AuthPage() {
 
     if (mode !== "recover" && !captchaToken) {
       toast.error("Complete the security check before continuing.");
+      return;
+    }
+
+    if (pendingOtpEmail) {
+      setBusy(true);
+      try {
+        await requestLoginOtp(pendingOtpEmail, captchaToken);
+        sessionStorage.setItem("strap_otp_email", pendingOtpEmail);
+        sessionStorage.setItem("strap_otp_flow", "signin");
+        await navigate({ to: "/verify-email", search: { email: pendingOtpEmail }, replace: true });
+      } catch (error) {
+        toast.error(errorMessage(error, "We couldn't send your verification code."));
+        setCaptchaToken(null);
+        setCaptchaResetKey((value) => value + 1);
+      } finally {
+        setBusy(false);
+      }
       return;
     }
 
@@ -210,14 +229,10 @@ function AuthPage() {
         });
         if (error) {
           if (error.message.toLowerCase().includes("email not confirmed")) {
-            await requestLoginOtp(normalizedEmail, captchaToken);
-            sessionStorage.setItem("strap_otp_email", normalizedEmail);
-            sessionStorage.setItem("strap_otp_flow", "signin");
-            void navigate({
-              to: "/verify-email",
-              search: { email: normalizedEmail },
-              replace: true,
-            });
+            setPendingOtpEmail(normalizedEmail);
+            setCaptchaToken(null);
+            setCaptchaResetKey((value) => value + 1);
+            setNotice("Your password is correct. Complete the security check again, then send your sign-in code.");
             return;
           }
           throw new Error(error.message);
@@ -245,10 +260,10 @@ function AuthPage() {
         }
 
         await supabase.auth.signOut();
-        await requestLoginOtp(normalizedEmail, captchaToken);
-        sessionStorage.setItem("strap_otp_email", normalizedEmail);
-        sessionStorage.setItem("strap_otp_flow", "signin");
-        void navigate({ to: "/verify-email", search: { email: normalizedEmail }, replace: true });
+        setPendingOtpEmail(normalizedEmail);
+        setCaptchaToken(null);
+        setCaptchaResetKey((value) => value + 1);
+        setNotice("This device needs an email verification. Complete the security check again, then send your sign-in code.");
       } catch (error) {
         toast.error(
           errorMessage(error, "That didn't work. Please check your details and try again."),
@@ -464,7 +479,7 @@ function AuthPage() {
               )}
 
               {(mode === "signin" || mode === "signup" || mode === "reset") && (
-                <TurnstileCaptcha onTokenChange={setCaptchaToken} />
+                <TurnstileCaptcha key={captchaResetKey} onTokenChange={setCaptchaToken} />
               )}
 
               {notice && (
@@ -474,7 +489,7 @@ function AuthPage() {
               )}
 
               <Button type="submit" disabled={busy} className="strap-btn strap-btn-primary">
-                {busy ? "Please wait…" : submitLabel}
+                {busy ? "Please wait…" : pendingOtpEmail ? "Send verification code" : submitLabel}
               </Button>
             </form>
 
@@ -487,6 +502,9 @@ function AuthPage() {
                     className="strap-link"
                     onClick={() => {
                       setMode(switchMode);
+                      setPendingOtpEmail(null);
+                      setCaptchaToken(null);
+                      setCaptchaResetKey((value) => value + 1);
                       setNotice(null);
                     }}
                   >
