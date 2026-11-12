@@ -142,18 +142,22 @@ function DashboardPage() {
   return (
     <AppShell title="Dashboard">
       <div className="mx-auto w-full max-w-[1440px] space-y-6 pb-10 sm:space-y-7">
-        <section className="relative isolate overflow-hidden rounded-[28px] border border-border bg-surface shadow-sm sm:rounded-[32px]">
-          <div className="absolute inset-y-0 right-0 -z-10 w-2/3 bg-[radial-gradient(ellipse_at_top_right,color-mix(in_oklch,var(--color-accent)_17%,transparent),transparent_68%)]" />
+        <section className="relative isolate overflow-hidden rounded-[28px] border border-border/80 bg-[linear-gradient(135deg,var(--card)_0%,var(--card)_62%,color-mix(in_oklch,var(--color-accent)_8%,var(--card))_100%)] shadow-[0_18px_55px_rgba(15,23,42,.06)] ring-1 ring-foreground/[0.025] sm:rounded-[32px]">
+          <div className="pointer-events-none absolute -right-24 -top-32 -z-10 size-[360px] rounded-full border-[42px] border-accent/[0.055]" />
+          <div className="pointer-events-none absolute -right-10 top-0 -z-10 h-full w-2/3 bg-[radial-gradient(ellipse_at_top_right,color-mix(in_oklch,var(--color-accent)_18%,transparent),transparent_70%)]" />
           <div className="grid gap-7 p-5 sm:p-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:p-9">
             <div className="min-w-0">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-background/75 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-                <span className="size-2 rounded-full bg-success" />
-                {greeting} <span aria-hidden="true">·</span> Business overview
+              <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-border/80 bg-background/80 px-3.5 py-2 text-[11px] font-bold uppercase tracking-[.11em] text-muted-foreground shadow-sm backdrop-blur sm:text-xs">
+                <span className="relative flex size-2 shrink-0">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-success/50" />
+                  <span className="relative inline-flex size-2 rounded-full bg-success" />
+                </span>
+                {greeting} <span className="text-border" aria-hidden="true">/</span> Business overview
               </div>
-              <h2 className="max-w-2xl break-words text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+              <h2 className="max-w-2xl break-words text-[2rem] font-extrabold tracking-[-.045em] text-foreground sm:text-4xl lg:text-[3.25rem] lg:leading-[1.08]">
                 {store?.name ?? "Your store"}
               </h2>
-              <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+              <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
                 {branch?.name ?? "All branches"} <span className="mx-1.5">/</span> Here's what's
                 happening today.
               </p>
@@ -161,7 +165,7 @@ function DashboardPage() {
             <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap lg:justify-end">
               <Link
                 to="/pos"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#c6f432] px-4 text-sm font-bold text-[#101713] shadow-sm transition hover:bg-[#d4ff50] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9ac51c] sm:px-5"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#c6f432] px-4 text-sm font-bold text-[#101713] shadow-[0_8px_22px_rgba(155,198,35,.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d4ff50] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9ac51c] sm:px-5"
               >
                 <ScanLine className="size-4" /> Start selling
               </Link>
@@ -173,7 +177,7 @@ function DashboardPage() {
               </Link>
             </div>
           </div>
-          <div className="grid min-w-0 grid-cols-3 divide-x divide-border border-t border-border bg-background/65">
+          <div className="grid min-w-0 grid-cols-3 divide-x divide-border/80 border-t border-border/80 bg-background/55 backdrop-blur">
             <QuickStat
               icon={<ShoppingBag className="size-4" />}
               label="Sales today"
@@ -412,13 +416,13 @@ function QuickStat({
   value: string;
 }) {
   return (
-    <div className="flex min-w-0 items-center gap-2 px-2 py-3.5 sm:gap-3 sm:px-6 sm:py-4">
-      <span className="hidden size-8 shrink-0 items-center justify-center rounded-xl bg-secondary text-muted-foreground sm:flex sm:size-9">
+    <div className="flex min-w-0 items-center justify-center gap-2 px-1.5 py-3.5 sm:justify-start sm:gap-3 sm:px-6 sm:py-4">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-secondary text-muted-foreground">
         {icon}
       </span>
       <div className="min-w-0">
-        <p className="numeric text-lg font-bold leading-none sm:text-xl">{value}</p>
-        <p className="mt-1 truncate text-[9px] font-medium text-muted-foreground sm:text-xs">
+        <p className="numeric text-lg font-bold leading-none tracking-tight sm:text-xl">{value}</p>
+        <p className="mt-1 truncate text-[9px] font-semibold text-muted-foreground sm:text-xs">
           {label}
         </p>
       </div>

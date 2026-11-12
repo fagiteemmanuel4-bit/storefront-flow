@@ -9,7 +9,6 @@ import {
   Plus,
   Search,
   MoreVertical,
-  LayoutDashboard,
   ScanLine,
   Share2,
   SlidersHorizontal,
@@ -331,29 +330,38 @@ function ProductsPage() {
     }
   }
   return (
-    <AppShell title="">
+    <AppShell title={isFashion ? "Fashion catalogue" : "Products"}>
       <div className="space-y-4">
-        <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3">
-          <h1 className="min-w-0 truncate font-display text-xl font-bold tracking-tight sm:text-2xl">
-            {isFashion ? "Fashion catalogue" : "Products"}
-          </h1>
-          <div className="flex shrink-0 items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => void navigate({ to: "/dashboard" })}
-              className="h-9 gap-1.5 rounded-xl px-2.5 text-xs font-semibold sm:px-3 sm:text-sm"
-            >
-              <LayoutDashboard className="size-4" aria-hidden="true" />
-              <span>Dashboard</span>
-            </Button>
+        <section className="rounded-[22px] border border-border/80 bg-surface p-3 shadow-sm sm:rounded-[24px] sm:p-4">
+          <div className="flex min-w-0 items-center gap-2">
+            <div className="relative min-w-0 flex-1">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={
+                  isFashion ? "Search styles, names or categories" : "Search products, SKU or barcode"
+                }
+                aria-label="Search products"
+                className="h-12 rounded-xl border-border/80 bg-background pl-10 pr-10 text-sm shadow-none transition focus-visible:ring-2 focus-visible:ring-accent/40 sm:rounded-2xl sm:text-[15px]"
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => setSearch("")}
+                  aria-label="Clear product search"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md px-1 text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="size-10 rounded-xl"
+                  className="size-12 shrink-0 rounded-xl"
                   aria-label="Product actions"
                 >
                   <MoreVertical className="size-4" />
@@ -386,29 +394,7 @@ function ProductsPage() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        </div>
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-          <div className="relative min-w-0 flex-1">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={
-                isFashion ? "Search styles, names or categories" : "Search products, SKU or barcode"
-              }
-              className="h-12 rounded-xl pl-9 pr-10"
-            />
-          </div>
-          {search && (
-            <button
-              type="button"
-              onClick={() => setSearch("")}
-              className="shrink-0 rounded-xl border border-border px-3 text-xs font-semibold text-muted-foreground hover:bg-secondary"
-            >
-              Clear search
-            </button>
-          )}
-        </div>
+        </section>
         <div className="flex gap-2 overflow-x-auto pb-1" role="tablist">
           {(
             [

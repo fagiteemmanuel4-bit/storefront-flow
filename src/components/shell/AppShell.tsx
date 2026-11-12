@@ -18,6 +18,7 @@ import {
   LayoutDashboard,
   LockKeyhole,
   LogOut,
+  Menu,
   Package,
   PanelLeftClose,
   PanelLeftOpen,
@@ -901,6 +902,29 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
                 </h1>
               </div>
               <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
+                {pathname === "/dashboard" && (
+                  <button
+                    type="button"
+                    onClick={() => setMenuOpen(true)}
+                    aria-label="Open dashboard menu"
+                    aria-haspopup="dialog"
+                    title="Open menu"
+                    className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-background text-foreground shadow-sm transition hover:border-accent/50 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 active:scale-[.97]"
+                  >
+                    <Menu className="size-5" strokeWidth={2.25} aria-hidden="true" />
+                  </button>
+                )}
+                {pathname === "/products" && (
+                  <Link
+                    to="/dashboard"
+                    aria-label="Go to dashboard"
+                    title="Dashboard"
+                    className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-border bg-background px-3 text-xs font-semibold text-foreground transition hover:border-accent/50 hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:h-11 sm:px-3.5 sm:text-sm"
+                  >
+                    <LayoutDashboard className="size-4" aria-hidden="true" />
+                    <span>Dashboard</span>
+                  </Link>
+                )}
                 {pathname === "/pos" && (
                   <div className="hidden lg:block">
                     <BusinessCalculatorFab className="shrink-0" />
