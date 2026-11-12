@@ -14,6 +14,7 @@ import {
   ShoppingBag,
   Sparkles,
   Store,
+  X,
   Users,
 } from "lucide-react";
 
@@ -225,22 +226,51 @@ export function QuickFind({ open, onOpenChange }: QuickFindProps) {
       shouldFilter
       loop
       overlayClassName="fixed inset-0 z-[120] bg-foreground/35 backdrop-blur-[2px]"
-      contentClassName="fixed left-1/2 top-[10vh] z-[121] w-[calc(100%-24px)] max-w-xl -translate-x-1/2 overflow-hidden rounded-2xl border border-border bg-background shadow-2xl"
+      contentClassName="fixed left-1/2 top-1/2 z-[121] flex max-h-[min(78dvh,760px)] w-[calc(100vw-28px)] max-w-2xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[26px] border border-border/80 bg-background shadow-[0_28px_100px_rgba(0,0,0,.28)] ring-1 ring-foreground/[0.06] sm:w-[calc(100vw-48px)] sm:rounded-[30px]"
     >
-      <div className="flex items-center gap-3 border-b border-border px-4">
+      <div className="h-1 shrink-0 bg-gradient-to-r from-[#c6f432] via-[#d9ff68] to-transparent" />
+      <div className="flex items-center gap-3 border-b border-border/80 bg-secondary/25 px-4 sm:px-5">
         <Search className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
         <Command.Input
           value={query}
           onValueChange={setQuery}
           placeholder="Search Strap or jump to a workspace…"
-          className="h-14 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+          className="h-[60px] min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground sm:h-[68px] sm:text-base"
           autoFocus
         />
-        <kbd className="hidden rounded-md border border-border bg-secondary px-2 py-1 text-[10px] font-medium text-muted-foreground sm:block">
-          Esc
+        <kbd className="hidden rounded-lg border border-border bg-background px-2 py-1 text-[10px] font-semibold text-muted-foreground shadow-sm sm:block">
+          ESC
         </kbd>
+        <button
+          type="button"
+          onClick={() => onOpenChange(false)}
+          aria-label="Close quick find"
+          className="flex size-9 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+        >
+          <X className="size-4" aria-hidden="true" />
+        </button>
       </div>
-      <Command.List className="max-h-[55vh] overflow-y-auto p-2 outline-none">
+      <div className="flex flex-wrap items-center gap-2 border-b border-border/70 px-4 py-3 sm:px-5">
+        <span className="mr-1 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[.14em] text-muted-foreground">
+          <Sparkles className="size-3.5" /> Quick access
+        </span>
+        {[
+          { label: "New sale", to: "/pos" },
+          { label: "Products", to: "/products" },
+          { label: "Orders", to: "/online-store/orders" },
+          { label: "Analytics", to: "/reports" },
+        ].map((item) => (
+          <button
+            key={item.to}
+            type="button"
+            onClick={() => go(item.to)}
+            className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-muted-foreground transition hover:border-[#c6f432]/70 hover:bg-[#c6f432]/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c6f432]/50"
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+      <Command.List className="min-h-0 max-h-[min(48dvh,480px)] flex-1 overflow-y-auto p-2.5 outline-none sm:p-3">
         <Command.Empty className="px-3 py-10 text-center">
           <p className="text-sm font-semibold">No matching Strap destination</p>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -266,9 +296,10 @@ export function QuickFind({ open, onOpenChange }: QuickFindProps) {
           ))}
         </Command.Group>
       </Command.List>
-      <div className="flex items-center justify-between border-t border-border bg-secondary/30 px-4 py-2.5 text-[11px] text-muted-foreground">
-        <span>Quick find</span>
-        <span className="hidden sm:inline">↑↓ Navigate · Enter Open · Esc Close</span>
+      <div className="flex items-center justify-between gap-3 border-t border-border/80 bg-secondary/30 px-4 py-3 text-[10px] text-muted-foreground sm:px-5 sm:text-[11px]">
+        <span className="font-semibold tracking-wide">STRAP QUICK FIND</span>
+        <span className="hidden sm:inline">↑↓ Navigate <span className="mx-1 opacity-40">·</span> Enter Open <span className="mx-1 opacity-40">·</span> Esc Close</span>
+        <span className="sm:hidden">Enter to open · Esc to close</span>
       </div>
     </Command.Dialog>
   );
@@ -279,9 +310,9 @@ function ActionItem({ action, onSelect }: { action: QuickAction; onSelect: (to: 
     <Command.Item
       value={`${action.label} ${action.hint} ${action.keywords}`}
       onSelect={() => onSelect(action.to)}
-      className="group flex cursor-default items-center gap-3 rounded-xl px-3 py-3 text-left outline-none data-[selected=true]:bg-secondary"
+      className="group flex cursor-default items-center gap-3 rounded-2xl px-3 py-3.5 text-left outline-none transition-colors data-[selected=true]:bg-secondary sm:px-4"
     >
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary group-data-[selected=true]:bg-background">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border/70 bg-secondary/80 group-data-[selected=true]:border-[#c6f432]/50 group-data-[selected=true]:bg-background">
         <Icon className="size-4" aria-hidden="true" />
       </span>
       <span className="min-w-0 flex-1">
