@@ -215,7 +215,8 @@ function AuthPage() {
             void navigate({ to: "/dashboard", replace: true });
             return;
           }
-          if (deviceError) console.warn("Trusted-device check failed; requiring email verification.");
+          if (deviceError)
+            console.warn("Trusted-device check failed; requiring email verification.");
         }
 
         await supabase.auth.signOut();

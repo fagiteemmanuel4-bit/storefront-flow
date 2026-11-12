@@ -100,14 +100,17 @@ Deno.serve(async (req: Request) => {
         ip_address: ip,
         user_agent_family: family,
       });
-      await supabase.from("auth_security_events").delete()
+      await supabase
+        .from("auth_security_events")
+        .delete()
         .eq("user_id", userId)
         .lt("created_at", new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString());
       return json({ registered: true, expiresInDays: 30 });
     }
 
     if (action === "revoke") {
-      const { error } = await supabase.from("trusted_auth_devices")
+      const { error } = await supabase
+        .from("trusted_auth_devices")
         .update({ revoked_at: new Date().toISOString() })
         .eq("user_id", userId)
         .eq("token_hash", tokenHash)
@@ -116,7 +119,8 @@ Deno.serve(async (req: Request) => {
       return json({ revoked: true });
     }
 
-    const { data: device, error } = await supabase.from("trusted_auth_devices")
+    const { data: device, error } = await supabase
+      .from("trusted_auth_devices")
       .select("id,user_agent_family,last_ip,expires_at")
       .eq("user_id", userId)
       .eq("token_hash", tokenHash)
@@ -148,11 +152,14 @@ Deno.serve(async (req: Request) => {
     }
 
     const ipChanged = Boolean(device.last_ip && ip && device.last_ip !== ip);
-    await supabase.from("trusted_auth_devices").update({
-      last_ip: ip,
-      last_seen_at: new Date().toISOString(),
-      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    }).eq("id", device.id);
+    await supabase
+      .from("trusted_auth_devices")
+      .update({
+        last_ip: ip,
+        last_seen_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      })
+      .eq("id", device.id);
 
     if (ipChanged) {
       await supabase.from("auth_security_events").insert({
