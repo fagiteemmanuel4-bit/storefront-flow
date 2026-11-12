@@ -152,7 +152,11 @@ function DashboardPage() {
                   <span className="absolute inline-flex size-full animate-ping rounded-full bg-success/50" />
                   <span className="relative inline-flex size-2 rounded-full bg-success" />
                 </span>
-                {greeting} <span className="text-border" aria-hidden="true">/</span> Business overview
+                {greeting}{" "}
+                <span className="text-border" aria-hidden="true">
+                  /
+                </span>{" "}
+                Business overview
               </div>
               <h2 className="max-w-2xl break-words text-[2rem] font-extrabold tracking-[-.045em] text-foreground sm:text-4xl lg:text-[3.25rem] lg:leading-[1.08]">
                 {store?.name ?? "Your store"}
