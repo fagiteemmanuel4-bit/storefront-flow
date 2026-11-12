@@ -245,6 +245,8 @@ function VerifyEmailPage() {
           ? error.message
           : "We couldn't send a new code. Please try again later.",
       );
+      setCaptchaToken(null);
+      setCaptchaResetKey((value) => value + 1);
     } finally {
       setResending(false);
     }
