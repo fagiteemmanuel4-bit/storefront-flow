@@ -7,6 +7,8 @@ import {
   Edit3,
   Package,
   Plus,
+  Puzzle,
+  LockKeyhole,
   Search,
   MoreVertical,
   ScanLine,
