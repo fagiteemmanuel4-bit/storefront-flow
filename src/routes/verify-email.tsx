@@ -23,6 +23,27 @@ const RESEND_COOLDOWN_SECONDS = 60;
 const OTP_LENGTH = 8;
 type VerificationState = "checking" | "waiting" | "verifying" | "success" | "error";
 
+function createTrustedDeviceToken() {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  return btoa(String.fromCharCode(...bytes))
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .replace(/=+$/g, "");
+}
+
+async function rememberCurrentDevice() {
+  const token = createTrustedDeviceToken();
+  const { data, error } = await supabase.functions.invoke("trusted-device", {
+    body: { action: "register", token },
+  });
+  if (error || data?.registered !== true) {
+    console.warn("Strap could not register this trusted device.", error);
+    return false;
+  }
+  localStorage.setItem("strap_trusted_device_token", token);
+  return true;
+}
+
 function VerifyEmailPage() {
   const navigate = useNavigate();
   const search = useSearch({ from: "/verify-email" }) as { email?: string };
@@ -67,9 +88,7 @@ function VerifyEmailPage() {
             "Your email could not be confirmed. The verification link may have expired.",
           );
         if (!active) return;
-        if (email) {
-          localStorage.setItem(`strap_trusted_device_${email.trim().toLowerCase()}`, "true");
-        }
+        if (flow === "signin") await rememberCurrentDevice();
         sessionStorage.removeItem("strap_otp_email");
         sessionStorage.removeItem("strap_otp_flow");
         setState("success");
@@ -145,7 +164,7 @@ function VerifyEmailPage() {
           "The code was accepted, but your email is not confirmed yet. Please request a fresh code.",
         );
 
-      localStorage.setItem(`strap_trusted_device_${normalizedEmail}`, "true");
+      if (flow === "signin") await rememberCurrentDevice();
       sessionStorage.removeItem("strap_otp_email");
       sessionStorage.removeItem("strap_otp_flow");
       setCode("");
