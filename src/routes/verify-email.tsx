@@ -26,8 +26,8 @@ type VerificationState = "checking" | "waiting" | "verifying" | "success" | "err
 function createTrustedDeviceToken() {
   const bytes = crypto.getRandomValues(new Uint8Array(32));
   return btoa(String.fromCharCode(...bytes))
-    .replace(/\\+/g, "-")
-    .replace(/\\//g, "_")
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
     .replace(/=+$/g, "");
 }
 
