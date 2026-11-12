@@ -29,6 +29,11 @@ const SCRIPT_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render
 
 export function TurnstileCaptcha({ onTokenChange }: TurnstileCaptchaProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const onTokenChangeRef = useRef(onTokenChange);
+
+  useEffect(() => {
+    onTokenChangeRef.current = onTokenChange;
+  }, []);
 
   useEffect(() => {
     if (!siteKey || !containerRef.current) return;
@@ -41,9 +46,9 @@ export function TurnstileCaptcha({ onTokenChange }: TurnstileCaptchaProps) {
       widgetId = window.turnstile.render(containerRef.current, {
         sitekey: siteKey,
         theme: "auto",
-        callback: (token) => onTokenChange(token),
-        "expired-callback": () => onTokenChange(null),
-        "error-callback": () => onTokenChange(null),
+        callback: (token) => onTokenChangeRef.current(token),
+        "expired-callback": () => onTokenChangeRef.current(null),
+        "error-callback": () => onTokenChangeRef.current(null),
       });
     };
 
@@ -59,24 +64,24 @@ export function TurnstileCaptcha({ onTokenChange }: TurnstileCaptchaProps) {
         document.head.appendChild(script);
       }
       script.addEventListener("load", renderWidget);
-      script.addEventListener("error", () => onTokenChange(null), { once: true });
+      script.addEventListener("error", () => onTokenChangeRef.current(null), { once: true });
       if (window.turnstile) renderWidget();
     }
 
     return () => {
       cancelled = true;
       if (widgetId && window.turnstile) window.turnstile.remove(widgetId);
-      onTokenChange(null);
+      onTokenChangeRef.current(null);
     };
   }, [onTokenChange]);
 
   if (!siteKey) {
     return (
-      <p className="strap-captcha-missing" role="alert">
+      <p role="alert" style={{ color: "#b42318", fontSize: 13, margin: "12px 0" }}>
         Security check is not configured yet. Add VITE_TURNSTILE_SITE_KEY to the Vercel project.
       </p>
     );
   }
 
-  return <div className="strap-captcha" ref={containerRef} aria-label="Security verification" />;
+  return <div ref={containerRef} aria-label="Security verification" style={{ display: "flex", justifyContent: "center", minHeight: 66, margin: "12px 0" }} />;
 }
