@@ -912,7 +912,6 @@ export function AppShell({
                 </h1>
               </div>
               <div className="flex shrink-0 items-center gap-2">
-                {headerActions}
                 {pathname !== "/dashboard" && (
                   <Link
                     to="/dashboard"
@@ -924,6 +923,7 @@ export function AppShell({
                     <span>Dashboard</span>
                   </Link>
                 )}
+                {headerActions}
                 {pathname === "/dashboard" && (
                   <button
                     type="button"
