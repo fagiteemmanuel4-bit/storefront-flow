@@ -79,13 +79,6 @@ const ACTIONS: QuickAction[] = [
     keywords: "storefront website ecommerce online",
   },
   {
-    label: "Extensions",
-    hint: "Install optional tools for your workflow",
-    to: "/extensions",
-    icon: Puzzle,
-    keywords: "extensions tools calculator plugins addons",
-  },
-  {
     label: "Feature tour",
     hint: "Discover Strap's workspace features",
     to: "/feature-discovery",

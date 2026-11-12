@@ -111,15 +111,6 @@ function ProfilePage() {
             </div>
           </div>
         </section>
-        <section className="surface-card p-5 sm:p-6">
-          <div>
-            <p className="font-semibold">Coming soon</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Profile photo, notification preferences, login activity, connected devices and
-              personal shortcuts are being prepared for Strap.
-            </p>
-          </div>
-        </section>
         <section className="surface-card flex items-center justify-between gap-4 p-5 sm:p-6">
           <div>
             <p className="font-semibold">Sign out</p>

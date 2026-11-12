@@ -1277,17 +1277,7 @@ function Staff() {
                 Remove
               </Button>
             )}
-            <Button
-              variant="ghost"
-              disabled
-              title="The existing staff API does not expose a safe PIN reset operation"
-            >
-              Reset access
-            </Button>
           </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Reset access is intentionally disabled rather than pretending to perform a PIN reset.
-          </p>
         </Modal>
       )}
       {creating && (
