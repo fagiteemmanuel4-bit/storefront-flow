@@ -9,7 +9,6 @@ import {
   Plus,
   Search,
   MoreVertical,
-  LayoutDashboard,
   ScanLine,
   Share2,
   SlidersHorizontal,
