@@ -887,7 +887,7 @@ export function AppShell({ title, children, headerActions }: { title: string; ch
                 "mb-5 flex min-w-0 flex-row items-center justify-between gap-3 border-b border-border/70 pb-4 text-left sm:mb-6 sm:pb-5 lg:mb-8",
               )}
             >
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 {(branch || staffActive) && (
                   <p className="max-w-full truncate text-xs text-muted-foreground">
                     {branch?.name ?? ""}
