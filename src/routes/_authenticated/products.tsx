@@ -9,6 +9,7 @@ import {
   Plus,
   Search,
   MoreVertical,
+  LayoutDashboard,
   ScanLine,
   Share2,
   SlidersHorizontal,
@@ -332,10 +333,21 @@ function ProductsPage() {
   return (
     <AppShell title="">
       <div className="space-y-4">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="font-display text-xl font-bold tracking-tight">
+        <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3">
+          <h1 className="min-w-0 truncate font-display text-xl font-bold tracking-tight sm:text-2xl">
             {isFashion ? "Fashion catalogue" : "Products"}
           </h1>
+          <div className="flex shrink-0 items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => void navigate({ to: "/dashboard" })}
+              className="h-9 gap-1.5 rounded-xl px-2.5 text-xs font-semibold sm:px-3 sm:text-sm"
+            >
+              <LayoutDashboard className="size-4" aria-hidden="true" />
+              <span>Dashboard</span>
+            </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -373,6 +385,7 @@ function ProductsPage() {
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+          </div>
         </div>
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <div className="relative min-w-0 flex-1">

@@ -29,7 +29,8 @@ export function MobileNav() {
     "/food-service",
     "/grocery-inventory",
   ].some((route) => pathname.startsWith(route));
-  if (!visible || pathname.startsWith("/settings")) return null;
+  // Keep the dashboard intentionally distraction-free; navigation remains available on every other page.
+  if (pathname === "/dashboard" || !visible || pathname.startsWith("/settings")) return null;
   const openSharedSearch = () => window.dispatchEvent(new Event("strap-open-quick-find"));
   const openSharedMenu = () => window.dispatchEvent(new Event("strap-open-mobile-menu"));
   return (
