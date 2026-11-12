@@ -31,3 +31,4 @@ verify_jwt = true
 
 [functions.trusted-device]
 verify_jwt = true
+# Device trust uses a JWT-protected Edge Function and private server-side token hashes.
