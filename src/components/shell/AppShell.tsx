@@ -644,24 +644,6 @@ export function AppShell({
                     locked={isLockedPath(item.to, subscriptionTier)}
                   />
                 ))}
-                <div
-                  aria-disabled="true"
-                  title="Apps · Coming soon"
-                  className={cn(
-                    "flex min-h-11 cursor-not-allowed items-center gap-3 rounded-xl px-3 text-sm font-medium text-[#b4bac6]/40 opacity-55",
-                    sidebarCollapsed && "justify-center px-2",
-                  )}
-                >
-                  <Puzzle className="size-[18px] shrink-0" aria-hidden="true" />
-                  {!sidebarCollapsed && (
-                    <>
-                      <span className="min-w-0 flex-1 truncate">Apps</span>
-                      <span className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#8a919e]">
-                        Coming soon
-                      </span>
-                    </>
-                  )}
-                </div>
               </nav>
             )}
           </section>
