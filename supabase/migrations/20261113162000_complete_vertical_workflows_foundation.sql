@@ -232,6 +232,7 @@ begin
     (_store_id,_repair_id,_amount,_payment_method,btrim(_reference),btrim(coalesce(_note,'')),v_user_id)
   returning id into v_payment_id;
 
+  perform pg_catalog.set_config('app.allow_vertical_balance_update','on',true);
   update public.electronics_repairs
      set paid_amount = paid_amount + _amount, updated_at = now()
    where id = _repair_id and store_id = _store_id;
@@ -395,6 +396,7 @@ begin
   insert into public.beauty_appointment_payments(store_id,appointment_id,amount,payment_method,reference,received_by)
     values(_store_id,_appointment_id,_amount,_payment_method,btrim(_reference),v_user_id)
     returning id into v_payment_id;
+  perform pg_catalog.set_config('app.allow_vertical_balance_update','on',true);
   update public.beauty_appointments set paid_amount=paid_amount+_amount,updated_at=now()
    where id=_appointment_id and store_id=_store_id;
   return v_payment_id;
@@ -544,6 +546,7 @@ begin
   if v_job.amount_paid + new.amount > greatest(v_job.quoted_amount, v_job.final_amount) then
     raise exception 'Payment exceeds the remaining job balance';
   end if;
+  perform pg_catalog.set_config('app.allow_vertical_balance_update','on',true);
   update public.service_jobs
      set amount_paid = amount_paid + new.amount, updated_at = now()
    where id = new.job_id and store_id = new.store_id;
@@ -604,6 +607,35 @@ create trigger guard_beauty_appointment_schedule
 before insert or update of starts_at, ends_at, assigned_staff_id, status
 on public.beauty_appointments
 for each row execute function public.guard_beauty_appointment_schedule();
+
+-- Balance fields are ledger-managed: clients cannot edit paid totals directly.
+create or replace function public.guard_vertical_payment_balance()
+returns trigger
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+begin
+  if new.paid_amount is distinct from old.paid_amount
+     and pg_catalog.current_setting('app.allow_vertical_balance_update',true) is distinct from 'on' then
+    raise exception 'Payment balances can only be changed by the payment ledger';
+  end if;
+  return new;
+end;
+$function$;
+revoke all on function public.guard_vertical_payment_balance() from public,anon,authenticated;
+drop trigger if exists guard_electronics_repair_paid_amount on public.electronics_repairs;
+create trigger guard_electronics_repair_paid_amount
+before update of paid_amount on public.electronics_repairs
+for each row execute function public.guard_vertical_payment_balance();
+drop trigger if exists guard_beauty_appointment_paid_amount on public.beauty_appointments;
+create trigger guard_beauty_appointment_paid_amount
+before update of paid_amount on public.beauty_appointments
+for each row execute function public.guard_vertical_payment_balance();
+drop trigger if exists guard_service_job_paid_amount on public.service_jobs;
+create trigger guard_service_job_paid_amount
+before update of amount_paid on public.service_jobs
+for each row execute function public.guard_vertical_payment_balance();
 
 -- Apply tenant isolation to every new vertical table. Payment ledgers are append-only.
 do $policy$
