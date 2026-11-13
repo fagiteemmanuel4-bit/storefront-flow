@@ -870,8 +870,7 @@ begin
   end if;
   return v_sale_id;
 end;
-$function$
-
+$function$;
 
 create or replace function public.apply_pharmacy_batch_dispensing()
 returns trigger
