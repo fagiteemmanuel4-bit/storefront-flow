@@ -409,7 +409,7 @@ function FoodServicePage() {
     }
     setSaving(true);
     try {
-      const { error } = await db.rpc("record_food_waste", {
+      const { error } = await db.rpc("record_food_waste_fractional", {
         _store_id: storeId,
         _branch_id: branchId,
         _ingredient_product_id: wasteIngredientId,
