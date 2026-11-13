@@ -40,6 +40,7 @@ type Recipe = {
   menu_product_id: string;
   ingredient_product_id: string;
   quantity_per_serving: number;
+  unit: string;
 };
 type Ticket = {
   id: string;
@@ -80,6 +81,7 @@ function FoodServicePage() {
   const [recipeMenuId, setRecipeMenuId] = useState("");
   const [ingredientId, setIngredientId] = useState("");
   const [ingredientQty, setIngredientQty] = useState("1");
+  const [ingredientUnit, setIngredientUnit] = useState("unit");
   const [wasteIngredientId, setWasteIngredientId] = useState("");
   const [wasteQty, setWasteQty] = useState("1");
   const [wasteReason, setWasteReason] = useState("");
@@ -110,7 +112,7 @@ function FoodServicePage() {
     queryFn: async () => {
       const { data, error } = await db
         .from("food_recipe_ingredients")
-        .select("id,menu_product_id,ingredient_product_id,quantity_per_serving")
+        .select("id,menu_product_id,ingredient_product_id,quantity_per_serving,unit")
         .eq("store_id", storeId!)
         .eq("branch_id", branchId!)
         .order("menu_product_id");
@@ -259,12 +261,39 @@ function FoodServicePage() {
       return;
     }
     const quantity = Number(ingredientQty);
-    if (!Number.isInteger(quantity) || quantity < 1) {
-      toast.error("Ingredient quantity must be a whole number of at least one.");
+    if (!Number.isFinite(quantity) || quantity <= 0 || quantity > 100000) {
+      toast.error("Ingredient quantity must be greater than zero.");
+      return;
+    }
+    if (!ingredientUnit.trim()) {
+      toast.error("Choose the stock unit used for this ingredient.");
       return;
     }
     setSaving(true);
     try {
+      const { data: existingStock, error: stockReadError } = await db
+        .from("branch_stock")
+        .select("product_id")
+        .eq("store_id", storeId)
+        .eq("branch_id", branchId)
+        .eq("product_id", ingredientId)
+        .maybeSingle();
+      if (stockReadError) throw new Error(stockReadError.message);
+      if (existingStock) {
+        const { error: unitError } = await db
+          .from("branch_stock")
+          .update({ stock_unit: ingredientUnit.trim(), updated_at: new Date().toISOString() })
+          .eq("store_id", storeId)
+          .eq("branch_id", branchId)
+          .eq("product_id", ingredientId);
+        if (unitError) throw new Error(unitError.message);
+      } else {
+        const { error: stockError } = await db.from("branch_stock").insert({
+          store_id: storeId, branch_id: branchId, product_id: ingredientId,
+          quantity: 0, stock_unit: ingredientUnit.trim(),
+        });
+        if (stockError) throw new Error(stockError.message);
+      }
       const { error } = await db.from("food_recipe_ingredients").upsert(
         {
           store_id: storeId,
@@ -272,12 +301,14 @@ function FoodServicePage() {
           menu_product_id: recipeMenuId,
           ingredient_product_id: ingredientId,
           quantity_per_serving: quantity,
+          unit: ingredientUnit.trim(),
         },
         { onConflict: "branch_id,menu_product_id,ingredient_product_id" },
       );
       if (error) throw new Error(error.message);
       toast.success("Recipe ingredient saved.");
       setIngredientQty("1");
+      setIngredientUnit("unit");
       await refresh();
     } catch (error) {
       toast.error(errorMessage(error, "Recipe ingredient could not be saved."));
@@ -639,18 +670,33 @@ function FoodServicePage() {
                         ))}
                     </select>
                   </label>
-                  <label className="block space-y-1.5">
-                    <span className="text-xs font-semibold">Units used per serving</span>
-                    <Input
-                      type="number"
-                      min={1}
-                      step={1}
-                      required
-                      value={ingredientQty}
-                      onChange={(e) => setIngredientQty(e.target.value)}
-                      className="h-11"
-                    />
-                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <label className="block space-y-1.5">
+                      <span className="text-xs font-semibold">Quantity per serving</span>
+                      <Input
+                        type="number"
+                        min="0.0001"
+                        max="100000"
+                        step="0.0001"
+                        required
+                        value={ingredientQty}
+                        onChange={(e) => setIngredientQty(e.target.value)}
+                        className="h-11"
+                      />
+                    </label>
+                    <label className="block space-y-1.5">
+                      <span className="text-xs font-semibold">Stock unit</span>
+                      <select value={ingredientUnit} onChange={(e) => setIngredientUnit(e.target.value)} className="field h-11 w-full">
+                        <option value="unit">Unit</option>
+                        <option value="g">Grams (g)</option>
+                        <option value="kg">Kilograms (kg)</option>
+                        <option value="ml">Millilitres (ml)</option>
+                        <option value="l">Litres (l)</option>
+                        <option value="piece">Pieces</option>
+                        <option value="portion">Portions</option>
+                      </select>
+                    </label>
+                  </div>
                   <Button className="h-11 w-full" disabled={saving}>
                     <Plus className="mr-2 size-4" />
                     Add ingredient to recipe
@@ -666,7 +712,7 @@ function FoodServicePage() {
                     <div className="min-w-0">
                       <p className="font-semibold">
                         {products.find((p) => p.id === r.menu_product_id)?.name ?? "Menu item"} ←{" "}
-                        {r.quantity_per_serving} ×{" "}
+                        {r.quantity_per_serving} {r.unit} ×{" "}
                         {products.find((p) => p.id === r.ingredient_product_id)?.name ??
                           "Ingredient"}
                       </p>
