@@ -57,7 +57,6 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
   const [serviceDescription, setServiceDescription] = useState("");
   const [serviceDuration, setServiceDuration] = useState("30");
   const [servicePrice, setServicePrice] = useState("0");
-  const [serviceDuration, setServiceDuration] = useState("30");
   const [appointmentService, setAppointmentService] = useState("");
   const [appointmentName, setAppointmentName] = useState("");
   const [appointmentPhone, setAppointmentPhone] = useState("");
