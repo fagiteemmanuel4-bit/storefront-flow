@@ -135,7 +135,7 @@ revoke all on function public.receive_food_ingredient_stock(uuid,uuid,uuid,numer
 grant execute on function public.receive_food_ingredient_stock(uuid,uuid,uuid,numeric,text,numeric) to authenticated;
 
 drop function if exists public.record_food_waste(uuid,uuid,uuid,integer,text);
-create or replace function public.record_food_waste(
+create or replace function public.record_food_waste_fractional(
   _store_id uuid,_branch_id uuid,_ingredient_product_id uuid,_quantity numeric,_reason text
 )
 returns uuid
@@ -164,8 +164,21 @@ begin
   return v_id;
 end;
 $function$;
-revoke all on function public.record_food_waste(uuid,uuid,uuid,numeric,text) from public,anon;
-grant execute on function public.record_food_waste(uuid,uuid,uuid,numeric,text) to authenticated;
+revoke all on function public.record_food_waste_fractional(uuid,uuid,uuid,numeric,text) from public,anon;
+grant execute on function public.record_food_waste_fractional(uuid,uuid,uuid,numeric,text) to authenticated;
+
+create or replace function public.record_food_waste(
+  _store_id uuid,_branch_id uuid,_ingredient_product_id uuid,_quantity integer,_reason text
+)
+returns uuid
+language sql
+security definer
+set search_path to ''
+as $function$
+  select public.record_food_waste_fractional(_store_id,_branch_id,_ingredient_product_id,_quantity::numeric,_reason);
+$function$;
+revoke all on function public.record_food_waste(uuid,uuid,uuid,integer,text) from public,anon;
+grant execute on function public.record_food_waste(uuid,uuid,uuid,integer,text) to authenticated;
 
 
 -- Electronics: track repair payments separately from repair estimates/final cost.
