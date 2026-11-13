@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Building2,
   Check,
+  CircleHelp,
   Globe2,
   MapPin,
   Store,
@@ -225,22 +226,13 @@ function OnboardingPage() {
         .eq("id", storeId);
       if (storeError) throw new Error(storeError.message);
 
-      const amount =
-        plan === "free" ? 0 : billing === "year" ? PLANS[plan].yearly : PLANS[plan].monthly;
-      const { error: subscriptionError } = await supabase.from("store_subscriptions").upsert(
-        {
-          store_id: storeId,
-          provider: "korapay",
-          plan_code: plan,
-          status: plan === "free" ? "active" : "pending",
-          currency,
-          amount,
-          interval: billing,
-          metadata: { selected_during_onboarding: true, billing, annual_saving: annualSaving },
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "store_id" },
-      );
+      const { error: subscriptionError } = await supabase.rpc("initialize_store_subscription", {
+        _store_id: storeId,
+        _plan_code: plan,
+        _currency: currency,
+        _interval: billing,
+        _metadata: { selected_during_onboarding: true, billing, annual_saving: annualSaving },
+      });
       if (subscriptionError) throw new Error(subscriptionError.message);
 
       if (onlineStoreEnabled && (plan === "business" || plan === "pro")) {
@@ -632,15 +624,29 @@ function OnboardingPage() {
                   />
                 </div>
                 <div className="sa-f">
-                  <label htmlFor="tax">Default sales tax (%)</label>
+                  <div className="flex items-center justify-between gap-3">
+                    <label htmlFor="tax">Default sales tax (%)</label>
+                    <Link
+                      to="/tax-guide"
+                      className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-2 text-xs font-semibold text-primary hover:bg-accent-soft"
+                      aria-label="Learn how to choose a tax percentage"
+                    >
+                      <CircleHelp className="size-4" /> How do I find this?
+                    </Link>
+                  </div>
                   <input
                     id="tax"
                     className="sa-in"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.01"
                     value={taxRate}
                     onChange={(e) => setTaxRate(e.target.value)}
                     inputMode="decimal"
                     placeholder="0"
                   />
+                  <p className="ob-hint">Enter the rate that applies to your taxable sales. You can leave it at 0% and update it later in settings.</p>
                 </div>
               </>
             )}
