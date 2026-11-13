@@ -311,6 +311,85 @@ create table if not exists public.pharmacy_recalls (
   created_at timestamptz not null default now()
 );
 
+-- Fashion returns: record real refund settlement separately from stock restocking.
+alter table public.sale_returns
+  add column if not exists refunded_amount numeric(12,2) not null default 0 check (refunded_amount >= 0),
+  add column if not exists refund_status text not null default 'unpaid' check (refund_status in ('unpaid','partially_refunded','refunded')),
+  add column if not exists updated_at timestamptz not null default now(),
+  add column if not exists replacement_sale_id uuid references public.sales(id) on delete set null;
+
+create table if not exists public.sale_return_refunds (
+  id uuid primary key default gen_random_uuid(),
+  store_id uuid not null references public.stores(id) on delete cascade,
+  return_id uuid not null references public.sale_returns(id) on delete restrict,
+  amount numeric(12,2) not null check (amount > 0),
+  payment_method text not null check (payment_method in ('cash','card','transfer')),
+  reference text not null,
+  note text not null default '',
+  received_by uuid not null references auth.users(id),
+  created_at timestamptz not null default now(),
+  unique(store_id,reference)
+);
+create index if not exists sale_return_refunds_return_idx
+  on public.sale_return_refunds(store_id,return_id,created_at desc);
+
+create or replace function public.record_sale_return_refund(
+  _store_id uuid,_return_id uuid,_amount numeric,_payment_method text,_reference text,_note text default ''
+)
+returns uuid
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_user_id uuid := auth.uid();
+  v_return public.sale_returns%rowtype;
+  v_refund_id uuid;
+begin
+  if v_user_id is null then raise exception 'Not authenticated'; end if;
+  if not public.has_store_role(_store_id,v_user_id,array['owner','manager','cashier']::public.store_role[]) then raise exception 'Not authorized for this store'; end if;
+  if _amount is null or _amount<=0 then raise exception 'Refund amount must be greater than zero'; end if;
+  if _payment_method not in ('cash','card','transfer') then raise exception 'Invalid refund method'; end if;
+  if length(btrim(coalesce(_reference,'')))<3 then raise exception 'Enter a refund reference'; end if;
+  select * into v_return from public.sale_returns where id=_return_id and store_id=_store_id for update;
+  if not found then raise exception 'Return record not found'; end if;
+  if v_return.refunded_amount+_amount>v_return.total_amount then raise exception 'Refund exceeds the remaining return value'; end if;
+  insert into public.sale_return_refunds(store_id,return_id,amount,payment_method,reference,note,received_by)
+    values(_store_id,_return_id,_amount,_payment_method,btrim(_reference),btrim(coalesce(_note,'')),v_user_id)
+    returning id into v_refund_id;
+  perform pg_catalog.set_config('app.allow_sale_return_refund_update','on',true);
+  update public.sale_returns
+     set refunded_amount=refunded_amount+_amount,
+         refund_status=case when refunded_amount+_amount>=total_amount then 'refunded' else 'partially_refunded' end,
+         updated_at=now()
+   where id=_return_id and store_id=_store_id;
+  perform pg_catalog.set_config('app.allow_sale_return_refund_update','off',true);
+  return v_refund_id;
+end;
+$function$;
+revoke all on function public.record_sale_return_refund(uuid,uuid,numeric,text,text,text) from public,anon;
+grant execute on function public.record_sale_return_refund(uuid,uuid,numeric,text,text,text) to authenticated;
+
+create or replace function public.guard_sale_return_refund_balance()
+returns trigger
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+begin
+  if (new.refunded_amount is distinct from old.refunded_amount or new.refund_status is distinct from old.refund_status)
+     and pg_catalog.current_setting('app.allow_sale_return_refund_update',true) is distinct from 'on' then
+    raise exception 'Refund totals can only be changed by the refund ledger';
+  end if;
+  return new;
+end;
+$function$;
+revoke all on function public.guard_sale_return_refund_balance() from public,anon,authenticated;
+drop trigger if exists guard_sale_return_refund_balance on public.sale_returns;
+create trigger guard_sale_return_refund_balance
+before update of refunded_amount,refund_status on public.sale_returns
+for each row execute function public.guard_sale_return_refund_balance();
+
 -- Beauty: service catalogue, appointments and auditable consumable usage.
 create table if not exists public.beauty_services (
   id uuid primary key default gen_random_uuid(),
@@ -651,7 +730,7 @@ declare
   t text;
 begin
   foreach t in array array[
-    'electronics_repair_payments','food_ingredient_stock',
+    'electronics_repair_payments','food_ingredient_stock','sale_return_refunds',
     'pharmacy_product_profiles','pharmacy_batches','pharmacy_dispensing_records','pharmacy_recalls',
     'beauty_services','beauty_appointments','beauty_appointment_services','beauty_appointment_payments','beauty_consumable_usage',
     'service_catalog','service_jobs','service_job_items','service_job_payments'
