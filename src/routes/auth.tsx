@@ -359,7 +359,7 @@ function AuthPage() {
     const normalizedEmail = parsedEmail.data;
 
     if (!recoveryVerified) {
-      if (!/^\\d{8}$/.test(recoveryCode)) {
+      if (!/^\d{8}$/.test(recoveryCode)) {
         toast.error("Enter the 8-digit password verification code from your email.");
         return;
       }
@@ -626,7 +626,7 @@ function AuthPage() {
                       id="recovery-code"
                       value={recoveryCode}
                       onChange={(event) =>
-                        setRecoveryCode(event.target.value.replace(/\\D/g, "").slice(0, 8))
+                        setRecoveryCode(event.target.value.replace(/\D/g, "").slice(0, 8))
                       }
                       className="strap-field"
                       inputMode="numeric"
