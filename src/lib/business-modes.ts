@@ -226,6 +226,11 @@ export const BUSINESS_MODES: BusinessMode[] = [
           "Record customer devices, reported faults, warranty claims, estimates and repair progress.",
         status: "available",
       },
+      {
+        title: "Online serialised-device checkout",
+        detail: "Public checkout for registered devices stays disabled until the server can reserve and release individual device serials safely.",
+        status: "planned",
+      },
     ],
     quickActions: [
       { label: "Product catalogue", description: "Review stock", to: "/products" },
@@ -276,6 +281,11 @@ export const BUSINESS_MODES: BusinessMode[] = [
         detail: "Record ingredient waste with a reason and deduct stock safely.",
         status: "available",
       },
+      {
+        title: "Online menu ordering and kitchen dispatch",
+        detail: "Recipe or modifier-based menu items remain off public checkout until the online kitchen workflow is enabled.",
+        status: "planned",
+      },
     ],
     quickActions: [
       {
@@ -310,6 +320,11 @@ export const BUSINESS_MODES: BusinessMode[] = [
         title: "Prescription and controlled-product safeguards",
         detail: "Capture prescription references and patient details at POS, enforce minimum-age rules and require manager-authorised dispensing for controlled products.",
         status: "available",
+      },
+      {
+        title: "Public online pharmacy checkout",
+        detail: "Configured batch-tracked and prescription-controlled medicines are blocked from public checkout until online dispensing safeguards are supported.",
+        status: "planned",
       },
     ],
     quickActions: [
