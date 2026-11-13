@@ -716,6 +716,7 @@ function PosPage() {
       toast.error("Allow pop-ups for Strap to print receipts.");
       return;
     }
+    popup.onload = () => popup.print();
     popup.document
       .write(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(receipt.reference)}</title><style>
       *{box-sizing:border-box}body{font-family:Arial,sans-serif;padding:16px;max-width:${width};margin:auto;color:#111;font-size:${fontSize};line-height:1.45}
@@ -729,7 +730,7 @@ function PosPage() {
       ${rows}<div class="rule"></div>${totals}
       ${prefs.thankYou ? `<p class="center" style="margin-top:18px">${escapeHtml(prefs.thankYou)}</p>` : '<p class="center" style="margin-top:18px">Thank you for shopping with us.</p>'}
       ${prefs.showFooter === false ? "" : `<p class="center">${escapeHtml(prefs.footer || "Powered by Strap")}</p>`}
-      <script>window.onload=()=>window.print()</script></body></html>`);
+      </body></html>`);
     popup.document.close();
     popup.focus();
   }
