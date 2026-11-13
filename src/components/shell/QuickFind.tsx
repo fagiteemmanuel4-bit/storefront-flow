@@ -12,7 +12,6 @@ import {
   Search,
   Settings,
   ShoppingBag,
-  Sparkles,
   Store,
   X,
   Users,
@@ -208,9 +207,6 @@ export function QuickFind({ open, onOpenChange }: QuickFindProps) {
   };
   const go = (to: string) => {
     remember(to);
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      try { navigator.vibrate(10); } catch { /* haptics are optional */ }
-    }
     onOpenChange(false);
     void navigate({ to: to as never });
   };
