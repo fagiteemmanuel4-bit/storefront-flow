@@ -9,6 +9,8 @@ Strap is a retail commerce operations platform by Kryonara. It brings point of s
 - Support: https://storefront-flow.vercel.app/support
 - Partners: https://storefront-flow.vercel.app/partners
 - Sitemap: https://storefront-flow.vercel.app/sitemap.xml
+- Public tax guide: https://storefront-flow.vercel.app/tax-guide
+- Machine-readable tax reference: https://storefront-flow.vercel.app/tax-guide.md
 - Full AI-readable product guide: https://storefront-flow.vercel.app/llms-full.txt
 
 ## Core capabilities

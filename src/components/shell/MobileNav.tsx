@@ -29,8 +29,15 @@ export function MobileNav() {
     "/food-service",
     "/grocery-inventory",
   ].some((route) => pathname.startsWith(route));
-  // Keep the dashboard intentionally distraction-free; navigation remains available on every other page.
+  // The commerce dock belongs only inside an active workspace. Never cover
+  // public pages, authentication, verification, onboarding, or learning pages.
+  const hideDock =
+    pathname === "/" ||
+    ["/auth", "/signup", "/verify-email", "/email-confirmed", "/verified", "/onboarding", "/tax-guide"].some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
+    );
   if (
+    hideDock ||
     pathname === "/dashboard" ||
     pathname.startsWith("/customers") ||
     !visible ||

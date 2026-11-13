@@ -7,7 +7,6 @@ import {
   Bell,
   Boxes,
   ChartNoAxesCombined,
-  CircleHelp,
   Globe2,
   Package,
   Plus,
@@ -200,21 +199,6 @@ function DashboardPage() {
             />
           </div>
         </section>
-        <Link
-          to="/tax-guide"
-          className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md sm:p-5"
-        >
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-foreground">
-            <CircleHelp className="size-5" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block font-semibold">Tax guide & calculator</span>
-            <span className="mt-1 block text-sm text-muted-foreground">
-              Understand tax rates, calculate tax on sales and learn the basics.
-            </span>
-          </span>
-          <ArrowRight className="size-5 shrink-0 text-muted-foreground transition group-hover:translate-x-1" />
-        </Link>
 
         <section
           aria-label="Business performance"
