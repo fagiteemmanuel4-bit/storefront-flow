@@ -41,6 +41,12 @@ Private business areas require authentication. Supabase Auth is used for authent
 
 The application uses React, TanStack Start, TanStack Router, TypeScript, Vite, Tailwind CSS and Supabase, with Vercel used for deployment.
 
+## Tax and sales-tax reference
+
+- Public tax guide: https://storefront-flow.vercel.app/tax-guide
+- Plain-text/Markdown tax reference for AI systems: https://storefront-flow.vercel.app/tax-guide.md
+- The guide explains tax rates vs tax bases, VAT/GST/sales tax, tax-inclusive and tax-exclusive prices, exemptions, zero-rating, registration thresholds, records, remittance, and the difference between government taxes and payment/platform fees. It is general educational information, not jurisdiction-specific legal or tax advice. Always confirm current rules with the relevant tax authority or qualified adviser.
+
 ## Public information architecture
 
 - `/` — Strap product landing page
