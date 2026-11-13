@@ -61,3 +61,34 @@ Milestones are small and gated. Work on one milestone at a time. After each mile
 4. Automated tests, security review and tenant-isolation tests pass.
 5. Feature flag remains OFF until verified and explicitly reviewed.
 6. User approves production release; otherwise no Vercel production deployment.
+
+
+## Business-mode profile foundation
+
+All eight business-mode profiles are now authored under `modes/<mode>/mode.json`:
+
+| Business mode | Profile |
+| --- | --- |
+| General retail | `modes/normal-business/mode.json` |
+| Groceries & provision | `modes/grocery-provision/mode.json` |
+| Fashion & boutiques | `modes/fashion/mode.json` |
+| Electronics & phones | `modes/electronics/mode.json` |
+| Food & restaurants | `modes/food-service/mode.json` |
+| Pharmacy & health products | `modes/pharmacy/mode.json` |
+| Beauty & personal care | `modes/beauty-personal-care/mode.json` |
+| Services & appointments | `modes/services/mode.json` |
+
+These are draft configuration profiles, not runtime integrations. They were authored using the mode registry and the vertical workflow migrations currently present in the repository. Each profile keeps all feature flags OFF, includes a storefront template set and mode-specific section registry, and explicitly records domain-specific checkout restrictions.
+
+### Important safety boundary
+
+- Grocery expiry/batch allocation must use FEFO and server-authoritative stock checks.
+- Fashion stock is per size/colour SKU; aggregate stock is not sufficient for variant checkout.
+- Electronics serial/IMEI online checkout remains blocked until unit reservation and release are atomic.
+- Food-service online ordering remains blocked until recipe deductions, modifiers, kitchen dispatch and delivery rules are server-authoritative.
+- Pharmacy prescription/controlled products remain blocked from public checkout pending compliant online dispensing safeguards.
+- Beauty/service appointments require server-side staff availability, conflict prevention, deposits and payment-ledger behavior.
+- No profile is runtime-ready until its fields and workflows are validated against database contracts, runtime services and automated tests.
+- Template entries are initial creative directions, not finished storefront themes. The Store Studio template and preview milestones must build the actual registered renderers and fixture-driven previews.
+
+The Normal Business feature catalog is the only supplied catalog. Its 73 IDs are carried into each profile as default-OFF flags for traceability; this does **not** assert that every feature is applicable to every mode. A mode-specific feature catalog and explicit applicability mapping must be produced before enabling any mode-specific flag.
