@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -70,6 +70,7 @@ function AuthPage() {
   const [accepted, setAccepted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
@@ -114,17 +115,25 @@ function AuthPage() {
   }, [navigate]);
 
   async function handleGoogleSignIn() {
-    setBusy(true);
+    if (busy || googleLoading) return;
+    setGoogleLoading(true);
     setNotice(null);
+    // Recover if the browser never leaves for Google's consent screen.
+    const redirectWatchdog = window.setTimeout(() => {
+      setGoogleLoading(false);
+      toast.error("Google sign-in is taking too long. Please check your connection and try again.");
+    }, 20000);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: `${window.location.origin}/auth` },
       });
       if (error) throw error;
+      // Supabase redirects to Google; keep the form locked during navigation.
     } catch (error) {
-      toast.error(errorMessage(error, "Google sign-in couldn't be started. Please try again."));
-      setBusy(false);
+      window.clearTimeout(redirectWatchdog);
+      setGoogleLoading(false);
+      toast.error(errorMessage(error, "Google sign-in could not be started. Please try again."));
     }
   }
 
@@ -371,7 +380,7 @@ function AuthPage() {
               <div style={{ display: "grid", gap: 14, marginBottom: 18 }}>
                 <Button
                   type="button"
-                  disabled={busy}
+                  disabled={busy || googleLoading}
                   onClick={() => void handleGoogleSignIn()}
                   className="strap-btn strap-btn-google"
                   style={{
@@ -404,8 +413,20 @@ function AuthPage() {
                       d="M24 48c6.47 0 11.9-2.13 15.86-5.86l-7.65-5.94c-2.12 1.42-4.84 2.26-8.21 2.26-6.52 0-12.07-4.22-14.02-10.09l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"
                     />
                   </svg>
-                  Continue with Google
+                  {googleLoading ? (
+                    <>
+                      <LoaderCircle size={19} className="animate-spin" aria-hidden="true" />
+                      Connecting to Google…
+                    </>
+                  ) : (
+                    "Continue with Google"
+                  )}
                 </Button>
+                {googleLoading && (
+                  <p role="status" aria-live="polite" style={{ margin: 0, textAlign: "center", fontSize: 13, color: "var(--color-muted-foreground)" }}>
+                    Redirecting securely. Please wait…
+                  </p>
+                )}
                 <div
                   style={{
                     display: "flex",
@@ -422,7 +443,8 @@ function AuthPage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="strap-auth-form" noValidate={false}>
+            <form onSubmit={handleSubmit} className="strap-auth-form" noValidate={false} aria-busy={busy || googleLoading}>
+              <fieldset disabled={busy || googleLoading} style={{ border: 0, minWidth: 0, margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 16 }}>
               {mode === "signup" && (
                 <div className="strap-field-wrap">
                   <Label htmlFor="name" className="strap-label">
@@ -534,9 +556,10 @@ function AuthPage() {
                 </div>
               )}
 
-              <Button type="submit" disabled={busy} className="strap-btn strap-btn-primary">
+              <Button type="submit" disabled={busy || googleLoading} className="strap-btn strap-btn-primary">
                 {busy ? "Please wait…" : pendingOtpEmail ? "Send verification code" : submitLabel}
               </Button>
+              </fieldset>
             </form>
 
             {(mode === "signin" || mode === "signup") && (
@@ -546,6 +569,7 @@ function AuthPage() {
                   <button
                     type="button"
                     className="strap-link"
+                    disabled={busy || googleLoading}
                     onClick={() => {
                       setMode(switchMode);
                       setPendingOtpEmail(null);
