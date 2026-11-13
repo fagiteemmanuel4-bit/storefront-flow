@@ -33,9 +33,15 @@ export function MobileNav() {
   // public pages, authentication, verification, onboarding, or learning pages.
   const hideDock =
     pathname === "/" ||
-    ["/auth", "/signup", "/verify-email", "/email-confirmed", "/verified", "/onboarding", "/tax-guide"].some(
-      (route) => pathname === route || pathname.startsWith(`${route}/`),
-    );
+    [
+      "/auth",
+      "/signup",
+      "/verify-email",
+      "/email-confirmed",
+      "/verified",
+      "/onboarding",
+      "/tax-guide",
+    ].some((route) => pathname === route || pathname.startsWith(`${route}/`));
   if (
     hideDock ||
     pathname === "/dashboard" ||

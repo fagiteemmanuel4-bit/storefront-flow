@@ -24,6 +24,7 @@ import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as TaxGuideRouteImport } from './routes/tax-guide'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
@@ -53,7 +54,6 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedStockSenseRouteImport } from './routes/_authenticated/stock-sense'
 import { Route as AuthenticatedStoreEditorRouteImport } from './routes/_authenticated/store-editor'
-import { Route as AuthenticatedTaxGuideRouteImport } from './routes/_authenticated/tax-guide'
 import { Route as AuthenticatedUnitSaleRouteImport } from './routes/_authenticated/unit-sale'
 import { Route as AuthenticatedUpgradeRouteImport } from './routes/_authenticated/upgrade'
 import { Route as OauthConsentRouteImport } from './routes/oauth.consent'
@@ -158,6 +158,11 @@ const SignupRoute = SignupRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TaxGuideRoute = TaxGuideRouteImport.update({
+  id: '/tax-guide',
+  path: '/tax-guide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -315,11 +320,6 @@ const AuthenticatedStoreEditorRoute =
     path: '/store-editor',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedTaxGuideRoute = AuthenticatedTaxGuideRouteImport.update({
-  id: '/tax-guide',
-  path: '/tax-guide',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedUnitSaleRoute = AuthenticatedUnitSaleRouteImport.update({
   id: '/unit-sale',
   path: '/unit-sale',
@@ -516,6 +516,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
+  '/tax-guide': typeof TaxGuideRoute
   '/terms': typeof TermsRoute
   '/verified': typeof VerifiedRoute
   '/verify-email': typeof VerifyEmailRoute
@@ -545,7 +546,6 @@ export interface FileRoutesByFullPath {
   '/staff': typeof AuthenticatedStaffRoute
   '/stock-sense': typeof AuthenticatedStockSenseRoute
   '/store-editor': typeof AuthenticatedStoreEditorRoute
-  '/tax-guide': typeof AuthenticatedTaxGuideRoute
   '/unit-sale': typeof AuthenticatedUnitSaleRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/oauth/consent': typeof OauthConsentRoute
@@ -593,6 +593,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
+  '/tax-guide': typeof TaxGuideRoute
   '/terms': typeof TermsRoute
   '/verified': typeof VerifiedRoute
   '/verify-email': typeof VerifyEmailRoute
@@ -621,7 +622,6 @@ export interface FileRoutesByTo {
   '/staff': typeof AuthenticatedStaffRoute
   '/stock-sense': typeof AuthenticatedStockSenseRoute
   '/store-editor': typeof AuthenticatedStoreEditorRoute
-  '/tax-guide': typeof AuthenticatedTaxGuideRoute
   '/unit-sale': typeof AuthenticatedUnitSaleRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/oauth/consent': typeof OauthConsentRoute
@@ -671,6 +671,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
+  '/tax-guide': typeof TaxGuideRoute
   '/terms': typeof TermsRoute
   '/verified': typeof VerifiedRoute
   '/verify-email': typeof VerifyEmailRoute
@@ -700,7 +701,6 @@ export interface FileRoutesById {
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/stock-sense': typeof AuthenticatedStockSenseRoute
   '/_authenticated/store-editor': typeof AuthenticatedStoreEditorRoute
-  '/_authenticated/tax-guide': typeof AuthenticatedTaxGuideRoute
   '/_authenticated/unit-sale': typeof AuthenticatedUnitSaleRoute
   '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
   '/oauth/consent': typeof OauthConsentRoute
@@ -750,6 +750,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/signup'
     | '/support'
+    | '/tax-guide'
     | '/terms'
     | '/verified'
     | '/verify-email'
@@ -779,7 +780,6 @@ export interface FileRouteTypes {
     | '/staff'
     | '/stock-sense'
     | '/store-editor'
-    | '/tax-guide'
     | '/unit-sale'
     | '/upgrade'
     | '/oauth/consent'
@@ -827,6 +827,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/signup'
     | '/support'
+    | '/tax-guide'
     | '/terms'
     | '/verified'
     | '/verify-email'
@@ -855,7 +856,6 @@ export interface FileRouteTypes {
     | '/staff'
     | '/stock-sense'
     | '/store-editor'
-    | '/tax-guide'
     | '/unit-sale'
     | '/upgrade'
     | '/oauth/consent'
@@ -904,6 +904,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/signup'
     | '/support'
+    | '/tax-guide'
     | '/terms'
     | '/verified'
     | '/verify-email'
@@ -933,7 +934,6 @@ export interface FileRouteTypes {
     | '/_authenticated/staff'
     | '/_authenticated/stock-sense'
     | '/_authenticated/store-editor'
-    | '/_authenticated/tax-guide'
     | '/_authenticated/unit-sale'
     | '/_authenticated/upgrade'
     | '/oauth/consent'
@@ -983,6 +983,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SignupRoute: typeof SignupRoute
   SupportRoute: typeof SupportRoute
+  TaxGuideRoute: typeof TaxGuideRoute
   TermsRoute: typeof TermsRoute
   VerifiedRoute: typeof VerifiedRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
@@ -1097,6 +1098,13 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tax-guide': {
+      id: '/tax-guide'
+      path: '/tax-guide'
+      fullPath: '/tax-guide'
+      preLoaderRoute: typeof TaxGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -1300,13 +1308,6 @@ declare module '@tanstack/react-router' {
       path: '/store-editor'
       fullPath: '/store-editor'
       preLoaderRoute: typeof AuthenticatedStoreEditorRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/tax-guide': {
-      id: '/_authenticated/tax-guide'
-      path: '/tax-guide'
-      fullPath: '/tax-guide'
-      preLoaderRoute: typeof AuthenticatedTaxGuideRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/unit-sale': {
@@ -1617,7 +1618,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
   AuthenticatedStockSenseRoute: typeof AuthenticatedStockSenseRoute
   AuthenticatedStoreEditorRoute: typeof AuthenticatedStoreEditorRoute
-  AuthenticatedTaxGuideRoute: typeof AuthenticatedTaxGuideRoute
   AuthenticatedUnitSaleRoute: typeof AuthenticatedUnitSaleRoute
   AuthenticatedUpgradeRoute: typeof AuthenticatedUpgradeRoute
   AuthenticatedOnlineStoreAdvancedEditorRoute: typeof AuthenticatedOnlineStoreAdvancedEditorRoute
@@ -1656,7 +1656,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
   AuthenticatedStockSenseRoute: AuthenticatedStockSenseRoute,
   AuthenticatedStoreEditorRoute: AuthenticatedStoreEditorRoute,
-  AuthenticatedTaxGuideRoute: AuthenticatedTaxGuideRoute,
   AuthenticatedUnitSaleRoute: AuthenticatedUnitSaleRoute,
   AuthenticatedUpgradeRoute: AuthenticatedUpgradeRoute,
   AuthenticatedOnlineStoreAdvancedEditorRoute:
@@ -1701,6 +1700,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SignupRoute: SignupRoute,
   SupportRoute: SupportRoute,
+  TaxGuideRoute: TaxGuideRoute,
   TermsRoute: TermsRoute,
   VerifiedRoute: VerifiedRoute,
   VerifyEmailRoute: VerifyEmailRoute,

@@ -5,9 +5,11 @@ Last reviewed: 2026-11-13
 Publisher: Strap by Kryonara
 
 ## Scope and reliability
+
 This is general educational information about taxes for merchants and small businesses. It is not legal, accounting, tax, or financial advice. Tax rules, rates, thresholds, exemptions, place-of-supply rules, registration duties, and filing deadlines vary by jurisdiction and change over time. Never infer a user's tax rate from their country alone. Ask for the relevant jurisdiction and business/product context, then verify current details with the official tax authority or a qualified tax professional.
 
 ## Core concepts
+
 - A tax is a compulsory payment imposed by a public authority under law.
 - A tax rate is the percentage or amount applied to a tax base.
 - A tax base is the income, value, transaction, item, or activity on which a tax is calculated.
@@ -16,10 +18,13 @@ This is general educational information about taxes for merchants and small busi
 - Tax-inclusive price: tax is already included in the displayed total. Tax portion = total × rate ÷ (100 + rate). Pre-tax base = total ÷ (1 + rate ÷ 100).
 
 ## Consumption taxes
+
 VAT (value-added tax) and GST (goods and services tax) are consumption taxes commonly collected at multiple stages of a supply chain. A registered business may charge output tax on eligible sales and may recover eligible input tax on purchases, subject to local law, evidence and restrictions. Retail sales tax is often charged at the final retail sale. The terminology and mechanics vary by jurisdiction.
 
 ## Tax rate is not enough
+
 A correct calculation requires both the applicable rate and the correct tax base. The merchant must verify:
+
 1. Where the business is registered and where the supply is treated as taking place.
 2. Whether the transaction is within the scope of the tax.
 3. Whether the product or service is standard-rated, reduced-rated, zero-rated, exempt or outside scope.
@@ -28,6 +33,7 @@ A correct calculation requires both the applicable rate and the correct tax base
 6. Whether special rules apply to cross-border, marketplace, digital, wholesale, or business-to-business transactions.
 
 ## Common terms
+
 - Output tax: eligible consumption tax charged on sales.
 - Input tax: eligible consumption tax paid on business purchases.
 - Zero-rated: within the tax system but charged at a zero rate, where that category exists.
@@ -38,9 +44,11 @@ A correct calculation requires both the applicable rate and the correct tax base
 - Filing/return: report submitted to the tax authority, often on a periodic basis.
 
 ## Taxes versus commercial fees
+
 Government taxes are imposed by law. Payment processor fees, card-network charges, marketplace commissions, delivery charges and software subscription fees are commercial charges. A commercial fee can itself have tax treatment, but it is not automatically the same as VAT, GST or sales tax. Keep taxes and fees separately identified in bookkeeping and customer-facing pricing.
 
 ## How an assistant should answer tax-rate questions
+
 1. Do not invent a percentage or assume that a country has one universal rate.
 2. Ask for the jurisdiction, type of sale, product/service category, and whether the price is tax-inclusive when those details are missing.
 3. Explain the difference between rate and base.
@@ -50,14 +58,17 @@ Government taxes are imposed by law. Payment processor fees, card-network charge
 7. Make clear that Strap's default sales-tax percentage is a calculation setting, not a tax compliance determination.
 
 ## Calculator formulas
+
 - Exclusive: tax = price × rate / 100; total = price + tax.
 - Inclusive: base = total / (1 + rate / 100); tax = total − base.
-Example: 5% on a taxable exclusive base of 20,000 gives 1,000 tax and a 21,000 total. This is a mathematical example, not a recommendation of a legal rate.
+  Example: 5% on a taxable exclusive base of 20,000 gives 1,000 tax and a 21,000 total. This is a mathematical example, not a recommendation of a legal rate.
 
 ## Educational videos
+
 The public guide contains optional, collapsed YouTube lessons. The videos explain general tax types and VAT mechanics; they do not establish current tax rates for any particular country.
 
 ## Sources and further learning
+
 - Animated tax explainer (Tax Explained with Bananas): https://www.youtube.com/watch?v=LYsqkGRpv_k
 - TaxEDU animated explainers: https://taxfoundation.org/taxedu/videos/
 - Tax Rate vs. Tax Base: https://taxfoundation.org/taxedu/videos/tax-rate-vs-tax-base/
@@ -65,4 +76,5 @@ The public guide contains optional, collapsed YouTube lessons. The videos explai
 - Official local tax authority guidance should always take precedence for applicable law.
 
 ## Canonical human guide
+
 https://storefront-flow.vercel.app/tax-guide
