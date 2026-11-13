@@ -279,6 +279,7 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
     if (!storeId || !branchId || !appointmentService || !appointmentName.trim() || !appointmentPhone.trim() || !appointmentStart) return;
     const selected = (beautyServicesQuery.data ?? []).find((s) => s.id === appointmentService);
     if (!selected) return toast.error("Choose a valid service.");
+    if (Number(appointmentDeposit) > Number(selected.price)) return toast.error("Deposit cannot exceed the service price.");
     const start = new Date(appointmentStart);
     const end = new Date(start.getTime() + selected.duration_minutes * 60_000);
     setSaving(true);
@@ -380,6 +381,7 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
     if (!storeId || !branchId || !serviceAppointmentServiceId || !serviceAppointmentCustomer.trim() || !serviceAppointmentPhone.trim() || !serviceAppointmentStart) return;
     const selected = catalog.find((service) => service.id === serviceAppointmentServiceId);
     if (!selected) return toast.error("Choose a valid service.");
+    if (Number(serviceAppointmentDeposit) > Number(selected.default_price)) return toast.error("Deposit cannot exceed the service price.");
     const start = new Date(serviceAppointmentStart);
     const end = new Date(start.getTime() + selected.duration_minutes * 60_000);
     setSaving(true);
