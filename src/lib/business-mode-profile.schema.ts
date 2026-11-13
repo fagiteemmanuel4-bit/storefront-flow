@@ -25,7 +25,12 @@ const transitionSchema = z.looseObject({
 const templateSchema = z.looseObject({
   id: z.string().min(1),
   name: z.string().min(1),
+  family: z.string().min(1),
+  positioning: z.string().min(1),
+  recommendedFor: z.array(z.string()).optional(),
+  styleTags: z.array(z.string()),
   version: z.number().int().positive(),
+  preview: z.record(z.string(), z.unknown()).optional(),
   theme: z.record(z.string(), z.unknown()),
   pages: z.record(z.string(), z.array(z.string())),
 });
