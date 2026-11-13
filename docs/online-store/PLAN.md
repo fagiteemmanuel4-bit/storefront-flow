@@ -12,9 +12,9 @@
 
 ## Blocking inputs before implementation
 
-1. Add/confirm `modes/normal-business.mode.json` (and profile schema) in the repository. The current main branch has no mode profile file, while the feature catalog requires it. Do not start mode-dependent feature implementation until it is supplied and reviewed.
-2. Confirm the JSON templates already prepared by the user; treat them as samples to improve, not production-ready designs or schemas.
-3. Confirm template preview content can use generated/demo fixture data only and must not expose real seller/customer data.
+1. Review the authored draft at `modes/normal-business/mode.json` and schema at `schemas/business-mode-profile.schema.json`. It is grounded in current code but is not runtime-integrated. Validate it against the database and domain services before enabling profile-driven behavior.
+2. Treat the six template profiles in the Normal Business mode profile as initial design directions, not finished production themes. Expand their design tokens, section settings, page composition and responsive previews in Store Studio milestones.
+3. Template preview content must use generated/demo fixture data only and must not expose real seller/customer data.
 
 ## Milestone sequencing
 
