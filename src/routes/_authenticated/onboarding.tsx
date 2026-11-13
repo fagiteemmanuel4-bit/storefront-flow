@@ -630,8 +630,9 @@ function OnboardingPage() {
                       to="/tax-guide"
                       className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-2 text-xs font-semibold text-primary hover:bg-accent-soft"
                       aria-label="Learn how to choose a tax percentage"
+                      title="Learn about tax rates"
                     >
-                      <CircleHelp className="size-4" /> How do I find this?
+                      <CircleHelp className="size-4" />
                     </Link>
                   </div>
                   <input
@@ -646,10 +647,6 @@ function OnboardingPage() {
                     inputMode="decimal"
                     placeholder="0"
                   />
-                  <p className="ob-hint">
-                    Enter the rate that applies to your taxable sales. You can leave it at 0% and
-                    update it later in settings.
-                  </p>
                 </div>
               </>
             )}
