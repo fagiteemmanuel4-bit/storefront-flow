@@ -423,7 +423,16 @@ function AuthPage() {
                   )}
                 </Button>
                 {googleLoading && (
-                  <p role="status" aria-live="polite" style={{ margin: 0, textAlign: "center", fontSize: 13, color: "var(--color-muted-foreground)" }}>
+                  <p
+                    role="status"
+                    aria-live="polite"
+                    style={{
+                      margin: 0,
+                      textAlign: "center",
+                      fontSize: 13,
+                      color: "var(--color-muted-foreground)",
+                    }}
+                  >
                     Redirecting securely. Please wait…
                   </p>
                 )}
@@ -443,122 +452,144 @@ function AuthPage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="strap-auth-form" noValidate={false} aria-busy={busy || googleLoading}>
-              <fieldset disabled={busy || googleLoading} style={{ border: 0, minWidth: 0, margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 16 }}>
-              {mode === "signup" && (
-                <div className="strap-field-wrap">
-                  <Label htmlFor="name" className="strap-label">
-                    Full name
-                  </Label>
-                  <Input
-                    id="name"
-                    value={fullName}
-                    onChange={(event) => setFullName(event.target.value)}
-                    className="strap-field"
-                    autoComplete="name"
-                    maxLength={120}
-                    placeholder="Your full name"
-                    required
-                  />
-                </div>
-              )}
-
-              {mode !== "recover" && (
-                <div className="strap-field-wrap">
-                  <Label htmlFor="email" className="strap-label">
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    className="strap-field"
-                    autoComplete="email"
-                    inputMode="email"
-                    autoCapitalize="none"
-                    spellCheck={false}
-                    placeholder="you@yourbusiness.com"
-                    required
-                  />
-                </div>
-              )}
-
-              {mode !== "reset" && (
-                <div className="strap-field-wrap">
-                  <div className="strap-field-row">
-                    <Label htmlFor="password" className="strap-label">
-                      {mode === "recover" ? "New password" : "Password"}
+            <form
+              onSubmit={handleSubmit}
+              className="strap-auth-form"
+              noValidate={false}
+              aria-busy={busy || googleLoading}
+            >
+              <fieldset
+                disabled={busy || googleLoading}
+                style={{
+                  border: 0,
+                  minWidth: 0,
+                  margin: 0,
+                  padding: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 16,
+                }}
+              >
+                {mode === "signup" && (
+                  <div className="strap-field-wrap">
+                    <Label htmlFor="name" className="strap-label">
+                      Full name
                     </Label>
-                    {mode === "signin" && (
-                      <button
-                        type="button"
-                        className="strap-link"
-                        onClick={() => {
-                          setMode("reset");
-                          setNotice(null);
-                        }}
-                      >
-                        Forgot password?
-                      </button>
-                    )}
-                  </div>
-                  <div className="strap-pw">
                     <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)}
+                      id="name"
+                      value={fullName}
+                      onChange={(event) => setFullName(event.target.value)}
                       className="strap-field"
-                      autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                      placeholder={mode === "signin" ? "Enter your password" : "Create a password"}
+                      autoComplete="name"
+                      maxLength={120}
+                      placeholder="Your full name"
                       required
                     />
-                    <button
-                      type="button"
-                      className="strap-eye"
-                      onClick={() => setShowPassword((value) => !value)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                      aria-pressed={showPassword}
-                    >
-                      {showPassword ? (
-                        <EyeOff size={22} aria-hidden="true" />
-                      ) : (
-                        <Eye size={22} aria-hidden="true" />
-                      )}
-                    </button>
                   </div>
-                </div>
-              )}
+                )}
 
-              {mode === "signup" && (
-                <label className="strap-terms">
-                  <Checkbox
-                    checked={accepted}
-                    onCheckedChange={(value) => setAccepted(value === true)}
-                    className="strap-check"
-                    aria-label="Accept terms and privacy policy"
-                  />
-                  <span>
-                    I agree to the <Link to="/terms">Terms</Link> and{" "}
-                    <Link to="/privacy">Privacy Policy</Link>.
-                  </span>
-                </label>
-              )}
+                {mode !== "recover" && (
+                  <div className="strap-field-wrap">
+                    <Label htmlFor="email" className="strap-label">
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      className="strap-field"
+                      autoComplete="email"
+                      inputMode="email"
+                      autoCapitalize="none"
+                      spellCheck={false}
+                      placeholder="you@yourbusiness.com"
+                      required
+                    />
+                  </div>
+                )}
 
-              {(mode === "signin" || mode === "signup" || mode === "reset") && (
-                <TurnstileCaptcha key={captchaResetKey} onTokenChange={setCaptchaToken} />
-              )}
+                {mode !== "reset" && (
+                  <div className="strap-field-wrap">
+                    <div className="strap-field-row">
+                      <Label htmlFor="password" className="strap-label">
+                        {mode === "recover" ? "New password" : "Password"}
+                      </Label>
+                      {mode === "signin" && (
+                        <button
+                          type="button"
+                          className="strap-link"
+                          onClick={() => {
+                            setMode("reset");
+                            setNotice(null);
+                          }}
+                        >
+                          Forgot password?
+                        </button>
+                      )}
+                    </div>
+                    <div className="strap-pw">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                        className="strap-field"
+                        autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                        placeholder={
+                          mode === "signin" ? "Enter your password" : "Create a password"
+                        }
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="strap-eye"
+                        onClick={() => setShowPassword((value) => !value)}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-pressed={showPassword}
+                      >
+                        {showPassword ? (
+                          <EyeOff size={22} aria-hidden="true" />
+                        ) : (
+                          <Eye size={22} aria-hidden="true" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-              {notice && (
-                <div className="strap-notice" role="status">
-                  {notice}
-                </div>
-              )}
+                {mode === "signup" && (
+                  <label className="strap-terms">
+                    <Checkbox
+                      checked={accepted}
+                      onCheckedChange={(value) => setAccepted(value === true)}
+                      className="strap-check"
+                      aria-label="Accept terms and privacy policy"
+                    />
+                    <span>
+                      I agree to the <Link to="/terms">Terms</Link> and{" "}
+                      <Link to="/privacy">Privacy Policy</Link>.
+                    </span>
+                  </label>
+                )}
 
-              <Button type="submit" disabled={busy || googleLoading} className="strap-btn strap-btn-primary">
-                {busy ? "Please wait…" : pendingOtpEmail ? "Send verification code" : submitLabel}
-              </Button>
+                {(mode === "signin" || mode === "signup" || mode === "reset") && (
+                  <TurnstileCaptcha key={captchaResetKey} onTokenChange={setCaptchaToken} />
+                )}
+
+                {notice && (
+                  <div className="strap-notice" role="status">
+                    {notice}
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={busy || googleLoading}
+                  className="strap-btn strap-btn-primary"
+                >
+                  {busy ? "Please wait…" : pendingOtpEmail ? "Send verification code" : submitLabel}
+                </Button>
               </fieldset>
             </form>
 
