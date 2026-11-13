@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { AppShell } from "@/components/shell/AppShell";
-import { getBusinessMode } from "@/lib/business-modes";
+import { getBusinessMode, resolveBusinessMode } from "@/lib/business-modes";
 import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 
 export const Route = createFileRoute("/_authenticated/online-store/")({
@@ -23,12 +23,15 @@ export const Route = createFileRoute("/_authenticated/online-store/")({
 function OnlineStoreHome() {
   const { store, role } = useStoreContext();
   const canEdit = role === "owner" || role === "manager";
-  const businessMode = getBusinessMode(
-    (store?.storefront_settings as any)?.businessMode ?? (store as any)?.business_type,
-  );
+  const businessModeValue =
+    (store?.storefront_settings as any)?.businessMode ?? (store as any)?.business_type;
+  const resolvedBusinessMode = resolveBusinessMode(businessModeValue);
+  const businessMode = resolvedBusinessMode ?? getBusinessMode(null);
   const isFashion = businessMode.key === "fashion";
-  const modeProfileResult = getBusinessModeProfile(businessMode.key);
-  const modeProfile = modeProfileResult.ok ? modeProfileResult.profile : null;
+  const modeProfileResult = resolvedBusinessMode
+    ? getBusinessModeProfile(resolvedBusinessMode.key)
+    : null;
+  const modeProfile = modeProfileResult?.ok ? modeProfileResult.profile : null;
   const storefrontTemplates = modeProfile?.storefront.templates ?? [];
   const query = useQuery({
     queryKey: ["online-store-home", store?.id],
