@@ -500,7 +500,7 @@ $function$;
 revoke all on function public.guard_sale_return_refund_balance() from public,anon,authenticated;
 drop trigger if exists guard_sale_return_refund_balance on public.sale_returns;
 create trigger guard_sale_return_refund_balance
-before update of refunded_amount,refund_status on public.sale_returns
+before update of refunded_amount,refund_status,replacement_sale_id on public.sale_returns
 for each row execute function public.guard_sale_return_refund_balance();
 
 -- Beauty: service catalogue, appointments and auditable consumable usage.
