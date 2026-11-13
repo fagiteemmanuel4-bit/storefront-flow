@@ -1,0 +1,1207 @@
+{
+  "$schema": "../../schemas/business-mode-profile.schema.json",
+  "schemaVersion": 1,
+  "profileVersion": 1,
+  "id": "normal-business",
+  "name": "Normal Business",
+  "status": "draft",
+  "runtimeReady": false,
+  "baseCatalog": "normal",
+  "businessModeKeys": [
+    "general-retail"
+  ],
+  "description": "The Normal Business baseline profile for general retail and mixed everyday product shops. It is the first data-driven mode profile for Strap Online Store.",
+  "principles": [
+    "All mode-specific product fields, variants, order statuses, checkout fields, dashboard cards, storefront sections, filters and templates are read from this profile.",
+    "Shared UI and services must not branch on a business-mode name when profile data can express the behavior.",
+    "The Physical Store and Online Store remain separate workspaces. They share store-scoped product, inventory, customer and order services through explicit contracts.",
+    "Templates and section JSON are declarative configuration only. Render only registered components; never execute arbitrary code from JSON.",
+    "Missing, invalid or unsupported profile configuration fails closed and never silently falls back to another mode."
+  ],
+  "product": {
+    "entity": "products",
+    "inventoryEntity": "branch_stock",
+    "fields": [
+      {
+        "id": "name",
+        "label": "Product name",
+        "column": "name",
+        "type": "text",
+        "required": true,
+        "maxLength": 120,
+        "surfaces": [
+          "physical",
+          "online"
+        ],
+        "searchable": true
+      },
+      {
+        "id": "description",
+        "label": "Description",
+        "column": "description",
+        "type": "long-text",
+        "required": false,
+        "surfaces": [
+          "online"
+        ],
+        "searchable": true
+      },
+      {
+        "id": "sku",
+        "label": "SKU",
+        "column": "sku",
+        "type": "text",
+        "required": false,
+        "maxLength": 60,
+        "surfaces": [
+          "physical",
+          "online"
+        ],
+        "searchable": true
+      },
+      {
+        "id": "barcode",
+        "label": "Barcode",
+        "column": "barcode",
+        "type": "text",
+        "required": false,
+        "maxLength": 60,
+        "surfaces": [
+          "physical"
+        ],
+        "searchable": false
+      },
+      {
+        "id": "category",
+        "label": "Category",
+        "column": "category",
+        "type": "text",
+        "required": false,
+        "maxLength": 60,
+        "surfaces": [
+          "physical",
+          "online"
+        ],
+        "searchable": true,
+        "filterable": true
+      },
+      {
+        "id": "brand",
+        "label": "Brand",
+        "column": "brand",
+        "type": "text",
+        "required": false,
+        "surfaces": [
+          "physical",
+          "online"
+        ],
+        "searchable": true
+      },
+      {
+        "id": "manufacturer",
+        "label": "Manufacturer",
+        "column": "manufacturer",
+        "type": "text",
+        "required": false,
+        "surfaces": [
+          "physical"
+        ],
+        "searchable": true
+      },
+      {
+        "id": "unit",
+        "label": "Selling unit",
+        "column": "unit",
+        "type": "text",
+        "required": false,
+        "surfaces": [
+          "physical",
+          "online"
+        ]
+      },
+      {
+        "id": "price",
+        "label": "Selling price",
+        "column": "price",
+        "type": "money",
+        "required": true,
+        "min": 0,
+        "surfaces": [
+          "physical",
+          "online"
+        ],
+        "sortable": true
+      },
+      {
+        "id": "cost",
+        "label": "Unit cost",
+        "column": "cost",
+        "type": "money",
+        "required": false,
+        "min": 0,
+        "surfaces": [
+          "physical"
+        ]
+      },
+      {
+        "id": "lowStockThreshold",
+        "label": "Low-stock threshold",
+        "column": "low_stock_threshold",
+        "type": "integer",
+        "required": false,
+        "min": 0,
+        "surfaces": [
+          "physical"
+        ]
+      },
+      {
+        "id": "quantity",
+        "label": "Available quantity",
+        "source": "branch_stock.quantity",
+        "type": "integer",
+        "required": false,
+        "readOnly": true,
+        "surfaces": [
+          "physical",
+          "online"
+        ],
+        "notes": "Aggregated or branch-scoped from the inventory ledger; never written directly by storefront JSON."
+      },
+      {
+        "id": "images",
+        "label": "Product images",
+        "source": "product_images",
+        "type": "image-list",
+        "required": false,
+        "maxItems": 6,
+        "surfaces": [
+          "physical",
+          "online"
+        ]
+      }
+    ],
+    "variants": {
+      "enabled": false,
+      "strategy": "simple-product",
+      "optionGroups": [],
+      "notes": "Normal Business baseline has no configured variant dimension. Do not show fashion size/color, electronics storage/IMEI, or food portion modifiers in this profile. A future profile revision may add generic variants after its inventory and checkout allocation contract is implemented."
+    },
+    "inventory": {
+      "sourceOfTruth": "branch_stock",
+      "quantityMutation": "inventory-ledger-or-authorized-stock-service",
+      "supportsMultipleBranches": true,
+      "supportsAtomicReservation": true,
+      "onlineAndPhysicalShareStock": true,
+      "oversellPolicy": "deny",
+      "lowStockField": "low_stock_threshold"
+    }
+  },
+  "orders": {
+    "entity": "online_orders",
+    "statuses": [
+      {
+        "id": "pending",
+        "label": "Pending",
+        "kind": "open",
+        "customerVisible": true,
+        "initial": true
+      },
+      {
+        "id": "confirmed",
+        "label": "Confirmed",
+        "kind": "open",
+        "customerVisible": true
+      },
+      {
+        "id": "processing",
+        "label": "Processing",
+        "kind": "fulfillment",
+        "customerVisible": true
+      },
+      {
+        "id": "ready",
+        "label": "Ready",
+        "kind": "fulfillment",
+        "customerVisible": true,
+        "legacy": true
+      },
+      {
+        "id": "shipped",
+        "label": "Shipped / dispatched",
+        "kind": "fulfillment",
+        "customerVisible": true
+      },
+      {
+        "id": "completed",
+        "label": "Completed",
+        "kind": "terminal",
+        "customerVisible": true
+      },
+      {
+        "id": "cancelled",
+        "label": "Cancelled",
+        "kind": "terminal",
+        "customerVisible": true
+      },
+      {
+        "id": "refunded",
+        "label": "Refunded",
+        "kind": "terminal",
+        "customerVisible": true
+      }
+    ],
+    "transitions": [
+      {
+        "from": "pending",
+        "to": [
+          "confirmed",
+          "cancelled"
+        ]
+      },
+      {
+        "from": "confirmed",
+        "to": [
+          "processing",
+          "shipped",
+          "cancelled"
+        ]
+      },
+      {
+        "from": "processing",
+        "to": [
+          "shipped",
+          "cancelled"
+        ]
+      },
+      {
+        "from": "ready",
+        "to": [
+          "completed",
+          "cancelled"
+        ],
+        "legacyPath": true
+      },
+      {
+        "from": "shipped",
+        "to": [
+          "completed"
+        ]
+      },
+      {
+        "from": "completed",
+        "to": []
+      },
+      {
+        "from": "cancelled",
+        "to": []
+      },
+      {
+        "from": "refunded",
+        "to": []
+      }
+    ],
+    "terminalStatuses": [
+      "completed",
+      "cancelled",
+      "refunded"
+    ],
+    "notes": "This mirrors the current database transition guard. Do not add transitions until the server-side guard and order UI are updated and tested together."
+  },
+  "dashboard": {
+    "cards": [
+      {
+        "id": "sales-today",
+        "label": "Sales today",
+        "source": "sales",
+        "metric": "count",
+        "scope": "active-branch-or-all-branches",
+        "priority": 1
+      },
+      {
+        "id": "revenue-today",
+        "label": "Revenue today",
+        "source": "sales.total",
+        "metric": "sum",
+        "scope": "active-branch-or-all-branches",
+        "priority": 2
+      },
+      {
+        "id": "low-stock",
+        "label": "Low stock",
+        "source": "branch_stock+products.low_stock_threshold",
+        "metric": "count",
+        "scope": "active-branch",
+        "priority": 3
+      },
+      {
+        "id": "orders-to-action",
+        "label": "Orders to action",
+        "source": "online_orders.status",
+        "metric": "count",
+        "filter": {
+          "statuses": [
+            "pending"
+          ]
+        },
+        "scope": "store",
+        "priority": 4
+      }
+    ],
+    "notes": "Dashboard card definitions are profile-driven. Hide cards whose data source or feature flag is unavailable; never show fabricated zeroes when a query failed."
+  },
+  "storefront": {
+    "allowedSectionTypes": [
+      "announcement",
+      "hero",
+      "featured-products",
+      "product-grid",
+      "categories",
+      "promotional-banner",
+      "gallery",
+      "about",
+      "testimonials",
+      "social-proof",
+      "newsletter",
+      "faq",
+      "contact",
+      "footer"
+    ],
+    "sectionRegistry": [
+      {
+        "id": "announcement",
+        "label": "Announcement bar",
+        "category": "marketing",
+        "singleton": true,
+        "settings": {
+          "text": "string",
+          "href": "url?",
+          "tone": "enum:neutral|accent|dark"
+        }
+      },
+      {
+        "id": "hero",
+        "label": "Hero",
+        "category": "content",
+        "singleton": true,
+        "settings": {
+          "headline": "string",
+          "subheadline": "string?",
+          "buttonText": "string?",
+          "buttonHref": "url?",
+          "imageAsset": "asset?",
+          "alignment": "enum:left|center|split"
+        }
+      },
+      {
+        "id": "featured-products",
+        "label": "Featured products",
+        "category": "catalog",
+        "singleton": false,
+        "settings": {
+          "title": "string",
+          "collectionId": "collection?",
+          "limit": "integer:1..12"
+        }
+      },
+      {
+        "id": "product-grid",
+        "label": "Product grid",
+        "category": "catalog",
+        "singleton": false,
+        "settings": {
+          "title": "string",
+          "collectionId": "collection?",
+          "columns": "integer:2..5",
+          "limit": "integer:4..48"
+        }
+      },
+      {
+        "id": "categories",
+        "label": "Categories",
+        "category": "catalog",
+        "singleton": false,
+        "settings": {
+          "title": "string",
+          "layout": "enum:tiles|pills|editorial",
+          "limit": "integer:2..12"
+        }
+      },
+      {
+        "id": "promotional-banner",
+        "label": "Promotional banner",
+        "category": "marketing",
+        "singleton": false,
+        "settings": {
+          "headline": "string",
+          "body": "string?",
+          "imageAsset": "asset?",
+          "href": "url?"
+        }
+      },
+      {
+        "id": "gallery",
+        "label": "Image gallery",
+        "category": "content",
+        "singleton": false,
+        "settings": {
+          "title": "string",
+          "images": "asset[]",
+          "layout": "enum:grid|masonry|carousel"
+        }
+      },
+      {
+        "id": "about",
+        "label": "About",
+        "category": "content",
+        "singleton": false,
+        "settings": {
+          "title": "string",
+          "body": "richText",
+          "imageAsset": "asset?"
+        }
+      },
+      {
+        "id": "testimonials",
+        "label": "Testimonials",
+        "category": "trust",
+        "singleton": false,
+        "settings": {
+          "title": "string",
+          "source": "verified_reviews|merchant_quotes"
+        }
+      },
+      {
+        "id": "social-proof",
+        "label": "Social proof",
+        "category": "trust",
+        "singleton": false,
+        "settings": {
+          "title": "string",
+          "showReviewSummary": "boolean"
+        }
+      },
+      {
+        "id": "newsletter",
+        "label": "Newsletter",
+        "category": "marketing",
+        "singleton": true,
+        "settings": {
+          "title": "string",
+          "description": "string?",
+          "consentText": "string"
+        }
+      },
+      {
+        "id": "faq",
+        "label": "FAQ",
+        "category": "support",
+        "singleton": false,
+        "settings": {
+          "title": "string",
+          "items": "faq[]"
+        }
+      },
+      {
+        "id": "contact",
+        "label": "Contact",
+        "category": "support",
+        "singleton": false,
+        "settings": {
+          "title": "string",
+          "showPhone": "boolean",
+          "showEmail": "boolean",
+          "showAddress": "boolean"
+        }
+      },
+      {
+        "id": "footer",
+        "label": "Footer",
+        "category": "navigation",
+        "singleton": true,
+        "settings": {
+          "brandText": "string?",
+          "showPolicies": "boolean",
+          "showSocialLinks": "boolean"
+        }
+      }
+    ],
+    "templateIds": [
+      "everyday-edit",
+      "market-day",
+      "quiet-form",
+      "bold-supply",
+      "neighbourhood",
+      "signature-store"
+    ],
+    "templates": [
+      {
+        "id": "everyday-edit",
+        "name": "Everyday Edit",
+        "family": "Modern retail",
+        "positioning": "A confident, editorial storefront for mixed everyday catalogues.",
+        "recommendedFor": [
+          "general shops",
+          "mixed catalogues",
+          "lifestyle retailers"
+        ],
+        "styleTags": [
+          "editorial",
+          "balanced",
+          "modern"
+        ],
+        "version": 1,
+        "preview": {
+          "fixture": "normal-demo-v1",
+          "viewport": "desktop",
+          "hero": "Split editorial hero with generous whitespace"
+        },
+        "theme": {
+          "colorScheme": "light",
+          "background": "#FAFAF7",
+          "surface": "#FFFFFF",
+          "text": "#191B18",
+          "muted": "#73766F",
+          "primary": "#253B32",
+          "accent": "#C7F36B",
+          "fontHeading": "Manrope",
+          "fontBody": "Inter",
+          "radius": "20px",
+          "density": "comfortable"
+        },
+        "pages": {
+          "home": [
+            "announcement",
+            "hero",
+            "categories",
+            "featured-products",
+            "product-grid",
+            "promotional-banner",
+            "about",
+            "footer"
+          ],
+          "collection": [
+            "hero",
+            "product-grid",
+            "footer"
+          ],
+          "product": [
+            "gallery",
+            "about",
+            "featured-products",
+            "footer"
+          ],
+          "content": [
+            "hero",
+            "about",
+            "contact",
+            "footer"
+          ]
+        }
+      },
+      {
+        "id": "market-day",
+        "name": "Market Day",
+        "family": "Warm commerce",
+        "positioning": "A lively, approachable shop with clear categories and fast product discovery.",
+        "recommendedFor": [
+          "provision shops",
+          "neighbourhood stores",
+          "high-turnover retail"
+        ],
+        "styleTags": [
+          "warm",
+          "approachable",
+          "discovery"
+        ],
+        "version": 1,
+        "preview": {
+          "fixture": "normal-demo-v1",
+          "viewport": "desktop",
+          "hero": "Warm color-block hero with category shortcuts"
+        },
+        "theme": {
+          "colorScheme": "light",
+          "background": "#FFF9F0",
+          "surface": "#FFFFFF",
+          "text": "#29231D",
+          "muted": "#7D7165",
+          "primary": "#6C3F25",
+          "accent": "#F4B544",
+          "fontHeading": "DM Sans",
+          "fontBody": "DM Sans",
+          "radius": "14px",
+          "density": "compact"
+        },
+        "pages": {
+          "home": [
+            "announcement",
+            "hero",
+            "categories",
+            "product-grid",
+            "featured-products",
+            "social-proof",
+            "footer"
+          ],
+          "collection": [
+            "categories",
+            "product-grid",
+            "footer"
+          ],
+          "product": [
+            "gallery",
+            "about",
+            "featured-products",
+            "footer"
+          ],
+          "content": [
+            "hero",
+            "about",
+            "faq",
+            "contact",
+            "footer"
+          ]
+        }
+      },
+      {
+        "id": "quiet-form",
+        "name": "Quiet Form",
+        "family": "Minimal",
+        "positioning": "A calm, spacious design that keeps the catalogue and photography in focus.",
+        "recommendedFor": [
+          "minimal brands",
+          "specialty retailers",
+          "small curated shops"
+        ],
+        "styleTags": [
+          "minimal",
+          "quiet",
+          "image-led"
+        ],
+        "version": 1,
+        "preview": {
+          "fixture": "normal-demo-v1",
+          "viewport": "desktop",
+          "hero": "Minimal typography-led hero"
+        },
+        "theme": {
+          "colorScheme": "light",
+          "background": "#F7F7F5",
+          "surface": "#FFFFFF",
+          "text": "#171717",
+          "muted": "#777777",
+          "primary": "#171717",
+          "accent": "#B7C5A5",
+          "fontHeading": "Inter",
+          "fontBody": "Inter",
+          "radius": "10px",
+          "density": "comfortable"
+        },
+        "pages": {
+          "home": [
+            "hero",
+            "featured-products",
+            "product-grid",
+            "about",
+            "faq",
+            "footer"
+          ],
+          "collection": [
+            "hero",
+            "product-grid",
+            "footer"
+          ],
+          "product": [
+            "gallery",
+            "about",
+            "featured-products",
+            "footer"
+          ],
+          "content": [
+            "hero",
+            "about",
+            "contact",
+            "footer"
+          ]
+        }
+      },
+      {
+        "id": "bold-supply",
+        "name": "Bold Supply",
+        "family": "Catalog first",
+        "positioning": "A high-clarity catalogue experience for stores with broad product ranges.",
+        "recommendedFor": [
+          "general merchandise",
+          "hardware and utility retail",
+          "large catalogues"
+        ],
+        "styleTags": [
+          "catalog-first",
+          "high-contrast",
+          "functional"
+        ],
+        "version": 1,
+        "preview": {
+          "fixture": "normal-demo-v1",
+          "viewport": "desktop",
+          "hero": "Compact headline with prominent search and category rail"
+        },
+        "theme": {
+          "colorScheme": "light",
+          "background": "#F3F5F7",
+          "surface": "#FFFFFF",
+          "text": "#101820",
+          "muted": "#687582",
+          "primary": "#123B5D",
+          "accent": "#C8E64A",
+          "fontHeading": "Space Grotesk",
+          "fontBody": "Inter",
+          "radius": "12px",
+          "density": "compact"
+        },
+        "pages": {
+          "home": [
+            "announcement",
+            "hero",
+            "categories",
+            "product-grid",
+            "featured-products",
+            "footer"
+          ],
+          "collection": [
+            "categories",
+            "product-grid",
+            "footer"
+          ],
+          "product": [
+            "gallery",
+            "about",
+            "featured-products",
+            "footer"
+          ],
+          "content": [
+            "hero",
+            "about",
+            "faq",
+            "contact",
+            "footer"
+          ]
+        }
+      },
+      {
+        "id": "neighbourhood",
+        "name": "Neighbourhood",
+        "family": "Community retail",
+        "positioning": "A friendly, trust-led shop with clear contact and store information.",
+        "recommendedFor": [
+          "local stores",
+          "family businesses",
+          "community retailers"
+        ],
+        "styleTags": [
+          "friendly",
+          "local",
+          "trust-led"
+        ],
+        "version": 1,
+        "preview": {
+          "fixture": "normal-demo-v1",
+          "viewport": "desktop",
+          "hero": "Warm welcome hero with store details and featured range"
+        },
+        "theme": {
+          "colorScheme": "light",
+          "background": "#F8F8F2",
+          "surface": "#FFFFFF",
+          "text": "#22251F",
+          "muted": "#72766C",
+          "primary": "#365B45",
+          "accent": "#E4B86A",
+          "fontHeading": "Plus Jakarta Sans",
+          "fontBody": "Inter",
+          "radius": "18px",
+          "density": "comfortable"
+        },
+        "pages": {
+          "home": [
+            "announcement",
+            "hero",
+            "featured-products",
+            "categories",
+            "about",
+            "testimonials",
+            "contact",
+            "footer"
+          ],
+          "collection": [
+            "hero",
+            "product-grid",
+            "footer"
+          ],
+          "product": [
+            "gallery",
+            "about",
+            "featured-products",
+            "contact",
+            "footer"
+          ],
+          "content": [
+            "hero",
+            "about",
+            "testimonials",
+            "faq",
+            "contact",
+            "footer"
+          ]
+        }
+      },
+      {
+        "id": "signature-store",
+        "name": "Signature Store",
+        "family": "Premium",
+        "positioning": "A refined, image-forward experience for carefully selected products.",
+        "recommendedFor": [
+          "specialty shops",
+          "premium general retail",
+          "curated collections"
+        ],
+        "styleTags": [
+          "premium",
+          "editorial",
+          "refined"
+        ],
+        "version": 1,
+        "preview": {
+          "fixture": "normal-demo-v1",
+          "viewport": "desktop",
+          "hero": "Large immersive image hero with restrained typography"
+        },
+        "theme": {
+          "colorScheme": "light",
+          "background": "#F6F3EE",
+          "surface": "#FFFFFF",
+          "text": "#211F1B",
+          "muted": "#80796E",
+          "primary": "#28231E",
+          "accent": "#B89B6B",
+          "fontHeading": "Cormorant Garamond",
+          "fontBody": "Manrope",
+          "radius": "4px",
+          "density": "comfortable"
+        },
+        "pages": {
+          "home": [
+            "announcement",
+            "hero",
+            "gallery",
+            "featured-products",
+            "categories",
+            "about",
+            "testimonials",
+            "footer"
+          ],
+          "collection": [
+            "hero",
+            "product-grid",
+            "footer"
+          ],
+          "product": [
+            "gallery",
+            "about",
+            "featured-products",
+            "testimonials",
+            "footer"
+          ],
+          "content": [
+            "hero",
+            "about",
+            "gallery",
+            "contact",
+            "footer"
+          ]
+        }
+      }
+    ],
+    "productDiscovery": {
+      "searchableFields": [
+        "name",
+        "description",
+        "category",
+        "brand"
+      ],
+      "filters": [
+        {
+          "id": "category",
+          "label": "Category",
+          "source": "product.category",
+          "type": "multi-select"
+        },
+        {
+          "id": "availability",
+          "label": "Availability",
+          "source": "inventory.available_quantity",
+          "type": "enum",
+          "values": [
+            "in-stock",
+            "out-of-stock"
+          ]
+        },
+        {
+          "id": "price",
+          "label": "Price range",
+          "source": "product.price",
+          "type": "range"
+        }
+      ],
+      "sortOptions": [
+        {
+          "id": "name-asc",
+          "label": "Name: A to Z",
+          "field": "name",
+          "direction": "asc"
+        },
+        {
+          "id": "price-asc",
+          "label": "Price: low to high",
+          "field": "price",
+          "direction": "asc"
+        },
+        {
+          "id": "price-desc",
+          "label": "Price: high to low",
+          "field": "price",
+          "direction": "desc"
+        }
+      ],
+      "defaultSort": "name-asc"
+    },
+    "productPage": {
+      "layout": "gallery-details",
+      "gallery": {
+        "enabled": true,
+        "source": "product_images",
+        "maxImages": 6
+      },
+      "showPrice": true,
+      "showAvailability": true,
+      "showCategory": true,
+      "showSku": false,
+      "showRelatedProducts": true,
+      "variantSelector": false
+    },
+    "pages": [
+      "home",
+      "collection",
+      "product",
+      "cart",
+      "content"
+    ],
+    "preview": {
+      "fixtureSet": "normal-demo-v1",
+      "allowLiveCustomerData": false,
+      "allowPublishedWrites": false,
+      "viewportPresets": [
+        "mobile-390",
+        "tablet-768",
+        "desktop-1440"
+      ],
+      "defaultViewport": "desktop"
+    }
+  },
+  "checkout": {
+    "fields": [
+      {
+        "id": "customerName",
+        "label": "Full name",
+        "source": "online_orders.customer_name",
+        "type": "text",
+        "required": true
+      },
+      {
+        "id": "customerPhone",
+        "label": "Phone number",
+        "source": "online_orders.customer_phone",
+        "type": "tel",
+        "required": true
+      },
+      {
+        "id": "customerEmail",
+        "label": "Email address",
+        "source": "online_orders.customer_email",
+        "type": "email",
+        "required": false
+      },
+      {
+        "id": "shippingAddress",
+        "label": "Delivery address",
+        "source": "online_orders.shipping_address",
+        "type": "textarea",
+        "required": true
+      },
+      {
+        "id": "customerNote",
+        "label": "Order note",
+        "source": "online_orders.customer_note",
+        "type": "textarea",
+        "required": false
+      }
+    ],
+    "fulfillmentModes": [
+      {
+        "id": "delivery",
+        "label": "Delivery",
+        "enabled": true
+      }
+    ],
+    "paymentMethods": [
+      {
+        "id": "pay_on_delivery",
+        "label": "Pay on delivery",
+        "enabled": true,
+        "implementation": "current-public-order-rpc"
+      },
+      {
+        "id": "bank_transfer",
+        "label": "Bank transfer",
+        "enabled": true,
+        "implementation": "current-public-order-rpc"
+      }
+    ],
+    "paymentProviderPolicy": "Provider availability is resolved from seller country and server-side provider configuration. Do not expose card or wallet methods unless a verified provider integration is enabled.",
+    "taxAndShipping": {
+      "requiredBeforeCheckoutRelease": true,
+      "configurationSource": "store-shipping-settings",
+      "noImplicitFreeShipping": true
+    },
+    "notes": "Current public order RPC requires customer name, phone and shipping address, and accepts pay_on_delivery or bank_transfer. Checkout remains gated until the full feature acceptance and test gates pass."
+  },
+  "featureFlags": {
+    "default": "off",
+    "flags": {
+      "ob.email-verify": false,
+      "ob.save-resume": false,
+      "ob.slug-check": false,
+      "ob.mode-select": false,
+      "ob.logo-upload": false,
+      "ob.setup-checklist": false,
+      "pr.crud": false,
+      "pr.images": false,
+      "pr.variants": false,
+      "pr.mode-fields": false,
+      "pr.categories": false,
+      "pr.bulk-actions": false,
+      "pr.csv-import-export": false,
+      "pr.draft-publish": false,
+      "pr.seo-fields": false,
+      "sy.publish-button": false,
+      "sy.import-from-store": false,
+      "sy.unpublish": false,
+      "sy.field-overrides": false,
+      "sy.stock-single-source": false,
+      "sy.sync-log": false,
+      "sy.auto-unpublish": false,
+      "or.list-filter": false,
+      "or.status-flow": false,
+      "or.detail-timeline": false,
+      "or.notifications": false,
+      "or.invoice-packing": false,
+      "or.cancel-refund": false,
+      "or.delivery-pickup": false,
+      "or.internal-notes": false,
+      "cu.list-profile": false,
+      "cu.merge-channels": false,
+      "cu.shopper-account": false,
+      "cu.order-tracking": false,
+      "cu.wishlist": false,
+      "cu.saved-addresses": false,
+      "sf.template-gallery": false,
+      "sf.theme-editor": false,
+      "sf.section-editor": false,
+      "sf.draft-publish-versions": false,
+      "sf.custom-css-js": false,
+      "sf.subdomain-domain": false,
+      "sf.search-filter-sort": false,
+      "sf.product-page": false,
+      "sf.reviews": false,
+      "sf.seo-og": false,
+      "ck.cart-drawer": false,
+      "ck.guest-and-account": false,
+      "ck.discount-codes": false,
+      "ck.shipping-tax": false,
+      "ck.payments": false,
+      "ck.mode-fields": false,
+      "ck.abandoned-cart": false,
+      "mk.announcement-bar": false,
+      "mk.newsletter": false,
+      "mk.share-qr": false,
+      "mk.banners": false,
+      "an.dashboard-cards": false,
+      "an.sales-chart": false,
+      "an.top-products": false,
+      "an.channel-compare": false,
+      "st.store-profile": false,
+      "st.policies": false,
+      "st.roles": false,
+      "st.notifications": false,
+      "st.data-export": false,
+      "pl.states": false,
+      "pl.security": false,
+      "pl.audit-log": false,
+      "pl.feature-flags": false,
+      "pl.monitoring": false,
+      "pl.accessibility-performance": false,
+      "pl.e2e-tests": false
+    },
+    "rule": "Flag key must exactly equal the feature id in strap-features.normal.json. A flag is enabled only after acceptance criteria, lifecycle states, 390px/desktop checks and automated tests pass."
+  },
+  "workspaces": {
+    "physicalStore": {
+      "purpose": "In-person POS, branch stock, product operations and physical sales.",
+      "owns": [
+        "branch_stock",
+        "physical_sales",
+        "physical_receipts"
+      ]
+    },
+    "onlineStore": {
+      "purpose": "Store Studio, JSON templates, storefront publishing, online carts, customer orders and online fulfilment.",
+      "owns": [
+        "storefront_drafts",
+        "storefront_published_versions",
+        "online_orders",
+        "online_order_items"
+      ]
+    },
+    "shared": [
+      "store-scoped products",
+      "inventory service",
+      "customer identity where consent and matching rules permit",
+      "notification service"
+    ],
+    "syncContract": {
+      "direction": "explicit-events-and-service-calls",
+      "idempotent": true,
+      "auditRequired": true,
+      "stockAuthority": "branch_stock-and-inventory-service",
+      "noCrossWorkspaceUICoupling": true
+    }
+  },
+  "compatibility": {
+    "databaseStatus": "profile-authored-not-runtime-integrated",
+    "verifiedAgainst": [
+      "src/lib/business-modes.ts",
+      "src/components/pos/ProductFormDialog.tsx",
+      "src/routes/_authenticated/products.tsx",
+      "src/routes/_authenticated/online-store/orders.tsx",
+      "src/routes/_authenticated/online-store/builder.tsx",
+      "supabase/migrations/20261107214440_guard_online_order_status_transitions.sql",
+      "supabase/migrations/20261028230000_fashion_storefront_variants.sql"
+    ],
+    "knownLimitations": [
+      "Current product and order screens still contain hard-coded mode branches. The profile is not consumed by the runtime yet.",
+      "Current storefront builder has hard-coded template definitions. The new template list is a proposed data-driven replacement, not a claim that the templates already render.",
+      "Current public order RPC supports pay_on_delivery and bank_transfer. Payment-provider expansion requires country-aware server configuration.",
+      "The current online order transition guard remains authoritative until a profile-driven server-side transition validator is implemented.",
+      "Generic product variants are intentionally disabled for Normal Business until a complete stock reservation and order allocation contract exists."
+    ]
+  }
+}
