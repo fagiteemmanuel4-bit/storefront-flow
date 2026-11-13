@@ -516,6 +516,14 @@ begin
 end;
 $policy$;
 
+create policy food_ingredient_stock_manager_insert on public.food_ingredient_stock
+  for insert to authenticated
+  with check (
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[])
+    and exists(select 1 from public.products p where p.id=product_id and p.store_id=food_ingredient_stock.store_id)
+    and exists(select 1 from public.branches b where b.id=branch_id and b.store_id=food_ingredient_stock.store_id)
+  );
+
 -- Manager-only configuration and stock receiving.
 create policy pharmacy_profiles_manager_write on public.pharmacy_product_profiles
   for all to authenticated
