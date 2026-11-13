@@ -63,6 +63,7 @@ const RESOURCES = [
   ["Help Centre", "/support", CircleHelp],
   ["Guides & documentation", "/support", BookOpen],
   ["Getting started", "/support", Zap],
+  ["Tax guide & calculator", "/tax-guide", Receipt],
   ["Hardware Center", "/hardware", ScanLine],
   ["Receipt printing help", "/support", Printer],
   ["Contact support", "/support", Mail],
@@ -266,7 +267,7 @@ export function SiteFooter() {
               {RESOURCES.map(([label, href, Icon]) => (
                 <Link
                   key={label}
-                  to={href as "/support" | "/hardware"}
+                  to={href as "/support" | "/hardware" | "/tax-guide"}
                   className="flex items-center gap-2 text-sm text-background/60 hover:text-accent"
                 >
                   <Icon className="size-3.5 shrink-0" />
