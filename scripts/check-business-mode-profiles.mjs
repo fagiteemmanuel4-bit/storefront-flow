@@ -41,6 +41,11 @@ for (const directory of profileDirs) {
   }
   const allowed = new Set(profile.storefront.allowedSectionTypes);
   for (const template of profile.storefront.templates) {
+    assert.ok(typeof template.name === "string" && template.name.length > 0, directory + ": template name is required");
+    assert.ok(typeof template.family === "string" && template.family.length > 0, directory + ": template family is required");
+    assert.ok(typeof template.positioning === "string" && template.positioning.length > 0, directory + ": template positioning is required");
+    assert.ok(Array.isArray(template.styleTags) && template.styleTags.every((tag) => typeof tag === "string"), directory + ": template styleTags must be strings");
+    assert.ok(Number.isInteger(template.version) && template.version > 0, directory + ": template version must be a positive integer");
     for (const sections of Object.values(template.pages)) {
       assert.ok(sections.every((section) => allowed.has(section)), directory + ": template references an unregistered section");
     }
