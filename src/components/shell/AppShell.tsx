@@ -66,6 +66,7 @@ import {
   STAFF_ROLE_META,
 } from "@/lib/staff-session";
 import { BusinessCalculatorFab } from "@/components/pos/BusinessCalculatorFab";
+import { FirstVisitTour } from "@/components/shell/FirstVisitTour";
 import { getBusinessMode } from "@/lib/business-modes";
 import { getStoreSubscription } from "@/lib/plan-access";
 import { hasEntitlement, type StrapTier } from "@/lib/commerceEntitlements";
@@ -1061,6 +1062,7 @@ export function AppShell({
           Strap will close the current session and return to sign-in. It does not delete your store.
         </div>
       </SecurityModal>
+      <FirstVisitTour pageKey={pathname} />
     </div>
   );
 }
