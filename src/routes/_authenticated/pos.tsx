@@ -819,6 +819,14 @@ function PosPage() {
                   {line.orderNote && (
                     <p className="mt-0.5 text-xs text-amber-700">Note: {line.orderNote}</p>
                   )}
+                  {line.pharmacyPrescriptionReference && (
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      Rx: {line.pharmacyPrescriptionReference} · {line.pharmacyPatientName}
+                    </p>
+                  )}
+                  {line.pharmacyPatientAge !== undefined && (
+                    <p className="mt-0.5 text-xs text-muted-foreground">Patient age: {line.pharmacyPatientAge}</p>
+                  )}
                   <p className="numeric mt-0.5 text-xs text-muted-foreground">
                     {formatMoney(Number(line.product.price), currency)} each
                   </p>
