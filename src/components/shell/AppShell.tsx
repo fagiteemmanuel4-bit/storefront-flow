@@ -926,10 +926,14 @@ export function AppShell({
                     {staffActive ? (branch ? " · " : "") + staffSession!.name : ""}
                   </p>
                 )}
-                <h1 className={cn(
-                  "truncate font-display font-bold leading-tight tracking-tight",
-                  pathname.startsWith("/settings") ? "text-xl sm:text-2xl" : "mt-1 text-2xl sm:text-3xl",
-                )}>
+                <h1
+                  className={cn(
+                    "truncate font-display font-bold leading-tight tracking-tight",
+                    pathname.startsWith("/settings")
+                      ? "text-xl sm:text-2xl"
+                      : "mt-1 text-2xl sm:text-3xl",
+                  )}
+                >
                   {title}
                 </h1>
               </div>

@@ -296,7 +296,10 @@ function ActionItem({ action, onSelect }: { action: QuickAction; onSelect: (to: 
         <span className="block text-sm font-semibold">{action.label}</span>
         <span className="block truncate text-xs text-muted-foreground">{action.hint}</span>
       </span>
-      <ArrowRight className="size-4 text-muted-foreground/50 transition-transform group-data-[selected=true]:translate-x-1 group-data-[selected=true]:text-foreground" aria-hidden="true" />
+      <ArrowRight
+        className="size-4 text-muted-foreground/50 transition-transform group-data-[selected=true]:translate-x-1 group-data-[selected=true]:text-foreground"
+        aria-hidden="true"
+      />
     </Command.Item>
   );
 }
