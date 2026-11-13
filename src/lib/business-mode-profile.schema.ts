@@ -30,7 +30,11 @@ const templateSchema = z.looseObject({
   pages: z.record(z.string(), z.array(z.string())),
 });
 
-export const businessModeProfileSchema = z.looseObject({
+export const businessModeProfileSchema = z.object({
+  $schema: z.string().optional(),
+  description: z.string().optional(),
+  principles: z.array(z.string()).optional(),
+  compatibility: z.record(z.string(), z.unknown()).optional(),
   schemaVersion: z.literal(1),
   profileVersion: z.number().int().positive(),
   id: z.string().regex(/^[a-z][a-z0-9-]+$/),
@@ -60,6 +64,10 @@ export const businessModeProfileSchema = z.looseObject({
     sectionRegistry: z.array(z.looseObject({ id: z.string(), label: z.string(), category: z.string(), settings: z.record(z.string(), z.unknown()) })),
     templates: z.array(templateSchema),
     templateIds: z.array(z.string()).optional(),
+    productDiscovery: z.record(z.string(), z.unknown()),
+    productPage: z.record(z.string(), z.unknown()),
+    pages: z.array(z.string()),
+    preview: z.record(z.string(), z.unknown()),
   }),
   checkout: z.looseObject({
     fields: z.array(z.looseObject({ id: z.string(), label: z.string(), type: z.string(), required: z.boolean() })),
