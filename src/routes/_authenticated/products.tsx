@@ -40,7 +40,7 @@ import {
   BottomSheetTitle,
 } from "@/components/ui/bottom-sheet";
 import { cn } from "@/lib/utils";
-import { getBusinessMode } from "@/lib/business-modes";
+import { getBusinessMode, resolveBusinessMode } from "@/lib/business-modes";
 import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { fetchAllRows } from "@/lib/supabase-pagination";
@@ -107,12 +107,15 @@ function ProductsPage() {
   const storeId = store?.id ?? null;
   const branchId = branch?.id ?? null;
   const currency = store?.currency ?? "NGN";
-  const businessMode = getBusinessMode(
-    (store?.storefront_settings as any)?.businessMode ?? store?.business_type,
-  );
+  const businessModeValue =
+    (store?.storefront_settings as any)?.businessMode ?? store?.business_type;
+  const resolvedBusinessMode = resolveBusinessMode(businessModeValue);
+  const businessMode = resolvedBusinessMode ?? getBusinessMode(null);
   const isFashion = businessMode.key === "fashion";
-  const modeProfileResult = getBusinessModeProfile(businessMode.key);
-  const modeProfile = modeProfileResult.ok ? modeProfileResult.profile : null;
+  const modeProfileResult = resolvedBusinessMode
+    ? getBusinessModeProfile(resolvedBusinessMode.key)
+    : null;
+  const modeProfile = modeProfileResult?.ok ? modeProfileResult.profile : null;
   const physicalProfileFields = modeProfile?.product.fields.filter((field) => field.surfaces.includes("physical")) ?? [];
   const isGrocery = businessMode.key === "grocery-provision";
   const query = useQuery({
