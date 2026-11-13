@@ -78,6 +78,8 @@ function AuthPage() {
     return new URLSearchParams(window.location.search).get("email") ?? "";
   });
   const [recoveryCode, setRecoveryCode] = useState("");
+  const [recoveryVerified, setRecoveryVerified] = useState(false);
+  const [googleOnlyRecovery, setGoogleOnlyRecovery] = useState(false);
   const [password, setPassword] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -207,6 +209,8 @@ function AuthPage() {
           sessionStorage.setItem("strap_password_recovery_email", normalizedEmail);
           setEmail(normalizedEmail);
           setRecoveryCode("");
+          setRecoveryVerified(false);
+          setGoogleOnlyRecovery(false);
           setPassword("");
           setMode("recover");
           setNotice(
@@ -352,46 +356,67 @@ function AuthPage() {
       toast.error("Enter the email address where you received the verification code.");
       return;
     }
+    const normalizedEmail = parsedEmail.data;
+
+    if (!recoveryVerified) {
+      if (!/^\\d{8}$/.test(recoveryCode)) {
+        toast.error("Enter the 8-digit password verification code from your email.");
+        return;
+      }
+      setBusy(true);
+      setNotice(null);
+      try {
+        const { data: recovery, error: verifyError } = await supabase.auth.verifyOtp({
+          email: normalizedEmail,
+          token: recoveryCode,
+          type: "recovery",
+        });
+        if (verifyError) throw new Error(verifyError.message);
+        if (!recovery.user) throw new Error("We couldn't verify that code. Request a fresh one.");
+
+        const providers = Array.isArray(recovery.user.app_metadata?.providers)
+          ? recovery.user.app_metadata.providers
+          : [];
+        const isGoogleOnly = providers.includes("google") && !providers.includes("email");
+        setGoogleOnlyRecovery(isGoogleOnly);
+        setRecoveryVerified(true);
+        setRecoveryCode("");
+        setNotice(
+          isGoogleOnly
+            ? "This account was created with Google and doesn't have a password yet. Create a password now to connect email-and-password sign-in to this same Strap account."
+            : "Your email is verified. Create your new password below to finish the password update.",
+        );
+      } catch (error) {
+        toast.error(errorMessage(error, "We couldn't verify that code. Check it and try again."));
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     const parsedPassword = passwordSchema.safeParse(password);
     if (!parsedPassword.success) {
       toast.error(parsedPassword.error.issues[0]!.message);
       return;
     }
-    const normalizedEmail = parsedEmail.data;
-    if (!/^\\d{8}$/.test(recoveryCode)) {
-      toast.error("Enter the 8-digit password verification code from your email.");
-      return;
-    }
     setBusy(true);
     setNotice(null);
     try {
-      const { data: recovery, error: verifyError } = await supabase.auth.verifyOtp({
-        email: normalizedEmail,
-        token: recoveryCode,
-        type: "recovery",
-      });
-      if (verifyError) throw new Error(verifyError.message);
-      if (!recovery.user) throw new Error("We couldn't verify that code. Request a fresh one.");
-
-      const providers = Array.isArray(recovery.user.app_metadata?.providers)
-        ? recovery.user.app_metadata.providers
-        : [];
-      const googleOnlyAccount = providers.includes("google") && !providers.includes("email");
-
       const { error } = await supabase.auth.updateUser({ password: parsedPassword.data });
       if (error) throw new Error(error.message);
       await supabase.auth.signOut();
       sessionStorage.removeItem("strap_password_recovery_email");
       setNotice(
-        googleOnlyAccount
+        googleOnlyRecovery
           ? "Password created and connected to your Google-linked email. You can now sign in to this same Strap account with Google or with your email and new password."
           : "Your password has been updated successfully. You can now sign in with your email and new password.",
       );
       setPassword("");
       setRecoveryCode("");
+      setRecoveryVerified(false);
       setMode("signin");
     } catch (error) {
-      toast.error(errorMessage(error, "We couldn't verify the code or save your password."));
+      toast.error(errorMessage(error, "We couldn't save your password. Please try again."));
     } finally {
       setBusy(false);
     }
@@ -421,7 +446,9 @@ function AuthPage() {
         ? "Create account"
         : mode === "reset"
           ? "Send verification code"
-          : "Verify code & create password";
+          : recoveryVerified
+            ? "Connect password"
+            : "Verify email code";
 
   return (
     <main className="strap-auth-main">
@@ -590,7 +617,7 @@ function AuthPage() {
                     />
                 </div>
 
-                {mode === "recover" && (
+                {mode === "recover" && !recoveryVerified && (
                   <div className="strap-field-wrap">
                     <Label htmlFor="recovery-code" className="strap-label">
                       8-digit email verification code
@@ -616,7 +643,7 @@ function AuthPage() {
                   </div>
                 )}
 
-                {mode !== "reset" && (
+                {mode !== "reset" && (mode !== "recover" || recoveryVerified) && (
                   <div className="strap-field-wrap">
                     <div className="strap-field-row">
                       <Label htmlFor="password" className="strap-label">
@@ -736,6 +763,8 @@ function AuthPage() {
                   setNotice(null);
                   setPassword("");
                   setRecoveryCode("");
+                  setRecoveryVerified(false);
+                  setGoogleOnlyRecovery(false);
                 }}
               >
                 Back to log in
