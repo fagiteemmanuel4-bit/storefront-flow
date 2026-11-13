@@ -721,6 +721,121 @@ before insert or update of starts_at, ends_at, assigned_staff_id, status
 on public.beauty_appointments
 for each row execute function public.guard_beauty_appointment_schedule();
 
+-- Services: appointment booking, staff scheduling and deposits alongside job cards.
+alter table public.service_catalog
+  add column if not exists duration_minutes integer not null default 30
+  check (duration_minutes between 5 and 1440);
+
+create table if not exists public.service_appointments (
+  id uuid primary key default gen_random_uuid(),
+  store_id uuid not null references public.stores(id) on delete cascade,
+  branch_id uuid not null references public.branches(id) on delete cascade,
+  service_id uuid not null references public.service_catalog(id) on delete restrict,
+  service_name text not null,
+  customer_name text not null,
+  customer_phone text not null,
+  assigned_staff_id uuid references auth.users(id) on delete set null,
+  starts_at timestamptz not null,
+  ends_at timestamptz not null,
+  status text not null default 'booked' check (status in ('booked','confirmed','checked_in','in_progress','completed','cancelled','no_show')),
+  price numeric(12,2) not null default 0 check (price >= 0),
+  deposit_amount numeric(12,2) not null default 0 check (deposit_amount >= 0),
+  paid_amount numeric(12,2) not null default 0 check (paid_amount >= 0),
+  notes text not null default '',
+  created_by uuid not null references auth.users(id),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  check (ends_at > starts_at)
+);
+create index if not exists service_appointments_calendar_idx
+  on public.service_appointments(store_id,branch_id,starts_at);
+create index if not exists service_appointments_staff_idx
+  on public.service_appointments(store_id,assigned_staff_id,starts_at);
+
+create table if not exists public.service_appointment_payments (
+  id uuid primary key default gen_random_uuid(),
+  store_id uuid not null references public.stores(id) on delete cascade,
+  appointment_id uuid not null references public.service_appointments(id) on delete cascade,
+  amount numeric(12,2) not null check (amount > 0),
+  payment_method text not null check (payment_method in ('cash','card','transfer')),
+  reference text not null,
+  received_by uuid not null references auth.users(id),
+  created_at timestamptz not null default now(),
+  unique(store_id,reference)
+);
+
+create or replace function public.guard_service_appointment_schedule()
+returns trigger
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+begin
+  if new.assigned_staff_id is not null and not (
+    exists(select 1 from public.store_members sm where sm.store_id=new.store_id and sm.user_id=new.assigned_staff_id)
+    or exists(select 1 from public.stores s where s.id=new.store_id and s.owner_id=new.assigned_staff_id)
+  ) then raise exception 'Assigned staff member does not belong to this store'; end if;
+  if new.status not in ('cancelled','no_show') then
+    perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(new.store_id::text||':branch:'||new.branch_id::text,0));
+    if new.assigned_staff_id is not null then
+      perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(new.store_id::text||':staff:'||new.assigned_staff_id::text,0));
+    end if;
+    if exists(
+      select 1 from public.service_appointments a
+       where a.store_id=new.store_id and a.id is distinct from new.id
+         and a.status not in ('cancelled','no_show')
+         and a.starts_at<new.ends_at and a.ends_at>new.starts_at
+         and (
+           (new.assigned_staff_id is not null and a.assigned_staff_id=new.assigned_staff_id)
+           or (a.branch_id=new.branch_id and (a.assigned_staff_id is null or new.assigned_staff_id is null))
+         )
+    ) then raise exception 'This staff member or unassigned branch slot already has an appointment during that time'; end if;
+  end if;
+  return new;
+end;
+$function$;
+revoke all on function public.guard_service_appointment_schedule() from public,anon,authenticated;
+drop trigger if exists guard_service_appointment_schedule on public.service_appointments;
+create trigger guard_service_appointment_schedule
+before insert or update of starts_at,ends_at,assigned_staff_id,status on public.service_appointments
+for each row execute function public.guard_service_appointment_schedule();
+
+create or replace function public.record_service_appointment_payment(
+  _store_id uuid,_appointment_id uuid,_amount numeric,_payment_method text,_reference text
+)
+returns uuid
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_user_id uuid:=auth.uid();
+  v_appointment public.service_appointments%rowtype;
+  v_total numeric(12,2);
+  v_payment_id uuid;
+begin
+  if v_user_id is null or not public.has_store_role(_store_id,v_user_id,array['owner','manager','cashier']::public.store_role[]) then raise exception 'Not authorized for this store'; end if;
+  if _amount is null or _amount<=0 then raise exception 'Payment must be greater than zero'; end if;
+  if _payment_method not in ('cash','card','transfer') then raise exception 'Invalid payment method'; end if;
+  if length(btrim(coalesce(_reference,'')))<3 then raise exception 'Enter a payment reference'; end if;
+  select * into v_appointment from public.service_appointments where id=_appointment_id and store_id=_store_id for update;
+  if not found then raise exception 'Appointment not found'; end if;
+  if v_appointment.status in ('cancelled','no_show') then raise exception 'Cannot take payment for a cancelled or missed appointment'; end if;
+  v_total:=greatest(v_appointment.price,v_appointment.deposit_amount);
+  if v_appointment.paid_amount+_amount>v_total then raise exception 'Payment exceeds the appointment balance'; end if;
+  insert into public.service_appointment_payments(store_id,appointment_id,amount,payment_method,reference,received_by)
+    values(_store_id,_appointment_id,_amount,_payment_method,btrim(_reference),v_user_id)
+    returning id into v_payment_id;
+  perform pg_catalog.set_config('app.allow_vertical_balance_update','on',true);
+  update public.service_appointments set paid_amount=paid_amount+_amount,updated_at=now()
+    where id=_appointment_id and store_id=_store_id;
+  perform pg_catalog.set_config('app.allow_vertical_balance_update','off',true);
+  return v_payment_id;
+end;
+$function$;
+revoke all on function public.record_service_appointment_payment(uuid,uuid,numeric,text,text) from public,anon;
+grant execute on function public.record_service_appointment_payment(uuid,uuid,numeric,text,text) to authenticated;
+
 -- Balance fields are ledger-managed: clients cannot edit paid totals directly.
 create or replace function public.guard_vertical_payment_balance()
 returns trigger
@@ -754,6 +869,10 @@ drop trigger if exists guard_service_job_paid_amount on public.service_jobs;
 create trigger guard_service_job_paid_amount
 before update of amount_paid on public.service_jobs
 for each row execute function public.guard_vertical_payment_balance();
+drop trigger if exists guard_service_appointment_paid_amount on public.service_appointments;
+create trigger guard_service_appointment_paid_amount
+before update of paid_amount on public.service_appointments
+for each row execute function public.guard_vertical_payment_balance();
 
 -- Apply tenant isolation to every new vertical table. Payment ledgers are append-only.
 do $policy$
@@ -763,7 +882,7 @@ begin
   foreach t in array array[
     'electronics_repair_payments','food_ingredient_stock','sale_return_refunds',
     'pharmacy_product_profiles','pharmacy_batches','pharmacy_dispensing_records','pharmacy_recalls',
-    'beauty_services','beauty_appointments','beauty_appointment_services','beauty_appointment_payments','beauty_consumable_usage',
+    'beauty_services','beauty_appointments','beauty_appointment_services','beauty_appointment_payments','beauty_consumable_usage','service_appointments','service_appointment_payments',
     'service_catalog','service_jobs','service_job_items','service_job_payments'
   ] loop
     execute format('alter table public.%I enable row level security', t);
