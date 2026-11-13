@@ -85,7 +85,7 @@ export function isBusinessModeFeatureEnabled(
   return profile.status === "active"
     && profile.runtimeReady
     && applicability !== undefined
-    && applicability.applicableModeKeys.includes(profile.businessModeKeys[0] ?? "")
+    && profile.businessModeKeys.some((modeKey) => applicability.applicableModeKeys.includes(modeKey))
     && profile.featureFlags.flags[featureId] === true;
 }
 
