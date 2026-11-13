@@ -96,21 +96,27 @@ function findTarget(selectors: string[]) {
 }
 
 export function FirstVisitTour({ pageKey }: { pageKey: string }) {
+  const pageLabel = useMemo(() => {
+    const segment = pageKey.split("/").filter(Boolean).at(-1) ?? "workspace";
+    return segment
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, (character) => character.toUpperCase());
+  }, [pageKey]);
   const steps = useMemo(
     () =>
       pageSteps[pageKey] ?? [
         {
           selector: ['[data-tour="page-heading"]'],
-          title: "This page at a glance",
-          body: "This heading identifies your current workspace. Use the page content below to complete the tasks available in this section.",
+          title: `${pageLabel} overview`,
+          body: `This heading identifies your ${pageLabel.toLowerCase()} workspace. Use the tools and information below to complete the tasks available in this section.`,
         },
         {
           selector: ['[data-tour="main-content"]'],
-          title: "Your workspace",
-          body: "Work through the tools and information on this page. Strap keeps the controls for this task together here, so you can stay in your current workflow.",
+          title: `Work in ${pageLabel}`,
+          body: `The controls and information for ${pageLabel.toLowerCase()} are grouped in this workspace. Follow the page actions and review details before confirming changes.`,
         },
       ],
-    [pageKey],
+    [pageKey, pageLabel],
   );
   const [step, setStep] = useState(-1);
   const [rect, setRect] = useState<Rect | null>(null);
