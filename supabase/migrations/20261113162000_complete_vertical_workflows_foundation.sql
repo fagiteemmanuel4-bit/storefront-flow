@@ -370,6 +370,37 @@ $function$;
 revoke all on function public.record_sale_return_refund(uuid,uuid,numeric,text,text,text) from public,anon;
 grant execute on function public.record_sale_return_refund(uuid,uuid,numeric,text,text,text) to authenticated;
 
+create or replace function public.link_sale_return_replacement_sale(
+  _store_id uuid,_return_id uuid,_replacement_sale_reference text
+)
+returns uuid
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_user_id uuid := auth.uid();
+  v_return public.sale_returns%rowtype;
+  v_replacement_id uuid;
+begin
+  if v_user_id is null or not public.has_store_role(_store_id,v_user_id,array['owner','manager','cashier']::public.store_role[]) then
+    raise exception 'Not authorized for this store';
+  end if;
+  if length(btrim(coalesce(_replacement_sale_reference,'')))<3 then raise exception 'Enter the replacement receipt reference'; end if;
+  select * into v_return from public.sale_returns where id=_return_id and store_id=_store_id for update;
+  if not found then raise exception 'Return record not found'; end if;
+  if v_return.replacement_sale_id is not null then raise exception 'A replacement sale is already linked to this return'; end if;
+  select id into v_replacement_id from public.sales
+   where store_id=_store_id and reference=btrim(_replacement_sale_reference) and id<>v_return.sale_id;
+  if not found then raise exception 'Replacement sale not found in this store'; end if;
+  update public.sale_returns set replacement_sale_id=v_replacement_id,updated_at=now()
+   where id=_return_id and store_id=_store_id;
+  return v_replacement_id;
+end;
+$function$;
+revoke all on function public.link_sale_return_replacement_sale(uuid,uuid,text) from public,anon;
+grant execute on function public.link_sale_return_replacement_sale(uuid,uuid,text) to authenticated;
+
 create or replace function public.guard_sale_return_refund_balance()
 returns trigger
 language plpgsql
