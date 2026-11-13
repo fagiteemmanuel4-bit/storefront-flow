@@ -273,13 +273,26 @@ function FoodServicePage() {
     try {
       const { data: existingStock, error: stockReadError } = await db
         .from("branch_stock")
-        .select("product_id")
+        .select("product_id,quantity,stock_unit")
         .eq("store_id", storeId)
         .eq("branch_id", branchId)
         .eq("product_id", ingredientId)
         .maybeSingle();
       if (stockReadError) throw new Error(stockReadError.message);
       if (existingStock) {
+        if (Number(existingStock.quantity) > 0 && existingStock.stock_unit !== ingredientUnit.trim()) {
+          throw new Error("This ingredient already has stock in " + existingStock.stock_unit + ". Use that unit or adjust the stock first.");
+        }
+        const { data: existingRecipes, error: recipeUnitError } = await db
+          .from("food_recipe_ingredients")
+          .select("unit")
+          .eq("store_id", storeId)
+          .eq("branch_id", branchId)
+          .eq("ingredient_product_id", ingredientId);
+        if (recipeUnitError) throw new Error(recipeUnitError.message);
+        if ((existingRecipes ?? []).some((row: { unit: string }) => row.unit !== ingredientUnit.trim())) {
+          throw new Error("This ingredient is already used by another recipe in a different unit.");
+        }
         const { error: unitError } = await db
           .from("branch_stock")
           .update({ stock_unit: ingredientUnit.trim(), updated_at: new Date().toISOString() })
