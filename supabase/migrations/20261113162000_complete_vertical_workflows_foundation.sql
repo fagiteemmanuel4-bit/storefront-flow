@@ -380,7 +380,7 @@ before insert or update of starts_at, ends_at, assigned_staff_id, status
 on public.beauty_appointments
 for each row execute function public.guard_beauty_appointment_schedule();
 
--- Apply tenant isolation to every new vertical table.
+-- Apply tenant isolation to every new vertical table. Payment ledgers are append-only.
 do $policy$
 declare
   t text;
@@ -398,61 +398,114 @@ begin
       'create policy %I on public.%I for select to authenticated using (public.is_store_member(store_id, (select auth.uid())))',
       t || '_store_member_select', t
     );
-    execute format('drop policy if exists %I on public.%I', t || '_manager_write', t);
-    execute format(
-      'create policy %I on public.%I for all to authenticated using (public.has_store_role(store_id, (select auth.uid()), array[''owner'',''manager'']::public.store_role[])) with check (public.has_store_role(store_id, (select auth.uid()), array[''owner'',''manager'']::public.store_role[]))',
-      t || '_manager_write', t
-    );
   end loop;
 end;
 $policy$;
 
--- Staff who can operate daily workflows may record payments and operational events.
-drop policy if exists electronics_repair_payments_cashier_insert on public.electronics_repair_payments;
-create policy electronics_repair_payments_cashier_insert
-  on public.electronics_repair_payments for insert to authenticated
+-- Manager-only configuration and stock receiving.
+create policy pharmacy_profiles_manager_write on public.pharmacy_product_profiles
+  for all to authenticated
+  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]))
   with check (
-    public.has_store_role(store_id, (select auth.uid()), array['owner','manager','cashier']::public.store_role[])
-    and received_by = (select auth.uid())
-    and exists (select 1 from public.electronics_repairs r where r.id = repair_id and r.store_id = store_id)
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[])
+    and exists(select 1 from public.products p where p.id=product_id and p.store_id=pharmacy_product_profiles.store_id)
+  );
+create policy pharmacy_batches_manager_write on public.pharmacy_batches
+  for all to authenticated
+  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]))
+  with check (
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[])
+    and exists(select 1 from public.products p where p.id=product_id and p.store_id=pharmacy_batches.store_id)
+    and exists(select 1 from public.branches b where b.id=branch_id and b.store_id=pharmacy_batches.store_id)
+  );
+create policy pharmacy_recalls_manager_write on public.pharmacy_recalls
+  for all to authenticated
+  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]))
+  with check (
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[])
+    and exists(select 1 from public.pharmacy_batches b where b.id=batch_id and b.store_id=pharmacy_recalls.store_id)
   );
 
-drop policy if exists pharmacy_dispensing_records_cashier_insert on public.pharmacy_dispensing_records;
-create policy pharmacy_dispensing_records_cashier_insert
-  on public.pharmacy_dispensing_records for insert to authenticated
+-- Pharmacy dispensing is a staff operation, but the referenced batch and sale line
+-- must belong to the same tenant and branch.
+create policy pharmacy_dispensing_records_cashier_insert on public.pharmacy_dispensing_records
+  for insert to authenticated
   with check (
-    public.has_store_role(store_id, (select auth.uid()), array['owner','manager','cashier']::public.store_role[])
-    and dispensed_by = (select auth.uid())
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[])
+    and dispensed_by=(select auth.uid())
+    and exists(select 1 from public.pharmacy_batches b where b.id=batch_id and b.store_id=pharmacy_dispensing_records.store_id and b.branch_id=pharmacy_dispensing_records.branch_id)
+    and exists(select 1 from public.sale_items si where si.id=sale_item_id and si.store_id=pharmacy_dispensing_records.store_id)
   );
 
-drop policy if exists beauty_appointments_staff_write on public.beauty_appointments;
-create policy beauty_appointments_staff_write
-  on public.beauty_appointments for all to authenticated
-  using (public.has_store_role(store_id, (select auth.uid()), array['owner','manager','cashier']::public.store_role[]))
-  with check (public.has_store_role(store_id, (select auth.uid()), array['owner','manager','cashier']::public.store_role[]));
+-- Beauty and service configuration is manager-controlled; staff can manage daily bookings/jobs.
+create policy beauty_services_manager_write on public.beauty_services
+  for all to authenticated
+  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]))
+  with check (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]));
 
-drop policy if exists beauty_appointment_services_staff_write on public.beauty_appointment_services;
-create policy beauty_appointment_services_staff_write
-  on public.beauty_appointment_services for all to authenticated
-  using (public.has_store_role(store_id, (select auth.uid()), array['owner','manager','cashier']::public.store_role[]))
-  with check (public.has_store_role(store_id, (select auth.uid()), array['owner','manager','cashier']::public.store_role[]));
-
-drop policy if exists service_jobs_staff_write on public.service_jobs;
-create policy service_jobs_staff_write
-  on public.service_jobs for all to authenticated
-  using (public.has_store_role(store_id, (select auth.uid()), array['owner','manager','cashier']::public.store_role[]))
-  with check (public.has_store_role(store_id, (select auth.uid()), array['owner','manager','cashier']::public.store_role[]));
-
-drop policy if exists service_job_items_staff_write on public.service_job_items;
-create policy service_job_items_staff_write
-  on public.service_job_items for all to authenticated
-  using (public.has_store_role(store_id, (select auth.uid()), array['owner','manager','cashier']::public.store_role[]))
-  with check (public.has_store_role(store_id, (select auth.uid()), array['owner','manager','cashier']::public.store_role[]));
-
-drop policy if exists service_job_payments_staff_insert on public.service_job_payments;
-create policy service_job_payments_staff_insert
-  on public.service_job_payments for insert to authenticated
+create policy beauty_appointments_staff_write on public.beauty_appointments
+  for all to authenticated
+  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[]))
   with check (
-    public.has_store_role(store_id, (select auth.uid()), array['owner','manager','cashier']::public.store_role[])
-    and received_by = (select auth.uid())
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[])
+    and exists(select 1 from public.branches b where b.id=branch_id and b.store_id=beauty_appointments.store_id)
+    and (customer_id is null or exists(select 1 from public.customers c where c.id=customer_id and c.store_id=beauty_appointments.store_id))
+  );
+
+create policy beauty_appointment_services_staff_write on public.beauty_appointment_services
+  for all to authenticated
+  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[]))
+  with check (
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[])
+    and exists(select 1 from public.beauty_appointments a where a.id=appointment_id and a.store_id=beauty_appointment_services.store_id)
+    and exists(select 1 from public.beauty_services s where s.id=service_id and s.store_id=beauty_appointment_services.store_id)
+  );
+
+create policy beauty_consumable_usage_staff_insert on public.beauty_consumable_usage
+  for insert to authenticated
+  with check (
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[])
+    and recorded_by=(select auth.uid())
+    and exists(select 1 from public.beauty_appointments a where a.id=appointment_id and a.store_id=beauty_consumable_usage.store_id and a.branch_id=beauty_consumable_usage.branch_id)
+    and exists(select 1 from public.products p where p.id=product_id and p.store_id=beauty_consumable_usage.store_id)
+  );
+
+create policy service_catalog_manager_write on public.service_catalog
+  for all to authenticated
+  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]))
+  with check (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]));
+
+create policy service_jobs_staff_write on public.service_jobs
+  for all to authenticated
+  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[]))
+  with check (
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[])
+    and exists(select 1 from public.branches b where b.id=branch_id and b.store_id=service_jobs.store_id)
+    and (customer_id is null or exists(select 1 from public.customers c where c.id=customer_id and c.store_id=service_jobs.store_id))
+  );
+
+create policy service_job_items_staff_write on public.service_job_items
+  for all to authenticated
+  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[]))
+  with check (
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[])
+    and exists(select 1 from public.service_jobs j where j.id=job_id and j.store_id=service_job_items.store_id)
+    and (service_id is null or exists(select 1 from public.service_catalog s where s.id=service_id and s.store_id=service_job_items.store_id))
+  );
+
+-- Payment ledgers are insert-only for staff and managers; no client-side editing/deletion.
+create policy electronics_repair_payments_cashier_insert on public.electronics_repair_payments
+  for insert to authenticated
+  with check (
+    public.has_store_role(electronics_repair_payments.store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[])
+    and received_by=(select auth.uid())
+    and exists(select 1 from public.electronics_repairs r where r.id=repair_id and r.store_id=electronics_repair_payments.store_id)
+  );
+
+create policy service_job_payments_staff_insert on public.service_job_payments
+  for insert to authenticated
+  with check (
+    public.has_store_role(service_job_payments.store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[])
+    and received_by=(select auth.uid())
+    and exists(select 1 from public.service_jobs j where j.id=job_id and j.store_id=service_job_payments.store_id)
   );
