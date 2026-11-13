@@ -5807,6 +5807,16 @@ export type Database = {
           tracking_account_id: string;
         }[];
       };
+      initialize_store_subscription: {
+        Args: {
+          _currency: string;
+          _interval: string;
+          _metadata?: Json;
+          _plan_code: string;
+          _store_id: string;
+        };
+        Returns: undefined;
+      };
       verify_staff_pin: {
         Args: { _pin: string; _staff_id: string; _store_id: string };
         Returns: Json;
