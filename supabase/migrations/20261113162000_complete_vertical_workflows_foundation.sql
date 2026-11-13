@@ -960,3 +960,52 @@ drop trigger if exists apply_pharmacy_batch_dispensing on public.sale_items;
 create trigger apply_pharmacy_batch_dispensing
 after insert on public.sale_items
 for each row execute function public.apply_pharmacy_batch_dispensing();
+
+
+-- Receiving a pharmacy lot updates the batch ledger and sellable branch stock atomically.
+create or replace function public.receive_pharmacy_batch(
+  _store_id uuid,
+  _branch_id uuid,
+  _product_id uuid,
+  _batch_number text,
+  _manufacturer text,
+  _supplier_name text,
+  _quantity integer,
+  _expiry_date date,
+  _unit_cost numeric default 0
+)
+returns uuid
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_user_id uuid := auth.uid();
+  v_batch_id uuid;
+begin
+  if v_user_id is null then raise exception 'Not authenticated'; end if;
+  if not public.has_store_role(_store_id,v_user_id,array['owner','manager']::public.store_role[]) then
+    raise exception 'Only a store owner or manager can receive pharmacy batches';
+  end if;
+  if _quantity is null or _quantity <= 0 then raise exception 'Received quantity must be greater than zero'; end if;
+  if _expiry_date is null or _expiry_date < current_date then raise exception 'A future expiry date is required'; end if;
+  if length(btrim(coalesce(_batch_number,''))) < 2 then raise exception 'Enter a batch number'; end if;
+  if _unit_cost is null or _unit_cost < 0 then raise exception 'Unit cost cannot be negative'; end if;
+  if not exists(select 1 from public.branches b where b.id=_branch_id and b.store_id=_store_id) then raise exception 'Invalid branch'; end if;
+  if not exists(select 1 from public.products p where p.id=_product_id and p.store_id=_store_id) then raise exception 'Invalid product'; end if;
+
+  insert into public.pharmacy_batches
+    (store_id,branch_id,product_id,batch_number,manufacturer,supplier_name,received_quantity,available_quantity,expiry_date,unit_cost,created_by)
+  values
+    (_store_id,_branch_id,_product_id,btrim(_batch_number),btrim(coalesce(_manufacturer,'')),btrim(coalesce(_supplier_name,'')),_quantity,_quantity,_expiry_date,_unit_cost,v_user_id)
+  returning id into v_batch_id;
+
+  insert into public.branch_stock(store_id,branch_id,product_id,quantity,updated_at)
+    values(_store_id,_branch_id,_product_id,_quantity,now())
+    on conflict(branch_id,product_id) do update
+      set quantity=public.branch_stock.quantity+excluded.quantity,updated_at=now();
+  return v_batch_id;
+end;
+$function$;
+revoke all on function public.receive_pharmacy_batch(uuid,uuid,uuid,text,text,text,integer,date,numeric) from public, anon;
+grant execute on function public.receive_pharmacy_batch(uuid,uuid,uuid,text,text,text,integer,date,numeric) to authenticated;
