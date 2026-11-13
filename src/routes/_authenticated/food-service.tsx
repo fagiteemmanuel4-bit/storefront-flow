@@ -42,6 +42,7 @@ type Recipe = {
   quantity_per_serving: number;
   unit: string;
 };
+type IngredientStock = { product_id: string; quantity: number; unit: string };
 type Ticket = {
   id: string;
   ticket_number: string;
@@ -82,6 +83,9 @@ function FoodServicePage() {
   const [ingredientId, setIngredientId] = useState("");
   const [ingredientQty, setIngredientQty] = useState("1");
   const [ingredientUnit, setIngredientUnit] = useState("unit");
+  const [stockProductId, setStockProductId] = useState("");
+  const [stockReceiveQty, setStockReceiveQty] = useState("1");
+  const [stockReceiveUnit, setStockReceiveUnit] = useState("unit");
   const [wasteIngredientId, setWasteIngredientId] = useState("");
   const [wasteQty, setWasteQty] = useState("1");
   const [wasteReason, setWasteReason] = useState("");
@@ -118,6 +122,20 @@ function FoodServicePage() {
         .order("menu_product_id");
       if (error) throw new Error(error.message);
       return (data ?? []) as Recipe[];
+    },
+  });
+  const ingredientStockQuery = useQuery({
+    queryKey: ["food-ingredient-stock", storeId, branchId],
+    enabled: Boolean(storeId && branchId),
+    queryFn: async () => {
+      const { data, error } = await db
+        .from("food_ingredient_stock")
+        .select("product_id,quantity,unit")
+        .eq("store_id", storeId!)
+        .eq("branch_id", branchId!)
+        .order("product_id");
+      if (error) throw new Error(error.message);
+      return (data ?? []) as IngredientStock[];
     },
   });
   const ticketsQuery = useQuery({
@@ -170,6 +188,7 @@ function FoodServicePage() {
   const products = (productsQuery.data ?? EMPTY_ARRAY) as Product[];
   const modifiers = modifiersQuery.data ?? EMPTY_ARRAY;
   const recipes = recipesQuery.data ?? EMPTY_ARRAY;
+  const ingredientStock = ingredientStockQuery.data ?? EMPTY_ARRAY;
   const waste = wasteQuery.data ?? EMPTY_ARRAY;
   const itemsByTicket = useMemo(() => {
     const map = new Map<string, TicketItem[]>();
@@ -194,6 +213,7 @@ function FoodServicePage() {
     await Promise.all([
       client.invalidateQueries({ queryKey: ["food-menu-modifiers", storeId] }),
       client.invalidateQueries({ queryKey: ["food-recipes", storeId, branchId] }),
+      client.invalidateQueries({ queryKey: ["food-ingredient-stock", storeId, branchId] }),
       client.invalidateQueries({ queryKey: ["food-kitchen-tickets", storeId, branchId] }),
       client.invalidateQueries({ queryKey: ["food-kitchen-ticket-items"] }),
       client.invalidateQueries({ queryKey: ["food-waste", storeId, branchId] }),
@@ -272,38 +292,30 @@ function FoodServicePage() {
     setSaving(true);
     try {
       const { data: existingStock, error: stockReadError } = await db
-        .from("branch_stock")
-        .select("product_id,quantity,stock_unit")
+        .from("food_ingredient_stock")
+        .select("product_id,quantity,unit")
         .eq("store_id", storeId)
         .eq("branch_id", branchId)
         .eq("product_id", ingredientId)
         .maybeSingle();
       if (stockReadError) throw new Error(stockReadError.message);
-      if (existingStock) {
-        if (Number(existingStock.quantity) > 0 && existingStock.stock_unit !== ingredientUnit.trim()) {
-          throw new Error("This ingredient already has stock in " + existingStock.stock_unit + ". Use that unit or adjust the stock first.");
-        }
-        const { data: existingRecipes, error: recipeUnitError } = await db
-          .from("food_recipe_ingredients")
-          .select("unit")
-          .eq("store_id", storeId)
-          .eq("branch_id", branchId)
-          .eq("ingredient_product_id", ingredientId);
-        if (recipeUnitError) throw new Error(recipeUnitError.message);
-        if ((existingRecipes ?? []).some((row: { unit: string }) => row.unit !== ingredientUnit.trim())) {
-          throw new Error("This ingredient is already used by another recipe in a different unit.");
-        }
-        const { error: unitError } = await db
-          .from("branch_stock")
-          .update({ stock_unit: ingredientUnit.trim(), updated_at: new Date().toISOString() })
-          .eq("store_id", storeId)
-          .eq("branch_id", branchId)
-          .eq("product_id", ingredientId);
-        if (unitError) throw new Error(unitError.message);
-      } else {
-        const { error: stockError } = await db.from("branch_stock").insert({
+      if (existingStock && Number(existingStock.quantity) > 0 && existingStock.unit !== ingredientUnit.trim()) {
+        throw new Error("This ingredient already has stock in " + existingStock.unit + ". Use that unit or adjust the stock first.");
+      }
+      const { data: existingRecipes, error: recipeUnitError } = await db
+        .from("food_recipe_ingredients")
+        .select("unit")
+        .eq("store_id", storeId)
+        .eq("branch_id", branchId)
+        .eq("ingredient_product_id", ingredientId);
+      if (recipeUnitError) throw new Error(recipeUnitError.message);
+      if ((existingRecipes ?? []).some((row: { unit: string }) => row.unit !== ingredientUnit.trim())) {
+        throw new Error("This ingredient is already used by another recipe in a different unit.");
+      }
+      if (!existingStock) {
+        const { error: stockError } = await db.from("food_ingredient_stock").insert({
           store_id: storeId, branch_id: branchId, product_id: ingredientId,
-          quantity: 0, stock_unit: ingredientUnit.trim(),
+          quantity: 0, unit: ingredientUnit.trim(),
         });
         if (stockError) throw new Error(stockError.message);
       }
@@ -329,6 +341,28 @@ function FoodServicePage() {
       setSaving(false);
     }
   }
+  async function receiveIngredientStock(event: React.FormEvent) {
+    event.preventDefault();
+    if (!storeId || !branchId || !stockProductId || !stockReceiveUnit.trim()) return;
+    const quantity = Number(stockReceiveQty);
+    if (!Number.isFinite(quantity) || quantity <= 0) {
+      toast.error("Enter a valid ingredient quantity.");
+      return;
+    }
+    setSaving(true);
+    try {
+      const { error } = await db.rpc("receive_food_ingredient_stock", {
+        _store_id: storeId, _branch_id: branchId, _product_id: stockProductId,
+        _quantity: quantity, _unit: stockReceiveUnit.trim(),
+      });
+      if (error) throw new Error(error.message);
+      toast.success("Ingredient stock received.");
+      setStockProductId(""); setStockReceiveQty("1"); await refresh();
+    } catch (error) {
+      toast.error(errorMessage(error, "Ingredient stock could not be received."));
+    } finally { setSaving(false); }
+  }
+
   async function removeRow(table: string, id: string) {
     if (!canManage) return;
     const { error } = await db.from(table).delete().eq("id", id);
@@ -356,6 +390,11 @@ function FoodServicePage() {
     event.preventDefault();
     if (!storeId || !branchId || !wasteIngredientId) {
       toast.error("Choose an ingredient.");
+      return;
+    }
+    const quantity = Number(wasteQty);
+    if (!Number.isFinite(quantity) || quantity <= 0) {
+      toast.error("Waste quantity must be greater than zero.");
       return;
     }
     setSaving(true);
@@ -716,6 +755,24 @@ function FoodServicePage() {
                   </Button>
                 </form>
               )}
+              <div className="mt-5 rounded-xl border border-border p-4">
+                <h3 className="font-semibold">Receive ingredient stock</h3>
+                <p className="mt-1 text-xs text-muted-foreground">Fractional quantities are supported. The unit must match the recipe unit for this ingredient.</p>
+                <form onSubmit={receiveIngredientStock} className="mt-3 grid gap-2 sm:grid-cols-4">
+                  <select required value={stockProductId} onChange={(e) => setStockProductId(e.target.value)} className="field h-11 sm:col-span-2">
+                    <option value="">Choose ingredient</option>
+                    {products.filter((p) => p.id !== recipeMenuId).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  </select>
+                  <Input type="number" min="0.0001" step="0.0001" value={stockReceiveQty} onChange={(e) => setStockReceiveQty(e.target.value)} className="h-11" required />
+                  <select value={stockReceiveUnit} onChange={(e) => setStockReceiveUnit(e.target.value)} className="field h-11">
+                    <option value="unit">Unit</option><option value="g">Grams (g)</option><option value="kg">Kilograms (kg)</option><option value="ml">Millilitres (ml)</option><option value="l">Litres (l)</option><option value="piece">Pieces</option><option value="portion">Portions</option>
+                  </select>
+                  <Button type="submit" className="sm:col-span-4" disabled={saving || !stockProductId}>Receive ingredient stock</Button>
+                </form>
+                <div className="mt-3 space-y-1">
+                  {ingredientStock.map((stock) => <p key={stock.product_id} className="flex justify-between gap-2 text-xs text-muted-foreground"><span>{products.find((p) => p.id === stock.product_id)?.name ?? "Ingredient"}</span><strong>{Number(stock.quantity).toLocaleString()} {stock.unit}</strong></p>)}
+                </div>
+              </div>
               <div className="mt-5 space-y-2">
                 {recipes.map((r) => (
                   <div
