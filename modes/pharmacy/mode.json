@@ -216,7 +216,6 @@
         "surfaces": [
           "physical"
         ],
-        "format": "ISO-8601-date",
         "searchable": false
       },
       {
