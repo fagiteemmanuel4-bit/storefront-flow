@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -71,10 +71,17 @@ function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const googleRedirectTimer = useRef<number | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
   const [pendingOtpEmail, setPendingOtpEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (googleRedirectTimer.current !== null) window.clearTimeout(googleRedirectTimer.current);
+    };
+  }, []);
 
   // Keep the browser tab icon in sync with the Strap logo.
   useEffect(() => {
@@ -119,7 +126,8 @@ function AuthPage() {
     setGoogleLoading(true);
     setNotice(null);
     // Recover if the browser never leaves for Google's consent screen.
-    const redirectWatchdog = window.setTimeout(() => {
+    googleRedirectTimer.current = window.setTimeout(() => {
+      googleRedirectTimer.current = null;
       setGoogleLoading(false);
       toast.error("Google sign-in is taking too long. Please check your connection and try again.");
     }, 20000);
@@ -131,7 +139,10 @@ function AuthPage() {
       if (error) throw error;
       // Supabase redirects to Google; keep the form locked during navigation.
     } catch (error) {
-      window.clearTimeout(redirectWatchdog);
+      if (googleRedirectTimer.current !== null) {
+        window.clearTimeout(googleRedirectTimer.current);
+        googleRedirectTimer.current = null;
+      }
       setGoogleLoading(false);
       toast.error(errorMessage(error, "Google sign-in could not be started. Please try again."));
     }
@@ -395,7 +406,7 @@ function AuthPage() {
                     color: "var(--color-foreground)",
                   }}
                 >
-                  <svg aria-hidden="true" viewBox="0 0 48 48" width="19" height="19">
+                  {!googleLoading && <svg aria-hidden="true" viewBox="0 0 48 48" width="19" height="19">
                     <path
                       fill="#EA4335"
                       d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.04 13.22l7.98 6.19C11.93 13.72 17.48 9.5 24 9.5Z"
@@ -412,7 +423,7 @@ function AuthPage() {
                       fill="#34A853"
                       d="M24 48c6.47 0 11.9-2.13 15.86-5.86l-7.65-5.94c-2.12 1.42-4.84 2.26-8.21 2.26-6.52 0-12.07-4.22-14.02-10.09l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"
                     />
-                  </svg>
+                  </svg>}
                   {googleLoading ? (
                     <>
                       <LoaderCircle size={19} className="animate-spin" aria-hidden="true" />
@@ -519,6 +530,7 @@ function AuthPage() {
                         <button
                           type="button"
                           className="strap-link"
+                          disabled={busy || googleLoading}
                           onClick={() => {
                             setMode("reset");
                             setNotice(null);
@@ -619,6 +631,7 @@ function AuthPage() {
               <button
                 type="button"
                 className="strap-link strap-auth-back"
+                disabled={busy || googleLoading}
                 onClick={() => {
                   setMode("signin");
                   setNotice(null);
