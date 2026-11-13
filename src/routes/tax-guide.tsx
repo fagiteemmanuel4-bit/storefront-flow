@@ -372,7 +372,7 @@ function PublicTaxGuidePage() {
               </div>
             </section>
 
-            <section className="rounded-3xl border border-border bg-surface p-5 sm:p-8">
+            <section id="videos" className="rounded-3xl border border-border bg-surface p-5 sm:p-8">
               <div className="flex items-center gap-3">
                 <PlayCircle className="size-5" />
                 <div>
