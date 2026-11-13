@@ -5,6 +5,35 @@
 alter table public.online_order_variant_allocations
   add column if not exists released_at timestamptz;
 
+alter table public.online_order_stock_allocations add column if not exists fulfilled_at timestamptz;
+alter table public.online_order_batch_allocations add column if not exists fulfilled_at timestamptz;
+alter table public.online_order_variant_allocations add column if not exists released_at timestamptz;
+alter table public.online_order_variant_allocations add column if not exists fulfilled_at timestamptz;
+
+create or replace function public.mark_online_order_allocations_fulfilled()
+returns trigger
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+begin
+  if new.status in ('shipped','completed') and old.status not in ('shipped','completed') then
+    update public.online_order_stock_allocations set fulfilled_at=coalesce(fulfilled_at,now())
+      where order_id=new.id and released_at is null;
+    update public.online_order_variant_allocations set fulfilled_at=coalesce(fulfilled_at,now())
+      where order_id=new.id and released_at is null;
+    update public.online_order_batch_allocations set fulfilled_at=coalesce(fulfilled_at,now())
+      where order_id=new.id and released_at is null;
+  end if;
+  return new;
+end;
+$function$;
+revoke all on function public.mark_online_order_allocations_fulfilled() from public,anon,authenticated;
+drop trigger if exists mark_online_order_allocations_fulfilled on public.online_orders;
+create trigger mark_online_order_allocations_fulfilled
+after update of status on public.online_orders
+for each row execute function public.mark_online_order_allocations_fulfilled();
+
 create or replace function public.release_online_order_stock()
 returns trigger
 language plpgsql
@@ -18,19 +47,21 @@ begin
       from public.online_order_stock_allocations a
      where a.order_id = new.id
        and a.released_at is null
+       and a.fulfilled_at is null
        and bs.branch_id = a.branch_id
        and bs.product_id = a.product_id
        and bs.store_id = a.store_id;
 
     update public.online_order_stock_allocations
        set released_at = now()
-     where order_id = new.id and released_at is null;
+     where order_id = new.id and released_at is null and fulfilled_at is null;
 
     update public.fashion_variant_stock fvs
        set quantity = fvs.quantity + a.quantity, updated_at = now()
       from public.online_order_variant_allocations a
      where a.order_id = new.id
        and a.released_at is null
+       and a.fulfilled_at is null
        and a.fashion_variant_stock_id = fvs.id
        and a.store_id = fvs.store_id
        and a.branch_id = fvs.branch_id
@@ -38,7 +69,7 @@ begin
 
     update public.online_order_variant_allocations
        set released_at = now()
-     where order_id = new.id and released_at is null;
+     where order_id = new.id and released_at is null and fulfilled_at is null;
 
     update public.inventory_batches ib
        set quantity = ib.quantity + a.quantity,
@@ -50,6 +81,7 @@ begin
       from public.online_order_batch_allocations a
      where a.order_id = new.id
        and a.released_at is null
+       and a.fulfilled_at is null
        and a.batch_id = ib.id
        and a.store_id = ib.store_id
        and a.branch_id = ib.branch_id
@@ -57,7 +89,7 @@ begin
 
     update public.online_order_batch_allocations
        set released_at = now()
-     where order_id = new.id and released_at is null;
+     where order_id = new.id and released_at is null and fulfilled_at is null;
   end if;
   return new;
 end;
