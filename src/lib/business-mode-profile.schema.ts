@@ -167,6 +167,24 @@ export const businessModeProfileSchema = z.strictObject({
   if (profile.status === "active" && !profile.runtimeReady) {
     ctx.addIssue({ code: "custom", path: ["runtimeReady"], message: "An active profile must be runtimeReady." });
   }
+
+  // A profile must never be activated while product fields have no persistence contract.
+  // Draft profiles may describe planned fields, but runtime-ready profiles must map every
+  // field to a concrete database column or a named, server-owned data source.
+  if (profile.status === "active" && profile.runtimeReady) {
+    profile.product.fields.forEach((field, index) => {
+      const mapping = field as typeof field & { column?: unknown; source?: unknown };
+      const hasColumn = typeof mapping.column === "string" && mapping.column.trim().length > 0;
+      const hasSource = typeof mapping.source === "string" && mapping.source.trim().length > 0;
+      if (!hasColumn && !hasSource) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["product", "fields", index],
+          message: `Runtime-ready product field "${field.id}" must declare a database column or a server-owned source.`,
+        });
+      }
+    });
+  }
 });
 
 export type BusinessModeProfile = z.infer<typeof businessModeProfileSchema>;
