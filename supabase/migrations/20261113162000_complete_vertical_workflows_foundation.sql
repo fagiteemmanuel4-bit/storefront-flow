@@ -584,6 +584,8 @@ begin
     from public.beauty_appointment_services
    where appointment_id=_appointment_id and store_id=_store_id;
   v_total := greatest(v_total, v_appointment.deposit_amount);
+  if v_total > 0 and v_appointment.deposit_amount > v_total then raise exception 'Deposit exceeds the total appointment service price'; end if;
+  if v_total <= 0 then v_total := v_appointment.deposit_amount; end if;
   if v_total <= 0 then raise exception 'Add a priced service or deposit before taking payment'; end if;
   if v_appointment.paid_amount + _amount > v_total then raise exception 'Payment exceeds the appointment balance'; end if;
   insert into public.beauty_appointment_payments(store_id,appointment_id,amount,payment_method,reference,received_by)
@@ -827,7 +829,8 @@ create table if not exists public.service_appointments (
   created_by uuid not null references auth.users(id),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  check (ends_at > starts_at)
+  check (ends_at > starts_at),
+  check (deposit_amount <= price)
 );
 create index if not exists service_appointments_calendar_idx
   on public.service_appointments(store_id,branch_id,starts_at);
