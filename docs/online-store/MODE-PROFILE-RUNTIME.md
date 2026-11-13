@@ -7,6 +7,7 @@
 - Unknown, malformed, duplicate, or deprecated profiles fail closed.
 - `isBusinessModeFeatureEnabled(profile, featureId)` returns true only when the profile is active, runtime-ready, the feature is explicitly mapped to that mode, and its flag is true.
 - Draft profiles cannot enable features. All eight authored profiles remain draft, `runtimeReady: false`, and all flags OFF.
+- An active, runtime-ready profile must map every product field to a database column or named server-owned source, and each field must independently declare `runtimeReady: true`; field readiness defaults to false.
 
 ## Applicability policy
 
