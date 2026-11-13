@@ -199,7 +199,6 @@ function DashboardPage() {
             />
           </div>
         </section>
->
 
         <section
           aria-label="Business performance"
