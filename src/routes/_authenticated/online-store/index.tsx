@@ -15,6 +15,7 @@ import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { AppShell } from "@/components/shell/AppShell";
 import { getBusinessMode } from "@/lib/business-modes";
+import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 
 export const Route = createFileRoute("/_authenticated/online-store/")({
   component: OnlineStoreHome,
@@ -26,6 +27,9 @@ function OnlineStoreHome() {
     (store?.storefront_settings as any)?.businessMode ?? (store as any)?.business_type,
   );
   const isFashion = businessMode.key === "fashion";
+  const modeProfileResult = getBusinessModeProfile(businessMode.key);
+  const modeProfile = modeProfileResult.ok ? modeProfileResult.profile : null;
+  const storefrontTemplates = modeProfile?.storefront.templates ?? [];
   const query = useQuery({
     queryKey: ["online-store-home", store?.id],
     enabled: Boolean(store?.id),
@@ -134,6 +138,65 @@ function OnlineStoreHome() {
               )}
             </div>
           </div>
+        </section>
+        <section className="rounded-3xl border border-border bg-surface p-5 shadow-sm sm:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[.16em] text-muted-foreground">
+                Mode-aware Store Studio
+              </p>
+              <h2 className="mt-1 font-display text-xl font-bold tracking-tight">
+                {modeProfile?.name ?? "Storefront profile unavailable"}
+              </h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
+                {modeProfile
+                  ? "These storefront directions come from the selected business-mode JSON profile. This is a read-only preview; publishing and customer-facing behavior remain unchanged."
+                  : "The existing storefront remains available. A validated mode profile is required before profile-driven templates can be previewed."}
+              </p>
+            </div>
+            <span className="inline-flex shrink-0 items-center rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">
+              Draft · preview only
+            </span>
+          </div>
+          {storefrontTemplates.length > 0 ? (
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {storefrontTemplates.map((template) => (
+                <article
+                  key={template.id}
+                  className="rounded-2xl border border-border bg-background p-4 transition-colors hover:border-accent/40"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="font-semibold">{template.name}</h3>
+                      <p className="mt-1 text-xs text-muted-foreground">{template.family} direction</p>
+                    </div>
+                    <span className="rounded-lg bg-secondary px-2 py-1 text-[10px] font-semibold text-muted-foreground">
+                      v{template.version}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-xs leading-5 text-muted-foreground">{template.positioning}</p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {template.styleTags.slice(0, 3).map((tag) => (
+                      <span key={tag} className="rounded-full bg-secondary px-2 py-1 text-[10px] font-medium text-secondary-foreground">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-4 rounded-xl bg-secondary/50 p-3 text-sm text-muted-foreground">
+              No validated storefront templates are registered for this mode yet.
+            </p>
+          )}
+          {modeProfile && (
+            <p className="mt-4 text-xs text-muted-foreground">
+              {modeProfile.storefront.allowedSectionTypes.length} approved section types ·{" "}
+              {modeProfile.storefront.pages.length} storefront page types ·{" "}
+              {storefrontTemplates.length} template directions
+            </p>
+          )}
         </section>
         <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
