@@ -83,5 +83,11 @@ export function TurnstileCaptcha({ onTokenChange }: TurnstileCaptchaProps) {
     );
   }
 
-  return <div ref={containerRef} aria-label="Security verification" style={{ display: "flex", justifyContent: "center", minHeight: 66, margin: "12px 0" }} />;
+  return (
+    <div
+      ref={containerRef}
+      aria-label="Security verification"
+      style={{ display: "flex", justifyContent: "center", minHeight: 66, margin: "12px 0" }}
+    />
+  );
 }
