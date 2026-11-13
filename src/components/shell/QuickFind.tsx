@@ -208,6 +208,9 @@ export function QuickFind({ open, onOpenChange }: QuickFindProps) {
   };
   const go = (to: string) => {
     remember(to);
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+      try { navigator.vibrate(10); } catch { /* haptics are optional */ }
+    }
     onOpenChange(false);
     void navigate({ to: to as never });
   };
@@ -218,17 +221,19 @@ export function QuickFind({ open, onOpenChange }: QuickFindProps) {
       label="Find in Strap"
       shouldFilter
       loop
-      overlayClassName="fixed inset-0 z-[120] bg-foreground/35 backdrop-blur-[2px]"
-      contentClassName="fixed left-1/2 top-1/2 z-[121] flex max-h-[min(78dvh,760px)] w-[calc(100vw-28px)] max-w-2xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[26px] border border-border/80 bg-background shadow-[0_28px_100px_rgba(0,0,0,.28)] ring-1 ring-foreground/[0.06] sm:w-[calc(100vw-48px)] sm:rounded-[30px]"
+      overlayClassName="fixed inset-0 z-[120] bg-foreground/25 backdrop-blur-xl animate-in fade-in duration-200"
+      contentClassName="fixed left-1/2 top-[max(12px,env(safe-area-inset-top))] z-[121] flex max-h-[min(78dvh,680px)] w-[calc(100vw-24px)] max-w-2xl -translate-x-1/2 flex-col overflow-hidden rounded-[26px] border border-white/50 bg-background/75 shadow-[0_28px_100px_rgba(0,0,0,.22)] ring-1 ring-foreground/[0.05] backdrop-blur-2xl animate-in fade-in slide-in-from-top-3 duration-200 sm:w-[calc(100vw-48px)] sm:rounded-[30px]"
     >
       <div className="h-1 shrink-0 bg-gradient-to-r from-[#c6f432] via-[#d9ff68] to-transparent" />
-      <div className="flex items-center gap-3 border-b border-border/80 bg-secondary/25 px-4 sm:px-5">
-        <Search className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+      <div className="flex min-h-16 items-center gap-3 border-b border-border/60 bg-background/35 px-4 sm:min-h-[72px] sm:px-5">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary/80 text-muted-foreground">
+          <Search className="size-[18px]" aria-hidden="true" />
+        </span>
         <Command.Input
           value={query}
           onValueChange={setQuery}
-          placeholder="Search Strap or jump to a workspace…"
-          className="h-[60px] min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground sm:h-[68px] sm:text-base"
+          placeholder="Search anything in Strap…"
+          className="h-14 min-w-0 flex-1 bg-transparent text-[15px] leading-none outline-none placeholder:text-muted-foreground sm:text-base"
           autoFocus
         />
         <kbd className="hidden rounded-lg border border-border bg-background px-2 py-1 text-[10px] font-semibold text-muted-foreground shadow-sm sm:block">
@@ -243,28 +248,8 @@ export function QuickFind({ open, onOpenChange }: QuickFindProps) {
           <X className="size-4" aria-hidden="true" />
         </button>
       </div>
-      <div className="flex flex-wrap items-center gap-2 border-b border-border/70 px-4 py-3 sm:px-5">
-        <span className="mr-1 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[.14em] text-muted-foreground">
-          <Sparkles className="size-3.5" /> Quick access
-        </span>
-        {[
-          { label: "New sale", to: "/pos" },
-          { label: "Products", to: "/products" },
-          { label: "Orders", to: "/online-store/orders" },
-          { label: "Analytics", to: "/reports" },
-        ].map((item) => (
-          <button
-            key={item.to}
-            type="button"
-            onClick={() => go(item.to)}
-            className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-muted-foreground transition hover:border-[#c6f432]/70 hover:bg-[#c6f432]/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c6f432]/50"
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-      <Command.List className="min-h-0 max-h-[min(48dvh,480px)] flex-1 overflow-y-auto p-2.5 outline-none sm:p-3">
-        <Command.Empty className="px-3 py-10 text-center">
+      <Command.List className="min-h-0 max-h-[min(58dvh,520px)] flex-1 overflow-y-auto px-3 py-2 outline-none sm:px-4">
+        <Command.Empty className="px-4 py-9 text-center animate-in fade-in duration-200">
           <p className="text-sm font-semibold">No matching Strap destination</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Try a product, order, customer, report, extension, or action.
@@ -306,16 +291,16 @@ function ActionItem({ action, onSelect }: { action: QuickAction; onSelect: (to: 
     <Command.Item
       value={`${action.label} ${action.hint} ${action.keywords}`}
       onSelect={() => onSelect(action.to)}
-      className="group flex cursor-default items-center gap-3 rounded-2xl px-3 py-3.5 text-left outline-none transition-colors data-[selected=true]:bg-secondary sm:px-4"
+      className="group flex cursor-default items-center gap-3 rounded-xl border-b border-border/35 px-2.5 py-3 text-left outline-none transition-all duration-150 data-[selected=true]:translate-x-1 data-[selected=true]:bg-foreground/[0.045] sm:px-3"
     >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border/70 bg-secondary/80 group-data-[selected=true]:border-[#c6f432]/50 group-data-[selected=true]:bg-background">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary/70 text-muted-foreground transition-colors group-data-[selected=true]:bg-[#c6f432] group-data-[selected=true]:text-[#111713]">
         <Icon className="size-4" aria-hidden="true" />
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-semibold">{action.label}</span>
         <span className="block truncate text-xs text-muted-foreground">{action.hint}</span>
       </span>
-      <ArrowRight className="size-4 text-muted-foreground" aria-hidden="true" />
+      <ArrowRight className="size-4 text-muted-foreground/50 transition-transform group-data-[selected=true]:translate-x-1 group-data-[selected=true]:text-foreground" aria-hidden="true" />
     </Command.Item>
   );
 }
