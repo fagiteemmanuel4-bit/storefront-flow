@@ -290,7 +290,7 @@ export function SettingsLayout() {
                 <SettingsLinks onNavigate={() => setNavOpen(false)} />
               </SheetContent>
             </Sheet>
-                      </div>
+          </div>
           <Outlet />
         </main>
       </div>
