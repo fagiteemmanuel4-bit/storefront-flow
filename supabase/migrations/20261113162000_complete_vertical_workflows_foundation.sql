@@ -82,6 +82,7 @@ create table if not exists public.food_ingredient_stock (
   product_id uuid not null references public.products(id) on delete restrict,
   quantity numeric(14,4) not null default 0 check (quantity >= 0),
   unit text not null check (length(btrim(unit)) between 1 and 32),
+  unit_cost numeric(14,6) not null default 0 check (unit_cost >= 0),
   updated_at timestamptz not null default now(),
   created_at timestamptz not null default now(),
   unique(store_id,branch_id,product_id)
@@ -92,8 +93,9 @@ create index if not exists food_ingredient_stock_branch_idx
 alter table public.food_waste_records
   alter column quantity type numeric(14,4) using quantity::numeric(14,4);
 
+drop function if exists public.receive_food_ingredient_stock(uuid,uuid,uuid,numeric,text);
 create or replace function public.receive_food_ingredient_stock(
-  _store_id uuid,_branch_id uuid,_product_id uuid,_quantity numeric,_unit text
+  _store_id uuid,_branch_id uuid,_product_id uuid,_quantity numeric,_unit text,_unit_cost numeric default 0
 )
 returns uuid
 language plpgsql
@@ -110,20 +112,27 @@ begin
   end if;
   if _quantity is null or _quantity <= 0 or _quantity > 100000 then raise exception 'Enter a valid received quantity'; end if;
   if length(btrim(coalesce(_unit,'')))=0 or length(btrim(_unit))>32 then raise exception 'Enter a valid stock unit'; end if;
+  if _unit_cost is null or _unit_cost < 0 then raise exception 'Unit cost cannot be negative'; end if;
   if not exists(select 1 from public.branches b where b.id=_branch_id and b.store_id=_store_id) then raise exception 'Invalid branch'; end if;
   if not exists(select 1 from public.products p where p.id=_product_id and p.store_id=_store_id) then raise exception 'Invalid ingredient'; end if;
-  insert into public.food_ingredient_stock(store_id,branch_id,product_id,quantity,unit)
-    values(_store_id,_branch_id,_product_id,_quantity,btrim(_unit))
+  insert into public.food_ingredient_stock(store_id,branch_id,product_id,quantity,unit,unit_cost)
+    values(_store_id,_branch_id,_product_id,_quantity,btrim(_unit),_unit_cost)
     on conflict(store_id,branch_id,product_id) do update
-      set quantity=public.food_ingredient_stock.quantity+excluded.quantity,updated_at=now()
+      set unit_cost=case
+            when public.food_ingredient_stock.quantity+excluded.quantity > 0
+            then ((public.food_ingredient_stock.quantity*public.food_ingredient_stock.unit_cost)+(excluded.quantity*excluded.unit_cost))/(public.food_ingredient_stock.quantity+excluded.quantity)
+            else excluded.unit_cost
+          end,
+          quantity=public.food_ingredient_stock.quantity+excluded.quantity,
+          updated_at=now()
       where public.food_ingredient_stock.unit=excluded.unit
     returning id into v_id;
   if v_id is null then raise exception 'Ingredient stock unit does not match the existing stock unit'; end if;
   return v_id;
 end;
 $function$;
-revoke all on function public.receive_food_ingredient_stock(uuid,uuid,uuid,numeric,text) from public,anon;
-grant execute on function public.receive_food_ingredient_stock(uuid,uuid,uuid,numeric,text) to authenticated;
+revoke all on function public.receive_food_ingredient_stock(uuid,uuid,uuid,numeric,text,numeric) from public,anon;
+grant execute on function public.receive_food_ingredient_stock(uuid,uuid,uuid,numeric,text,numeric) to authenticated;
 
 drop function if exists public.record_food_waste(uuid,uuid,uuid,integer,text);
 create or replace function public.record_food_waste(
