@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/bottom-sheet";
 import { cn } from "@/lib/utils";
 import { getBusinessMode } from "@/lib/business-modes";
+import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { fetchAllRows } from "@/lib/supabase-pagination";
 
@@ -110,6 +111,9 @@ function ProductsPage() {
     (store?.storefront_settings as any)?.businessMode ?? store?.business_type,
   );
   const isFashion = businessMode.key === "fashion";
+  const modeProfileResult = getBusinessModeProfile(businessMode.key);
+  const modeProfile = modeProfileResult.ok ? modeProfileResult.profile : null;
+  const physicalProfileFields = modeProfile?.product.fields.filter((field) => field.surfaces.includes("physical")) ?? [];
   const isGrocery = businessMode.key === "grocery-provision";
   const query = useQuery({
     queryKey: ["products", storeId, branchId],
@@ -385,6 +389,56 @@ function ProductsPage() {
       }
     >
       <div className="space-y-4">
+        {modeProfile ? (
+          <section
+            aria-label="Business mode configuration preview"
+            className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5">
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-[.16em] text-muted-foreground">
+                  Mode configuration
+                </p>
+                <h2 className="mt-1 truncate text-sm font-semibold">{modeProfile.name}</h2>
+              </div>
+              <span className="inline-flex items-center rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">
+                Draft · preview only
+              </span>
+            </div>
+            <div className="grid gap-3 p-4 sm:grid-cols-[1fr_auto] sm:items-center sm:px-5">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {physicalProfileFields.length} physical-store product fields are defined in this profile.
+                  They are shown for review only; the existing product form and database remain unchanged.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {physicalProfileFields.slice(0, 6).map((field) => (
+                    <span key={field.id} className="rounded-lg bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+                      {field.label}
+                    </span>
+                  ))}
+                  {physicalProfileFields.length > 6 && (
+                    <span className="rounded-lg bg-secondary px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                      +{physicalProfileFields.length - 6} more
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="text-left sm:text-right">
+                <p className="text-xs font-semibold text-muted-foreground">Variants</p>
+                <p className="mt-1 text-sm font-semibold">{modeProfile.product.variants.enabled ? "Configured" : "Not configured"}</p>
+                <p className="mt-1 text-[11px] text-muted-foreground">Feature flags remain off</p>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section role="status" className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
+            <p className="text-sm font-semibold">Mode profile needs attention</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Product management is continuing with its existing workflow. Profile-driven configuration is unavailable until this mode profile is corrected.
+            </p>
+          </section>
+        )}
         <section
           aria-label="Find products"
           className="flex min-w-0 items-center gap-2 rounded-2xl border border-border bg-background p-2 shadow-sm transition-colors focus-within:border-accent/70 focus-within:ring-2 focus-within:ring-accent/15 sm:rounded-[20px] sm:p-2.5"
