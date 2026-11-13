@@ -442,7 +442,6 @@ create policy pharmacy_profiles_manager_write on public.pharmacy_product_profile
   );
 create policy pharmacy_batches_manager_insert on public.pharmacy_batches
   for insert to authenticated
-  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]))
   with check (
     public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[])
     and exists(select 1 from public.products p where p.id=product_id and p.store_id=pharmacy_batches.store_id)
