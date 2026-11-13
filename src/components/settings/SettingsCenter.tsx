@@ -203,9 +203,9 @@ export function SettingsLayout() {
   const location = useLocation();
   const [navOpen, setNavOpen] = useState(location.pathname === "/settings");
   const SettingsLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
-    <div className="flex min-h-full flex-col">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       {(["Workspace", "Account"] as const).map((group) => (
-        <div key={group} className="mb-5 last:mb-0">
+        <div key={group} className="mb-3 last:mb-0">
           <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/75">
             {group}
           </p>
@@ -227,7 +227,7 @@ export function SettingsLayout() {
                   to={item.path}
                   onClick={onNavigate}
                   aria-current={active ? "page" : undefined}
-                  className={`group flex min-h-[58px] items-center gap-3 rounded-2xl border px-3 py-2.5 transition-all duration-200 ${active ? "border-[#c6f432]/70 bg-[#c6f432]/15 text-foreground shadow-sm" : "border-transparent bg-background text-foreground hover:border-border hover:bg-secondary/70"}`}
+                  className={`group flex min-h-11 items-center gap-2.5 rounded-xl border px-2.5 py-1.5 transition-all duration-200 ${active ? "border-[#c6f432]/70 bg-[#c6f432]/15 text-foreground shadow-sm" : "border-transparent bg-background text-foreground hover:border-border hover:bg-secondary/70"}`}
                 >
                   <span
                     className={`flex size-9 shrink-0 items-center justify-center rounded-xl transition-colors ${active ? "bg-[#c6f432] text-[#111713]" : "bg-secondary text-muted-foreground group-hover:text-foreground"}`}
@@ -236,7 +236,7 @@ export function SettingsLayout() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[13px] font-semibold">{item.title}</span>
-                    <span className="mt-0.5 block truncate text-[10px] leading-4 text-muted-foreground">
+                    <span className="mt-0.5 hidden truncate text-[10px] leading-4 text-muted-foreground sm:block">
                       {item.description}
                     </span>
                   </span>
@@ -264,11 +264,11 @@ export function SettingsLayout() {
   return (
     <AppShell title="Settings">
       <div className="settings-workspace mx-auto grid max-w-7xl min-w-0 items-start gap-5 lg:grid-cols-[270px_minmax(0,1fr)]">
-        <aside className="hidden min-h-[calc(100dvh-9rem)] flex-col rounded-[26px] border border-border/70 bg-background p-3 shadow-[0_12px_38px_rgba(15,23,42,.06)] lg:sticky lg:top-24 lg:flex">
+        <aside className="hidden h-[calc(100dvh-9rem)] max-h-[calc(100dvh-9rem)] min-h-0 flex-col overflow-hidden rounded-[26px] border border-border/70 bg-background p-3 shadow-[0_12px_38px_rgba(15,23,42,.06)] lg:sticky lg:top-24 lg:flex">
           <SettingsLinks />
         </aside>
         <main className="settings-detail min-w-0">
-          <div className="mb-4 flex items-center justify-between gap-3 lg:hidden">
+          <div className="mb-4 flex items-center justify-start gap-3 lg:hidden">
             <Sheet open={navOpen} onOpenChange={setNavOpen}>
               <SheetTrigger asChild>
                 <Button
@@ -282,7 +282,7 @@ export function SettingsLayout() {
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="flex w-[min(90vw,370px)] flex-col overflow-y-auto border-r border-border bg-background p-4"
+                className="flex h-[100dvh] max-h-[100dvh] w-[min(90vw,370px)] flex-col overflow-hidden border-r border-border bg-background p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]"
               >
                 <SheetHeader className="mb-5 text-left">
                   <SheetTitle className="font-display text-lg font-bold">Settings</SheetTitle>
@@ -290,12 +290,6 @@ export function SettingsLayout() {
                 <SettingsLinks onNavigate={() => setNavOpen(false)} />
               </SheetContent>
             </Sheet>
-            <Link
-              to="/dashboard"
-              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6F432] px-4 text-xs font-bold text-[#0E1116] shadow-sm"
-            >
-              <ArrowRight className="size-3.5 rotate-180" /> Dashboard
-            </Link>
           </div>
           <Outlet />
         </main>

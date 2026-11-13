@@ -916,17 +916,20 @@ export function AppShell({
             <header
               data-tour="page-heading"
               className={cn(
-                "mb-5 flex min-w-0 flex-row items-center justify-between gap-3 border-b border-border/70 pb-4 text-left sm:mb-6 sm:pb-5 lg:mb-8",
+                "mb-4 flex min-w-0 flex-row items-center justify-between gap-3 border-b border-border/70 pb-3 text-left sm:mb-5 sm:pb-4 lg:mb-6",
               )}
             >
               <div className="min-w-0 flex-1">
-                {(branch || staffActive) && (
+                {(branch || staffActive) && !pathname.startsWith("/settings") && (
                   <p className="max-w-full truncate text-xs text-muted-foreground">
                     {branch?.name ?? ""}
                     {staffActive ? (branch ? " · " : "") + staffSession!.name : ""}
                   </p>
                 )}
-                <h1 className="mt-1 truncate font-display text-2xl font-bold leading-tight tracking-tight sm:text-3xl">
+                <h1 className={cn(
+                  "truncate font-display font-bold leading-tight tracking-tight",
+                  pathname.startsWith("/settings") ? "text-xl sm:text-2xl" : "mt-1 text-2xl sm:text-3xl",
+                )}>
                   {title}
                 </h1>
               </div>
@@ -936,7 +939,7 @@ export function AppShell({
                     to="/dashboard"
                     aria-label="Go to dashboard"
                     title="Dashboard"
-                    className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-border bg-background px-3 text-xs font-semibold text-foreground transition hover:border-accent/50 hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:h-11 sm:px-3.5 sm:text-sm"
+                    className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-[#c6f432]/70 bg-[#c6f432] px-4 text-xs font-bold text-[#0e1116] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#b6e52c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c6f432]/50 sm:h-11 sm:px-4 sm:text-sm"
                   >
                     <LayoutDashboard className="size-4" aria-hidden="true" />
                     <span>Dashboard</span>
