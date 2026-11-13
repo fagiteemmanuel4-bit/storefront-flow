@@ -96,7 +96,22 @@ function findTarget(selectors: string[]) {
 }
 
 export function FirstVisitTour({ pageKey }: { pageKey: string }) {
-  const steps = useMemo(() => pageSteps[pageKey] ?? [], [pageKey]);
+  const steps = useMemo(
+    () =>
+      pageSteps[pageKey] ?? [
+        {
+          selector: ['[data-tour="page-heading"]'],
+          title: "This page at a glance",
+          body: "This heading identifies your current workspace. Use the page content below to complete the tasks available in this section.",
+        },
+        {
+          selector: ['[data-tour="main-content"]'],
+          title: "Your workspace",
+          body: "Work through the tools and information on this page. Strap keeps the controls for this task together here, so you can stay in your current workflow.",
+        },
+      ],
+    [pageKey],
+  );
   const [step, setStep] = useState(-1);
   const [rect, setRect] = useState<Rect | null>(null);
 
@@ -127,6 +142,12 @@ export function FirstVisitTour({ pageKey }: { pageKey: string }) {
     if (!steps.length) return;
     const seen = readSeen();
     if (!seen[pageKey]) setStep(0);
+    const replay = () => {
+      setRect(null);
+      setStep(0);
+    };
+    window.addEventListener("strap-start-guided-tour", replay);
+    return () => window.removeEventListener("strap-start-guided-tour", replay);
   }, [pageKey, steps.length]);
 
   useLayoutEffect(() => {
