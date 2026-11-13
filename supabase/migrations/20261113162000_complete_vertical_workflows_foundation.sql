@@ -440,16 +440,32 @@ create policy pharmacy_profiles_manager_write on public.pharmacy_product_profile
     public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[])
     and exists(select 1 from public.products p where p.id=product_id and p.store_id=pharmacy_product_profiles.store_id)
   );
-create policy pharmacy_batches_manager_write on public.pharmacy_batches
-  for all to authenticated
+create policy pharmacy_batches_manager_insert on public.pharmacy_batches
+  for insert to authenticated
   using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]))
   with check (
     public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[])
     and exists(select 1 from public.products p where p.id=product_id and p.store_id=pharmacy_batches.store_id)
     and exists(select 1 from public.branches b where b.id=branch_id and b.store_id=pharmacy_batches.store_id)
   );
-create policy pharmacy_recalls_manager_write on public.pharmacy_recalls
-  for all to authenticated
+create policy pharmacy_batches_manager_update on public.pharmacy_batches
+  for update to authenticated
+  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]))
+  with check (
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[])
+    and exists(select 1 from public.products p where p.id=product_id and p.store_id=pharmacy_batches.store_id)
+    and exists(select 1 from public.branches b where b.id=branch_id and b.store_id=pharmacy_batches.store_id)
+  );
+
+create policy pharmacy_recalls_manager_insert on public.pharmacy_recalls
+  for insert to authenticated
+  with check (
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[])
+    and reported_by=(select auth.uid())
+    and exists(select 1 from public.pharmacy_batches b where b.id=batch_id and b.store_id=pharmacy_recalls.store_id)
+  );
+create policy pharmacy_recalls_manager_update on public.pharmacy_recalls
+  for update to authenticated
   using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]))
   with check (
     public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[])
