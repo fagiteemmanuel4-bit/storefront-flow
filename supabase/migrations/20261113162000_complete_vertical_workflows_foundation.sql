@@ -469,8 +469,10 @@ begin
   select id into v_replacement_id from public.sales
    where store_id=_store_id and reference=btrim(_replacement_sale_reference) and id<>v_return.sale_id;
   if not found then raise exception 'Replacement sale not found in this store'; end if;
+  perform pg_catalog.set_config('app.allow_sale_return_replacement_update','on',true);
   update public.sale_returns set replacement_sale_id=v_replacement_id,updated_at=now()
    where id=_return_id and store_id=_store_id;
+  perform pg_catalog.set_config('app.allow_sale_return_replacement_update','off',true);
   return v_replacement_id;
 end;
 $function$;
@@ -487,6 +489,10 @@ begin
   if (new.refunded_amount is distinct from old.refunded_amount or new.refund_status is distinct from old.refund_status)
      and pg_catalog.current_setting('app.allow_sale_return_refund_update',true) is distinct from 'on' then
     raise exception 'Refund totals can only be changed by the refund ledger';
+  end if;
+  if new.replacement_sale_id is distinct from old.replacement_sale_id
+     and pg_catalog.current_setting('app.allow_sale_return_replacement_update',true) is distinct from 'on' then
+    raise exception 'Replacement sales can only be linked by the exchange workflow';
   end if;
   return new;
 end;
