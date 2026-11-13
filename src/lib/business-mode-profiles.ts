@@ -1,4 +1,5 @@
 import { businessModeProfileSchema, type BusinessModeProfile } from "./business-mode-profile.schema";
+import featureApplicability from "../../modes/feature-applicability.json";
 
 type ProfileError = {
   modeKey: string;
@@ -80,8 +81,11 @@ export function isBusinessModeFeatureEnabled(
   profile: BusinessModeProfile,
   featureId: string,
 ): boolean {
+  const applicability = featureApplicability.features[featureId as keyof typeof featureApplicability.features];
   return profile.status === "active"
     && profile.runtimeReady
+    && Boolean(applicability)
+    && applicability.applicableModeKeys.includes(profile.businessModeKeys[0] ?? "")
     && profile.featureFlags.flags[featureId] === true;
 }
 
