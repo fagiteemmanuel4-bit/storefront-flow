@@ -955,6 +955,16 @@ create policy pharmacy_dispensing_records_cashier_insert on public.pharmacy_disp
   );
 
 -- Beauty and service configuration is manager-controlled; staff can manage daily bookings/jobs.
+create policy service_appointments_staff_write on public.service_appointments
+  for all to authenticated
+  using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[]))
+  with check (
+    public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[])
+    and exists(select 1 from public.branches b where b.id=branch_id and b.store_id=service_appointments.store_id)
+    and exists(select 1 from public.service_catalog s where s.id=service_id and s.store_id=service_appointments.store_id)
+    and (assigned_staff_id is null or exists(select 1 from public.store_members sm where sm.store_id=service_appointments.store_id and sm.user_id=service_appointments.assigned_staff_id) or exists(select 1 from public.stores s where s.id=service_appointments.store_id and s.owner_id=service_appointments.assigned_staff_id))
+  );
+
 create policy beauty_services_manager_write on public.beauty_services
   for all to authenticated
   using (public.has_store_role(store_id,(select auth.uid()),array['owner','manager']::public.store_role[]))
