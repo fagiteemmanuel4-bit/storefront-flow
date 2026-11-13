@@ -37,6 +37,7 @@ jobs:
         with:
           scan-type: fs
           scan-ref: .
+          version: v0.76.2
           scanners: vuln,misconfig,secret
           severity: HIGH,CRITICAL
           ignore-unfixed: true
