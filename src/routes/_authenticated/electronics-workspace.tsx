@@ -224,15 +224,28 @@ function ElectronicsWorkspacePage() {
     const form = new FormData(event.currentTarget);
     const diagnosis = String(form.get("diagnosis") ?? "").trim();
     const finalCost = Number(form.get("final_cost") ?? 0);
-    if (!Number.isFinite(finalCost) || finalCost < 0 || finalCost < Number(repair.paid_amount ?? 0)) {
+    if (
+      !Number.isFinite(finalCost) ||
+      finalCost < 0 ||
+      finalCost < Number(repair.paid_amount ?? 0)
+    ) {
       toast.error("Final cost cannot be lower than payments already received.");
       return;
     }
-    const { error } = await db.from("electronics_repairs").update({
-      diagnosis, final_cost: finalCost, updated_at: new Date().toISOString(),
-    }).eq("id", repair.id).eq("store_id", storeId);
+    const { error } = await db
+      .from("electronics_repairs")
+      .update({
+        diagnosis,
+        final_cost: finalCost,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", repair.id)
+      .eq("store_id", storeId);
     if (error) toast.error(error.message);
-    else { toast.success("Diagnosis and final repair cost saved."); await refresh(); }
+    else {
+      toast.success("Diagnosis and final repair cost saved.");
+      await refresh();
+    }
   }
 
   async function recordRepairPayment(event: React.FormEvent<HTMLFormElement>, repair: Repair) {
@@ -249,11 +262,19 @@ function ElectronicsWorkspacePage() {
       return;
     }
     const { error } = await db.rpc("record_electronics_repair_payment", {
-      _store_id: storeId, _repair_id: repair.id, _amount: amount,
-      _payment_method: paymentMethod, _reference: reference, _note: note,
+      _store_id: storeId,
+      _repair_id: repair.id,
+      _amount: amount,
+      _payment_method: paymentMethod,
+      _reference: reference,
+      _note: note,
     });
     if (error) toast.error(error.message);
-    else { toast.success("Repair payment recorded."); formElement.reset(); await refresh(); }
+    else {
+      toast.success("Repair payment recorded.");
+      formElement.reset();
+      await refresh();
+    }
   }
 
   async function updateRepair(repair: Repair, nextStatus: string) {
@@ -552,7 +573,9 @@ function ElectronicsWorkspacePage() {
                       </div>
                       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
                         <span className="text-xs text-muted-foreground">
-                          Estimate {formatMoney(Number(repair.estimated_cost), currency)} · Final {formatMoney(Number(repair.final_cost), currency)} · Paid {formatMoney(Number(repair.paid_amount ?? 0), currency)} ·{" "}
+                          Estimate {formatMoney(Number(repair.estimated_cost), currency)} · Final{" "}
+                          {formatMoney(Number(repair.final_cost), currency)} · Paid{" "}
+                          {formatMoney(Number(repair.paid_amount ?? 0), currency)} ·{" "}
                           {new Date(repair.received_at).toLocaleDateString()}
                         </span>
                         <select
@@ -571,25 +594,78 @@ function ElectronicsWorkspacePage() {
                         </select>
                       </div>
                       {canManage && (
-                        <form onSubmit={(event) => void saveRepairDetails(event, repair)} className="grid gap-2 rounded-xl bg-secondary/45 p-3 sm:grid-cols-[minmax(0,1fr)_150px_auto]">
-                          <Input name="diagnosis" defaultValue={repair.diagnosis} className="h-10" placeholder="Diagnosis / work performed" />
-                          <Input name="final_cost" type="number" min={repair.paid_amount ?? 0} step="0.01" defaultValue={repair.final_cost || repair.estimated_cost} className="h-10" aria-label="Final repair cost" />
-                          <Button type="submit" size="sm" variant="outline">Save details</Button>
+                        <form
+                          onSubmit={(event) => void saveRepairDetails(event, repair)}
+                          className="grid gap-2 rounded-xl bg-secondary/45 p-3 sm:grid-cols-[minmax(0,1fr)_150px_auto]"
+                        >
+                          <Input
+                            name="diagnosis"
+                            defaultValue={repair.diagnosis}
+                            className="h-10"
+                            placeholder="Diagnosis / work performed"
+                          />
+                          <Input
+                            name="final_cost"
+                            type="number"
+                            min={repair.paid_amount ?? 0}
+                            step="0.01"
+                            defaultValue={repair.final_cost || repair.estimated_cost}
+                            className="h-10"
+                            aria-label="Final repair cost"
+                          />
+                          <Button type="submit" size="sm" variant="outline">
+                            Save details
+                          </Button>
                         </form>
                       )}
                       <div className="rounded-xl border border-border p-3">
                         <div className="mb-2 flex items-center justify-between gap-2">
                           <p className="text-xs font-semibold">Payment history & collection</p>
                           <p className="text-xs text-muted-foreground">
-                            Balance {formatMoney(Math.max(0, Number(repair.final_cost || repair.estimated_cost) - Number(repair.paid_amount ?? 0)), currency)}
+                            Balance{" "}
+                            {formatMoney(
+                              Math.max(
+                                0,
+                                Number(repair.final_cost || repair.estimated_cost) -
+                                  Number(repair.paid_amount ?? 0),
+                              ),
+                              currency,
+                            )}
                           </p>
                         </div>
                         {canTakePayment && !["collected", "cancelled"].includes(repair.status) && (
-                          <form onSubmit={(event) => void recordRepairPayment(event, repair)} className="grid gap-2 sm:grid-cols-4">
-                            <Input name="amount" type="number" min="0.01" step="0.01" max={Math.max(0, Number(repair.final_cost || repair.estimated_cost) - Number(repair.paid_amount ?? 0))} className="h-10" placeholder="Amount" required />
-                            <select name="payment_method" className="field h-10"><option value="cash">Cash</option><option value="card">Card</option><option value="transfer">Transfer</option></select>
-                            <Input name="reference" className="h-10" placeholder="Payment reference" required />
-                            <Button type="submit" size="sm">Record payment</Button>
+                          <form
+                            onSubmit={(event) => void recordRepairPayment(event, repair)}
+                            className="grid gap-2 sm:grid-cols-4"
+                          >
+                            <Input
+                              name="amount"
+                              type="number"
+                              min="0.01"
+                              step="0.01"
+                              max={Math.max(
+                                0,
+                                Number(repair.final_cost || repair.estimated_cost) -
+                                  Number(repair.paid_amount ?? 0),
+                              )}
+                              className="h-10"
+                              placeholder="Amount"
+                              required
+                            />
+                            <select name="payment_method" className="field h-10">
+                              <option value="cash">Cash</option>
+                              <option value="card">Card</option>
+                              <option value="transfer">Transfer</option>
+                            </select>
+                            <Input
+                              name="reference"
+                              className="h-10"
+                              placeholder="Payment reference"
+                              required
+                            />
+                            <Button type="submit" size="sm">
+                              Record payment
+                            </Button>
                           </form>
                         )}
                       </div>

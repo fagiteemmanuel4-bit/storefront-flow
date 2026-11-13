@@ -303,14 +303,24 @@ export function AppShell({
                   ]
                 : isBeauty
                   ? [
-                      { to: "/beauty", label: "Services & bookings", icon: Scissors, area: "orders" },
+                      {
+                        to: "/beauty",
+                        label: "Services & bookings",
+                        icon: Scissors,
+                        area: "orders",
+                      },
                       { to: "/pos", label: "Retail checkout", icon: ScanLine, area: "pos" },
                       { to: "/customers", label: "Customers", icon: Users, area: "customers" },
                       { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
                     ]
                   : isServices
                     ? [
-                        { to: "/services", label: "Service jobs", icon: BriefcaseBusiness, area: "orders" },
+                        {
+                          to: "/services",
+                          label: "Service jobs",
+                          icon: BriefcaseBusiness,
+                          area: "orders",
+                        },
                         { to: "/customers", label: "Customers", icon: Users, area: "customers" },
                         { to: "/expenses", label: "Expenses", icon: ReceiptText, area: "expenses" },
                         { to: "/reports", label: "Reports", icon: BarChart3, area: "reports" },

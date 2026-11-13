@@ -33,10 +33,23 @@ type SaleItem = {
   variant_color: string | null;
 };
 type SaleReturn = {
-  id: string; reference: string; total_amount: number; refunded_amount: number;
-  refund_status: string; reason: string; created_at: string; replacement_sale_id: string | null;
+  id: string;
+  reference: string;
+  total_amount: number;
+  refunded_amount: number;
+  refund_status: string;
+  reason: string;
+  created_at: string;
+  replacement_sale_id: string | null;
 };
-type ReturnRefund = { id: string; return_id: string; amount: number; payment_method: string; reference: string; created_at: string };
+type ReturnRefund = {
+  id: string;
+  return_id: string;
+  amount: number;
+  payment_method: string;
+  reference: string;
+  created_at: string;
+};
 
 function FashionReturnsPage() {
   const { store, branch } = useStoreContext();
@@ -96,9 +109,14 @@ function FashionReturnsPage() {
     queryKey: ["fashion-sale-returns", sale?.id],
     enabled: Boolean(sale?.id),
     queryFn: async () => {
-      const { data, error } = await db.from("sale_returns")
-        .select("id,reference,total_amount,refunded_amount,refund_status,reason,created_at,replacement_sale_id")
-        .eq("sale_id", sale!.id).eq("store_id", storeId!).order("created_at", { ascending: false });
+      const { data, error } = await db
+        .from("sale_returns")
+        .select(
+          "id,reference,total_amount,refunded_amount,refund_status,reason,created_at,replacement_sale_id",
+        )
+        .eq("sale_id", sale!.id)
+        .eq("store_id", storeId!)
+        .order("created_at", { ascending: false });
       if (error) throw new Error(error.message);
       return (data ?? []) as SaleReturn[];
     },
@@ -108,9 +126,14 @@ function FashionReturnsPage() {
     queryKey: ["fashion-return-refunds", saleReturns.map((r) => r.id).join(",")],
     enabled: saleReturns.length > 0,
     queryFn: async () => {
-      const { data, error } = await db.from("sale_return_refunds")
+      const { data, error } = await db
+        .from("sale_return_refunds")
         .select("id,return_id,amount,payment_method,reference,created_at")
-        .in("return_id", saleReturns.map((r) => r.id)).eq("store_id", storeId!)
+        .in(
+          "return_id",
+          saleReturns.map((r) => r.id),
+        )
+        .eq("store_id", storeId!)
         .order("created_at", { ascending: false });
       if (error) throw new Error(error.message);
       return (data ?? []) as ReturnRefund[];
@@ -130,7 +153,10 @@ function FashionReturnsPage() {
     setReason("");
   }, [sale?.id]);
 
-  async function linkReplacementSale(event: React.FormEvent<HTMLFormElement>, returnRow: SaleReturn) {
+  async function linkReplacementSale(
+    event: React.FormEvent<HTMLFormElement>,
+    returnRow: SaleReturn,
+  ) {
     event.preventDefault();
     if (!storeId) return;
     const form = event.currentTarget;
@@ -139,17 +165,25 @@ function FashionReturnsPage() {
     setSaving(true);
     try {
       const { error } = await db.rpc("link_sale_return_replacement_sale", {
-        _store_id: storeId, _return_id: returnRow.id, _replacement_sale_reference: reference,
+        _store_id: storeId,
+        _return_id: returnRow.id,
+        _replacement_sale_reference: reference,
       });
       if (error) throw new Error(error.message);
       toast.success("Replacement sale linked to the return.");
       form.reset();
       await queryClient.invalidateQueries({ queryKey: ["fashion-sale-returns", sale?.id] });
-    } catch (error) { toast.error(errorMessage(error, "Replacement sale could not be linked.")); }
-    finally { setSaving(false); }
+    } catch (error) {
+      toast.error(errorMessage(error, "Replacement sale could not be linked."));
+    } finally {
+      setSaving(false);
+    }
   }
 
-  async function recordReturnRefund(event: React.FormEvent<HTMLFormElement>, returnRow: SaleReturn) {
+  async function recordReturnRefund(
+    event: React.FormEvent<HTMLFormElement>,
+    returnRow: SaleReturn,
+  ) {
     event.preventDefault();
     if (!storeId) return;
     const form = event.currentTarget;
@@ -164,8 +198,11 @@ function FashionReturnsPage() {
     setSaving(true);
     try {
       const { error } = await db.rpc("record_sale_return_refund", {
-        _store_id: storeId, _return_id: returnRow.id, _amount: amount,
-        _payment_method: paymentMethod, _reference: reference,
+        _store_id: storeId,
+        _return_id: returnRow.id,
+        _amount: amount,
+        _payment_method: paymentMethod,
+        _reference: reference,
       });
       if (error) throw new Error(error.message);
       toast.success("Refund recorded for " + returnRow.reference + ".");
@@ -174,8 +211,11 @@ function FashionReturnsPage() {
         queryClient.invalidateQueries({ queryKey: ["fashion-sale-returns", sale?.id] }),
         queryClient.invalidateQueries({ queryKey: ["fashion-return-refunds"] }),
       ]);
-    } catch (error) { toast.error(errorMessage(error, "Refund could not be recorded.")); }
-    finally { setSaving(false); }
+    } catch (error) {
+      toast.error(errorMessage(error, "Refund could not be recorded."));
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function processReturn() {
@@ -394,35 +434,96 @@ function FashionReturnsPage() {
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <h2 className="font-display font-semibold">Return settlement & exchange history</h2>
-                <p className="mt-1 text-xs text-muted-foreground">Stock restoration and cash refunds are recorded separately.</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Stock restoration and cash refunds are recorded separately.
+                </p>
               </div>
               <span className="text-xs text-muted-foreground">{saleReturns.length} return(s)</span>
             </div>
-            {saleReturnsQuery.isLoading ? <p className="text-sm text-muted-foreground">Loading return history…</p> : saleReturns.length === 0 ? <p className="text-sm text-muted-foreground">No returns recorded for this receipt.</p> : (
+            {saleReturnsQuery.isLoading ? (
+              <p className="text-sm text-muted-foreground">Loading return history…</p>
+            ) : saleReturns.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No returns recorded for this receipt.</p>
+            ) : (
               <div className="divide-y divide-border">
                 {saleReturns.map((returnRow) => {
-                  const remaining = Math.max(0, Number(returnRow.total_amount) - Number(returnRow.refunded_amount));
+                  const remaining = Math.max(
+                    0,
+                    Number(returnRow.total_amount) - Number(returnRow.refunded_amount),
+                  );
                   return (
                     <div key={returnRow.id} className="space-y-3 py-4">
                       <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div><p className="font-semibold">{returnRow.reference}</p><p className="text-xs text-muted-foreground">{returnRow.reason} · {formatDateTime(returnRow.created_at)}</p></div>
-                        <div className="text-right"><p className="numeric font-semibold">{formatMoney(Number(returnRow.refunded_amount),currency)} / {formatMoney(Number(returnRow.total_amount),currency)}</p><p className="text-xs text-muted-foreground">{returnRow.refund_status.replaceAll("_"," ")}</p></div>
+                        <div>
+                          <p className="font-semibold">{returnRow.reference}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {returnRow.reason} · {formatDateTime(returnRow.created_at)}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="numeric font-semibold">
+                            {formatMoney(Number(returnRow.refunded_amount), currency)} /{" "}
+                            {formatMoney(Number(returnRow.total_amount), currency)}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {returnRow.refund_status.replaceAll("_", " ")}
+                          </p>
+                        </div>
                       </div>
-                      {returnRefunds.filter((refund) => refund.return_id===returnRow.id).map((refund)=><p key={refund.id} className="text-xs text-muted-foreground">{formatMoney(Number(refund.amount),currency)} · {refund.payment_method} · {refund.reference}</p>)}
+                      {returnRefunds
+                        .filter((refund) => refund.return_id === returnRow.id)
+                        .map((refund) => (
+                          <p key={refund.id} className="text-xs text-muted-foreground">
+                            {formatMoney(Number(refund.amount), currency)} · {refund.payment_method}{" "}
+                            · {refund.reference}
+                          </p>
+                        ))}
                       {remaining > 0 && (
-                        <form onSubmit={(event)=>void recordReturnRefund(event,returnRow)} className="grid gap-2 sm:grid-cols-4">
-                          <Input name="amount" type="number" min="0.01" max={remaining} step="0.01" className="h-10" placeholder={"Up to "+formatMoney(remaining,currency)} required />
-                          <select name="payment_method" className="field h-10"><option value="cash">Cash</option><option value="card">Card</option><option value="transfer">Transfer</option></select>
-                          <Input name="reference" className="h-10" placeholder="Refund reference" required />
-                          <Button type="submit" size="sm" disabled={saving}>Record refund</Button>
+                        <form
+                          onSubmit={(event) => void recordReturnRefund(event, returnRow)}
+                          className="grid gap-2 sm:grid-cols-4"
+                        >
+                          <Input
+                            name="amount"
+                            type="number"
+                            min="0.01"
+                            max={remaining}
+                            step="0.01"
+                            className="h-10"
+                            placeholder={"Up to " + formatMoney(remaining, currency)}
+                            required
+                          />
+                          <select name="payment_method" className="field h-10">
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="transfer">Transfer</option>
+                          </select>
+                          <Input
+                            name="reference"
+                            className="h-10"
+                            placeholder="Refund reference"
+                            required
+                          />
+                          <Button type="submit" size="sm" disabled={saving}>
+                            Record refund
+                          </Button>
                         </form>
                       )}
                       {returnRow.replacement_sale_id ? (
                         <p className="text-xs font-medium text-success">Replacement sale linked.</p>
                       ) : (
-                        <form onSubmit={(event)=>void linkReplacementSale(event,returnRow)} className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
-                          <Input name="replacement_sale_reference" className="h-10" placeholder="Replacement sale receipt reference (optional)" />
-                          <Button type="submit" size="sm" variant="outline" disabled={saving}>Link exchange sale</Button>
+                        <form
+                          onSubmit={(event) => void linkReplacementSale(event, returnRow)}
+                          className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]"
+                        >
+                          <Input
+                            name="replacement_sale_reference"
+                            className="h-10"
+                            placeholder="Replacement sale receipt reference (optional)"
+                          />
+                          <Button type="submit" size="sm" variant="outline" disabled={saving}>
+                            Link exchange sale
+                          </Button>
                         </form>
                       )}
                     </div>

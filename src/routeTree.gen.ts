@@ -29,6 +29,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as AuthenticatedActivityRouteImport } from './routes/_authenticated/activity'
+import { Route as AuthenticatedBeautyRouteImport } from './routes/_authenticated/beauty'
 import { Route as AuthenticatedBranchesRouteImport } from './routes/_authenticated/branches'
 import { Route as AuthenticatedCommandCenterRouteImport } from './routes/_authenticated/command-center'
 import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
@@ -44,12 +45,14 @@ import { Route as AuthenticatedHelpRouteImport } from './routes/_authenticated/h
 import { Route as AuthenticatedInsightsRouteImport } from './routes/_authenticated/insights'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedPharmacyRouteImport } from './routes/_authenticated/pharmacy'
 import { Route as AuthenticatedPosRouteImport } from './routes/_authenticated/pos'
 import { Route as AuthenticatedProductImportRouteImport } from './routes/_authenticated/product-import'
 import { Route as AuthenticatedProductsRouteImport } from './routes/_authenticated/products'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedReceiptDesignerRouteImport } from './routes/_authenticated/receipt-designer'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
+import { Route as AuthenticatedServicesRouteImport } from './routes/_authenticated/services'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedStockSenseRouteImport } from './routes/_authenticated/stock-sense'
@@ -185,6 +188,11 @@ const AuthenticatedActivityRoute = AuthenticatedActivityRouteImport.update({
   path: '/activity',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBeautyRoute = AuthenticatedBeautyRouteImport.update({
+  id: '/beauty',
+  path: '/beauty',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedBranchesRoute = AuthenticatedBranchesRouteImport.update({
   id: '/branches',
   path: '/branches',
@@ -267,6 +275,11 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPharmacyRoute = AuthenticatedPharmacyRouteImport.update({
+  id: '/pharmacy',
+  path: '/pharmacy',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPosRoute = AuthenticatedPosRouteImport.update({
   id: '/pos',
   path: '/pos',
@@ -297,6 +310,11 @@ const AuthenticatedReceiptDesignerRoute =
 const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedServicesRoute = AuthenticatedServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -521,6 +539,7 @@ export interface FileRoutesByFullPath {
   '/verified': typeof VerifiedRoute
   '/verify-email': typeof VerifyEmailRoute
   '/activity': typeof AuthenticatedActivityRoute
+  '/beauty': typeof AuthenticatedBeautyRoute
   '/branches': typeof AuthenticatedBranchesRoute
   '/command-center': typeof AuthenticatedCommandCenterRoute
   '/customers': typeof AuthenticatedCustomersRoute
@@ -536,12 +555,14 @@ export interface FileRoutesByFullPath {
   '/insights': typeof AuthenticatedInsightsRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/pharmacy': typeof AuthenticatedPharmacyRoute
   '/pos': typeof AuthenticatedPosRoute
   '/product-import': typeof AuthenticatedProductImportRoute
   '/products': typeof AuthenticatedProductsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/receipt-designer': typeof AuthenticatedReceiptDesignerRoute
   '/reports': typeof AuthenticatedReportsRoute
+  '/services': typeof AuthenticatedServicesRoute
   '/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/staff': typeof AuthenticatedStaffRoute
   '/stock-sense': typeof AuthenticatedStockSenseRoute
@@ -598,6 +619,7 @@ export interface FileRoutesByTo {
   '/verified': typeof VerifiedRoute
   '/verify-email': typeof VerifyEmailRoute
   '/activity': typeof AuthenticatedActivityRoute
+  '/beauty': typeof AuthenticatedBeautyRoute
   '/branches': typeof AuthenticatedBranchesRoute
   '/command-center': typeof AuthenticatedCommandCenterRoute
   '/customers': typeof AuthenticatedCustomersRoute
@@ -613,12 +635,14 @@ export interface FileRoutesByTo {
   '/insights': typeof AuthenticatedInsightsRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/pharmacy': typeof AuthenticatedPharmacyRoute
   '/pos': typeof AuthenticatedPosRoute
   '/product-import': typeof AuthenticatedProductImportRoute
   '/products': typeof AuthenticatedProductsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/receipt-designer': typeof AuthenticatedReceiptDesignerRoute
   '/reports': typeof AuthenticatedReportsRoute
+  '/services': typeof AuthenticatedServicesRoute
   '/staff': typeof AuthenticatedStaffRoute
   '/stock-sense': typeof AuthenticatedStockSenseRoute
   '/store-editor': typeof AuthenticatedStoreEditorRoute
@@ -676,6 +700,7 @@ export interface FileRoutesById {
   '/verified': typeof VerifiedRoute
   '/verify-email': typeof VerifyEmailRoute
   '/_authenticated/activity': typeof AuthenticatedActivityRoute
+  '/_authenticated/beauty': typeof AuthenticatedBeautyRoute
   '/_authenticated/branches': typeof AuthenticatedBranchesRoute
   '/_authenticated/command-center': typeof AuthenticatedCommandCenterRoute
   '/_authenticated/customers': typeof AuthenticatedCustomersRoute
@@ -691,12 +716,14 @@ export interface FileRoutesById {
   '/_authenticated/insights': typeof AuthenticatedInsightsRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/pharmacy': typeof AuthenticatedPharmacyRoute
   '/_authenticated/pos': typeof AuthenticatedPosRoute
   '/_authenticated/product-import': typeof AuthenticatedProductImportRoute
   '/_authenticated/products': typeof AuthenticatedProductsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/receipt-designer': typeof AuthenticatedReceiptDesignerRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
+  '/_authenticated/services': typeof AuthenticatedServicesRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/stock-sense': typeof AuthenticatedStockSenseRoute
@@ -755,6 +782,7 @@ export interface FileRouteTypes {
     | '/verified'
     | '/verify-email'
     | '/activity'
+    | '/beauty'
     | '/branches'
     | '/command-center'
     | '/customers'
@@ -770,12 +798,14 @@ export interface FileRouteTypes {
     | '/insights'
     | '/notifications'
     | '/onboarding'
+    | '/pharmacy'
     | '/pos'
     | '/product-import'
     | '/products'
     | '/profile'
     | '/receipt-designer'
     | '/reports'
+    | '/services'
     | '/settings'
     | '/staff'
     | '/stock-sense'
@@ -832,6 +862,7 @@ export interface FileRouteTypes {
     | '/verified'
     | '/verify-email'
     | '/activity'
+    | '/beauty'
     | '/branches'
     | '/command-center'
     | '/customers'
@@ -847,12 +878,14 @@ export interface FileRouteTypes {
     | '/insights'
     | '/notifications'
     | '/onboarding'
+    | '/pharmacy'
     | '/pos'
     | '/product-import'
     | '/products'
     | '/profile'
     | '/receipt-designer'
     | '/reports'
+    | '/services'
     | '/staff'
     | '/stock-sense'
     | '/store-editor'
@@ -909,6 +942,7 @@ export interface FileRouteTypes {
     | '/verified'
     | '/verify-email'
     | '/_authenticated/activity'
+    | '/_authenticated/beauty'
     | '/_authenticated/branches'
     | '/_authenticated/command-center'
     | '/_authenticated/customers'
@@ -924,12 +958,14 @@ export interface FileRouteTypes {
     | '/_authenticated/insights'
     | '/_authenticated/notifications'
     | '/_authenticated/onboarding'
+    | '/_authenticated/pharmacy'
     | '/_authenticated/pos'
     | '/_authenticated/product-import'
     | '/_authenticated/products'
     | '/_authenticated/profile'
     | '/_authenticated/receipt-designer'
     | '/_authenticated/reports'
+    | '/_authenticated/services'
     | '/_authenticated/settings'
     | '/_authenticated/staff'
     | '/_authenticated/stock-sense'
@@ -1135,6 +1171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedActivityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/beauty': {
+      id: '/_authenticated/beauty'
+      path: '/beauty'
+      fullPath: '/beauty'
+      preLoaderRoute: typeof AuthenticatedBeautyRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/branches': {
       id: '/_authenticated/branches'
       path: '/branches'
@@ -1240,6 +1283,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/pharmacy': {
+      id: '/_authenticated/pharmacy'
+      path: '/pharmacy'
+      fullPath: '/pharmacy'
+      preLoaderRoute: typeof AuthenticatedPharmacyRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/pos': {
       id: '/_authenticated/pos'
       path: '/pos'
@@ -1280,6 +1330,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof AuthenticatedReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/services': {
+      id: '/_authenticated/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof AuthenticatedServicesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings': {
@@ -1593,6 +1650,7 @@ const AuthenticatedSettingsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedActivityRoute: typeof AuthenticatedActivityRoute
+  AuthenticatedBeautyRoute: typeof AuthenticatedBeautyRoute
   AuthenticatedBranchesRoute: typeof AuthenticatedBranchesRoute
   AuthenticatedCommandCenterRoute: typeof AuthenticatedCommandCenterRoute
   AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute
@@ -1608,12 +1666,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInsightsRoute: typeof AuthenticatedInsightsRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedPharmacyRoute: typeof AuthenticatedPharmacyRoute
   AuthenticatedPosRoute: typeof AuthenticatedPosRoute
   AuthenticatedProductImportRoute: typeof AuthenticatedProductImportRoute
   AuthenticatedProductsRoute: typeof AuthenticatedProductsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReceiptDesignerRoute: typeof AuthenticatedReceiptDesignerRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
+  AuthenticatedServicesRoute: typeof AuthenticatedServicesRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRouteWithChildren
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
   AuthenticatedStockSenseRoute: typeof AuthenticatedStockSenseRoute
@@ -1630,6 +1690,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedActivityRoute: AuthenticatedActivityRoute,
+  AuthenticatedBeautyRoute: AuthenticatedBeautyRoute,
   AuthenticatedBranchesRoute: AuthenticatedBranchesRoute,
   AuthenticatedCommandCenterRoute: AuthenticatedCommandCenterRoute,
   AuthenticatedCustomersRoute: AuthenticatedCustomersRoute,
@@ -1646,12 +1707,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedInsightsRoute: AuthenticatedInsightsRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedPharmacyRoute: AuthenticatedPharmacyRoute,
   AuthenticatedPosRoute: AuthenticatedPosRoute,
   AuthenticatedProductImportRoute: AuthenticatedProductImportRoute,
   AuthenticatedProductsRoute: AuthenticatedProductsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReceiptDesignerRoute: AuthenticatedReceiptDesignerRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
+  AuthenticatedServicesRoute: AuthenticatedServicesRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRouteWithChildren,
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
   AuthenticatedStockSenseRoute: AuthenticatedStockSenseRoute,

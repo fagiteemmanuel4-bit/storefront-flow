@@ -228,7 +228,8 @@ export const BUSINESS_MODES: BusinessMode[] = [
       },
       {
         title: "Online serialised-device checkout",
-        detail: "Public checkout for registered devices stays disabled until the server can reserve and release individual device serials safely.",
+        detail:
+          "Public checkout for registered devices stays disabled until the server can reserve and release individual device serials safely.",
         status: "planned",
       },
     ],
@@ -283,7 +284,8 @@ export const BUSINESS_MODES: BusinessMode[] = [
       },
       {
         title: "Online menu ordering and kitchen dispatch",
-        detail: "Recipe or modifier-based menu items remain off public checkout until the online kitchen workflow is enabled.",
+        detail:
+          "Recipe or modifier-based menu items remain off public checkout until the online kitchen workflow is enabled.",
         status: "planned",
       },
     ],
@@ -318,12 +320,14 @@ export const BUSINESS_MODES: BusinessMode[] = [
       },
       {
         title: "Prescription and controlled-product safeguards",
-        detail: "Capture prescription references and patient details at POS, enforce minimum-age rules and require manager-authorised dispensing for controlled products.",
+        detail:
+          "Capture prescription references and patient details at POS, enforce minimum-age rules and require manager-authorised dispensing for controlled products.",
         status: "available",
       },
       {
         title: "Public online pharmacy checkout",
-        detail: "Configured batch-tracked and prescription-controlled medicines are blocked from public checkout until online dispensing safeguards are supported.",
+        detail:
+          "Configured batch-tracked and prescription-controlled medicines are blocked from public checkout until online dispensing safeguards are supported.",
         status: "planned",
       },
     ],
@@ -338,7 +342,8 @@ export const BUSINESS_MODES: BusinessMode[] = [
     key: "beauty-personal-care",
     label: "Beauty & personal care",
     eyebrow: "Products and repeat visits",
-    description: "Manage beauty retail, a priced service menu, appointment scheduling and treatment consumables in one workspace.",
+    description:
+      "Manage beauty retail, a priced service menu, appointment scheduling and treatment consumables in one workspace.",
     bestFor: "Beauty supply shops, cosmetics, skincare and personal-care retailers",
     workflows: [
       {
@@ -353,17 +358,20 @@ export const BUSINESS_MODES: BusinessMode[] = [
       },
       {
         title: "Appointments and service bookings",
-        detail: "Schedule customer visits, prevent staff double-booking and track each booking through completion.",
+        detail:
+          "Schedule customer visits, prevent staff double-booking and track each booking through completion.",
         status: "available",
       },
       {
         title: "Appointment staff, deposits and payments",
-        detail: "Assign staff, prevent overlapping bookings, collect deposits and record partial or full payments.",
+        detail:
+          "Assign staff, prevent overlapping bookings, collect deposits and record partial or full payments.",
         status: "available",
       },
       {
         title: "Consumable usage",
-        detail: "Record treatment products against an appointment and deduct branch stock transactionally.",
+        detail:
+          "Record treatment products against an appointment and deduct branch stock transactionally.",
         status: "available",
       },
     ],
@@ -394,17 +402,20 @@ export const BUSINESS_MODES: BusinessMode[] = [
       },
       {
         title: "Service appointments and deposits",
-        detail: "Book timed service appointments, assign staff, prevent schedule conflicts, collect deposits and track partial payments.",
+        detail:
+          "Book timed service appointments, assign staff, prevent schedule conflicts, collect deposits and track partial payments.",
         status: "available",
       },
       {
         title: "Job cards and work tracking",
-        detail: "Create customer job cards, add priced service line items, assign staff, set priorities and due dates, and track completion.",
+        detail:
+          "Create customer job cards, add priced service line items, assign staff, set priorities and due dates, and track completion.",
         status: "available",
       },
       {
         title: "Quotes and partial payments",
-        detail: "Edit final job amounts, record deposits and partial payments, and keep payment references in an append-only ledger.",
+        detail:
+          "Edit final job amounts, record deposits and partial payments, and keep payment references in an append-only ledger.",
         status: "available",
       },
     ],

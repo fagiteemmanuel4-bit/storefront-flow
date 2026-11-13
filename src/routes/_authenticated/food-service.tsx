@@ -204,7 +204,13 @@ function FoodServicePage() {
       map.set(
         recipe.menu_product_id,
         (map.get(recipe.menu_product_id) ?? 0) +
-          Number(ingredientStock.find((stock) => stock.product_id === recipe.ingredient_product_id)?.unit_cost ?? ingredient?.cost ?? 0) * recipe.quantity_per_serving,
+          Number(
+            ingredientStock.find((stock) => stock.product_id === recipe.ingredient_product_id)
+              ?.unit_cost ??
+              ingredient?.cost ??
+              0,
+          ) *
+            recipe.quantity_per_serving,
       );
     }
     return map;
@@ -300,10 +306,22 @@ function FoodServicePage() {
         .eq("product_id", ingredientId)
         .maybeSingle();
       if (stockReadError) throw new Error(stockReadError.message);
-      if (existingStock && Number(existingStock.quantity) > 0 && existingStock.unit !== ingredientUnit.trim()) {
-        throw new Error("This ingredient already has stock in " + existingStock.unit + ". Use that unit or adjust the stock first.");
+      if (
+        existingStock &&
+        Number(existingStock.quantity) > 0 &&
+        existingStock.unit !== ingredientUnit.trim()
+      ) {
+        throw new Error(
+          "This ingredient already has stock in " +
+            existingStock.unit +
+            ". Use that unit or adjust the stock first.",
+        );
       }
-      if (existingStock && Number(existingStock.quantity) === 0 && existingStock.unit !== ingredientUnit.trim()) {
+      if (
+        existingStock &&
+        Number(existingStock.quantity) === 0 &&
+        existingStock.unit !== ingredientUnit.trim()
+      ) {
         const { error: unitError } = await db
           .from("food_ingredient_stock")
           .update({ unit: ingredientUnit.trim(), updated_at: new Date().toISOString() })
@@ -319,13 +337,18 @@ function FoodServicePage() {
         .eq("branch_id", branchId)
         .eq("ingredient_product_id", ingredientId);
       if (recipeUnitError) throw new Error(recipeUnitError.message);
-      if ((existingRecipes ?? []).some((row: { unit: string }) => row.unit !== ingredientUnit.trim())) {
+      if (
+        (existingRecipes ?? []).some((row: { unit: string }) => row.unit !== ingredientUnit.trim())
+      ) {
         throw new Error("This ingredient is already used by another recipe in a different unit.");
       }
       if (!existingStock) {
         const { error: stockError } = await db.from("food_ingredient_stock").insert({
-          store_id: storeId, branch_id: branchId, product_id: ingredientId,
-          quantity: 0, unit: ingredientUnit.trim(),
+          store_id: storeId,
+          branch_id: branchId,
+          product_id: ingredientId,
+          quantity: 0,
+          unit: ingredientUnit.trim(),
         });
         if (stockError) throw new Error(stockError.message);
       }
@@ -362,15 +385,24 @@ function FoodServicePage() {
     setSaving(true);
     try {
       const { error } = await db.rpc("receive_food_ingredient_stock", {
-        _store_id: storeId, _branch_id: branchId, _product_id: stockProductId,
-        _quantity: quantity, _unit: stockReceiveUnit.trim(), _unit_cost: Number(stockReceiveUnitCost),
+        _store_id: storeId,
+        _branch_id: branchId,
+        _product_id: stockProductId,
+        _quantity: quantity,
+        _unit: stockReceiveUnit.trim(),
+        _unit_cost: Number(stockReceiveUnitCost),
       });
       if (error) throw new Error(error.message);
       toast.success("Ingredient stock received.");
-      setStockProductId(""); setStockReceiveQty("1"); setStockReceiveUnitCost("0"); await refresh();
+      setStockProductId("");
+      setStockReceiveQty("1");
+      setStockReceiveUnitCost("0");
+      await refresh();
     } catch (error) {
       toast.error(errorMessage(error, "Ingredient stock could not be received."));
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function removeRow(table: string, id: string) {
@@ -688,7 +720,8 @@ function FoodServicePage() {
                 <div>
                   <h2 className="font-display font-semibold">Recipe costing & ingredients</h2>
                   <p className="text-xs text-muted-foreground">
-                    Measured ingredient stock is deducted transactionally per serving; recipe costing uses the received unit cost.
+                    Measured ingredient stock is deducted transactionally per serving; recipe
+                    costing uses the received unit cost.
                   </p>
                 </div>
               </div>
@@ -727,7 +760,11 @@ function FoodServicePage() {
                         .filter((p) => p.id !== recipeMenuId)
                         .map((p) => (
                           <option key={p.id} value={p.id}>
-                            {p.name} · {ingredientStock.find((stock) => stock.product_id === p.id)?.quantity ?? 0} {ingredientStock.find((stock) => stock.product_id === p.id)?.unit ?? ""} in stock
+                            {p.name} ·{" "}
+                            {ingredientStock.find((stock) => stock.product_id === p.id)?.quantity ??
+                              0}{" "}
+                            {ingredientStock.find((stock) => stock.product_id === p.id)?.unit ?? ""}{" "}
+                            in stock
                           </option>
                         ))}
                     </select>
@@ -748,7 +785,11 @@ function FoodServicePage() {
                     </label>
                     <label className="block space-y-1.5">
                       <span className="text-xs font-semibold">Stock unit</span>
-                      <select value={ingredientUnit} onChange={(e) => setIngredientUnit(e.target.value)} className="field h-11 w-full">
+                      <select
+                        value={ingredientUnit}
+                        onChange={(e) => setIngredientUnit(e.target.value)}
+                        className="field h-11 w-full"
+                      >
                         <option value="unit">Unit</option>
                         <option value="g">Grams (g)</option>
                         <option value="kg">Kilograms (kg)</option>
@@ -767,21 +808,80 @@ function FoodServicePage() {
               )}
               <div className="mt-5 rounded-xl border border-border p-4">
                 <h3 className="font-semibold">Receive ingredient stock</h3>
-                <p className="mt-1 text-xs text-muted-foreground">Fractional quantities are supported. The unit must match the recipe unit for this ingredient.</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Fractional quantities are supported. The unit must match the recipe unit for this
+                  ingredient.
+                </p>
                 <form onSubmit={receiveIngredientStock} className="mt-3 grid gap-2 sm:grid-cols-4">
-                  <select required value={stockProductId} onChange={(e) => setStockProductId(e.target.value)} className="field h-11 sm:col-span-2">
+                  <select
+                    required
+                    value={stockProductId}
+                    onChange={(e) => setStockProductId(e.target.value)}
+                    className="field h-11 sm:col-span-2"
+                  >
                     <option value="">Choose ingredient</option>
-                    {products.filter((p) => p.id !== recipeMenuId).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                    {products
+                      .filter((p) => p.id !== recipeMenuId)
+                      .map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
                   </select>
-                  <Input type="number" min="0.0001" step="0.0001" value={stockReceiveQty} onChange={(e) => setStockReceiveQty(e.target.value)} className="h-11" required />
-                  <select value={stockReceiveUnit} onChange={(e) => setStockReceiveUnit(e.target.value)} className="field h-11">
-                    <option value="unit">Unit</option><option value="g">Grams (g)</option><option value="kg">Kilograms (kg)</option><option value="ml">Millilitres (ml)</option><option value="l">Litres (l)</option><option value="piece">Pieces</option><option value="portion">Portions</option>
+                  <Input
+                    type="number"
+                    min="0.0001"
+                    step="0.0001"
+                    value={stockReceiveQty}
+                    onChange={(e) => setStockReceiveQty(e.target.value)}
+                    className="h-11"
+                    required
+                  />
+                  <select
+                    value={stockReceiveUnit}
+                    onChange={(e) => setStockReceiveUnit(e.target.value)}
+                    className="field h-11"
+                  >
+                    <option value="unit">Unit</option>
+                    <option value="g">Grams (g)</option>
+                    <option value="kg">Kilograms (kg)</option>
+                    <option value="ml">Millilitres (ml)</option>
+                    <option value="l">Litres (l)</option>
+                    <option value="piece">Pieces</option>
+                    <option value="portion">Portions</option>
                   </select>
-                  <Input type="number" min="0" step="0.000001" value={stockReceiveUnitCost} onChange={(e) => setStockReceiveUnitCost(e.target.value)} className="h-11 sm:col-span-2" placeholder="Cost per unit" />
-                  <Button type="submit" className="sm:col-span-2" disabled={saving || !stockProductId}>Receive ingredient stock</Button>
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.000001"
+                    value={stockReceiveUnitCost}
+                    onChange={(e) => setStockReceiveUnitCost(e.target.value)}
+                    className="h-11 sm:col-span-2"
+                    placeholder="Cost per unit"
+                  />
+                  <Button
+                    type="submit"
+                    className="sm:col-span-2"
+                    disabled={saving || !stockProductId}
+                  >
+                    Receive ingredient stock
+                  </Button>
                 </form>
                 <div className="mt-3 space-y-1">
-                  {ingredientStock.map((stock) => <p key={stock.product_id} className="flex justify-between gap-2 text-xs text-muted-foreground"><span>{products.find((p) => p.id === stock.product_id)?.name ?? "Ingredient"}</span><strong>{Number(stock.quantity).toLocaleString()} {stock.unit} · {formatMoney(Number(stock.unit_cost), currency)}/{stock.unit}</strong></p>)}
+                  {ingredientStock.map((stock) => (
+                    <p
+                      key={stock.product_id}
+                      className="flex justify-between gap-2 text-xs text-muted-foreground"
+                    >
+                      <span>
+                        {products.find((p) => p.id === stock.product_id)?.name ?? "Ingredient"}
+                      </span>
+                      <strong>
+                        {Number(stock.quantity).toLocaleString()} {stock.unit} ·{" "}
+                        {formatMoney(Number(stock.unit_cost), currency)}/{stock.unit}
+                      </strong>
+                    </p>
+                  ))}
                 </div>
               </div>
               <div className="mt-5 space-y-2">
@@ -903,7 +1003,10 @@ function FoodServicePage() {
                         <p className="font-semibold">
                           {products.find((p) => p.id === w.ingredient_product_id)?.name ??
                             "Ingredient"}{" "}
-                          · {w.quantity} {ingredientStock.find((stock) => stock.product_id === w.ingredient_product_id)?.unit ?? "units"}
+                          · {w.quantity}{" "}
+                          {ingredientStock.find(
+                            (stock) => stock.product_id === w.ingredient_product_id,
+                          )?.unit ?? "units"}
                         </p>
                         <p className="mt-1 text-xs text-muted-foreground">{w.reason}</p>
                       </div>
