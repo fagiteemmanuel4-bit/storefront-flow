@@ -564,6 +564,12 @@ security definer
 set search_path to ''
 as $function$
 begin
+  if new.assigned_staff_id is not null and not (
+    exists(select 1 from public.store_members sm where sm.store_id=new.store_id and sm.user_id=new.assigned_staff_id)
+    or exists(select 1 from public.stores s where s.id=new.store_id and s.owner_id=new.assigned_staff_id)
+  ) then
+    raise exception 'Assigned staff member does not belong to this store';
+  end if;
   if new.assigned_staff_id is not null and new.status not in ('cancelled','no_show') then
     perform pg_catalog.pg_advisory_xact_lock(
       pg_catalog.hashtextextended(new.store_id::text || ':' || new.assigned_staff_id::text, 0)
@@ -716,6 +722,7 @@ create policy service_jobs_staff_write on public.service_jobs
     public.has_store_role(store_id,(select auth.uid()),array['owner','manager','cashier']::public.store_role[])
     and exists(select 1 from public.branches b where b.id=branch_id and b.store_id=service_jobs.store_id)
     and (customer_id is null or exists(select 1 from public.customers c where c.id=customer_id and c.store_id=service_jobs.store_id))
+    and (assigned_staff_id is null or exists(select 1 from public.store_members sm where sm.store_id=service_jobs.store_id and sm.user_id=service_jobs.assigned_staff_id) or exists(select 1 from public.stores s where s.id=service_jobs.store_id and s.owner_id=service_jobs.assigned_staff_id))
   );
 
 create policy service_job_items_staff_write on public.service_job_items
