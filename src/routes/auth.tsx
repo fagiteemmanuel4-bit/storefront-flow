@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { TurnstileCaptcha } from "@/components/auth/TurnstileCaptcha";
 
 /* Strap favicon: lime ring and dot on ink. Inlined so no extra file is needed. */
 const FAVICON_SVG =
@@ -39,10 +40,10 @@ function normalizeEmail(value: string) {
 function verificationUrl(email?: string) {
   return `${window.location.origin}/verify-email${email ? `?email=${encodeURIComponent(email)}` : ""}`;
 }
-async function requestLoginOtp(email: string) {
+async function requestLoginOtp(email: string, captchaToken?: string | null) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: false, emailRedirectTo: verificationUrl(email) },
+    options: { shouldCreateUser: false, emailRedirectTo: verificationUrl(email), captchaToken: captchaToken ?? undefined },
   });
   if (error) throw new Error(error.message);
 }
@@ -66,6 +67,9 @@ function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const [pendingOtpEmail, setPendingOtpEmail] = useState<string | null>(null);
 
   // Keep the browser tab icon in sync with the Strap logo.
   useEffect(() => {
@@ -105,8 +109,45 @@ function AuthPage() {
     };
   }, [navigate]);
 
+  async function handleGoogleSignIn() {
+    setBusy(true);
+    setNotice(null);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/auth` },
+      });
+      if (error) throw error;
+    } catch (error) {
+      toast.error(errorMessage(error, "Google sign-in couldn't be started. Please try again."));
+      setBusy(false);
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+
+    if (mode !== "recover" && !captchaToken) {
+      toast.error("Complete the security check before continuing.");
+      return;
+    }
+
+    if (pendingOtpEmail) {
+      setBusy(true);
+      try {
+        await requestLoginOtp(pendingOtpEmail, captchaToken);
+        sessionStorage.setItem("strap_otp_email", pendingOtpEmail);
+        sessionStorage.setItem("strap_otp_flow", "signin");
+        await navigate({ to: "/verify-email", search: { email: pendingOtpEmail }, replace: true });
+      } catch (error) {
+        toast.error(errorMessage(error, "We couldn't send your verification code."));
+        setCaptchaToken(null);
+        setCaptchaResetKey((value) => value + 1);
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
 
     if (mode !== "recover") {
       const parsedEmail = emailSchema.safeParse(normalizeEmail(email));
@@ -122,6 +163,7 @@ function AuthPage() {
         try {
           const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
             redirectTo: `${window.location.origin}/verified?kind=password&next=${encodeURIComponent("/auth?mode=recover")}`,
+            captchaToken: captchaToken ?? undefined,
           });
           if (error) throw new Error(error.message);
           setNotice(
@@ -165,6 +207,7 @@ function AuthPage() {
             options: {
               emailRedirectTo: verificationUrl(normalizedEmail),
               data: { full_name: validatedName },
+              captchaToken: captchaToken ?? undefined,
             },
           });
           if (error) throw new Error(error.message);
@@ -182,17 +225,14 @@ function AuthPage() {
         const { data, error } = await supabase.auth.signInWithPassword({
           email: normalizedEmail,
           password: parsedPassword.data,
+          options: { captchaToken: captchaToken ?? undefined },
         });
         if (error) {
           if (error.message.toLowerCase().includes("email not confirmed")) {
-            await requestLoginOtp(normalizedEmail);
-            sessionStorage.setItem("strap_otp_email", normalizedEmail);
-            sessionStorage.setItem("strap_otp_flow", "signin");
-            void navigate({
-              to: "/verify-email",
-              search: { email: normalizedEmail },
-              replace: true,
-            });
+            setPendingOtpEmail(normalizedEmail);
+            setCaptchaToken(null);
+            setCaptchaResetKey((value) => value + 1);
+            setNotice("Your password is correct. Complete the security check again, then send your sign-in code.");
             return;
           }
           throw new Error(error.message);
@@ -220,14 +260,16 @@ function AuthPage() {
         }
 
         await supabase.auth.signOut();
-        await requestLoginOtp(normalizedEmail);
-        sessionStorage.setItem("strap_otp_email", normalizedEmail);
-        sessionStorage.setItem("strap_otp_flow", "signin");
-        void navigate({ to: "/verify-email", search: { email: normalizedEmail }, replace: true });
+        setPendingOtpEmail(normalizedEmail);
+        setCaptchaToken(null);
+        setCaptchaResetKey((value) => value + 1);
+        setNotice("This device needs an email verification. Complete the security check again, then send your sign-in code.");
       } catch (error) {
         toast.error(
           errorMessage(error, "That didn't work. Please check your details and try again."),
         );
+        setCaptchaToken(null);
+        setCaptchaResetKey((value) => value + 1);
       } finally {
         setBusy(false);
       }
@@ -250,6 +292,8 @@ function AuthPage() {
       setMode("signin");
     } catch (error) {
       toast.error(errorMessage(error, "We couldn't update your password."));
+      setCaptchaToken(null);
+      setCaptchaResetKey((value) => value + 1);
     } finally {
       setBusy(false);
     }
@@ -314,6 +358,27 @@ function AuthPage() {
           <div className="strap-auth-box">
             <h1 className="strap-auth-title">{title}</h1>
             <p className="strap-auth-sub">{subtitle}</p>
+
+            {(mode === "signin" || mode === "signup") && (
+              <div style={{ display: "grid", gap: 14, marginBottom: 18 }}>
+                <Button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void handleGoogleSignIn()}
+                  className="strap-btn strap-btn-google"
+                  style={{ width: "100%", minHeight: 48, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, border: "1px solid var(--color-border)", background: "var(--color-surface)", color: "var(--color-foreground)" }}
+                >
+                  <svg aria-hidden="true" viewBox="0 0 48 48" width="19" height="19">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.04 13.22l7.98 6.19C11.93 13.72 17.48 9.5 24 9.5Z" />
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.73 7.18l7.65 5.94c4.47-4.13 7.12-10.2 7.12-17.59Z" />
+                    <path fill="#FBBC05" d="M10.02 28.59A14.4 14.4 0 0 1 9.25 24c0-1.59.27-3.13.77-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.88.93 7.55 2.04 10.78l7.98-6.19Z" />
+                    <path fill="#34A853" d="M24 48c6.47 0 11.9-2.13 15.86-5.86l-7.65-5.94c-2.12 1.42-4.84 2.26-8.21 2.26-6.52 0-12.07-4.22-14.02-10.09l-7.98 6.19C6.51 42.62 14.62 48 24 48Z" />
+                  </svg>
+                  Continue with Google
+                </Button>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--color-muted-foreground)", fontSize: 12 }}><span style={{ height: 1, flex: 1, background: "var(--color-border)" }} /><span>or continue with email</span><span style={{ height: 1, flex: 1, background: "var(--color-border)" }} /></div>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="strap-auth-form" noValidate={false}>
               {mode === "signup" && (
@@ -417,6 +482,10 @@ function AuthPage() {
                 </label>
               )}
 
+              {(mode === "signin" || mode === "signup" || mode === "reset") && (
+                <TurnstileCaptcha key={captchaResetKey} onTokenChange={setCaptchaToken} />
+              )}
+
               {notice && (
                 <div className="strap-notice" role="status">
                   {notice}
@@ -424,7 +493,7 @@ function AuthPage() {
               )}
 
               <Button type="submit" disabled={busy} className="strap-btn strap-btn-primary">
-                {busy ? "Please wait…" : submitLabel}
+                {busy ? "Please wait…" : pendingOtpEmail ? "Send verification code" : submitLabel}
               </Button>
             </form>
 
@@ -437,6 +506,9 @@ function AuthPage() {
                     className="strap-link"
                     onClick={() => {
                       setMode(switchMode);
+                      setPendingOtpEmail(null);
+                      setCaptchaToken(null);
+                      setCaptchaResetKey((value) => value + 1);
                       setNotice(null);
                     }}
                   >

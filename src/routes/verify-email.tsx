@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthBrand } from "@/components/auth/AuthBrand";
+import { TurnstileCaptcha } from "@/components/auth/TurnstileCaptcha";
 import "@/strap-auth.css";
 
 export const Route = createFileRoute("/verify-email")({
@@ -54,6 +55,8 @@ function VerifyEmailPage() {
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
   const [flow, setFlow] = useState<"signup" | "signin">("signin");
   const verifyingRef = useRef(false);
   const boxRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -209,6 +212,11 @@ function VerifyEmailPage() {
       setMessage("Enter your email address first.");
       return;
     }
+    if (!captchaToken) {
+      setState("error");
+      setMessage("Complete the security check before requesting another code.");
+      return;
+    }
     setResending(true);
     try {
       const { error } = await supabase.auth.signInWithOtp({
@@ -216,12 +224,15 @@ function VerifyEmailPage() {
         options: {
           shouldCreateUser: false,
           emailRedirectTo: `${window.location.origin}/verify-email?email=${encodeURIComponent(normalizedEmail)}`,
+          captchaToken,
         },
       });
       if (error) throw error;
       sessionStorage.setItem("strap_otp_email", normalizedEmail);
       sessionStorage.setItem("strap_otp_flow", flow);
       setCode("");
+      setCaptchaToken(null);
+      setCaptchaResetKey((value) => value + 1);
       setCooldown(RESEND_COOLDOWN_SECONDS);
       setState("waiting");
       setMessage(
@@ -234,6 +245,8 @@ function VerifyEmailPage() {
           ? error.message
           : "We couldn't send a new code. Please try again later.",
       );
+      setCaptchaToken(null);
+      setCaptchaResetKey((value) => value + 1);
     } finally {
       setResending(false);
     }
@@ -304,6 +317,7 @@ function VerifyEmailPage() {
                   Change email
                 </Link>
               </p>
+              <TurnstileCaptcha key={captchaResetKey} onTokenChange={setCaptchaToken} />
               <form onSubmit={(event) => void verifyCode(event)} className="sa-fm">
                 <div
                   className="sa-otp"
