@@ -238,7 +238,8 @@ function ElectronicsWorkspacePage() {
   async function recordRepairPayment(event: React.FormEvent<HTMLFormElement>, repair: Repair) {
     event.preventDefault();
     if (!canTakePayment || !storeId) return;
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const amount = Number(form.get("amount") ?? 0);
     const reference = String(form.get("reference") ?? "").trim();
     const paymentMethod = String(form.get("payment_method") ?? "cash");
@@ -252,7 +253,7 @@ function ElectronicsWorkspacePage() {
       _payment_method: paymentMethod, _reference: reference, _note: note,
     });
     if (error) toast.error(error.message);
-    else { toast.success("Repair payment recorded."); event.currentTarget.reset(); await refresh(); }
+    else { toast.success("Repair payment recorded."); formElement.reset(); await refresh(); }
   }
 
   async function updateRepair(repair: Repair, nextStatus: string) {
