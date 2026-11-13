@@ -208,6 +208,13 @@ export function QuickFind({ open, onOpenChange }: QuickFindProps) {
   };
   const go = (to: string) => {
     remember(to);
+    if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") {
+      try {
+        navigator.vibrate(12);
+      } catch {
+        // Haptics are optional and may be unavailable in some browsers.
+      }
+    }
     onOpenChange(false);
     void navigate({ to: to as never });
   };
