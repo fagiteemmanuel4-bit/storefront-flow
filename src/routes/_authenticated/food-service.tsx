@@ -42,7 +42,7 @@ type Recipe = {
   quantity_per_serving: number;
   unit: string;
 };
-type IngredientStock = { product_id: string; quantity: number; unit: string };
+type IngredientStock = { product_id: string; quantity: number; unit: string; unit_cost: number };
 type Ticket = {
   id: string;
   ticket_number: string;
@@ -86,6 +86,7 @@ function FoodServicePage() {
   const [stockProductId, setStockProductId] = useState("");
   const [stockReceiveQty, setStockReceiveQty] = useState("1");
   const [stockReceiveUnit, setStockReceiveUnit] = useState("unit");
+  const [stockReceiveUnitCost, setStockReceiveUnitCost] = useState("0");
   const [wasteIngredientId, setWasteIngredientId] = useState("");
   const [wasteQty, setWasteQty] = useState("1");
   const [wasteReason, setWasteReason] = useState("");
@@ -130,7 +131,7 @@ function FoodServicePage() {
     queryFn: async () => {
       const { data, error } = await db
         .from("food_ingredient_stock")
-        .select("product_id,quantity,unit")
+        .select("product_id,quantity,unit,unit_cost")
         .eq("store_id", storeId!)
         .eq("branch_id", branchId!)
         .order("product_id");
@@ -203,11 +204,11 @@ function FoodServicePage() {
       map.set(
         recipe.menu_product_id,
         (map.get(recipe.menu_product_id) ?? 0) +
-          Number(ingredient?.cost ?? 0) * recipe.quantity_per_serving,
+          Number(ingredientStock.find((stock) => stock.product_id === recipe.ingredient_product_id)?.unit_cost ?? ingredient?.cost ?? 0) * recipe.quantity_per_serving,
       );
     }
     return map;
-  }, [recipes, products]);
+  }, [recipes, products, ingredientStock]);
 
   async function refresh() {
     await Promise.all([
@@ -353,11 +354,11 @@ function FoodServicePage() {
     try {
       const { error } = await db.rpc("receive_food_ingredient_stock", {
         _store_id: storeId, _branch_id: branchId, _product_id: stockProductId,
-        _quantity: quantity, _unit: stockReceiveUnit.trim(),
+        _quantity: quantity, _unit: stockReceiveUnit.trim(), _unit_cost: Number(stockReceiveUnitCost),
       });
       if (error) throw new Error(error.message);
       toast.success("Ingredient stock received.");
-      setStockProductId(""); setStockReceiveQty("1"); await refresh();
+      setStockProductId(""); setStockReceiveQty("1"); setStockReceiveUnitCost("0"); await refresh();
     } catch (error) {
       toast.error(errorMessage(error, "Ingredient stock could not be received."));
     } finally { setSaving(false); }
@@ -717,7 +718,7 @@ function FoodServicePage() {
                         .filter((p) => p.id !== recipeMenuId)
                         .map((p) => (
                           <option key={p.id} value={p.id}>
-                            {p.name} · {p.quantity} in stock
+                            {p.name} · {ingredientStock.find((stock) => stock.product_id === p.id)?.quantity ?? 0} {ingredientStock.find((stock) => stock.product_id === p.id)?.unit ?? ""} in stock
                           </option>
                         ))}
                     </select>
@@ -767,10 +768,11 @@ function FoodServicePage() {
                   <select value={stockReceiveUnit} onChange={(e) => setStockReceiveUnit(e.target.value)} className="field h-11">
                     <option value="unit">Unit</option><option value="g">Grams (g)</option><option value="kg">Kilograms (kg)</option><option value="ml">Millilitres (ml)</option><option value="l">Litres (l)</option><option value="piece">Pieces</option><option value="portion">Portions</option>
                   </select>
-                  <Button type="submit" className="sm:col-span-4" disabled={saving || !stockProductId}>Receive ingredient stock</Button>
+                  <Input type="number" min="0" step="0.000001" value={stockReceiveUnitCost} onChange={(e) => setStockReceiveUnitCost(e.target.value)} className="h-11 sm:col-span-2" placeholder="Cost per unit" />
+                  <Button type="submit" className="sm:col-span-2" disabled={saving || !stockProductId}>Receive ingredient stock</Button>
                 </form>
                 <div className="mt-3 space-y-1">
-                  {ingredientStock.map((stock) => <p key={stock.product_id} className="flex justify-between gap-2 text-xs text-muted-foreground"><span>{products.find((p) => p.id === stock.product_id)?.name ?? "Ingredient"}</span><strong>{Number(stock.quantity).toLocaleString()} {stock.unit}</strong></p>)}
+                  {ingredientStock.map((stock) => <p key={stock.product_id} className="flex justify-between gap-2 text-xs text-muted-foreground"><span>{products.find((p) => p.id === stock.product_id)?.name ?? "Ingredient"}</span><strong>{Number(stock.quantity).toLocaleString()} {stock.unit} · {formatMoney(Number(stock.unit_cost), currency)}/{stock.unit}</strong></p>)}
                 </div>
               </div>
               <div className="mt-5 space-y-2">
@@ -843,8 +845,8 @@ function FoodServicePage() {
                   <span className="text-xs font-semibold">Quantity wasted</span>
                   <Input
                     type="number"
-                    min={1}
-                    step={1}
+                    min="0.0001"
+                    step="0.0001"
                     required
                     value={wasteQty}
                     onChange={(e) => setWasteQty(e.target.value)}
