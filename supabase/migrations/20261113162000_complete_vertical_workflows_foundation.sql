@@ -618,8 +618,13 @@ language plpgsql
 security definer
 set search_path to ''
 as $function$
+declare
+  v_new_balance text;
+  v_old_balance text;
 begin
-  if new.paid_amount is distinct from old.paid_amount
+  v_new_balance := coalesce(to_jsonb(new)->>'paid_amount',to_jsonb(new)->>'amount_paid');
+  v_old_balance := coalesce(to_jsonb(old)->>'paid_amount',to_jsonb(old)->>'amount_paid');
+  if v_new_balance is distinct from v_old_balance
      and pg_catalog.current_setting('app.allow_vertical_balance_update',true) is distinct from 'on' then
     raise exception 'Payment balances can only be changed by the payment ledger';
   end if;
