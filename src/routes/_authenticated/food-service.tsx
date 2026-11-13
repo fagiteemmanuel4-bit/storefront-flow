@@ -303,6 +303,15 @@ function FoodServicePage() {
       if (existingStock && Number(existingStock.quantity) > 0 && existingStock.unit !== ingredientUnit.trim()) {
         throw new Error("This ingredient already has stock in " + existingStock.unit + ". Use that unit or adjust the stock first.");
       }
+      if (existingStock && Number(existingStock.quantity) === 0 && existingStock.unit !== ingredientUnit.trim()) {
+        const { error: unitError } = await db
+          .from("food_ingredient_stock")
+          .update({ unit: ingredientUnit.trim(), updated_at: new Date().toISOString() })
+          .eq("store_id", storeId)
+          .eq("branch_id", branchId)
+          .eq("product_id", ingredientId);
+        if (unitError) throw new Error(unitError.message);
+      }
       const { data: existingRecipes, error: recipeUnitError } = await db
         .from("food_recipe_ingredients")
         .select("unit")
