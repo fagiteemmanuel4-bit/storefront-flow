@@ -105,7 +105,7 @@ create or replace function public.record_electronics_repair_payment(
 )
 returns uuid
 language plpgsql
-security invoker
+security definer
 set search_path to ''
 as $function$
 declare
@@ -126,7 +126,7 @@ begin
    where id = _repair_id and store_id = _store_id
    for update;
   if not found then raise exception 'Repair job not found'; end if;
-  if v_repair.status not in ('received','diagnosing','awaiting_approval','in_progress','completed') then
+  if v_repair.status not in ('received','diagnosing','waiting_parts','ready') then
     raise exception 'Payments cannot be recorded for this repair status';
   end if;
   if v_repair.paid_amount + _amount > greatest(v_repair.final_cost, v_repair.estimated_cost) then
@@ -344,6 +344,36 @@ create table if not exists public.service_job_payments (
   created_at timestamptz not null default now(),
   unique(store_id, reference)
 );
+
+-- A service payment atomically updates the job's paid balance.
+create or replace function public.apply_service_job_payment()
+returns trigger
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_job public.service_jobs%rowtype;
+begin
+  select * into v_job
+    from public.service_jobs
+   where id = new.job_id and store_id = new.store_id
+   for update;
+  if not found then raise exception 'Service job not found'; end if;
+  if v_job.amount_paid + new.amount > greatest(v_job.quoted_amount, v_job.final_amount) then
+    raise exception 'Payment exceeds the remaining job balance';
+  end if;
+  update public.service_jobs
+     set amount_paid = amount_paid + new.amount, updated_at = now()
+   where id = new.job_id and store_id = new.store_id;
+  return new;
+end;
+$function$;
+revoke all on function public.apply_service_job_payment() from public, anon, authenticated;
+drop trigger if exists apply_service_job_payment on public.service_job_payments;
+create trigger apply_service_job_payment
+before insert on public.service_job_payments
+for each row execute function public.apply_service_job_payment();
 
 -- Prevent double-booking a named staff member, including concurrent requests.
 create or replace function public.guard_beauty_appointment_schedule()
