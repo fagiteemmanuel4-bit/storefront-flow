@@ -688,7 +688,7 @@ function FoodServicePage() {
                 <div>
                   <h2 className="font-display font-semibold">Recipe costing & ingredients</h2>
                   <p className="text-xs text-muted-foreground">
-                    Ingredients are deducted per serving when a food sale is completed.
+                    Measured ingredient stock is deducted transactionally per serving; recipe costing uses the received unit cost.
                   </p>
                 </div>
               </div>
@@ -903,7 +903,7 @@ function FoodServicePage() {
                         <p className="font-semibold">
                           {products.find((p) => p.id === w.ingredient_product_id)?.name ??
                             "Ingredient"}{" "}
-                          · {w.quantity} units
+                          · {w.quantity} {ingredientStock.find((stock) => stock.product_id === w.ingredient_product_id)?.unit ?? "units"}
                         </p>
                         <p className="mt-1 text-xs text-muted-foreground">{w.reason}</p>
                       </div>
