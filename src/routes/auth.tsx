@@ -63,9 +63,23 @@ function StrapLogo() {
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recover">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recover">(() => {
+    if (typeof window === "undefined") return "signin";
+    const params = new URLSearchParams(window.location.search);
+    return params.get("mode") === "signup"
+      ? "signup"
+      : params.get("mode") === "recover" || window.location.hash.includes("type=recovery")
+        ? "recover"
+        : "signin";
+  });
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return new URLSearchParams(window.location.search).get("email") ?? "";
+  });
+  const [recoveryCode, setRecoveryCode] = useState("");
+  const [recoveryVerified, setRecoveryVerified] = useState(false);
+  const [googleOnlyRecovery, setGoogleOnlyRecovery] = useState(false);
   const [password, setPassword] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -104,6 +118,8 @@ function AuthPage() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("mode") === "recover" || window.location.hash.includes("type=recovery")) {
       setMode("recover");
+      const recoveryEmail = params.get("email");
+      if (recoveryEmail) setEmail(recoveryEmail);
       return;
     }
     let cancelled = false;
@@ -186,15 +202,22 @@ function AuthPage() {
         setNotice(null);
         try {
           const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-            redirectTo: `${window.location.origin}/verified?kind=password&next=${encodeURIComponent("/auth?mode=recover")}`,
+            redirectTo: `${window.location.origin}/auth?mode=recover&email=${encodeURIComponent(normalizedEmail)}`,
             captchaToken: captchaToken ?? undefined,
           });
           if (error) throw new Error(error.message);
+          sessionStorage.setItem("strap_password_recovery_email", normalizedEmail);
+          setEmail(normalizedEmail);
+          setRecoveryCode("");
+          setRecoveryVerified(false);
+          setGoogleOnlyRecovery(false);
+          setPassword("");
+          setMode("recover");
           setNotice(
-            "If an account exists for this email, we sent a secure password-reset link. Open it to continue.",
+            "If an account exists for this email, a secure verification code has been sent. Enter it below, then create a password for this same account. If you originally joined with Google, this adds password sign-in without creating another account.",
           );
         } catch (error) {
-          toast.error(errorMessage(error, "We couldn't send that reset link."));
+          toast.error(errorMessage(error, "We couldn't send a password verification code."));
         } finally {
           setBusy(false);
         }
@@ -234,8 +257,32 @@ function AuthPage() {
               captchaToken: captchaToken ?? undefined,
             },
           });
-          if (error) throw new Error(error.message);
+          if (error) {
+            const message = error.message.toLowerCase();
+            if (message.includes("already registered") || message.includes("already exists")) {
+              setEmail(normalizedEmail);
+              setMode("signin");
+              setPassword("");
+              setNotice(
+                "We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.",
+              );
+              return;
+            }
+            throw new Error(error.message);
+          }
           if (!data.user) throw new Error("Strap couldn't create the account. Please try again.");
+          // Supabase intentionally returns an empty identities array when an email
+          // already belongs to an account and email confirmations are enabled.
+          // Never attempt to create a second account for that address.
+          if (Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+            setEmail(normalizedEmail);
+            setPassword("");
+            setMode("signin");
+            setNotice(
+              "We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.",
+            );
+            return;
+          }
           sessionStorage.setItem("strap_otp_email", normalizedEmail);
           sessionStorage.setItem("strap_otp_flow", "signup");
           await navigate({
@@ -304,6 +351,49 @@ function AuthPage() {
       return;
     }
 
+    const parsedEmail = emailSchema.safeParse(normalizeEmail(email));
+    if (!parsedEmail.success) {
+      toast.error("Enter the email address where you received the verification code.");
+      return;
+    }
+    const normalizedEmail = parsedEmail.data;
+
+    if (!recoveryVerified) {
+      if (!/^\d{8}$/.test(recoveryCode)) {
+        toast.error("Enter the 8-digit password verification code from your email.");
+        return;
+      }
+      setBusy(true);
+      setNotice(null);
+      try {
+        const { data: recovery, error: verifyError } = await supabase.auth.verifyOtp({
+          email: normalizedEmail,
+          token: recoveryCode,
+          type: "recovery",
+        });
+        if (verifyError) throw new Error(verifyError.message);
+        if (!recovery.user) throw new Error("We couldn't verify that code. Request a fresh one.");
+
+        const providers = Array.isArray(recovery.user.app_metadata?.providers)
+          ? recovery.user.app_metadata.providers
+          : [];
+        const isGoogleOnly = providers.includes("google") && !providers.includes("email");
+        setGoogleOnlyRecovery(isGoogleOnly);
+        setRecoveryVerified(true);
+        setRecoveryCode("");
+        setNotice(
+          isGoogleOnly
+            ? "This account was created with Google and doesn't have a password yet. Create a password now to connect email-and-password sign-in to this same Strap account."
+            : "Your email is verified. Create your new password below to finish the password update.",
+        );
+      } catch (error) {
+        toast.error(errorMessage(error, "We couldn't verify that code. Check it and try again."));
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     const parsedPassword = passwordSchema.safeParse(password);
     if (!parsedPassword.success) {
       toast.error(parsedPassword.error.issues[0]!.message);
@@ -315,13 +405,18 @@ function AuthPage() {
       const { error } = await supabase.auth.updateUser({ password: parsedPassword.data });
       if (error) throw new Error(error.message);
       await supabase.auth.signOut();
-      setNotice("Your password has been updated. You can now sign in with the new password.");
+      sessionStorage.removeItem("strap_password_recovery_email");
+      setNotice(
+        googleOnlyRecovery
+          ? "Password created and connected to your Google-linked email. You can now sign in to this same Strap account with Google or with your email and new password."
+          : "Your password has been updated successfully. You can now sign in with your email and new password.",
+      );
       setPassword("");
+      setRecoveryCode("");
+      setRecoveryVerified(false);
       setMode("signin");
     } catch (error) {
-      toast.error(errorMessage(error, "We couldn't update your password."));
-      setCaptchaToken(null);
-      setCaptchaResetKey((value) => value + 1);
+      toast.error(errorMessage(error, "We couldn't save your password. Please try again."));
     } finally {
       setBusy(false);
     }
@@ -341,8 +436,8 @@ function AuthPage() {
       : mode === "signup"
         ? "Set up your shop in a few minutes."
         : mode === "reset"
-          ? "We’ll send a secure link to your email."
-          : "Finish your password change securely.";
+          ? "Enter your account email. We’ll send an 8-digit verification code."
+          : "Verify your email first, then create a password for this same Strap account.";
   const switchMode = mode === "signin" ? "signup" : "signin";
   const submitLabel =
     mode === "signin"
@@ -350,8 +445,10 @@ function AuthPage() {
       : mode === "signup"
         ? "Create account"
         : mode === "reset"
-          ? "Send reset link"
-          : "Update password";
+          ? "Send verification code"
+          : recoveryVerified
+            ? "Connect password"
+            : "Verify email code";
 
   return (
     <main className="strap-auth-main">
@@ -501,8 +598,7 @@ function AuthPage() {
                   </div>
                 )}
 
-                {mode !== "recover" && (
-                  <div className="strap-field-wrap">
+                <div className="strap-field-wrap">
                     <Label htmlFor="email" className="strap-label">
                       Email
                     </Label>
@@ -519,10 +615,35 @@ function AuthPage() {
                       placeholder="you@yourbusiness.com"
                       required
                     />
+                </div>
+
+                {mode === "recover" && !recoveryVerified && (
+                  <div className="strap-field-wrap">
+                    <Label htmlFor="recovery-code" className="strap-label">
+                      8-digit email verification code
+                    </Label>
+                    <Input
+                      id="recovery-code"
+                      value={recoveryCode}
+                      onChange={(event) =>
+                        setRecoveryCode(event.target.value.replace(/\D/g, "").slice(0, 8))
+                      }
+                      className="strap-field"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      maxLength={8}
+                      placeholder="Enter the code from your email"
+                      required
+                    />
+                    <p className="strap-auth-sub" style={{ marginTop: 6 }}>
+                      {notice?.includes("Google")
+                        ? "If this account was created with Google and has no password yet, this securely adds password sign-in to the same account."
+                        : "The code confirms you own this email before Strap changes your password."}
+                    </p>
                   </div>
                 )}
 
-                {mode !== "reset" && (
+                {mode !== "reset" && (mode !== "recover" || recoveryVerified) && (
                   <div className="strap-field-wrap">
                     <div className="strap-field-row">
                       <Label htmlFor="password" className="strap-label">
@@ -621,6 +742,9 @@ function AuthPage() {
                       setCaptchaToken(null);
                       setCaptchaResetKey((value) => value + 1);
                       setNotice(null);
+                      setEmail("");
+                      setPassword("");
+                      setRecoveryCode("");
                     }}
                   >
                     {mode === "signin" ? "Create an account" : "Log in"}
@@ -638,6 +762,9 @@ function AuthPage() {
                   setMode("signin");
                   setNotice(null);
                   setPassword("");
+                  setRecoveryCode("");
+                  setRecoveryVerified(false);
+                  setGoogleOnlyRecovery(false);
                 }}
               >
                 Back to log in
