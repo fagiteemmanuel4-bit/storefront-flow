@@ -81,7 +81,7 @@ export function isBusinessModeFeatureEnabled(
   profile: BusinessModeProfile,
   featureId: string,
 ): boolean {
-  const applicability = featureApplicability.features[featureId as keyof typeof featureApplicability.features];
+  const applicability = (featureApplicability.features as Record<string, { applicableModeKeys: string[] }>)[featureId];
   return profile.status === "active"
     && profile.runtimeReady
     && applicability !== undefined
