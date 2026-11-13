@@ -31,7 +31,7 @@ describe("business-mode profile activation safety", () => {
   });
 
   test("activation is rejected when a product field has no persistence mapping", async () => {
-    const profile = await readProfile(profilePaths[0]!);
+    const profile = await readProfile(profilePaths[3]!);
     profile.status = "active";
     profile.runtimeReady = true;
     for (const field of profile.product.fields) field.runtimeReady = true;
