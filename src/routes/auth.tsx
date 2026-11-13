@@ -599,22 +599,22 @@ function AuthPage() {
                 )}
 
                 <div className="strap-field-wrap">
-                    <Label htmlFor="email" className="strap-label">
-                      Email
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      className="strap-field"
-                      autoComplete="email"
-                      inputMode="email"
-                      autoCapitalize="none"
-                      spellCheck={false}
-                      placeholder="you@yourbusiness.com"
-                      required
-                    />
+                  <Label htmlFor="email" className="strap-label">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    className="strap-field"
+                    autoComplete="email"
+                    inputMode="email"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    placeholder="you@yourbusiness.com"
+                    required
+                  />
                 </div>
 
                 {mode === "recover" && !recoveryVerified && (
