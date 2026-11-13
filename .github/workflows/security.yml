@@ -69,10 +69,21 @@ jobs:
 
   production-dast:
     name: OWASP ZAP passive production scan
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' || github.event_name == 'push'
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      - name: Wait for the production security headers
+        run: |
+          for attempt in $(seq 1 60); do
+            if curl -fsSI https://storefront-flow.vercel.app | grep -qi '^content-security-policy:'; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Timed out waiting for the updated production deployment" >&2
+          exit 1
+
       - name: Scan production storefront
         uses: zaproxy/action-baseline@v0.14.0
         with:
