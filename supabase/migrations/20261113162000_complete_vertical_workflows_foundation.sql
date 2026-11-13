@@ -1023,3 +1023,50 @@ end;
 $function$;
 revoke all on function public.receive_pharmacy_batch(uuid,uuid,uuid,text,text,text,integer,date,numeric) from public, anon;
 grant execute on function public.receive_pharmacy_batch(uuid,uuid,uuid,text,text,text,integer,date,numeric) to authenticated;
+
+
+-- Do not let the public storefront bypass specialist checkout controls that are
+-- only implemented in the authenticated in-person workflows today.
+create or replace function public.guard_online_order_vertical_checkout()
+returns trigger
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_mode text;
+begin
+  select coalesce(s.storefront_settings->>'businessMode',s.business_type,'general-retail')
+    into v_mode
+    from public.stores s
+   where s.id = new.store_id;
+
+  if v_mode in ('pharmacy','pharmacy-health-products') and exists (
+    select 1 from public.pharmacy_product_profiles p
+     where p.store_id=new.store_id and p.product_id=new.product_id and p.is_active
+       and p.requires_batch_tracking
+  ) then
+    raise exception 'This pharmacy product must be dispensed through the pharmacy checkout with batch and prescription checks';
+  end if;
+
+  if v_mode in ('electronics','electronics-phones') and exists (
+    select 1 from public.electronics_devices d
+     where d.store_id=new.store_id and d.product_id=new.product_id
+  ) then
+    raise exception 'Serialised electronics must be sold through device-aware checkout';
+  end if;
+
+  if v_mode in ('food-service','restaurant','food','bakery') and (
+    exists(select 1 from public.food_menu_modifiers m where m.store_id=new.store_id and m.product_id=new.product_id and m.is_active)
+    or exists(select 1 from public.food_recipe_ingredients r where r.store_id=new.store_id and r.menu_product_id=new.product_id)
+  ) then
+    raise exception 'This menu item requires the restaurant checkout and kitchen workflow';
+  end if;
+  return new;
+end;
+$function$;
+revoke all on function public.guard_online_order_vertical_checkout() from public, anon, authenticated;
+drop trigger if exists guard_online_order_vertical_checkout on public.online_order_items;
+create trigger guard_online_order_vertical_checkout
+before insert on public.online_order_items
+for each row execute function public.guard_online_order_vertical_checkout();
