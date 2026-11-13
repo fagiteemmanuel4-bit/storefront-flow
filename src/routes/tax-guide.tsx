@@ -388,16 +388,17 @@ function PublicTaxGuidePage() {
                 </summary>
                 <div className="mt-5 space-y-6">
                   <article>
-                    <h3 className="font-semibold">The Three Basic Tax Types — TaxEDU</h3>
+                    <h3 className="font-semibold">Tax Explained with Bananas — Primate Economics</h3>
                     <p className="mb-3 mt-1 text-sm leading-6 text-muted-foreground">
-                      A short animated introduction to taxes on purchases, earnings and ownership.
-                      The examples are illustrative; tax systems and rates differ by location.
+                      A fully animated, light-hearted overview of what taxes are, why they exist,
+                      common tax types and how collection works. It compares examples from multiple
+                      places; never use its sample rates as local tax advice.
                     </p>
                     <div className="aspect-video overflow-hidden rounded-xl bg-black">
                       <iframe
                         className="size-full"
-                        src="https://www.youtube-nocookie.com/embed/sCdIII599iQ"
-                        title="The Three Basic Tax Types — TaxEDU animated explainer"
+                        src="https://www.youtube-nocookie.com/embed/LYsqkGRpv_k"
+                        title="Tax Explained with Bananas — animated tax explainer"
                         loading="lazy"
                         referrerPolicy="strict-origin-when-cross-origin"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
