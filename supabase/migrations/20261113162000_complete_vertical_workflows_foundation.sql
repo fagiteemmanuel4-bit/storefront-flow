@@ -348,6 +348,94 @@ create table if not exists public.beauty_appointments (
 create index if not exists beauty_appointments_calendar_idx
   on public.beauty_appointments(store_id, branch_id, starts_at, status);
 
+alter table public.beauty_appointments
+  add column if not exists paid_amount numeric(12,2) not null default 0 check (paid_amount >= 0);
+
+create table if not exists public.beauty_appointment_payments (
+  id uuid primary key default gen_random_uuid(),
+  store_id uuid not null references public.stores(id) on delete cascade,
+  appointment_id uuid not null references public.beauty_appointments(id) on delete cascade,
+  amount numeric(12,2) not null check (amount > 0),
+  payment_method text not null check (payment_method in ('cash','card','transfer')),
+  reference text not null,
+  received_by uuid not null references auth.users(id),
+  created_at timestamptz not null default now(),
+  unique(store_id,reference)
+);
+
+create or replace function public.record_beauty_appointment_payment(
+  _store_id uuid,_appointment_id uuid,_amount numeric,_payment_method text,_reference text
+)
+returns uuid
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_user_id uuid := auth.uid();
+  v_appointment public.beauty_appointments%rowtype;
+  v_total numeric(12,2);
+  v_payment_id uuid;
+begin
+  if v_user_id is null then raise exception 'Not authenticated'; end if;
+  if not public.has_store_role(_store_id,v_user_id,array['owner','manager','cashier']::public.store_role[]) then raise exception 'Not authorized for this store'; end if;
+  if _amount is null or _amount <= 0 then raise exception 'Payment must be greater than zero'; end if;
+  if _payment_method not in ('cash','card','transfer') then raise exception 'Invalid payment method'; end if;
+  if length(btrim(coalesce(_reference,''))) < 3 then raise exception 'Enter a payment reference'; end if;
+  select * into v_appointment from public.beauty_appointments
+   where id=_appointment_id and store_id=_store_id for update;
+  if not found then raise exception 'Appointment not found'; end if;
+  if v_appointment.status in ('cancelled','no_show') then raise exception 'Cannot take payment for a cancelled or missed appointment'; end if;
+  select coalesce(sum(unit_price*quantity),0)::numeric(12,2) into v_total
+    from public.beauty_appointment_services
+   where appointment_id=_appointment_id and store_id=_store_id;
+  v_total := greatest(v_total, v_appointment.deposit_amount);
+  if v_total <= 0 then raise exception 'Add a priced service or deposit before taking payment'; end if;
+  if v_appointment.paid_amount + _amount > v_total then raise exception 'Payment exceeds the appointment balance'; end if;
+  insert into public.beauty_appointment_payments(store_id,appointment_id,amount,payment_method,reference,received_by)
+    values(_store_id,_appointment_id,_amount,_payment_method,btrim(_reference),v_user_id)
+    returning id into v_payment_id;
+  update public.beauty_appointments set paid_amount=paid_amount+_amount,updated_at=now()
+   where id=_appointment_id and store_id=_store_id;
+  return v_payment_id;
+end;
+$function$;
+revoke all on function public.record_beauty_appointment_payment(uuid,uuid,numeric,text,text) from public,anon;
+grant execute on function public.record_beauty_appointment_payment(uuid,uuid,numeric,text,text) to authenticated;
+
+create or replace function public.list_store_staff(_store_id uuid)
+returns table(user_id uuid, display_name text, role text)
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_user_id uuid := auth.uid();
+begin
+  if v_user_id is null or not public.has_store_role(_store_id,v_user_id,array['owner','manager','cashier']::public.store_role[]) then
+    raise exception 'Not authorized for this store';
+  end if;
+  return query
+    select sm.user_id,
+      coalesce(nullif(u.raw_user_meta_data->>'full_name',''),nullif(u.raw_user_meta_data->>'name',''),u.email,'Team member')::text,
+      sm.role::text
+    from public.store_members sm
+    join auth.users u on u.id=sm.user_id
+    where sm.store_id=_store_id
+    union
+    select s.owner_id,
+      coalesce(nullif(u.raw_user_meta_data->>'full_name',''),nullif(u.raw_user_meta_data->>'name',''),u.email,'Store owner')::text,
+      'owner'::text
+    from public.stores s
+    join auth.users u on u.id=s.owner_id
+    where s.id=_store_id and not exists(
+      select 1 from public.store_members sm where sm.store_id=_store_id and sm.user_id=s.owner_id
+    );
+end;
+$function$;
+revoke all on function public.list_store_staff(uuid) from public,anon;
+grant execute on function public.list_store_staff(uuid) to authenticated;
+
 create table if not exists public.beauty_appointment_services (
   id uuid primary key default gen_random_uuid(),
   store_id uuid not null references public.stores(id) on delete cascade,
@@ -511,7 +599,7 @@ begin
   foreach t in array array[
     'electronics_repair_payments','food_ingredient_stock',
     'pharmacy_product_profiles','pharmacy_batches','pharmacy_dispensing_records','pharmacy_recalls',
-    'beauty_services','beauty_appointments','beauty_appointment_services','beauty_consumable_usage',
+    'beauty_services','beauty_appointments','beauty_appointment_services','beauty_appointment_payments','beauty_consumable_usage',
     'service_catalog','service_jobs','service_job_items','service_job_payments'
   ] loop
     execute format('alter table public.%I enable row level security', t);
