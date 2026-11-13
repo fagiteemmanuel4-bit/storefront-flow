@@ -8,6 +8,9 @@ const fieldSchema = z.looseObject({
   type: z.string().min(1),
   required: z.boolean(),
   surfaces: z.array(z.enum(["physical", "online"])).min(1),
+  column: z.string().min(1).optional(),
+  source: z.string().min(1).optional(),
+  runtimeReady: z.boolean().default(false),
 });
 
 const statusSchema = z.looseObject({
@@ -181,6 +184,13 @@ export const businessModeProfileSchema = z.strictObject({
           code: "custom",
           path: ["product", "fields", index],
           message: `Runtime-ready product field "${field.id}" must declare a database column or a server-owned source.`,
+        });
+      }
+      if (field.runtimeReady !== true) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["product", "fields", index, "runtimeReady"],
+          message: `Product field "${field.id}" must be individually verified before the profile can be activated.`,
         });
       }
     });
