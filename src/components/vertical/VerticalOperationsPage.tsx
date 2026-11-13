@@ -145,16 +145,6 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
       return (data ?? []) as ServiceCatalogItem[];
     },
   });
-  const jobItemsQuery = useQuery({
-    queryKey: ["service-job-items", storeId, jobsQuery.data?.map((job: ServiceJob) => job.id).join(",")],
-    enabled: Boolean(storeId && mode === "services" && (jobsQuery.data?.length ?? 0) > 0),
-    queryFn: async () => {
-      const jobIds = (jobsQuery.data ?? []).map((job: ServiceJob) => job.id);
-      const { data, error } = await db.from("service_job_items").select("id,job_id,description,quantity,unit_price,line_total").eq("store_id", storeId!).in("job_id", jobIds);
-      if (error) throw new Error(error.message);
-      return (data ?? []) as ServiceJobItem[];
-    },
-  });
   const jobsQuery = useQuery({
     queryKey: ["service-jobs", storeId, branchId],
     enabled: Boolean(storeId && branchId && mode === "services"),
@@ -165,6 +155,16 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
     },
   });
 
+  const jobItemsQuery = useQuery({
+    queryKey: ["service-job-items", storeId, jobsQuery.data?.map((job: ServiceJob) => job.id).join(",")],
+    enabled: Boolean(storeId && mode === "services" && (jobsQuery.data?.length ?? 0) > 0),
+    queryFn: async () => {
+      const jobIds = (jobsQuery.data ?? []).map((job: ServiceJob) => job.id);
+      const { data, error } = await db.from("service_job_items").select("id,job_id,description,quantity,unit_price,line_total").eq("store_id", storeId!).in("job_id", jobIds);
+      if (error) throw new Error(error.message);
+      return (data ?? []) as ServiceJobItem[];
+    },
+  });
   async function refresh() {
     await Promise.all([
       client.invalidateQueries({ queryKey: ["pharmacy-profiles", storeId] }),
@@ -370,8 +370,9 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
         description: jobDescription.trim(), quoted_amount: quote, final_amount: quote,
         assigned_staff_id: jobStaffId || null,
         due_at: jobDue ? new Date(jobDue).toISOString() : null, created_by: auth.user.id,
-      });
+      }).select("id").single();
       if (error) throw error;
+      if (!createdJob) throw new Error("The job card could not be confirmed.");
       if (selectedService) {
         const { error: itemError } = await db.from("service_job_items").insert({
           store_id: storeId, job_id: createdJob.id, service_id: selectedService.id,
