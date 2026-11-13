@@ -30,7 +30,7 @@ const templateSchema = z.looseObject({
   pages: z.record(z.string(), z.array(z.string())),
 });
 
-export const businessModeProfileSchema = z.object({
+export const businessModeProfileSchema = z.strictObject({
   $schema: z.string().optional(),
   description: z.string().optional(),
   principles: z.array(z.string()).optional(),
