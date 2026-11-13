@@ -3,7 +3,9 @@
   "framework": null,
   "installCommand": "bun install",
   "buildCommand": "npm run build",
-  "regions": ["fra1"],
+  "regions": [
+    "fra1"
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -35,6 +37,10 @@
         {
           "key": "Cross-Origin-Opener-Policy",
           "value": "same-origin-allow-popups"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
         }
       ]
     }
