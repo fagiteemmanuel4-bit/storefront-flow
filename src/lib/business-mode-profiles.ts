@@ -12,7 +12,7 @@ export type BusinessModeProfileResult =
 
 type ImportedProfile = { default?: unknown } | unknown;
 
-const profileModules = import.meta.glob<ImportedProfile>("../../../modes/*/mode.json", {
+const profileModules = import.meta.glob<ImportedProfile>("../../modes/*/mode.json", {
   eager: true,
 });
 
