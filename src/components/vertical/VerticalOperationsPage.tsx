@@ -18,7 +18,8 @@ type PharmacyBatch = { id: string; product_id: string; batch_number: string; man
 type BeautyService = { id: string; name: string; duration_minutes: number; price: number; is_active: boolean };
 type Appointment = { id: string; customer_name: string; customer_phone: string; starts_at: string; ends_at: string; status: string; notes: string; assigned_staff_id: string | null; deposit_amount: number; paid_amount: number };
 type Staff = { user_id: string; display_name: string; role: string };
-type ServiceCatalogItem = { id: string; name: string; description: string; default_price: number; is_active: boolean };
+type ServiceCatalogItem = { id: string; name: string; description: string; default_price: number; duration_minutes: number; is_active: boolean };
+type ServiceAppointment = { id: string; service_name: string; customer_name: string; customer_phone: string; starts_at: string; ends_at: string; status: string; assigned_staff_id: string | null; price: number; deposit_amount: number; paid_amount: number; notes: string };
 type ServiceJobItem = { id: string; job_id: string; description: string; quantity: number; unit_price: number; line_total: number };
 type ServiceJob = { id: string; reference: string; title: string; customer_name: string; customer_phone: string; status: string; priority: string; quoted_amount: number; final_amount: number; amount_paid: number; due_at: string | null; assigned_staff_id: string | null };
 
@@ -56,6 +57,7 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
   const [serviceDescription, setServiceDescription] = useState("");
   const [serviceDuration, setServiceDuration] = useState("30");
   const [servicePrice, setServicePrice] = useState("0");
+  const [serviceDuration, setServiceDuration] = useState("30");
   const [appointmentService, setAppointmentService] = useState("");
   const [appointmentName, setAppointmentName] = useState("");
   const [appointmentPhone, setAppointmentPhone] = useState("");
@@ -76,6 +78,13 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
   const [jobDue, setJobDue] = useState("");
   const [jobStaffId, setJobStaffId] = useState("");
   const [jobServiceId, setJobServiceId] = useState("");
+  const [serviceAppointmentServiceId, setServiceAppointmentServiceId] = useState("");
+  const [serviceAppointmentCustomer, setServiceAppointmentCustomer] = useState("");
+  const [serviceAppointmentPhone, setServiceAppointmentPhone] = useState("");
+  const [serviceAppointmentStart, setServiceAppointmentStart] = useState("");
+  const [serviceAppointmentStaffId, setServiceAppointmentStaffId] = useState("");
+  const [serviceAppointmentDeposit, setServiceAppointmentDeposit] = useState("0");
+  const [serviceAppointmentNotes, setServiceAppointmentNotes] = useState("");
   const [jobItemQuantity, setJobItemQuantity] = useState("1");
   const [paymentJob, setPaymentJob] = useState("");
   const [paymentAmount, setPaymentAmount] = useState("");
@@ -140,7 +149,7 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
     queryKey: ["service-catalog", storeId],
     enabled: Boolean(storeId && mode === "services"),
     queryFn: async () => {
-      const { data, error } = await db.from("service_catalog").select("id,name,description,default_price,is_active").eq("store_id", storeId!).order("name");
+      const { data, error } = await db.from("service_catalog").select("id,name,description,default_price,duration_minutes,is_active").eq("store_id", storeId!).order("name");
       if (error) throw new Error(error.message);
       return (data ?? []) as ServiceCatalogItem[];
     },
@@ -155,6 +164,18 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
     },
   });
 
+  const serviceAppointmentsQuery = useQuery({
+    queryKey: ["service-appointments", storeId, branchId],
+    enabled: Boolean(storeId && branchId && mode === "services"),
+    queryFn: async () => {
+      const { data, error } = await db.from("service_appointments")
+        .select("id,service_name,customer_name,customer_phone,starts_at,ends_at,status,assigned_staff_id,price,deposit_amount,paid_amount,notes")
+        .eq("store_id", storeId!).eq("branch_id", branchId!)
+        .order("starts_at", { ascending: false }).limit(100);
+      if (error) throw new Error(error.message);
+      return (data ?? []) as ServiceAppointment[];
+    },
+  });
   const jobItemsQuery = useQuery({
     queryKey: ["service-job-items", storeId, jobsQuery.data?.map((job: ServiceJob) => job.id).join(",")],
     enabled: Boolean(storeId && mode === "services" && (jobsQuery.data?.length ?? 0) > 0),
@@ -172,6 +193,7 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
       client.invalidateQueries({ queryKey: ["beauty-services", storeId] }),
       client.invalidateQueries({ queryKey: ["beauty-appointments", storeId, branchId] }),
       client.invalidateQueries({ queryKey: ["service-catalog", storeId] }),
+      client.invalidateQueries({ queryKey: ["service-appointments", storeId, branchId] }),
       client.invalidateQueries({ queryKey: ["service-jobs", storeId, branchId] }),
       client.invalidateQueries({ queryKey: ["service-job-items", storeId] }),
       client.invalidateQueries({ queryKey: ["vertical-products", storeId] }),
@@ -345,12 +367,68 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
     try {
       const { error } = await db.from("service_catalog").insert({
         store_id: storeId, name: serviceName.trim(), description: serviceDescription.trim(),
-        default_price: Number(servicePrice), is_active: true,
+        default_price: Number(servicePrice), duration_minutes: Number(serviceDuration), is_active: true,
       });
       if (error) throw error;
       toast.success("Service added to catalogue.");
-      setServiceName(""); setServiceDescription(""); setServicePrice("0"); await refresh();
+      setServiceName(""); setServiceDescription(""); setServicePrice("0"); setServiceDuration("30"); await refresh();
     } catch (error) { toast.error(errorMessage(error, "Service could not be saved.")); }
+    finally { setSaving(false); }
+  }
+
+  async function bookServiceAppointment(event: React.FormEvent) {
+    event.preventDefault();
+    if (!storeId || !branchId || !serviceAppointmentServiceId || !serviceAppointmentCustomer.trim() || !serviceAppointmentPhone.trim() || !serviceAppointmentStart) return;
+    const selected = catalog.find((service) => service.id === serviceAppointmentServiceId);
+    if (!selected) return toast.error("Choose a valid service.");
+    const start = new Date(serviceAppointmentStart);
+    const end = new Date(start.getTime() + selected.duration_minutes * 60_000);
+    setSaving(true);
+    try {
+      const { data: auth } = await supabase.auth.getUser();
+      if (!auth.user) throw new Error("Sign in again before booking.");
+      const { error } = await db.from("service_appointments").insert({
+        store_id: storeId, branch_id: branchId, service_id: selected.id,
+        service_name: selected.name, customer_name: serviceAppointmentCustomer.trim(),
+        customer_phone: serviceAppointmentPhone.trim(), starts_at: start.toISOString(), ends_at: end.toISOString(),
+        assigned_staff_id: serviceAppointmentStaffId || null, price: Number(selected.default_price),
+        deposit_amount: Number(serviceAppointmentDeposit) || 0, notes: serviceAppointmentNotes.trim(),
+        created_by: auth.user.id,
+      });
+      if (error) throw error;
+      toast.success("Service appointment booked.");
+      setServiceAppointmentServiceId(""); setServiceAppointmentCustomer(""); setServiceAppointmentPhone("");
+      setServiceAppointmentStart(""); setServiceAppointmentStaffId(""); setServiceAppointmentDeposit("0"); setServiceAppointmentNotes("");
+      await refresh();
+    } catch (error) { toast.error(errorMessage(error, "Service appointment could not be booked.")); }
+    finally { setSaving(false); }
+  }
+
+  async function updateServiceAppointment(id: string, status: string) {
+    if (!storeId) return;
+    const { error } = await db.from("service_appointments").update({ status, updated_at: new Date().toISOString() }).eq("id", id).eq("store_id", storeId);
+    if (error) toast.error(error.message); else { toast.success("Appointment updated."); await refresh(); }
+  }
+
+  async function recordServiceAppointmentPayment(event: React.FormEvent<HTMLFormElement>, appointment: ServiceAppointment) {
+    event.preventDefault();
+    if (!storeId) return;
+    const form = event.currentTarget;
+    const values = new FormData(form);
+    const amount = Number(values.get("amount") ?? 0);
+    const reference = String(values.get("reference") ?? "").trim();
+    const paymentMethod = String(values.get("payment_method") ?? "cash");
+    if (!Number.isFinite(amount) || amount <= 0 || reference.length < 3) return toast.error("Enter a valid payment amount and reference.");
+    setSaving(true);
+    try {
+      const { error } = await db.rpc("record_service_appointment_payment", {
+        _store_id: storeId, _appointment_id: appointment.id, _amount: amount,
+        _payment_method: paymentMethod, _reference: reference,
+      });
+      if (error) throw error;
+      toast.success("Service appointment payment recorded.");
+      form.reset(); await refresh();
+    } catch (error) { toast.error(errorMessage(error, "Appointment payment could not be recorded.")); }
     finally { setSaving(false); }
   }
 
@@ -436,6 +514,7 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
   const beautyServices = beautyServicesQuery.data ?? [];
   const appointments = appointmentsQuery.data ?? [];
   const catalog = serviceCatalogQuery.data ?? [];
+  const serviceAppointments = serviceAppointmentsQuery.data ?? [];
   const jobs = jobsQuery.data ?? [];
   const jobItems = jobItemsQuery.data ?? [];
 
@@ -484,9 +563,32 @@ export function VerticalOperationsPage({ mode }: { mode: VerticalMode }) {
       <div className="space-y-5">
         <header><p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Services & appointments</p><h1 className="mt-1 font-display text-2xl font-bold">Service catalogue & job cards</h1><p className="mt-1 text-sm text-muted-foreground">Create service quotes, track jobs from intake to completion and record deposits or part-payments.</p></header>
         <div className="grid gap-5 xl:grid-cols-2">
-          <section className={cardClass}><div className="mb-3 flex items-center gap-2"><BriefcaseBusiness className="size-5"/><h2 className="font-semibold">Service catalogue</h2></div><form onSubmit={saveServiceCatalog} className="space-y-3"><label><span className={labelClass}>Service name</span><Input className="h-11" value={serviceName} onChange={e=>setServiceName(e.target.value)} required/></label><label><span className={labelClass}>Description</span><Input className="h-11" value={serviceDescription} onChange={e=>setServiceDescription(e.target.value)}/></label><label><span className={labelClass}>Default price</span><Input className="h-11" type="number" min="0" step="0.01" value={servicePrice} onChange={e=>setServicePrice(e.target.value)}/></label><Button disabled={saving || !serviceName.trim()}><Plus className="mr-2 size-4"/>Add service</Button></form><div className="mt-4 divide-y divide-border">{catalog.map(s=><div key={s.id} className="flex justify-between py-2 text-sm"><span>{s.name}</span><strong>{formatMoney(Number(s.default_price),currency)}</strong></div>)}</div></section>
+          <section className={cardClass}><div className="mb-3 flex items-center gap-2"><BriefcaseBusiness className="size-5"/><h2 className="font-semibold">Service catalogue</h2></div><form onSubmit={saveServiceCatalog} className="space-y-3"><label><span className={labelClass}>Service name</span><Input className="h-11" value={serviceName} onChange={e=>setServiceName(e.target.value)} required/></label><label><span className={labelClass}>Description</span><Input className="h-11" value={serviceDescription} onChange={e=>setServiceDescription(e.target.value)}/></label><div className="grid grid-cols-2 gap-3"><label><span className={labelClass}>Default price</span><Input className="h-11" type="number" min="0" step="0.01" value={servicePrice} onChange={e=>setServicePrice(e.target.value)}/></label><label><span className={labelClass}>Duration (minutes)</span><Input className="h-11" type="number" min="5" max="1440" value={serviceDuration} onChange={e=>setServiceDuration(e.target.value)}/></label></div><Button disabled={saving || !serviceName.trim()}><Plus className="mr-2 size-4"/>Add service</Button></form><div className="mt-4 divide-y divide-border">{catalog.map(s=><div key={s.id} className="flex justify-between py-2 text-sm"><span>{s.name} · {s.duration_minutes} min</span><strong>{formatMoney(Number(s.default_price),currency)}</strong></div>)}</div></section>
           <section className={cardClass}><div className="mb-3 flex items-center gap-2"><ClipboardList className="size-5"/><h2 className="font-semibold">Create a job card</h2></div><form onSubmit={createJob} className="space-y-3"><div className="grid grid-cols-2 gap-3"><label><span className={labelClass}>Customer name</span><Input className="h-11" value={jobCustomer} onChange={e=>setJobCustomer(e.target.value)} required/></label><label><span className={labelClass}>Phone</span><Input className="h-11" value={jobPhone} onChange={e=>setJobPhone(e.target.value)} required/></label></div><label><span className={labelClass}>Job title</span><Input className="h-11" value={jobTitle} onChange={e=>setJobTitle(e.target.value)} required/></label><label><span className={labelClass}>Work description</span><Input className="h-11" value={jobDescription} onChange={e=>setJobDescription(e.target.value)}/></label><label><span className={labelClass}>Assign staff member (optional)</span><select className={inputClass} value={jobStaffId} onChange={e=>setJobStaffId(e.target.value)}><option value="">Unassigned</option>{(staffQuery.data ?? []).map(staff=><option key={staff.user_id} value={staff.user_id}>{staff.display_name} · {staff.role}</option>)}</select></label><div className="grid grid-cols-2 gap-3"><label><span className={labelClass}>Service item (optional)</span><select className={inputClass} value={jobServiceId} onChange={e=>{setJobServiceId(e.target.value);const service=catalog.find(s=>s.id===e.target.value);if(service)setJobQuote(String(service.default_price*Number(jobItemQuantity)));}}><option value="">Custom job</option>{catalog.filter(s=>s.is_active).map(s=><option key={s.id} value={s.id}>{s.name} · {formatMoney(Number(s.default_price),currency)}</option>)}</select></label><label><span className={labelClass}>Item quantity</span><Input className="h-11" type="number" min="0.01" step="0.01" value={jobItemQuantity} onChange={e=>{setJobItemQuantity(e.target.value);const service=catalog.find(s=>s.id===jobServiceId);if(service)setJobQuote(String(service.default_price*Number(e.target.value)));}}/></label></div><div className="grid grid-cols-2 gap-3"><label><span className={labelClass}>Quoted amount</span><Input className="h-11" type="number" min="0" step="0.01" value={jobQuote} onChange={e=>setJobQuote(e.target.value)}/></label><label><span className={labelClass}>Due date</span><Input className="h-11" type="datetime-local" value={jobDue} onChange={e=>setJobDue(e.target.value)}/></label></div><Button type="submit" disabled={saving || !jobTitle.trim()}><Plus className="mr-2 size-4"/>Create job card</Button></form></section>
         </div>
+        <section className={cardClass}>
+          <h2 className="font-semibold">Book a service appointment</h2>
+          <form onSubmit={bookServiceAppointment} className="mt-3 grid gap-3 sm:grid-cols-2">
+            <label><span className={labelClass}>Service</span><select className={inputClass} value={serviceAppointmentServiceId} onChange={e=>setServiceAppointmentServiceId(e.target.value)} required><option value="">Choose service</option>{catalog.filter(s=>s.is_active).map(s=><option key={s.id} value={s.id}>{s.name} · {s.duration_minutes} min</option>)}</select></label>
+            <label><span className={labelClass}>Customer name</span><Input className="h-11" value={serviceAppointmentCustomer} onChange={e=>setServiceAppointmentCustomer(e.target.value)} required/></label>
+            <label><span className={labelClass}>Customer phone</span><Input className="h-11" value={serviceAppointmentPhone} onChange={e=>setServiceAppointmentPhone(e.target.value)} required/></label>
+            <label><span className={labelClass}>Start date & time</span><Input className="h-11" type="datetime-local" value={serviceAppointmentStart} onChange={e=>setServiceAppointmentStart(e.target.value)} required/></label>
+            <label><span className={labelClass}>Assign staff</span><select className={inputClass} value={serviceAppointmentStaffId} onChange={e=>setServiceAppointmentStaffId(e.target.value)}><option value="">Unassigned</option>{(staffQuery.data ?? []).map(staff=><option key={staff.user_id} value={staff.user_id}>{staff.display_name} · {staff.role}</option>)}</select></label>
+            <label><span className={labelClass}>Deposit required</span><Input className="h-11" type="number" min="0" step="0.01" value={serviceAppointmentDeposit} onChange={e=>setServiceAppointmentDeposit(e.target.value)}/></label>
+            <label className="sm:col-span-2"><span className={labelClass}>Notes</span><Input className="h-11" value={serviceAppointmentNotes} onChange={e=>setServiceAppointmentNotes(e.target.value)}/></label>
+            <Button type="submit" disabled={saving || !serviceAppointmentServiceId}>Book appointment</Button>
+          </form>
+        </section>
+        <section className={cardClass}>
+          <h2 className="font-semibold">Service appointment calendar</h2>
+          <div className="mt-3 divide-y divide-border">
+            {serviceAppointments.map(a=><div key={a.id} className="space-y-2 py-3 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="font-semibold">{a.service_name} · {a.customer_name}</p><p className="text-xs text-muted-foreground">{a.customer_phone} · {new Date(a.starts_at).toLocaleString()} – {new Date(a.ends_at).toLocaleTimeString()}</p><p className="text-xs text-muted-foreground">Staff: {(staffQuery.data ?? []).find(s=>s.user_id===a.assigned_staff_id)?.display_name ?? "Unassigned"} · Price {formatMoney(Number(a.price),currency)} · Deposit {formatMoney(Number(a.deposit_amount),currency)} · Paid {formatMoney(Number(a.paid_amount),currency)}</p></div><select className="field h-9 w-auto" value={a.status} onChange={e=>void updateServiceAppointment(a.id,e.target.value)}><option value="booked">Booked</option><option value="confirmed">Confirmed</option><option value="checked_in">Checked in</option><option value="in_progress">In progress</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option><option value="no_show">No show</option></select></div>
+              {a.notes && <p className="text-xs text-muted-foreground">{a.notes}</p>}
+              <form onSubmit={(event)=>void recordServiceAppointmentPayment(event,a)} className="grid gap-2 sm:grid-cols-4"><Input name="amount" type="number" min="0.01" step="0.01" className="h-9" placeholder="Amount" required/><select name="payment_method" className="field h-9"><option value="cash">Cash</option><option value="card">Card</option><option value="transfer">Transfer</option></select><Input name="reference" className="h-9" placeholder="Payment reference" required/><Button type="submit" size="sm" disabled={saving || ["cancelled","no_show"].includes(a.status)}>Record payment</Button></form>
+            </div>)}
+          </div>
+        </section>
         <section className={cardClass}><h2 className="font-semibold">Job queue & payments</h2><div className="mt-3 divide-y divide-border">{jobs.map(job=><div key={job.id} className="space-y-3 py-4"><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="font-semibold">{job.reference} · {job.title}</p><p className="text-xs text-muted-foreground">{job.customer_name} · {job.customer_phone}</p><p className="text-xs text-muted-foreground">Assigned: {(staffQuery.data ?? []).find(s=>s.user_id===job.assigned_staff_id)?.display_name ?? "Unassigned"}</p><p className="mt-1 text-xs">Quoted {formatMoney(Number(job.quoted_amount),currency)} · Final {formatMoney(Number(job.final_amount),currency)} · Paid {formatMoney(Number(job.amount_paid),currency)} · Balance {formatMoney(Math.max(0,Number(job.final_amount)-Number(job.amount_paid)),currency)}</p>{jobItems.filter(item=>item.job_id===job.id).map(item=><p key={item.id} className="mt-1 text-xs text-muted-foreground">{item.description} × {item.quantity} · {formatMoney(Number(item.line_total),currency)}</p>)}</div><select className="field h-9 w-auto" value={job.status} onChange={e=>void updateJob(job,e.target.value)}><option value="requested">Requested</option><option value="quoted">Quoted</option><option value="approved">Approved</option><option value="in_progress">In progress</option><option value="on_hold">On hold</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></div><form onSubmit={(event)=>void saveJobFinalAmount(event,job)} className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]"><Input name="final_amount" type="number" min={job.amount_paid} step="0.01" defaultValue={job.final_amount} className="h-9" aria-label="Final job amount"/><Button type="submit" size="sm" variant="outline">Update final amount</Button></form><form onSubmit={recordJobPayment} className="grid gap-2 sm:grid-cols-4"><Input className="h-10" type="number" min="0.01" step="0.01" placeholder="Payment amount" value={paymentJob===job.id ? paymentAmount : ""} onFocus={()=>setPaymentJob(job.id)} onChange={e=>{setPaymentJob(job.id);setPaymentAmount(e.target.value)}} required/><select className="field h-10" value={paymentJob===job.id ? paymentMethod : "cash"} onChange={e=>{setPaymentJob(job.id);setPaymentMethod(e.target.value)}}><option value="cash">Cash</option><option value="card">Card</option><option value="transfer">Transfer</option></select><Input className="h-10" placeholder="Payment reference" value={paymentJob===job.id ? paymentReference : ""} onFocus={()=>setPaymentJob(job.id)} onChange={e=>{setPaymentJob(job.id);setPaymentReference(e.target.value)}} required/><Button type="submit" size="sm" disabled={saving || paymentJob!==job.id}>Record payment</Button></form></div>)}</div></section>
       </div>
     </AppShell>
