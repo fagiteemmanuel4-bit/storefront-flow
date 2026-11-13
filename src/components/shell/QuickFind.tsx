@@ -12,6 +12,7 @@ import {
   Search,
   Settings,
   ShoppingBag,
+  Sparkles,
   Store,
   X,
   Users,
