@@ -260,7 +260,7 @@ function AuthPage() {
               setMode("signin");
               setPassword("");
               setNotice(
-                "This email is already connected to a Strap account. Sign in with the method you originally used, or choose Forgot password to add a password to that same account.",
+                "We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.",
               );
               return;
             }
@@ -275,7 +275,7 @@ function AuthPage() {
             setPassword("");
             setMode("signin");
             setNotice(
-              "This email is already connected to a Strap account. Sign in with Google if that is how you joined, or choose Forgot password to add a password to the same account.",
+              "We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.",
             );
             return;
           }
@@ -571,8 +571,7 @@ function AuthPage() {
                   </div>
                 )}
 
-                {(mode !== "recover" || mode === "recover") && (
-                  <div className="strap-field-wrap">
+                <div className="strap-field-wrap">
                     <Label htmlFor="email" className="strap-label">
                       Email
                     </Label>
@@ -589,8 +588,7 @@ function AuthPage() {
                       placeholder="you@yourbusiness.com"
                       required
                     />
-                  </div>
-                )}
+                </div>
 
                 {mode === "recover" && (
                   <div className="strap-field-wrap">
