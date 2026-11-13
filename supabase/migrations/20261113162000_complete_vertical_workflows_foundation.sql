@@ -572,8 +572,13 @@ begin
   end if;
   if new.status not in ('cancelled','no_show') then
     perform pg_catalog.pg_advisory_xact_lock(
-      pg_catalog.hashtextextended(new.store_id::text || ':' || coalesce(new.assigned_staff_id::text,'branch:'||new.branch_id::text), 0)
+      pg_catalog.hashtextextended(new.store_id::text || ':branch:' || new.branch_id::text, 0)
     );
+    if new.assigned_staff_id is not null then
+      perform pg_catalog.pg_advisory_xact_lock(
+        pg_catalog.hashtextextended(new.store_id::text || ':staff:' || new.assigned_staff_id::text, 0)
+      );
+    end if;
     if exists (
       select 1
         from public.beauty_appointments a
@@ -584,8 +589,10 @@ begin
          and a.ends_at > new.starts_at
          and (
            (new.assigned_staff_id is not null and a.assigned_staff_id = new.assigned_staff_id)
-           or (new.assigned_staff_id is null and a.assigned_staff_id is null and a.branch_id = new.branch_id)
+           or a.assigned_staff_id is null
+           or new.assigned_staff_id is null
          )
+         and (a.assigned_staff_id is not null or a.branch_id = new.branch_id)
     ) then
       raise exception 'This staff member or unassigned branch slot already has an appointment during that time';
     end if;
