@@ -11,7 +11,7 @@
 
 ## Mode-profile prerequisite
 
-The current repository `main` tree has no `modes/<mode>/mode.json` or `normal-business.mode.json` profile. The supplied feature catalog explicitly requires this profile for mode-specific fields, variants, statuses, dashboard cards, checkout fields, storefront sections, filters and templates. This blocks implementation of those features. No substitute profile or guessed defaults will be created.
+A first Normal Business profile has now been authored at `modes/normal-business/mode.json`, with its structural contract at `schemas/business-mode-profile.schema.json`. It is a **draft configuration artifact**, not yet consumed by the application runtime. The profile is grounded in the current general-retail mode, product form, online order UI, storefront builder, and server-side order transition guard. Mode-specific runtime implementation remains blocked until the profile is validated against the actual database schema and connected through shared profile-driven services. Do not mark any feature done merely because its profile values exist.
 
 ## Feature acceptance criteria
 
