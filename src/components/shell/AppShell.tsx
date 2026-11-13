@@ -841,7 +841,7 @@ export function AppShell({
                   className={menuItem}
                 >
                   <Sparkles className="size-[18px] shrink-0" />
-                  Guided tour
+                  Replay page guide
                 </button>
                 <button
                   type="button"
