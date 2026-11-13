@@ -58,6 +58,7 @@ Example: 5% on a taxable exclusive base of 20,000 gives 1,000 tax and a 21,000 t
 The public guide contains optional, collapsed YouTube lessons. The videos explain general tax types and VAT mechanics; they do not establish current tax rates for any particular country.
 
 ## Sources and further learning
+- Animated tax explainer (Tax Explained with Bananas): https://www.youtube.com/watch?v=LYsqkGRpv_k
 - TaxEDU animated explainers: https://taxfoundation.org/taxedu/videos/
 - Tax Rate vs. Tax Base: https://taxfoundation.org/taxedu/videos/tax-rate-vs-tax-base/
 - General VAT mechanics: https://www.youtube.com/watch?v=a6RB4rIxWqI
