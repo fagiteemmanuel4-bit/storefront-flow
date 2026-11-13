@@ -209,11 +209,12 @@ function DashboardPage() {
           </span>
           <span className="min-w-0 flex-1">
             <span className="block font-semibold">Tax guide & calculator</span>
-            <span className="mt-1 block text-sm text-muted-foreground">Understand tax rates, calculate tax on sales and learn the basics.</span>
+            <span className="mt-1 block text-sm text-muted-foreground">
+              Understand tax rates, calculate tax on sales and learn the basics.
+            </span>
           </span>
           <ArrowRight className="size-5 shrink-0 text-muted-foreground transition group-hover:translate-x-1" />
         </Link>
-
 
         <section
           aria-label="Business performance"

@@ -53,6 +53,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedStockSenseRouteImport } from './routes/_authenticated/stock-sense'
 import { Route as AuthenticatedStoreEditorRouteImport } from './routes/_authenticated/store-editor'
+import { Route as AuthenticatedTaxGuideRouteImport } from './routes/_authenticated/tax-guide'
 import { Route as AuthenticatedUnitSaleRouteImport } from './routes/_authenticated/unit-sale'
 import { Route as AuthenticatedUpgradeRouteImport } from './routes/_authenticated/upgrade'
 import { Route as OauthConsentRouteImport } from './routes/oauth.consent'
@@ -314,6 +315,11 @@ const AuthenticatedStoreEditorRoute =
     path: '/store-editor',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedTaxGuideRoute = AuthenticatedTaxGuideRouteImport.update({
+  id: '/tax-guide',
+  path: '/tax-guide',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedUnitSaleRoute = AuthenticatedUnitSaleRouteImport.update({
   id: '/unit-sale',
   path: '/unit-sale',
@@ -539,6 +545,7 @@ export interface FileRoutesByFullPath {
   '/staff': typeof AuthenticatedStaffRoute
   '/stock-sense': typeof AuthenticatedStockSenseRoute
   '/store-editor': typeof AuthenticatedStoreEditorRoute
+  '/tax-guide': typeof AuthenticatedTaxGuideRoute
   '/unit-sale': typeof AuthenticatedUnitSaleRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/oauth/consent': typeof OauthConsentRoute
@@ -614,6 +621,7 @@ export interface FileRoutesByTo {
   '/staff': typeof AuthenticatedStaffRoute
   '/stock-sense': typeof AuthenticatedStockSenseRoute
   '/store-editor': typeof AuthenticatedStoreEditorRoute
+  '/tax-guide': typeof AuthenticatedTaxGuideRoute
   '/unit-sale': typeof AuthenticatedUnitSaleRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/oauth/consent': typeof OauthConsentRoute
@@ -692,6 +700,7 @@ export interface FileRoutesById {
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/stock-sense': typeof AuthenticatedStockSenseRoute
   '/_authenticated/store-editor': typeof AuthenticatedStoreEditorRoute
+  '/_authenticated/tax-guide': typeof AuthenticatedTaxGuideRoute
   '/_authenticated/unit-sale': typeof AuthenticatedUnitSaleRoute
   '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
   '/oauth/consent': typeof OauthConsentRoute
@@ -770,6 +779,7 @@ export interface FileRouteTypes {
     | '/staff'
     | '/stock-sense'
     | '/store-editor'
+    | '/tax-guide'
     | '/unit-sale'
     | '/upgrade'
     | '/oauth/consent'
@@ -845,6 +855,7 @@ export interface FileRouteTypes {
     | '/staff'
     | '/stock-sense'
     | '/store-editor'
+    | '/tax-guide'
     | '/unit-sale'
     | '/upgrade'
     | '/oauth/consent'
@@ -922,6 +933,7 @@ export interface FileRouteTypes {
     | '/_authenticated/staff'
     | '/_authenticated/stock-sense'
     | '/_authenticated/store-editor'
+    | '/_authenticated/tax-guide'
     | '/_authenticated/unit-sale'
     | '/_authenticated/upgrade'
     | '/oauth/consent'
@@ -1290,6 +1302,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStoreEditorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/tax-guide': {
+      id: '/_authenticated/tax-guide'
+      path: '/tax-guide'
+      fullPath: '/tax-guide'
+      preLoaderRoute: typeof AuthenticatedTaxGuideRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/unit-sale': {
       id: '/_authenticated/unit-sale'
       path: '/unit-sale'
@@ -1598,6 +1617,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
   AuthenticatedStockSenseRoute: typeof AuthenticatedStockSenseRoute
   AuthenticatedStoreEditorRoute: typeof AuthenticatedStoreEditorRoute
+  AuthenticatedTaxGuideRoute: typeof AuthenticatedTaxGuideRoute
   AuthenticatedUnitSaleRoute: typeof AuthenticatedUnitSaleRoute
   AuthenticatedUpgradeRoute: typeof AuthenticatedUpgradeRoute
   AuthenticatedOnlineStoreAdvancedEditorRoute: typeof AuthenticatedOnlineStoreAdvancedEditorRoute
@@ -1636,6 +1656,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
   AuthenticatedStockSenseRoute: AuthenticatedStockSenseRoute,
   AuthenticatedStoreEditorRoute: AuthenticatedStoreEditorRoute,
+  AuthenticatedTaxGuideRoute: AuthenticatedTaxGuideRoute,
   AuthenticatedUnitSaleRoute: AuthenticatedUnitSaleRoute,
   AuthenticatedUpgradeRoute: AuthenticatedUpgradeRoute,
   AuthenticatedOnlineStoreAdvancedEditorRoute:

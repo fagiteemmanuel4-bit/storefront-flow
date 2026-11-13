@@ -646,7 +646,10 @@ function OnboardingPage() {
                     inputMode="decimal"
                     placeholder="0"
                   />
-                  <p className="ob-hint">Enter the rate that applies to your taxable sales. You can leave it at 0% and update it later in settings.</p>
+                  <p className="ob-hint">
+                    Enter the rate that applies to your taxable sales. You can leave it at 0% and
+                    update it later in settings.
+                  </p>
                 </div>
               </>
             )}
