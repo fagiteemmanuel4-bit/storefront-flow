@@ -90,6 +90,37 @@ create table if not exists public.food_ingredient_stock (
 create index if not exists food_ingredient_stock_branch_idx
   on public.food_ingredient_stock(store_id,branch_id,product_id);
 
+-- Move existing recipe ingredient stock out of retail branch stock so it cannot
+-- be sold twice after recipe deductions switch to the measured ingredient ledger.
+do $migration$
+begin
+  if exists (
+    select 1
+      from public.food_recipe_ingredients
+     group by store_id,branch_id,ingredient_product_id
+    having count(distinct unit)>1
+  ) then
+    raise exception 'A food ingredient is configured with multiple stock units in one branch. Reconcile its recipe units before applying this migration.';
+  end if;
+end;
+$migration$;
+
+insert into public.food_ingredient_stock(store_id,branch_id,product_id,quantity,unit,unit_cost)
+select bs.store_id,bs.branch_id,bs.product_id,bs.quantity::numeric,min(r.unit),coalesce(p.cost,0)
+  from public.branch_stock bs
+  join public.food_recipe_ingredients r
+    on r.store_id=bs.store_id and r.branch_id=bs.branch_id and r.ingredient_product_id=bs.product_id
+  join public.products p on p.id=bs.product_id and p.store_id=bs.store_id
+ group by bs.store_id,bs.branch_id,bs.product_id,bs.quantity,p.cost
+on conflict(store_id,branch_id,product_id) do nothing;
+
+update public.branch_stock bs
+   set quantity=0,updated_at=now()
+ where exists (
+   select 1 from public.food_recipe_ingredients r
+    where r.store_id=bs.store_id and r.branch_id=bs.branch_id and r.ingredient_product_id=bs.product_id
+ );
+
 alter table public.food_waste_records
   alter column quantity type numeric(14,4) using quantity::numeric(14,4);
 
