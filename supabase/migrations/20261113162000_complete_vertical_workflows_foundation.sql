@@ -589,10 +589,8 @@ begin
          and a.ends_at > new.starts_at
          and (
            (new.assigned_staff_id is not null and a.assigned_staff_id = new.assigned_staff_id)
-           or a.assigned_staff_id is null
-           or new.assigned_staff_id is null
+           or (a.branch_id = new.branch_id and (a.assigned_staff_id is null or new.assigned_staff_id is null))
          )
-         and (a.assigned_staff_id is not null or a.branch_id = new.branch_id)
     ) then
       raise exception 'This staff member or unassigned branch slot already has an appointment during that time';
     end if;
