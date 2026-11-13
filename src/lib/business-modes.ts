@@ -167,7 +167,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
       {
         title: "Exchanges and returns workflow",
         detail:
-          "Record returns, prevent over-returning and restore the exact size/colour stock. Refund settlement and replacement sales remain separate workflows.",
+          "Record returns, restore the exact size/colour stock, process partial or full refunds and link replacement receipts for exchanges.",
         status: "available",
       },
     ],
@@ -308,8 +308,8 @@ export const BUSINESS_MODES: BusinessMode[] = [
       },
       {
         title: "Prescription and controlled-product safeguards",
-        detail: "Configure prescription requirements, patient-age checks and manager-authorised controlled-product dispensing. The POS still needs a dedicated prescription-entry experience before this workflow is fully customer-ready.",
-        status: "planned",
+        detail: "Capture prescription references and patient details at POS, enforce minimum-age rules and require manager-authorised dispensing for controlled products.",
+        status: "available",
       },
     ],
     quickActions: [
