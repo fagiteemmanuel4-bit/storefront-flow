@@ -34,7 +34,7 @@ type SaleItem = {
 };
 type SaleReturn = {
   id: string; reference: string; total_amount: number; refunded_amount: number;
-  refund_status: string; reason: string; created_at: string;
+  refund_status: string; reason: string; created_at: string; replacement_sale_id: string | null;
 };
 type ReturnRefund = { id: string; return_id: string; amount: number; payment_method: string; reference: string; created_at: string };
 
@@ -97,7 +97,7 @@ function FashionReturnsPage() {
     enabled: Boolean(sale?.id),
     queryFn: async () => {
       const { data, error } = await db.from("sale_returns")
-        .select("id,reference,total_amount,refunded_amount,refund_status,reason,created_at")
+        .select("id,reference,total_amount,refunded_amount,refund_status,reason,created_at,replacement_sale_id")
         .eq("sale_id", sale!.id).eq("store_id", storeId!).order("created_at", { ascending: false });
       if (error) throw new Error(error.message);
       return (data ?? []) as SaleReturn[];
@@ -129,6 +129,25 @@ function FashionReturnsPage() {
     setQuantities({});
     setReason("");
   }, [sale?.id]);
+
+  async function linkReplacementSale(event: React.FormEvent<HTMLFormElement>, returnRow: SaleReturn) {
+    event.preventDefault();
+    if (!storeId) return;
+    const form = event.currentTarget;
+    const reference = String(new FormData(form).get("replacement_sale_reference") ?? "").trim();
+    if (reference.length < 3) return toast.error("Enter the replacement receipt reference.");
+    setSaving(true);
+    try {
+      const { error } = await db.rpc("link_sale_return_replacement_sale", {
+        _store_id: storeId, _return_id: returnRow.id, _replacement_sale_reference: reference,
+      });
+      if (error) throw new Error(error.message);
+      toast.success("Replacement sale linked to the return.");
+      form.reset();
+      await queryClient.invalidateQueries({ queryKey: ["fashion-sale-returns", sale?.id] });
+    } catch (error) { toast.error(errorMessage(error, "Replacement sale could not be linked.")); }
+    finally { setSaving(false); }
+  }
 
   async function recordReturnRefund(event: React.FormEvent<HTMLFormElement>, returnRow: SaleReturn) {
     event.preventDefault();
@@ -396,6 +415,14 @@ function FashionReturnsPage() {
                           <select name="payment_method" className="field h-10"><option value="cash">Cash</option><option value="card">Card</option><option value="transfer">Transfer</option></select>
                           <Input name="reference" className="h-10" placeholder="Refund reference" required />
                           <Button type="submit" size="sm" disabled={saving}>Record refund</Button>
+                        </form>
+                      )}
+                      {returnRow.replacement_sale_id ? (
+                        <p className="text-xs font-medium text-success">Replacement sale linked.</p>
+                      ) : (
+                        <form onSubmit={(event)=>void linkReplacementSale(event,returnRow)} className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+                          <Input name="replacement_sale_reference" className="h-10" placeholder="Replacement sale receipt reference (optional)" />
+                          <Button type="submit" size="sm" variant="outline" disabled={saving}>Link exchange sale</Button>
                         </form>
                       )}
                     </div>
