@@ -539,3 +539,77 @@ create policy service_job_payments_staff_insert on public.service_job_payments
     and received_by=(select auth.uid())
     and exists(select 1 from public.service_jobs j where j.id=job_id and j.store_id=service_job_payments.store_id)
   );
+
+
+-- Recalled lots are immediately quarantined from future dispensing.
+create or replace function public.quarantine_recalled_pharmacy_batch()
+returns trigger
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+begin
+  update public.pharmacy_batches
+     set recall_status = 'recalled', updated_at = now()
+   where id = new.batch_id and store_id = new.store_id;
+  if not found then raise exception 'Pharmacy batch not found in this store'; end if;
+  return new;
+end;
+$function$;
+revoke all on function public.quarantine_recalled_pharmacy_batch() from public, anon, authenticated;
+drop trigger if exists quarantine_recalled_pharmacy_batch on public.pharmacy_recalls;
+create trigger quarantine_recalled_pharmacy_batch
+after insert on public.pharmacy_recalls
+for each row execute function public.quarantine_recalled_pharmacy_batch();
+
+-- Record service consumables and decrement branch stock in one transaction.
+create or replace function public.record_beauty_consumable_usage(
+  _store_id uuid,
+  _branch_id uuid,
+  _appointment_id uuid,
+  _product_id uuid,
+  _quantity numeric,
+  _unit text default 'unit'
+)
+returns uuid
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_user_id uuid := auth.uid();
+  v_available integer;
+  v_usage_id uuid;
+begin
+  if v_user_id is null then raise exception 'Not authenticated'; end if;
+  if not public.has_store_role(_store_id,v_user_id,array['owner','manager','cashier']::public.store_role[]) then
+    raise exception 'Not authorized for this store';
+  end if;
+  if _quantity is null or _quantity <= 0 or _quantity <> trunc(_quantity) then
+    raise exception 'Consumable quantity must be a positive whole number';
+  end if;
+  if length(btrim(coalesce(_unit,''))) = 0 or length(btrim(_unit)) > 32 then
+    raise exception 'Enter a valid stock unit';
+  end if;
+  if not exists (
+    select 1 from public.beauty_appointments a
+     where a.id = _appointment_id and a.store_id = _store_id and a.branch_id = _branch_id
+       and a.status in ('checked_in','in_progress','completed')
+  ) then raise exception 'Consumables can only be recorded against an active or completed appointment'; end if;
+  select quantity into v_available from public.branch_stock
+   where store_id = _store_id and branch_id = _branch_id and product_id = _product_id
+   for update;
+  if not found or v_available < _quantity then raise exception 'Not enough stock for this consumable'; end if;
+  update public.branch_stock
+     set quantity = quantity - _quantity::integer, updated_at = now()
+   where store_id = _store_id and branch_id = _branch_id and product_id = _product_id;
+  insert into public.beauty_consumable_usage
+    (store_id,branch_id,appointment_id,product_id,quantity,unit,recorded_by)
+  values
+    (_store_id,_branch_id,_appointment_id,_product_id,_quantity,btrim(_unit),v_user_id)
+  returning id into v_usage_id;
+  return v_usage_id;
+end;
+$function$;
+revoke all on function public.record_beauty_consumable_usage(uuid,uuid,uuid,uuid,numeric,text) from public, anon;
+grant execute on function public.record_beauty_consumable_usage(uuid,uuid,uuid,uuid,numeric,text) to authenticated;
