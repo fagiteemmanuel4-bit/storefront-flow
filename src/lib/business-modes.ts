@@ -29,7 +29,10 @@ export type BusinessQuickAction = {
     | "/fashion-returns"
     | "/electronics-workspace"
     | "/food-service"
-    | "/grocery-inventory";
+    | "/grocery-inventory"
+    | "/pharmacy"
+    | "/beauty"
+    | "/services";
 };
 
 export type BusinessMode = {
@@ -164,7 +167,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
       {
         title: "Exchanges and returns workflow",
         detail:
-          "Record returns, prevent over-returning, restock the original size/colour, then record the replacement sale.",
+          "Record returns, restore the exact size/colour stock, process partial or full refunds and link replacement receipts for exchanges.",
         status: "available",
       },
     ],
@@ -223,6 +226,11 @@ export const BUSINESS_MODES: BusinessMode[] = [
           "Record customer devices, reported faults, warranty claims, estimates and repair progress.",
         status: "available",
       },
+      {
+        title: "Online serialised-device checkout",
+        detail: "Public checkout for registered devices stays disabled until the server can reserve and release individual device serials safely.",
+        status: "planned",
+      },
     ],
     quickActions: [
       { label: "Product catalogue", description: "Review stock", to: "/products" },
@@ -245,7 +253,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
     label: "Food & restaurants",
     eyebrow: "Orders and ingredients",
     description:
-      "Start with sales and cost visibility, with restaurant-specific workflows clearly mapped for later.",
+      "Run menu configuration, priced modifiers, kitchen tickets, recipe costing, ingredient stock and waste from one restaurant workspace.",
     bestFor: "Restaurants, cafés, bakeries, caterers and takeaway sellers",
     workflows: [
       {
@@ -273,6 +281,11 @@ export const BUSINESS_MODES: BusinessMode[] = [
         detail: "Record ingredient waste with a reason and deduct stock safely.",
         status: "available",
       },
+      {
+        title: "Online menu ordering and kitchen dispatch",
+        detail: "Recipe or modifier-based menu items remain off public checkout until the online kitchen workflow is enabled.",
+        status: "planned",
+      },
     ],
     quickActions: [
       {
@@ -289,7 +302,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
     label: "Pharmacy & health products",
     eyebrow: "Traceability first",
     description:
-      "Keep catalogue and stock visibility central while specialist controls are planned carefully.",
+      "Manage medicine profiles, batch traceability, expiry and recall quarantine, with prescription and controlled-product safeguards at checkout.",
     bestFor: "Licensed pharmacies and health-product retailers",
     workflows: [
       {
@@ -299,17 +312,23 @@ export const BUSINESS_MODES: BusinessMode[] = [
       },
       { title: "Sales records", detail: "Review recorded transactions.", status: "available" },
       {
-        title: "Batch, expiry and recall traceability",
-        detail: "Track lots and identify affected stock quickly.",
-        status: "planned",
+        title: "Batch receiving and expiry traceability",
+        detail: "Receive lots, track expiry and use eligible batches for in-person dispensing.",
+        status: "available",
       },
       {
-        title: "Pharmacy-specific safeguards",
-        detail: "Design compliant access, dispensing and audit workflows before enabling them.",
+        title: "Prescription and controlled-product safeguards",
+        detail: "Capture prescription references and patient details at POS, enforce minimum-age rules and require manager-authorised dispensing for controlled products.",
+        status: "available",
+      },
+      {
+        title: "Public online pharmacy checkout",
+        detail: "Configured batch-tracked and prescription-controlled medicines are blocked from public checkout until online dispensing safeguards are supported.",
         status: "planned",
       },
     ],
     quickActions: [
+      { label: "Medicine controls", description: "Profiles, batches and recalls", to: "/pharmacy" },
       { label: "Review products", description: "Catalogue and stock", to: "/products" },
       { label: "Inventory settings", description: "Stock controls", to: "/settings/inventory" },
       { label: "Reports", description: "Review sales", to: "/reports" },
@@ -319,7 +338,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
     key: "beauty-personal-care",
     label: "Beauty & personal care",
     eyebrow: "Products and repeat visits",
-    description: "Make product stock and customer records easy to access for repeat business.",
+    description: "Manage beauty retail, a priced service menu, appointment scheduling and treatment consumables in one workspace.",
     bestFor: "Beauty supply shops, cosmetics, skincare and personal-care retailers",
     workflows: [
       {
@@ -334,16 +353,22 @@ export const BUSINESS_MODES: BusinessMode[] = [
       },
       {
         title: "Appointments and service bookings",
-        detail: "Schedule services and track booking status.",
-        status: "planned",
+        detail: "Schedule customer visits, prevent staff double-booking and track each booking through completion.",
+        status: "available",
+      },
+      {
+        title: "Appointment staff, deposits and payments",
+        detail: "Assign staff, prevent overlapping bookings, collect deposits and record partial or full payments.",
+        status: "available",
       },
       {
         title: "Consumable usage",
-        detail: "Track products used during services separately from retail sales.",
-        status: "planned",
+        detail: "Record treatment products against an appointment and deduct branch stock transactionally.",
+        status: "available",
       },
     ],
     quickActions: [
+      { label: "Services & bookings", description: "Manage the menu and calendar", to: "/beauty" },
       { label: "Products", description: "Manage retail items", to: "/products" },
       { label: "Customers", description: "Customer records", to: "/customers" },
       { label: "Sales report", description: "Review performance", to: "/reports" },
@@ -354,7 +379,7 @@ export const BUSINESS_MODES: BusinessMode[] = [
     label: "Services & appointments",
     eyebrow: "People and jobs",
     description:
-      "Use customer and financial records now, with service-specific scheduling mapped as a future workflow.",
+      "Manage a service catalogue, customer job cards, estimates, job status, due dates and partial payments.",
     bestFor: "Repair shops, studios, consultants and appointment-based businesses",
     workflows: [
       {
@@ -368,17 +393,23 @@ export const BUSINESS_MODES: BusinessMode[] = [
         status: "available",
       },
       {
-        title: "Appointments and job cards",
-        detail: "Schedule bookings and track work from intake to completion.",
-        status: "planned",
+        title: "Service appointments and deposits",
+        detail: "Book timed service appointments, assign staff, prevent schedule conflicts, collect deposits and track partial payments.",
+        status: "available",
       },
       {
-        title: "Service packages and deposits",
-        detail: "Track bundled services and partial payments.",
-        status: "planned",
+        title: "Job cards and work tracking",
+        detail: "Create customer job cards, add priced service line items, assign staff, set priorities and due dates, and track completion.",
+        status: "available",
+      },
+      {
+        title: "Quotes and partial payments",
+        detail: "Edit final job amounts, record deposits and partial payments, and keep payment references in an append-only ledger.",
+        status: "available",
       },
     ],
     quickActions: [
+      { label: "Service jobs", description: "Catalogue, job cards and payments", to: "/services" },
       { label: "Customers", description: "Open customer records", to: "/customers" },
       { label: "Expenses", description: "Track operating costs", to: "/expenses" },
       { label: "Reports", description: "Review activity", to: "/reports" },

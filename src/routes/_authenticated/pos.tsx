@@ -72,6 +72,12 @@ type SelectedFoodModifier = {
   option_label: string;
   price_delta: number;
 };
+type PharmacyProfile = {
+  product_id: string;
+  requires_prescription: boolean;
+  minimum_patient_age: number | null;
+  controlled_class: string | null;
+};
 type CartLine = {
   product: ProductWithStock;
   quantity: number;
@@ -79,6 +85,9 @@ type CartLine = {
   device?: ElectronicsDevice;
   foodModifiers?: SelectedFoodModifier[];
   orderNote?: string;
+  pharmacyPrescriptionReference?: string;
+  pharmacyPatientName?: string;
+  pharmacyPatientAge?: number;
 };
 type Customer = { id: string; name: string; phone: string };
 type Receipt = {
@@ -108,6 +117,10 @@ function PosPage() {
   const [variantPicker, setVariantPicker] = useState<ProductWithStock | null>(null);
   const [devicePicker, setDevicePicker] = useState<ProductWithStock | null>(null);
   const [foodPicker, setFoodPicker] = useState<ProductWithStock | null>(null);
+  const [pharmacyPicker, setPharmacyPicker] = useState<ProductWithStock | null>(null);
+  const [pharmacyPrescriptionReference, setPharmacyPrescriptionReference] = useState("");
+  const [pharmacyPatientName, setPharmacyPatientName] = useState("");
+  const [pharmacyPatientAge, setPharmacyPatientAge] = useState("");
   const [foodSelections, setFoodSelections] = useState<Record<string, string>>({});
   const [foodOrderNote, setFoodOrderNote] = useState("");
   const [search, setSearch] = useState("");
@@ -187,6 +200,19 @@ function PosPage() {
       return (data ?? []) as FoodModifier[];
     },
   });
+  const pharmacyProfilesQuery = useQuery({
+    queryKey: ["pharmacy-product-profiles", storeId],
+    enabled: Boolean(businessMode.key === "pharmacy" && storeId),
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("pharmacy_product_profiles")
+        .select("product_id,requires_prescription,minimum_patient_age,controlled_class")
+        .eq("store_id", storeId!)
+        .eq("is_active", true);
+      if (error) throw new Error(error.message);
+      return (data ?? []) as PharmacyProfile[];
+    },
+  });
   const receiptPrefsQuery = useQuery({
     queryKey: ["receipt-preferences", storeId],
     enabled: Boolean(storeId),
@@ -207,6 +233,7 @@ function PosPage() {
   const fashionVariants = fashionVariantsQuery.data ?? EMPTY_ARRAY;
   const electronicsDevices = electronicsDevicesQuery.data ?? EMPTY_ARRAY;
   const foodModifiers = foodModifiersQuery.data ?? EMPTY_ARRAY;
+  const pharmacyProfiles = pharmacyProfilesQuery.data ?? EMPTY_ARRAY;
   const selectedCustomer = customers.find((c) => c.id === customerId);
   useEffect(() => {
     const openScanner = () => setScanning(true);
@@ -338,6 +365,7 @@ function PosPage() {
       device?: ElectronicsDevice,
       selectedModifiers?: SelectedFoodModifier[],
       orderNote?: string,
+      pharmacyDetails?: { prescription_reference: string; patient_name: string; patient_age?: number },
     ) => {
       setCart((current) => {
         const available = device ? 1 : (variant?.quantity ?? product.quantity);
@@ -347,7 +375,10 @@ function PosPage() {
             l.variant?.id === variant?.id &&
             l.device?.id === device?.id &&
             JSON.stringify(l.foodModifiers ?? []) === JSON.stringify(selectedModifiers ?? []) &&
-            (l.orderNote ?? "") === (orderNote ?? ""),
+            (l.orderNote ?? "") === (orderNote ?? "") &&
+            (l.pharmacyPrescriptionReference ?? "") === (pharmacyDetails?.prescription_reference ?? "") &&
+            (l.pharmacyPatientName ?? "") === (pharmacyDetails?.patient_name ?? "") &&
+            (l.pharmacyPatientAge ?? null) === (pharmacyDetails?.patient_age ?? null),
         );
         if (available < 1) {
           toast.error(
@@ -373,7 +404,10 @@ function PosPage() {
             l.variant?.id === variant?.id &&
             l.device?.id === device?.id &&
             JSON.stringify(l.foodModifiers ?? []) === JSON.stringify(selectedModifiers ?? []) &&
-            (l.orderNote ?? "") === (orderNote ?? "")
+            (l.orderNote ?? "") === (orderNote ?? "") &&
+            (l.pharmacyPrescriptionReference ?? "") === (pharmacyDetails?.prescription_reference ?? "") &&
+            (l.pharmacyPatientName ?? "") === (pharmacyDetails?.patient_name ?? "") &&
+            (l.pharmacyPatientAge ?? null) === (pharmacyDetails?.patient_age ?? null)
               ? { ...l, quantity: l.quantity + 1 }
               : l,
           );
@@ -387,6 +421,9 @@ function PosPage() {
             ...(device ? { device } : {}),
             ...(selectedModifiers?.length ? { foodModifiers: selectedModifiers } : {}),
             ...(orderNote ? { orderNote } : {}),
+            ...(pharmacyDetails?.prescription_reference ? { pharmacyPrescriptionReference: pharmacyDetails.prescription_reference } : {}),
+            ...(pharmacyDetails?.patient_name ? { pharmacyPatientName: pharmacyDetails.patient_name } : {}),
+            ...(pharmacyDetails?.patient_age !== undefined ? { pharmacyPatientAge: pharmacyDetails.patient_age } : {}),
           },
         ];
       });
@@ -539,7 +576,7 @@ function PosPage() {
     const offlineId = crypto.randomUUID();
     if (
       !navigator.onLine &&
-      (cart.some((l) => l.variant || l.device) || businessMode.key === "food-service")
+      (cart.some((l) => l.variant || l.device) || businessMode.key === "food-service" || businessMode.key === "pharmacy")
     ) {
       return toast.error(
         "Reconnect before completing this sale so variant, serial or ingredient stock and kitchen tickets stay accurate.",
@@ -553,6 +590,9 @@ function PosPage() {
       ...(l.device ? { electronics_device_id: l.device.id } : {}),
       ...(l.foodModifiers?.length ? { modifiers: l.foodModifiers } : {}),
       ...(l.orderNote ? { order_notes: l.orderNote } : {}),
+      ...(l.pharmacyPrescriptionReference ? { prescription_reference: l.pharmacyPrescriptionReference } : {}),
+      ...(l.pharmacyPatientName ? { patient_name: l.pharmacyPatientName } : {}),
+      ...(l.pharmacyPatientAge !== undefined ? { patient_age: l.pharmacyPatientAge } : {}),
     }));
     setCharging(true);
     try {
@@ -778,6 +818,14 @@ function PosPage() {
                   )}
                   {line.orderNote && (
                     <p className="mt-0.5 text-xs text-amber-700">Note: {line.orderNote}</p>
+                  )}
+                  {line.pharmacyPrescriptionReference && (
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      Rx: {line.pharmacyPrescriptionReference} · {line.pharmacyPatientName}
+                    </p>
+                  )}
+                  {line.pharmacyPatientAge !== undefined && (
+                    <p className="mt-0.5 text-xs text-muted-foreground">Patient age: {line.pharmacyPatientAge}</p>
                   )}
                   <p className="numeric mt-0.5 text-xs text-muted-foreground">
                     {formatMoney(Number(line.product.price), currency)} each
@@ -1096,6 +1144,11 @@ function PosPage() {
                           setFoodPicker(product);
                           setFoodSelections({});
                           setFoodOrderNote("");
+                        } else if (businessMode.key === "pharmacy" && pharmacyProfiles.some((p) => p.product_id === product.id)) {
+                          setPharmacyPicker(product);
+                          setPharmacyPrescriptionReference("");
+                          setPharmacyPatientName("");
+                          setPharmacyPatientAge("");
                         } else addToCart(product);
                       }}
                       className={cn(
@@ -1299,6 +1352,72 @@ function PosPage() {
                 </Button>
               </div>
             </div>
+          </BottomSheetContent>
+        </BottomSheet>
+        <BottomSheet
+          open={Boolean(pharmacyPicker)}
+          onOpenChange={(open) => {
+            if (!open) setPharmacyPicker(null);
+          }}
+        >
+          <BottomSheetContent className="mx-auto w-full max-w-lg">
+            <BottomSheetHeader className="border-b border-border pb-3">
+              <BottomSheetTitle>Dispensing details</BottomSheetTitle>
+              <p className="text-sm text-muted-foreground">
+                {pharmacyPicker?.name} · Verify patient and prescription information before dispensing.
+              </p>
+            </BottomSheetHeader>
+            {(() => {
+              const profile = pharmacyProfiles.find((p) => p.product_id === pharmacyPicker?.id);
+              if (!profile) return null;
+              return (
+                <div className="space-y-3 pt-3">
+                  {profile.requires_prescription && (
+                    <label className="block space-y-1.5">
+                      <span className="text-sm font-semibold">Prescription reference *</span>
+                      <Input value={pharmacyPrescriptionReference} onChange={(e) => setPharmacyPrescriptionReference(e.target.value)} placeholder="Prescription / clinic reference" />
+                    </label>
+                  )}
+                  {(profile.requires_prescription || profile.minimum_patient_age !== null) && (
+                    <label className="block space-y-1.5">
+                      <span className="text-sm font-semibold">Patient name *</span>
+                      <Input value={pharmacyPatientName} onChange={(e) => setPharmacyPatientName(e.target.value)} placeholder="Patient full name" />
+                    </label>
+                  )}
+                  {profile.minimum_patient_age !== null && (
+                    <label className="block space-y-1.5">
+                      <span className="text-sm font-semibold">Patient age (minimum {profile.minimum_patient_age}) *</span>
+                      <Input type="number" min="0" max="120" value={pharmacyPatientAge} onChange={(e) => setPharmacyPatientAge(e.target.value)} placeholder="Age in years" />
+                    </label>
+                  )}
+                  {profile.controlled_class && (
+                    <p className="rounded-xl bg-amber-500/10 p-3 text-xs text-amber-800">
+                      Controlled product ({profile.controlled_class}). A manager must authorise this sale.
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between gap-3 border-t border-border pt-3">
+                    <span className="numeric font-semibold">{formatMoney(Number(pharmacyPicker?.price ?? 0), currency)}</span>
+                    <Button onClick={() => {
+                      if (!pharmacyPicker) return;
+                      if (profile.requires_prescription && (pharmacyPrescriptionReference.trim().length < 3 || pharmacyPatientName.trim().length < 2)) {
+                        toast.error("Enter the prescription reference and patient name.");
+                        return;
+                      }
+                      if (profile.minimum_patient_age !== null && (!pharmacyPatientName.trim() || Number(pharmacyPatientAge) < profile.minimum_patient_age)) {
+                        toast.error("The patient does not meet the minimum age requirement.");
+                        return;
+                      }
+                      addToCart(pharmacyPicker, undefined, undefined, undefined, undefined, {
+                        prescription_reference: pharmacyPrescriptionReference.trim(),
+                        patient_name: pharmacyPatientName.trim(),
+                        ...(pharmacyPatientAge ? { patient_age: Number(pharmacyPatientAge) } : {}),
+                      });
+                      setPharmacyPicker(null);
+                    }}>Add to sale</Button>
+                  </div>
+                </div>
+              );
+            })()}
           </BottomSheetContent>
         </BottomSheet>
         <BottomSheet

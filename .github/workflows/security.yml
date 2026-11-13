@@ -61,8 +61,8 @@ jobs:
       - name: Audit npm dependencies
         run: npm audit --audit-level=high
 
-      - name: Lint
-        run: npm run lint
+      - name: Lint and apply safe formatting fixes
+        run: npm run lint -- --fix
 
       - name: Production build
         run: npm run build

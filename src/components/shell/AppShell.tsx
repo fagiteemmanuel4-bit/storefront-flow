@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Activity,
   BarChart3,
+  BriefcaseBusiness,
   Boxes,
   ChefHat,
   ChevronDown,
@@ -20,6 +21,8 @@ import {
   LogOut,
   Menu,
   Package,
+  Pill,
+  Scissors,
   PanelLeftClose,
   PanelLeftOpen,
   Puzzle,
@@ -246,6 +249,9 @@ export function AppShell({
   const isElectronics = businessMode.key === "electronics";
   const isFoodService = businessMode.key === "food-service";
   const isGrocery = businessMode.key === "grocery-provision";
+  const isPharmacy = businessMode.key === "pharmacy";
+  const isBeauty = businessMode.key === "beauty-personal-care";
+  const isServices = businessMode.key === "services";
   const primaryNav = useMemo(
     () =>
       isFashion
@@ -288,8 +294,29 @@ export function AppShell({
                   { to: "/products", label: "Catalogue", icon: Package, area: "products" },
                   { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
                 ]
-              : PRIMARY_NAV,
-    [isFashion, isElectronics, isFoodService, isGrocery],
+              : isPharmacy
+                ? [
+                    { to: "/pharmacy", label: "Medicine & batches", icon: Pill, area: "products" },
+                    { to: "/pos", label: "Dispense / sell", icon: ScanLine, area: "pos" },
+                    { to: "/products", label: "Catalogue", icon: Package, area: "products" },
+                    { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
+                  ]
+                : isBeauty
+                  ? [
+                      { to: "/beauty", label: "Services & bookings", icon: Scissors, area: "orders" },
+                      { to: "/pos", label: "Retail checkout", icon: ScanLine, area: "pos" },
+                      { to: "/customers", label: "Customers", icon: Users, area: "customers" },
+                      { to: "/reports", label: "Sales", icon: BarChart3, area: "reports" },
+                    ]
+                  : isServices
+                    ? [
+                        { to: "/services", label: "Service jobs", icon: BriefcaseBusiness, area: "orders" },
+                        { to: "/customers", label: "Customers", icon: Users, area: "customers" },
+                        { to: "/expenses", label: "Expenses", icon: ReceiptText, area: "expenses" },
+                        { to: "/reports", label: "Reports", icon: BarChart3, area: "reports" },
+                      ]
+                    : PRIMARY_NAV,
+    [isFashion, isElectronics, isFoodService, isGrocery, isPharmacy, isBeauty, isServices],
   );
   const secondaryNav = useMemo(
     () =>
@@ -303,10 +330,10 @@ export function AppShell({
               area: "products",
             },
           ]
-        : isElectronics
+        : isElectronics || isPharmacy || isServices
           ? SECONDARY_NAV.filter((item) => item.to !== "/online-store")
           : SECONDARY_NAV,
-    [isFashion, isElectronics],
+    [isFashion, isElectronics, isPharmacy, isServices],
   );
   useEffect(() => {
     setStaffSessionState(getStaffSession(store?.id));
