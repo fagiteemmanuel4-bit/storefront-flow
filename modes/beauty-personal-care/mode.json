@@ -1049,7 +1049,9 @@
       "pl.feature-flags": false,
       "pl.monitoring": false,
       "pl.accessibility-performance": false,
-      "pl.e2e-tests": false
+      "pl.e2e-tests": false,
+      "sf.preview-responsive": false,
+      "sf.template-library": false
     },
     "rule": "Flag key must exactly equal the feature id in strap-features.normal.json. A flag is enabled only after acceptance criteria, lifecycle states, 390px/desktop checks and automated tests pass."
   },
