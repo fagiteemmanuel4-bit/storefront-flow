@@ -51,6 +51,10 @@ for (const directory of profileDirs) {
 assert.equal(profiles.length, 8, "expected eight mode profiles");
 const applicability = await readJson(join(modesDir, "feature-applicability.json"));
 assert.deepEqual(applicability.modeKeys, modeKeys);
+const catalogFeatureIds = Object.keys(applicability.features).sort();
+for (const profile of profiles) {
+  assert.deepEqual(Object.keys(profile.featureFlags.flags).sort(), catalogFeatureIds, profile.id + ": flags must match the complete feature catalog");
+}
 assert.ok(Object.values(applicability.features).every((feature) =>
   feature.availability === "all-modes"
     ? feature.applicableModeKeys.length === modeKeys.length
