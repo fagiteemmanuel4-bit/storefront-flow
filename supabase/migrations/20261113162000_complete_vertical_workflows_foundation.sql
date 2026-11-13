@@ -236,6 +236,7 @@ begin
   update public.electronics_repairs
      set paid_amount = paid_amount + _amount, updated_at = now()
    where id = _repair_id and store_id = _store_id;
+  perform pg_catalog.set_config('app.allow_vertical_balance_update','off',true);
   return v_payment_id;
 end;
 $function$;
@@ -399,6 +400,7 @@ begin
   perform pg_catalog.set_config('app.allow_vertical_balance_update','on',true);
   update public.beauty_appointments set paid_amount=paid_amount+_amount,updated_at=now()
    where id=_appointment_id and store_id=_store_id;
+  perform pg_catalog.set_config('app.allow_vertical_balance_update','off',true);
   return v_payment_id;
 end;
 $function$;
@@ -550,6 +552,7 @@ begin
   update public.service_jobs
      set amount_paid = amount_paid + new.amount, updated_at = now()
    where id = new.job_id and store_id = new.store_id;
+  perform pg_catalog.set_config('app.allow_vertical_balance_update','off',true);
   return new;
 end;
 $function$;
