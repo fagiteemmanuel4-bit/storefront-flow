@@ -65,6 +65,15 @@ $function$;
 
 revoke all on function public.release_online_order_stock() from public, anon, authenticated;
 
+-- Food recipes can consume fractional stock (for example 0.25 kg or 50 ml).
+alter table public.branch_stock
+  alter column quantity type numeric(14,4) using quantity::numeric(14,4);
+alter table public.branch_stock
+  add column if not exists stock_unit text not null default 'unit';
+alter table public.branch_stock
+  add constraint branch_stock_stock_unit_nonempty
+  check (length(btrim(stock_unit)) between 1 and 32);
+
 -- Food service: fractional ingredient quantities and explicit units.
 alter table public.food_recipe_ingredients
   alter column quantity_per_serving type numeric(12,4)
@@ -667,7 +676,8 @@ declare
   v_modifier_total numeric := 0;
   v_order_notes text;
   v_ingredient record;
-  v_available integer;
+  v_available numeric;
+  v_stock_unit text;
   v_ticket_id uuid;
   v_batch record;
   v_batch_total integer;
@@ -787,14 +797,18 @@ begin
 
   if v_business_mode in ('food-service','restaurant','food','bakery') then
     for v_ingredient in
-      select r.ingredient_product_id, sum(r.quantity_per_serving * (cart_row.value->>'quantity')::integer)::integer as required_quantity
+      select r.ingredient_product_id, sum(r.quantity_per_serving * (cart_row.value->>'quantity')::integer)::numeric as required_quantity,
+        min(r.unit) as unit, count(distinct r.unit)::integer as unit_count
       from jsonb_array_elements(_items) as cart_row(value)
       join public.food_recipe_ingredients r on r.menu_product_id=(cart_row.value->>'product_id')::uuid and r.store_id=_store_id and r.branch_id=_branch_id
       group by r.ingredient_product_id
     loop
-      select bs.quantity into v_available from public.branch_stock bs where bs.store_id=_store_id and bs.branch_id=_branch_id and bs.product_id=v_ingredient.ingredient_product_id for update;
-      if not found or v_available<v_ingredient.required_quantity then
+      select bs.quantity, bs.stock_unit into v_available, v_stock_unit from public.branch_stock bs where bs.store_id=_store_id and bs.branch_id=_branch_id and bs.product_id=v_ingredient.ingredient_product_id for update;
+      if not found or v_available < v_ingredient.required_quantity then
         raise exception 'Insufficient ingredient stock for product %',v_ingredient.ingredient_product_id;
+      end if;
+      if v_ingredient.unit_count <> 1 or v_stock_unit <> v_ingredient.unit then
+        raise exception 'Ingredient stock unit must match recipe unit (%) for product %',v_ingredient.unit,v_ingredient.ingredient_product_id;
       end if;
     end loop;
   end if;
@@ -885,7 +899,8 @@ begin
   end if;
   return v_sale_id;
 end;
-$function$;
+$function$
+;
 
 create or replace function public.apply_pharmacy_batch_dispensing()
 returns trigger
