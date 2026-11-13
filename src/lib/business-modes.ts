@@ -342,6 +342,11 @@ export const BUSINESS_MODES: BusinessMode[] = [
         status: "available",
       },
       {
+        title: "Appointment staff, deposits and payments",
+        detail: "Assign staff, prevent overlapping bookings, collect deposits and record partial or full payments.",
+        status: "available",
+      },
+      {
         title: "Consumable usage",
         detail: "Record treatment products against an appointment and deduct branch stock transactionally.",
         status: "available",
@@ -374,12 +379,12 @@ export const BUSINESS_MODES: BusinessMode[] = [
       },
       {
         title: "Job cards and work tracking",
-        detail: "Create customer jobs, set priorities and due dates, and move work from request to completion.",
+        detail: "Create customer job cards, add priced service line items, assign staff, set priorities and due dates, and track completion.",
         status: "available",
       },
       {
         title: "Quotes and partial payments",
-        detail: "Track quoted and final amounts, deposits and payment references against each job.",
+        detail: "Edit final job amounts, record deposits and partial payments, and keep payment references in an append-only ledger.",
         status: "available",
       },
     ],
