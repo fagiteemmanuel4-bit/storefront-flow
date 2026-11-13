@@ -500,7 +500,7 @@ declare
   t text;
 begin
   foreach t in array array[
-    'electronics_repair_payments',
+    'electronics_repair_payments','food_ingredient_stock',
     'pharmacy_product_profiles','pharmacy_batches','pharmacy_dispensing_records','pharmacy_recalls',
     'beauty_services','beauty_appointments','beauty_appointment_services','beauty_consumable_usage',
     'service_catalog','service_jobs','service_job_items','service_job_payments'
