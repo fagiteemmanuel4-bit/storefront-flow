@@ -378,6 +378,11 @@ export const BUSINESS_MODES: BusinessMode[] = [
         status: "available",
       },
       {
+        title: "Service appointments and deposits",
+        detail: "Book timed service appointments, assign staff, prevent schedule conflicts, collect deposits and track partial payments.",
+        status: "available",
+      },
+      {
         title: "Job cards and work tracking",
         detail: "Create customer job cards, add priced service line items, assign staff, set priorities and due dates, and track completion.",
         status: "available",
