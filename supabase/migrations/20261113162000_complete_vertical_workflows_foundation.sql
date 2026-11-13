@@ -65,15 +65,6 @@ $function$;
 
 revoke all on function public.release_online_order_stock() from public, anon, authenticated;
 
--- Food recipes can consume fractional stock (for example 0.25 kg or 50 ml).
-alter table public.branch_stock
-  alter column quantity type numeric(14,4) using quantity::numeric(14,4);
-alter table public.branch_stock
-  add column if not exists stock_unit text not null default 'unit';
-alter table public.branch_stock
-  add constraint branch_stock_stock_unit_nonempty
-  check (length(btrim(stock_unit)) between 1 and 32);
-
 -- Food service: fractional ingredient quantities and explicit units.
 alter table public.food_recipe_ingredients
   alter column quantity_per_serving type numeric(12,4)
@@ -83,6 +74,90 @@ alter table public.food_recipe_ingredients
 alter table public.food_recipe_ingredients
   add constraint food_recipe_ingredients_unit_nonempty
   check (length(btrim(unit)) between 1 and 32);
+
+create table if not exists public.food_ingredient_stock (
+  id uuid primary key default gen_random_uuid(),
+  store_id uuid not null references public.stores(id) on delete cascade,
+  branch_id uuid not null references public.branches(id) on delete cascade,
+  product_id uuid not null references public.products(id) on delete restrict,
+  quantity numeric(14,4) not null default 0 check (quantity >= 0),
+  unit text not null check (length(btrim(unit)) between 1 and 32),
+  updated_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  unique(store_id,branch_id,product_id)
+);
+create index if not exists food_ingredient_stock_branch_idx
+  on public.food_ingredient_stock(store_id,branch_id,product_id);
+
+alter table public.food_waste_records
+  alter column quantity type numeric(14,4) using quantity::numeric(14,4);
+
+create or replace function public.receive_food_ingredient_stock(
+  _store_id uuid,_branch_id uuid,_product_id uuid,_quantity numeric,_unit text
+)
+returns uuid
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_user_id uuid := auth.uid();
+  v_id uuid;
+begin
+  if v_user_id is null then raise exception 'Not authenticated'; end if;
+  if not public.has_store_role(_store_id,v_user_id,array['owner','manager']::public.store_role[]) then
+    raise exception 'Only a store owner or manager can receive ingredient stock';
+  end if;
+  if _quantity is null or _quantity <= 0 or _quantity > 100000 then raise exception 'Enter a valid received quantity'; end if;
+  if length(btrim(coalesce(_unit,'')))=0 or length(btrim(_unit))>32 then raise exception 'Enter a valid stock unit'; end if;
+  if not exists(select 1 from public.branches b where b.id=_branch_id and b.store_id=_store_id) then raise exception 'Invalid branch'; end if;
+  if not exists(select 1 from public.products p where p.id=_product_id and p.store_id=_store_id) then raise exception 'Invalid ingredient'; end if;
+  insert into public.food_ingredient_stock(store_id,branch_id,product_id,quantity,unit)
+    values(_store_id,_branch_id,_product_id,_quantity,btrim(_unit))
+    on conflict(store_id,branch_id,product_id) do update
+      set quantity=public.food_ingredient_stock.quantity+excluded.quantity,updated_at=now()
+      where public.food_ingredient_stock.unit=excluded.unit
+    returning id into v_id;
+  if v_id is null then raise exception 'Ingredient stock unit does not match the existing stock unit'; end if;
+  return v_id;
+end;
+$function$;
+revoke all on function public.receive_food_ingredient_stock(uuid,uuid,uuid,numeric,text) from public,anon;
+grant execute on function public.receive_food_ingredient_stock(uuid,uuid,uuid,numeric,text) to authenticated;
+
+drop function if exists public.record_food_waste(uuid,uuid,uuid,integer,text);
+create or replace function public.record_food_waste(
+  _store_id uuid,_branch_id uuid,_ingredient_product_id uuid,_quantity numeric,_reason text
+)
+returns uuid
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_user_id uuid := auth.uid();
+  v_available numeric;
+  v_id uuid;
+begin
+  if v_user_id is null then raise exception 'Not authenticated'; end if;
+  if not public.has_store_role(_store_id,v_user_id,array['owner','manager','cashier']::public.store_role[]) then raise exception 'Not authorized for this store'; end if;
+  if _quantity is null or _quantity<=0 then raise exception 'Waste quantity must be greater than zero'; end if;
+  if length(btrim(coalesce(_reason,'')))<3 then raise exception 'Enter a waste reason'; end if;
+  select quantity into v_available from public.food_ingredient_stock
+   where store_id=_store_id and branch_id=_branch_id and product_id=_ingredient_product_id
+   for update;
+  if not found or v_available<_quantity then raise exception 'Not enough ingredient stock to record this waste'; end if;
+  update public.food_ingredient_stock set quantity=quantity-_quantity,updated_at=now()
+   where store_id=_store_id and branch_id=_branch_id and product_id=_ingredient_product_id;
+  insert into public.food_waste_records(store_id,branch_id,ingredient_product_id,quantity,reason,recorded_by)
+   values(_store_id,_branch_id,_ingredient_product_id,_quantity,btrim(_reason),v_user_id)
+   returning id into v_id;
+  return v_id;
+end;
+$function$;
+revoke all on function public.record_food_waste(uuid,uuid,uuid,numeric,text) from public,anon;
+grant execute on function public.record_food_waste(uuid,uuid,uuid,numeric,text) to authenticated;
+
 
 -- Electronics: track repair payments separately from repair estimates/final cost.
 alter table public.electronics_repairs
@@ -803,7 +878,7 @@ begin
       join public.food_recipe_ingredients r on r.menu_product_id=(cart_row.value->>'product_id')::uuid and r.store_id=_store_id and r.branch_id=_branch_id
       group by r.ingredient_product_id
     loop
-      select bs.quantity, bs.stock_unit into v_available, v_stock_unit from public.branch_stock bs where bs.store_id=_store_id and bs.branch_id=_branch_id and bs.product_id=v_ingredient.ingredient_product_id for update;
+      select fs.quantity, fs.unit into v_available, v_stock_unit from public.food_ingredient_stock fs where fs.store_id=_store_id and fs.branch_id=_branch_id and fs.product_id=v_ingredient.ingredient_product_id for update;
       if not found or v_available < v_ingredient.required_quantity then
         raise exception 'Insufficient ingredient stock for product %',v_ingredient.ingredient_product_id;
       end if;
@@ -885,12 +960,12 @@ begin
       select v_ticket_id,_store_id,si.id,si.product_name,si.quantity,si.food_modifiers,si.order_notes
       from public.sale_items si where si.sale_id=v_sale_id;
     for v_item in select value from jsonb_array_elements(_items) loop
-      update public.branch_stock bs
-        set quantity=bs.quantity-(r.quantity_per_serving*(v_item->>'quantity')::integer),updated_at=now()
+      update public.food_ingredient_stock fs
+        set quantity=fs.quantity-(r.quantity_per_serving*(v_item->>'quantity')::integer),updated_at=now()
         from public.food_recipe_ingredients r
         where r.store_id=_store_id and r.branch_id=_branch_id
           and r.menu_product_id=(v_item->>'product_id')::uuid
-          and bs.store_id=_store_id and bs.branch_id=_branch_id and bs.product_id=r.ingredient_product_id;
+          and fs.store_id=_store_id and fs.branch_id=_branch_id and fs.product_id=r.ingredient_product_id and fs.unit=r.unit;
     end loop;
   end if;
 
