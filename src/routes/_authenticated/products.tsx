@@ -104,6 +104,7 @@ function ProductsPage() {
   const [scanOpen, setScanOpen] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [profileModeChoice, setProfileModeChoice] = useState<BusinessModeKey | "">("");
+  const [showProfilePicker, setShowProfilePicker] = useState(false);
   const [savingProfileMode, setSavingProfileMode] = useState(false);
   const canManage = canManageCatalog(role);
   const canManageProfile = role === "owner" || role === "manager";
@@ -153,6 +154,7 @@ function ProductsPage() {
       if (error) throw new Error(error.message);
       await refreshStore();
       setProfileModeChoice("");
+      setShowProfilePicker(false);
       toast.success("Business profile saved. Your catalogue is being updated.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not save the business profile.");
@@ -446,10 +448,45 @@ function ProductsPage() {
                 </p>
                 <h2 className="mt-1 truncate text-sm font-semibold">{modeProfile.name}</h2>
               </div>
-              <span className="inline-flex items-center rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">
-                Draft profile · fields available
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">
+                  Draft profile · fields available
+                </span>
+                {canManageProfile && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setProfileModeChoice(resolvedBusinessMode?.key ?? "");
+                      setShowProfilePicker((current) => !current);
+                    }}
+                  >
+                    Change profile
+                  </Button>
+                )}
+              </div>
             </div>
+            {showProfilePicker && canManageProfile && (
+              <div className="flex flex-col gap-2 border-b border-border p-4 sm:flex-row sm:px-5">
+                <select
+                  value={profileModeChoice}
+                  onChange={(event) => setProfileModeChoice(event.target.value as BusinessModeKey | "")}
+                  className="h-11 min-w-0 flex-1 rounded-xl border border-input bg-background px-3 text-sm"
+                >
+                  {BUSINESS_MODES.map((mode) => (
+                    <option key={mode.key} value={mode.key}>{mode.label}</option>
+                  ))}
+                </select>
+                <Button
+                  type="button"
+                  onClick={() => void saveBusinessModeProfile()}
+                  disabled={!profileModeChoice || profileModeChoice === resolvedBusinessMode?.key || savingProfileMode}
+                >
+                  {savingProfileMode ? "Saving…" : "Save profile"}
+                </Button>
+              </div>
+            )}
             <div className="grid gap-3 p-4 sm:grid-cols-[1fr_auto] sm:items-center sm:px-5">
               <div>
                 <p className="text-sm text-muted-foreground">
