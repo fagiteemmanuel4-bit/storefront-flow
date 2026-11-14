@@ -471,7 +471,12 @@ function PublicStorefrontPage() {
           if (section.type === "gallery") return (
             <article key={section.id} className="storefront-card p-6"><h3 className="text-lg font-bold">{String(settings.title ?? "Gallery")}</h3>{Boolean(settings.imageUrl) && <img src={String(settings.imageUrl)} alt="" loading="lazy" className="mt-4 max-h-80 w-full rounded-xl object-cover" />}</article>
           );
-          return null;
+          return (
+            <article key={section.id} className="storefront-card p-6">
+              <h3 className="text-lg font-bold">{String(settings.title ?? section.type.replace(/[-_]+/g, " ").replace(/\\b\\w/g, (letter) => letter.toUpperCase()))}</h3>
+              {Boolean(settings.body) && <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{String(settings.body)}</p>}
+            </article>
+          );
         })}
       </section>
       <section className="mx-auto max-w-6xl px-5 pb-24 lg:px-8">
