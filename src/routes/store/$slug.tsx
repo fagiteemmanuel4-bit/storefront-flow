@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
@@ -133,7 +133,9 @@ function PublicStorefrontPage() {
     "--store-accent": safeColor(configuredTheme.accentColor, "#f59e0b"),
     "--store-text": safeColor(configuredTheme.textColor, "#111827"),
     "--store-background": safeColor(configuredTheme.backgroundColor, "#ffffff"),
-  } as React.CSSProperties;
+    color: safeColor(configuredTheme.textColor, "#111827"),
+    backgroundColor: safeColor(configuredTheme.backgroundColor, "#ffffff"),
+  } as CSSProperties;
 
   const catalogQuery = useQuery({
     queryKey: ["public-store-products", slug],
