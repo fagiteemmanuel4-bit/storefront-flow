@@ -315,7 +315,7 @@ function OnboardingPage() {
             </div>
 
             <footer className="ob-actions">
-              <button type="button" className="ob-back" disabled={step === 0 || submitting} onClick={() => setStep(s => Math.max(0, s - 1)}><ArrowLeft size={17} /> Back</button>
+              <button type="button" className="ob-back" disabled={step === 0 || submitting} onClick={() => setStep(s => Math.max(0, s - 1))}><ArrowLeft size={17} /> Back</button>
               {step < totalSteps - 1
                 ? <button type="button" className="ob-primary" disabled={!canContinue()} onClick={() => setStep(s => s + 1)}>Continue <ArrowRight size={17} /></button>
                 : <button type="button" className="ob-primary" disabled={!plan || submitting} onClick={() => void finish()}>{submitting ? "Creating workspace…" : "Create my workspace"} <ArrowRight size={17} /></button>}
