@@ -49,7 +49,7 @@ type Props = {
   product: ProductWithStock | null;
   onSaved: () => Promise<void> | void;
   businessMode?: BusinessModeKey;
-  profileFields?: Array<{ id: string; label: string; type: string; required: boolean; column?: string; surfaces: string[] }>;
+  profileFields?: Array<{ id: string; label: string; type: string; required: boolean; column?: string; runtimeReady: boolean; surfaces: string[] }>;
 };
 type ProductImage = { id: string; image_url: string; sort_order: number };
 type PendingImage = { file: File; preview: string };
@@ -142,7 +142,7 @@ export function ProductFormDialog({
     setColors("");
     setMaterial("");
     setStyleNotes("");
-    setProfileValues(Object.fromEntries(profileFields.filter((field) => field.column && /^[a-z][a-z0-9_]*$/.test(field.column)).map((field) => [field.id, String((p as any)?.[field.column!] ?? "")])));
+    setProfileValues(Object.fromEntries(profileFields.filter((field) => field.runtimeReady && field.column && /^[a-z][a-z0-9_]*$/.test(field.column)).map((field) => [field.id, String((p as any)?.[field.column!] ?? "")])));
     setVariantInventory("");
     setProductLoadError(false);
 
@@ -474,7 +474,7 @@ export function ProductFormDialog({
       const normalizedPackPrice = packMode ? v.packPrice : 0;
       const mappedProfileFields = Object.fromEntries(
         profileFields
-          .filter((field) => field.column && /^[a-z][a-z0-9_]*$/.test(field.column) && field.id !== "name" && field.id !== "price" && field.id !== "cost" && field.id !== "sku" && field.id !== "barcode" && field.id !== "category" && field.id !== "lowStockThreshold" && field.id !== "quantity")
+          .filter((field) => field.runtimeReady && field.column && /^[a-z][a-z0-9_]*$/.test(field.column) && field.id !== "name" && field.id !== "price" && field.id !== "cost" && field.id !== "sku" && field.id !== "barcode" && field.id !== "category" && field.id !== "lowStockThreshold" && field.id !== "quantity")
           .map((field) => {
             const raw = profileValues[field.id] ?? "";
             const value = raw.trim() === "" ? null : ["integer", "money"].includes(field.type) ? Number(raw) : raw;
@@ -850,14 +850,14 @@ export function ProductFormDialog({
                 )}
               </div>
             )}
-            {profileFields.some((field) => field.column && !["name","price","cost","sku","barcode","category","lowStockThreshold","quantity"].includes(field.id)) && (
+            {profileFields.some((field) => field.runtimeReady && field.column && !["name","price","cost","sku","barcode","category","lowStockThreshold","quantity"].includes(field.id)) && (
               <section className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
                 <div>
                   <p className="text-sm font-semibold">Business-specific details</p>
                   <p className="mt-1 text-xs text-muted-foreground">Fields are shown from your business profile. Only fields with verified product-column mappings can be saved here.</p>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
-                  {profileFields.filter((field) => field.column && /^[a-z][a-z0-9_]*$/.test(field.column) && !["name","price","cost","sku","barcode","category","lowStockThreshold","quantity"].includes(field.id)).map((field) => (
+                  {profileFields.filter((field) => field.runtimeReady && field.column && /^[a-z][a-z0-9_]*$/.test(field.column) && !["name","price","cost","sku","barcode","category","lowStockThreshold","quantity"].includes(field.id)).map((field) => (
                     <Field key={field.id} label={field.label}>
                       <Input value={profileValues[field.id] ?? ""} onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: event.target.value }))} className="h-12" inputMode={field.type === "integer" || field.type === "money" ? "decimal" : undefined} type={field.type === "long-text" ? "text" : "text"} maxLength={240} />
                     </Field>
