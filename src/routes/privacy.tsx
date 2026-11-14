@@ -91,6 +91,17 @@ function Privacy() {
                 authentication identifiers, account status and security events.
               </li>
               <li>
+                <strong className="text-foreground">Personal profile and eligibility data:</strong>{" "}
+                date of birth and country of residence that you provide when creating or completing
+                your account.
+              </li>
+              <li>
+                <strong className="text-foreground">Business verification and compliance data:</strong>{" "}
+                business registration status and number (where available), declared branch count,
+                business country, state/region, city, street address, landmark, postal code, website
+                details and business profile image.
+              </li>
+              <li>
                 <strong className="text-foreground">Merchant/workspace data:</strong> business name,
                 branch, address, phone, currency, product catalogue, prices, stock, expenses,
                 reports, settings and staff permissions.
@@ -137,6 +148,11 @@ function Privacy() {
             <UL>
               <li>Provide, operate, maintain and improve Strap.</li>
               <li>Authenticate users, manage stores, branches, roles and permissions.</li>
+              <li>
+                Verify account eligibility, maintain accurate personal profiles and collect the
+                business identity and location details needed for platform compliance and lawful
+                registration or regulatory obligations.
+              </li>
               <li>
                 Process sales, inventory changes, online orders, receipts, reports and other
                 merchant instructions.
@@ -220,6 +236,12 @@ function Privacy() {
               Strap does not sell personal data as a commodity. We do not permit third parties to
               use merchant/customer data for unrelated advertising purposes merely because the data
               passes through Strap.
+            </P>
+            <P>
+              Personal profile and business compliance records may be reviewed by authorized Strap
+              platform compliance administrators for compliance and registration purposes. Store
+              owners can access their own business compliance records; ordinary store staff are not
+              granted access to those private records.
             </P>
           </Section>
           <Section title="8. Public storefronts, ratings and reports">
