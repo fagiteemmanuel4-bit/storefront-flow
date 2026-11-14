@@ -317,12 +317,12 @@ function RootComponent() {
     <ThemeProvider forceLight={forceLight}>
       <QueryClientProvider client={queryClient}>
         <RouteProgress />
-        <DomainMoveNotice />
+        {!pathname.startsWith("/onboarding") && <DomainMoveNotice />}
         <Outlet />
         <QuickFindHost />
-        <MobileNav />
-        <StoreFeedbackFloating />
-        <StoreCustomerAccess />
+        {!pathname.startsWith("/onboarding") && <MobileNav />}
+        {!pathname.startsWith("/onboarding") && <StoreFeedbackFloating />}
+        {!pathname.startsWith("/onboarding") && <StoreCustomerAccess />}
         <Toaster position="bottom-center" richColors />
       </QueryClientProvider>
     </ThemeProvider>
