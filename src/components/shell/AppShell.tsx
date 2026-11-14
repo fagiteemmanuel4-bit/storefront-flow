@@ -846,6 +846,18 @@ export function AppShell({
                 <button
                   type="button"
                   role="menuitem"
+                  onClick={() => {
+                    setAccountOpen(false);
+                    void navigate({ to: "/quick-tour" });
+                  }}
+                  className={menuItem}
+                >
+                  <Compass className="size-[18px] shrink-0" />
+                  Full workspace tour
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
                   data-tour="sidebar-export"
                   onClick={() => {
                     setAccountOpen(false);
