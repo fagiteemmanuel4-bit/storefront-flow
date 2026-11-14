@@ -135,6 +135,12 @@ function OnlineStoreSetupPage() {
         accepted_terms_at: new Date().toISOString(),
         accepted_privacy_at: new Date().toISOString(),
       };
+      const configResult = await onlineSupabase.from("storefront_configs").upsert(
+        { store_id: store.id, is_published: true },
+        { onConflict: "store_id" },
+      );
+      if (configResult.error) throw new Error(configResult.error.message);
+
       const result = existing.data
         ? await onlineSupabase.from("online_stores").update(payload).eq("store_id", store.id)
         : await onlineSupabase.from("online_stores").insert(payload);
