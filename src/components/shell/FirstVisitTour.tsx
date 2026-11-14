@@ -134,7 +134,7 @@ export function FirstVisitTour({ pageKey }: { pageKey: string }) {
       .replace(/[-_]+/g, " ")
       .replace(/\b\w/g, (character) => character.toUpperCase());
   }, [pageKey]);
-  const normalizedPageKey = pageKey.replace(/\\/+$/, "") || "/dashboard";
+  const normalizedPageKey = pageKey.replace(/\/+$/, "") || "/dashboard";
   const steps = useMemo(
     () =>
       pageSteps[normalizedPageKey] ?? [
