@@ -1,2 +1,0 @@
-alter table public.store_compliance_profiles
-  drop constraint if exists store_compliance_registration_number_required;
