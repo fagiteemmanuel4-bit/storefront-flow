@@ -122,7 +122,6 @@ function ActionLink({
   onClick: () => void;
   locked?: boolean;
 }) {
-  if (to.startsWith("/online-store")) return null;
   return (
     <Link
       to={(locked ? "/upgrade" : to) as any}
