@@ -1,9 +1,37 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type TourStep = { selector: string[]; title: string; body: string };
 type Rect = { top: number; left: number; width: number; height: number };
+type ScrollSnapshot = {
+  windowX: number;
+  windowY: number;
+  elements: Array<{ element: HTMLElement; left: number; top: number }>;
+};
+
+function captureScrollPosition(): ScrollSnapshot {
+  const elements = Array.from(document.querySelectorAll<HTMLElement>("body *"))
+    .filter((element) => {
+      const style = window.getComputedStyle(element);
+      return (
+        (element.scrollWidth > element.clientWidth && style.overflowX !== "visible") ||
+        (element.scrollHeight > element.clientHeight && style.overflowY !== "visible")
+      );
+    })
+    .map((element) => ({ element, left: element.scrollLeft, top: element.scrollTop }));
+  return { windowX: window.scrollX, windowY: window.scrollY, elements };
+}
+
+function restoreScrollPosition(snapshot: ScrollSnapshot | null) {
+  if (!snapshot) return;
+  window.scrollTo({ left: snapshot.windowX, top: snapshot.windowY, behavior: "auto" });
+  for (const position of snapshot.elements) {
+    if (!position.element.isConnected) continue;
+    position.element.scrollLeft = position.left;
+    position.element.scrollTop = position.top;
+  }
+}
 
 const KEY = "strap-page-tours-v2";
 const pageSteps: Record<string, TourStep[]> = {
@@ -212,12 +240,16 @@ export function FirstVisitTour({ pageKey }: { pageKey: string }) {
   );
   const [step, setStep] = useState(-1);
   const [rect, setRect] = useState<Rect | null>(null);
+  const scrollSnapshot = useRef<ScrollSnapshot | null>(null);
 
   const close = useCallback(
     (remember = true) => {
       if (remember) writeSeen(normalizedPageKey);
       setStep(-1);
       setRect(null);
+      const snapshot = scrollSnapshot.current;
+      scrollSnapshot.current = null;
+      requestAnimationFrame(() => restoreScrollPosition(snapshot));
     },
     [normalizedPageKey],
   );
@@ -249,9 +281,12 @@ export function FirstVisitTour({ pageKey }: { pageKey: string }) {
       /* local storage is optional */
     }
     const seen = readSeen();
+    const shouldStart = !welcomeTourPending && !seen[normalizedPageKey];
+    if (shouldStart) scrollSnapshot.current = captureScrollPosition();
     setRect(null);
-    setStep(welcomeTourPending || seen[normalizedPageKey] ? -1 : 0);
+    setStep(shouldStart ? 0 : -1);
     const replay = () => {
+      scrollSnapshot.current = captureScrollPosition();
       setRect(null);
       setStep(0);
     };
