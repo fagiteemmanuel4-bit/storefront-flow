@@ -119,6 +119,11 @@ const GOAL_OPTIONS = [
   "Open an online channel",
   "Run multiple locations",
 ];
+const COUNTRY_OPTIONS = [
+  "Nigeria", "Ghana", "Kenya", "South Africa", "Egypt", "Uganda", "Tanzania",
+  "Rwanda", "Senegal", "Côte d’Ivoire", "Cameroon", "United Kingdom",
+  "United States", "Canada", "United Arab Emirates", "India", "Other",
+];
 
 function OnboardingPage() {
   const navigate = useNavigate();
@@ -644,6 +649,36 @@ function OnboardingPage() {
             {step === 3 && (
               <>
                 <div className="sa-f">
+                  <label htmlFor="date-of-birth">Date of birth</label>
+                  <input
+                    id="date-of-birth"
+                    className="sa-in"
+                    type="date"
+                    max={new Date().toISOString().slice(0, 10)}
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    autoFocus
+                  />
+                  <p className="ob-hint">You must be at least 18 years old to create a Strap business account.</p>
+                </div>
+                <div className="sa-f">
+                  <label htmlFor="personal-country">Country of residence</label>
+                  <select
+                    id="personal-country"
+                    className="sa-in"
+                    value={personalCountry}
+                    onChange={(e) => setPersonalCountry(e.target.value)}
+                  >
+                    <option value="">Select your country</option>
+                    {COUNTRY_OPTIONS.map((country) => <option key={country} value={country}>{country}</option>)}
+                  </select>
+                </div>
+              </>
+            )}
+
+            {step === 7 && (
+              <>
+                <div className="sa-f">
                   <label htmlFor="business-name">Business / store name</label>
                   <input
                     id="business-name"
@@ -693,16 +728,6 @@ function OnboardingPage() {
                   </div>
                 </div>
                 <div className="sa-f">
-                  <label htmlFor="address">Business address</label>
-                  <input
-                    id="address"
-                    className="sa-in"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Street, area, city, state"
-                  />
-                </div>
-                <div className="sa-f">
                   <div className="flex items-center justify-between gap-3">
                     <label htmlFor="tax">Default sales tax (%)</label>
                     <Link
@@ -726,6 +751,100 @@ function OnboardingPage() {
                     inputMode="decimal"
                     placeholder="0"
                   />
+                </div>
+                <div className="sa-f">
+                  <label htmlFor="business-photo">Business profile picture <span className="ob-hint">(optional)</span></label>
+                  <input
+                    id="business-photo"
+                    className="sa-in ob-file"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] ?? null;
+                      if (file && file.size > 5 * 1024 * 1024) {
+                        toast.error("Choose an image smaller than 5 MB.");
+                        e.target.value = "";
+                        setBusinessPhoto(null);
+                        return;
+                      }
+                      setBusinessPhoto(file);
+                    }}
+                  />
+                  <p className="ob-hint">{businessPhoto ? businessPhoto.name : "PNG, JPG or WebP. Maximum 5 MB."}</p>
+                </div>
+              </>
+            )}
+
+            {step === 5 && (
+              <>
+                <div className="sa-f">
+                  <span className="sa-label">Is this a registered business?</span>
+                  <div className="ob-g2">
+                    {([
+                      ["Registered", "registered"],
+                      ["Not registered", "not_registered"],
+                      ["Registration in progress", "in_progress"],
+                    ] as const).map(([label, value]) => (
+                      <button key={value} type="button" className="ob-opt pill" aria-pressed={registrationStatus === value} onClick={() => setRegistrationStatus(value)}>{label}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="sa-f">
+                  <label htmlFor="registration-number">Business registration number <span className="ob-hint">(you can add this later)</span></label>
+                  <input
+                    id="registration-number"
+                    className="sa-in"
+                    value={registrationNumber}
+                    onChange={(e) => setRegistrationNumber(e.target.value)}
+                    placeholder="e.g. RC1234567"
+                    autoCapitalize="characters"
+                  />
+                </div>
+                <div className="sa-f">
+                  <label htmlFor="branch-count">How many branches do you operate?</label>
+                  <select id="branch-count" className="sa-in" value={declaredBranchCount} onChange={(e) => setDeclaredBranchCount(e.target.value as typeof declaredBranchCount)}>
+                    <option value="1">1 (single location)</option>
+                    <option value="2-5">2 to 5</option>
+                    <option value="6-20">6 to 20</option>
+                    <option value="20+">More than 20</option>
+                  </select>
+                  <p className="ob-hint">This records your current business footprint. Additional branches can be configured in your workspace.</p>
+                </div>
+              </>
+            )}
+
+            {step === 6 && (
+              <>
+                <div className="sa-f">
+                  <label htmlFor="business-country">Business country</label>
+                  <select id="business-country" className="sa-in" value={businessCountry} onChange={(e) => setBusinessCountry(e.target.value)}>
+                    <option value="">Select country</option>
+                    {COUNTRY_OPTIONS.map((country) => <option key={country} value={country}>{country}</option>)}
+                  </select>
+                </div>
+                <div className="ob-g2">
+                  <div className="sa-f">
+                    <label htmlFor="business-state">State / region</label>
+                    <input id="business-state" className="sa-in" value={businessState} onChange={(e) => setBusinessState(e.target.value)} placeholder="State or region" autoComplete="address-level1" />
+                  </div>
+                  <div className="sa-f">
+                    <label htmlFor="business-city">City / town</label>
+                    <input id="business-city" className="sa-in" value={businessCity} onChange={(e) => setBusinessCity(e.target.value)} placeholder="City or town" autoComplete="address-level2" />
+                  </div>
+                </div>
+                <div className="sa-f">
+                  <label htmlFor="business-street">Street address</label>
+                  <input id="business-street" className="sa-in" value={businessStreet} onChange={(e) => setBusinessStreet(e.target.value)} placeholder="House number, street and area" autoComplete="street-address" />
+                </div>
+                <div className="ob-g2">
+                  <div className="sa-f">
+                    <label htmlFor="business-landmark">Landmark <span className="ob-hint">(optional)</span></label>
+                    <input id="business-landmark" className="sa-in" value={businessLandmark} onChange={(e) => setBusinessLandmark(e.target.value)} placeholder="Nearby landmark" />
+                  </div>
+                  <div className="sa-f">
+                    <label htmlFor="business-postcode">Postal code <span className="ob-hint">(optional)</span></label>
+                    <input id="business-postcode" className="sa-in" value={businessPostcode} onChange={(e) => setBusinessPostcode(e.target.value)} placeholder="Postal code" autoComplete="postal-code" />
+                  </div>
                 </div>
               </>
             )}
