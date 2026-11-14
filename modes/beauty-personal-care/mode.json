@@ -38,13 +38,14 @@
       {
         "id": "description",
         "label": "Description",
-        "column": "description",
         "type": "long-text",
         "required": false,
         "surfaces": [
           "online"
         ],
-        "searchable": true
+        "searchable": true,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "sku",
@@ -88,25 +89,27 @@
       {
         "id": "brand",
         "label": "Brand",
-        "column": "brand",
         "type": "text",
         "required": false,
         "surfaces": [
           "physical",
           "online"
         ],
-        "searchable": true
+        "searchable": true,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "unit",
         "label": "Selling unit",
-        "column": "unit",
         "type": "text",
         "required": false,
         "surfaces": [
           "physical",
           "online"
-        ]
+        ],
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "price",
@@ -177,7 +180,9 @@
           "physical",
           "online"
         ],
-        "searchable": true
+        "searchable": true,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "skinType",
@@ -188,7 +193,9 @@
           "physical",
           "online"
         ],
-        "searchable": true
+        "searchable": true,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "volume",
@@ -199,7 +206,9 @@
           "physical",
           "online"
         ],
-        "searchable": true
+        "searchable": true,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "ingredients",
@@ -209,7 +218,9 @@
         "surfaces": [
           "online"
         ],
-        "searchable": false
+        "searchable": false,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "usageInstructions",
@@ -219,7 +230,9 @@
         "surfaces": [
           "online"
         ],
-        "searchable": false
+        "searchable": false,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "expiryDate",
@@ -229,7 +242,9 @@
         "surfaces": [
           "physical"
         ],
-        "searchable": false
+        "searchable": false,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       }
     ],
     "variants": {
