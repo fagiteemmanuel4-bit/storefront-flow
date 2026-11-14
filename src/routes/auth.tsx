@@ -5,17 +5,8 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { errorMessage } from "@/lib/format";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { TurnstileCaptcha } from "@/components/auth/TurnstileCaptcha";
-import "@/strap-auth.css";
-
-/* Strap favicon: lime ring and dot on ink. Inlined so no extra file is needed. */
-const FAVICON_SVG =
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0E1116"/><circle cx="16" cy="16" r="10.5" fill="none" stroke="#C6F432" stroke-width="2.5"/><circle cx="16" cy="16" r="4.5" fill="#C6F432"/></svg>';
-const FAVICON = `data:image/svg+xml,${encodeURIComponent(FAVICON_SVG)}`;
+import "@/strap-reference.css";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -24,16 +15,14 @@ export const Route = createFileRoute("/auth")({
       { title: "Sign in or create your shop — Strap" },
       { name: "description", content: "Sign in to Strap or create an account for your shop." },
     ],
-    links: [{ rel: "icon", type: "image/svg+xml", href: FAVICON }],
   }),
   component: AuthPage,
 });
 
+type Mode = "signin" | "signup" | "reset" | "recover";
 const emailSchema = z.string().trim().email("Enter a valid email address").max(255);
 const passwordSchema = z.string().min(8, "Use at least 8 characters").max(72);
 const nameSchema = z.string().trim().min(2, "Enter your full name").max(120);
-const strapVoiceScript =
-  "This is Strap. A simpler way to run your shop. Keep your sales moving, stay on top of inventory, and spend less time wrestling with admin. Strap puts the everyday rhythm of your business in one focused workspace. Welcome to Strap.";
 
 function normalizeEmail(value: string) {
   return value.trim().toLowerCase();
@@ -53,18 +42,23 @@ async function requestLoginOtp(email: string, captchaToken?: string | null) {
   if (error) throw new Error(error.message);
 }
 
-function StrapLogo() {
+function Brand() {
   return (
-    <Link to="/" className="strap-logo" aria-label="Strap home">
-      <span className="strap-logo-mark" aria-hidden="true" />
-      <span className="strap-logo-word">Strap</span>
-    </Link>
+    <section className="ref-hero">
+      <svg className="ref-logo" viewBox="0 0 136 136" aria-label="Strap logo">
+        <circle cx="68" cy="68" r="65" fill="none" stroke="#0a0a0a" strokeWidth="3" />
+        <circle cx="68" cy="68" r="49" fill="#0a0a0a" />
+        <circle cx="68" cy="68" r="19" fill="#e6f53a" />
+      </svg>
+      <h1>Strap</h1>
+      <p className="ref-tagline">Run your business. Not around it.</p>
+    </section>
   );
 }
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recover">(() => {
+  const [mode, setMode] = useState<Mode>(() => {
     if (typeof window === "undefined") return "signin";
     const params = new URLSearchParams(window.location.search);
     return params.get("mode") === "signup"
@@ -74,45 +68,25 @@ function AuthPage() {
         : "signin";
   });
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState(() => {
-    if (typeof window === "undefined") return "";
-    return new URLSearchParams(window.location.search).get("email") ?? "";
-  });
+  const [email, setEmail] = useState(() =>
+    typeof window === "undefined" ? "" : new URLSearchParams(window.location.search).get("email") ?? "",
+  );
+  const [password, setPassword] = useState("");
   const [recoveryCode, setRecoveryCode] = useState("");
   const [recoveryVerified, setRecoveryVerified] = useState(false);
   const [googleOnlyRecovery, setGoogleOnlyRecovery] = useState(false);
-  const [password, setPassword] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const googleRedirectTimer = useRef<number | null>(null);
+  const googleTimer = useRef<number | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
   const [pendingOtpEmail, setPendingOtpEmail] = useState<string | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (googleRedirectTimer.current !== null) window.clearTimeout(googleRedirectTimer.current);
-    };
-  }, []);
-
-  // Keep the browser tab icon in sync with the Strap logo.
-  useEffect(() => {
-    const links = document.querySelectorAll<HTMLLinkElement>("link[rel~='icon']");
-    if (links.length) {
-      links.forEach((link) => {
-        link.type = "image/svg+xml";
-        link.href = FAVICON;
-      });
-    } else {
-      const link = document.createElement("link");
-      link.rel = "icon";
-      link.type = "image/svg+xml";
-      link.href = FAVICON;
-      document.head.appendChild(link);
-    }
+  useEffect(() => () => {
+    if (googleTimer.current !== null) window.clearTimeout(googleTimer.current);
   }, []);
 
   useEffect(() => {
@@ -133,18 +107,20 @@ function AuthPage() {
         void navigate({ to: "/pos", replace: true });
       }
     });
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [navigate]);
+
+  function resetCaptcha() {
+    setCaptchaToken(null);
+    setCaptchaResetKey((value) => value + 1);
+  }
 
   async function handleGoogleSignIn() {
     if (busy || googleLoading) return;
     setGoogleLoading(true);
     setNotice(null);
-    // Recover if the browser never leaves for Google's consent screen.
-    googleRedirectTimer.current = window.setTimeout(() => {
-      googleRedirectTimer.current = null;
+    googleTimer.current = window.setTimeout(() => {
+      googleTimer.current = null;
       setGoogleLoading(false);
       toast.error("Google sign-in is taking too long. Please check your connection and try again.");
     }, 20000);
@@ -154,20 +130,18 @@ function AuthPage() {
         options: { redirectTo: `${window.location.origin}/auth` },
       });
       if (error) throw error;
-      // Supabase redirects to Google; keep the form locked during navigation.
     } catch (error) {
-      if (googleRedirectTimer.current !== null) {
-        window.clearTimeout(googleRedirectTimer.current);
-        googleRedirectTimer.current = null;
+      if (googleTimer.current !== null) {
+        window.clearTimeout(googleTimer.current);
+        googleTimer.current = null;
       }
       setGoogleLoading(false);
       toast.error(errorMessage(error, "Google sign-in could not be started. Please try again."));
     }
   }
 
-  async function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     if (mode !== "recover" && !captchaToken) {
       toast.error("Complete the security check before continuing.");
       return;
@@ -182,8 +156,7 @@ function AuthPage() {
         await navigate({ to: "/verify-email", search: { email: pendingOtpEmail }, replace: true });
       } catch (error) {
         toast.error(errorMessage(error, "We couldn't send your verification code."));
-        setCaptchaToken(null);
-        setCaptchaResetKey((value) => value + 1);
+        resetCaptcha();
       } finally {
         setBusy(false);
       }
@@ -214,9 +187,7 @@ function AuthPage() {
           setGoogleOnlyRecovery(false);
           setPassword("");
           setMode("recover");
-          setNotice(
-            "If an account exists for this email, a secure verification code has been sent. Enter it below, then create a password for this same account. If you originally joined with Google, this adds password sign-in without creating another account.",
-          );
+          setNotice("If an account exists for this email, a secure verification code has been sent. Enter it below, then create a password for this same Strap account. If you originally joined with Google, this adds password sign-in without creating another account.");
         } catch (error) {
           toast.error(errorMessage(error, "We couldn't send a password verification code."));
         } finally {
@@ -264,33 +235,22 @@ function AuthPage() {
               setEmail(normalizedEmail);
               setMode("signin");
               setPassword("");
-              setNotice(
-                "We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.",
-              );
+              setNotice("We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.");
               return;
             }
             throw new Error(error.message);
           }
           if (!data.user) throw new Error("Strap couldn't create the account. Please try again.");
-          // Supabase intentionally returns an empty identities array when an email
-          // already belongs to an account and email confirmations are enabled.
-          // Never attempt to create a second account for that address.
           if (Array.isArray(data.user.identities) && data.user.identities.length === 0) {
             setEmail(normalizedEmail);
             setPassword("");
             setMode("signin");
-            setNotice(
-              "We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.",
-            );
+            setNotice("We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.");
             return;
           }
           sessionStorage.setItem("strap_otp_email", normalizedEmail);
           sessionStorage.setItem("strap_otp_flow", "signup");
-          await navigate({
-            to: "/verify-email",
-            search: { email: normalizedEmail },
-            replace: true,
-          });
+          await navigate({ to: "/verify-email", search: { email: normalizedEmail }, replace: true });
           return;
         }
 
@@ -302,19 +262,14 @@ function AuthPage() {
         if (error) {
           if (error.message.toLowerCase().includes("email not confirmed")) {
             setPendingOtpEmail(normalizedEmail);
-            setCaptchaToken(null);
-            setCaptchaResetKey((value) => value + 1);
-            setNotice(
-              "Your password is correct. Complete the security check again, then send your sign-in code.",
-            );
+            resetCaptcha();
+            setNotice("Your password is correct. Complete the security check again, then send your sign-in code.");
             return;
           }
           throw new Error(error.message);
         }
-        if (!data.session || !data.user)
-          throw new Error("Sign in did not complete. Please try again.");
+        if (!data.session || !data.user) throw new Error("Sign in did not complete. Please try again.");
 
-        // A remembered device is trusted only when the server validates its opaque token.
         const deviceToken = localStorage.getItem("strap_trusted_device_token");
         if (deviceToken) {
           const { data: deviceStatus, error: deviceError } = await supabase.functions.invoke(
@@ -322,30 +277,21 @@ function AuthPage() {
             { body: { action: "check", token: deviceToken } },
           );
           if (!deviceError && deviceStatus?.trusted === true) {
-            if (deviceStatus.risk === "medium") {
-              toast.message("New network detected. Your device is still recognized.");
-            }
+            if (deviceStatus.risk === "medium") toast.message("New network detected. Your device is still recognized.");
             toast.success("Welcome back to Strap!");
             void navigate({ to: "/dashboard", replace: true });
             return;
           }
-          if (deviceError)
-            console.warn("Trusted-device check failed; requiring email verification.");
+          if (deviceError) console.warn("Trusted-device check failed; requiring email verification.");
         }
 
         await supabase.auth.signOut();
         setPendingOtpEmail(normalizedEmail);
-        setCaptchaToken(null);
-        setCaptchaResetKey((value) => value + 1);
-        setNotice(
-          "This device needs an email verification. Complete the security check again, then send your sign-in code.",
-        );
+        resetCaptcha();
+        setNotice("This device needs an email verification. Complete the security check again, then send your sign-in code.");
       } catch (error) {
-        toast.error(
-          errorMessage(error, "That didn't work. Please check your details and try again."),
-        );
-        setCaptchaToken(null);
-        setCaptchaResetKey((value) => value + 1);
+        toast.error(errorMessage(error, "That didn't work. Please check your details and try again."));
+        resetCaptcha();
       } finally {
         setBusy(false);
       }
@@ -358,7 +304,6 @@ function AuthPage() {
       return;
     }
     const normalizedEmail = parsedEmail.data;
-
     if (!recoveryVerified) {
       if (!/^\d{8}$/.test(recoveryCode)) {
         toast.error("Enter the 8-digit password verification code from your email.");
@@ -374,19 +319,14 @@ function AuthPage() {
         });
         if (verifyError) throw new Error(verifyError.message);
         if (!recovery.user) throw new Error("We couldn't verify that code. Request a fresh one.");
-
-        const providers = Array.isArray(recovery.user.app_metadata?.providers)
-          ? recovery.user.app_metadata.providers
-          : [];
+        const providers = Array.isArray(recovery.user.app_metadata?.providers) ? recovery.user.app_metadata.providers : [];
         const isGoogleOnly = providers.includes("google") && !providers.includes("email");
         setGoogleOnlyRecovery(isGoogleOnly);
         setRecoveryVerified(true);
         setRecoveryCode("");
-        setNotice(
-          isGoogleOnly
-            ? "This account was created with Google and doesn't have a password yet. Create a password now to connect email-and-password sign-in to this same Strap account."
-            : "Your email is verified. Create your new password below to finish the password update.",
-        );
+        setNotice(isGoogleOnly
+          ? "This account was created with Google and doesn't have a password yet. Create a password now to connect email-and-password sign-in to this same Strap account."
+          : "Your email is verified. Create your new password below to finish the password update.");
       } catch (error) {
         toast.error(errorMessage(error, "We couldn't verify that code. Check it and try again."));
       } finally {
@@ -407,11 +347,9 @@ function AuthPage() {
       if (error) throw new Error(error.message);
       await supabase.auth.signOut();
       sessionStorage.removeItem("strap_password_recovery_email");
-      setNotice(
-        googleOnlyRecovery
-          ? "Password created and connected to your Google-linked email. You can now sign in to this same Strap account with Google or with your email and new password."
-          : "Your password has been updated successfully. You can now sign in with your email and new password.",
-      );
+      setNotice(googleOnlyRecovery
+        ? "Password created and connected to your Google-linked email. You can now sign in to this same Strap account with Google or with your email and new password."
+        : "Your password has been updated successfully. You can now sign in with your email and new password.");
       setPassword("");
       setRecoveryCode("");
       setRecoveryVerified(false);
@@ -423,355 +361,115 @@ function AuthPage() {
     }
   }
 
-  const title =
-    mode === "signin"
-      ? "Continue with email"
-      : mode === "signup"
-        ? "Create your account"
-        : mode === "reset"
-          ? "Reset password"
-          : "Choose a new password";
-  const subtitle =
-    mode === "signin"
-      ? "Welcome back. Enter your details to continue."
-      : mode === "signup"
-        ? "Set up your shop in a few minutes."
-        : mode === "reset"
-          ? "Enter your account email. We’ll send an 8-digit verification code."
-          : "Verify your email first, then create a password for this same Strap account.";
-  const switchMode = mode === "signin" ? "signup" : "signin";
-  const submitLabel =
-    mode === "signin"
-      ? "Continue with email"
-      : mode === "signup"
-        ? "Create account"
-        : mode === "reset"
-          ? "Send verification code"
-          : recoveryVerified
-            ? "Connect password"
-            : "Verify email code";
+  const title = mode === "signin" ? "Continue with email" : mode === "signup" ? "Create your account" : mode === "reset" ? "Reset your password" : recoveryVerified ? "Create a new password" : "Enter your code";
+  const subtitle = mode === "signin"
+    ? "Welcome back. Enter your details to continue."
+    : mode === "signup"
+      ? "Set up your shop in a few minutes."
+      : mode === "reset"
+        ? "Enter your account email and we'll send you an 8-digit code."
+        : recoveryVerified
+          ? "Your email is verified. Choose a new password."
+          : "Enter the 8-digit password verification code sent to your email.";
+  const submitLabel = busy
+    ? "Please wait…"
+    : pendingOtpEmail
+      ? "Send verification code"
+      : mode === "signin"
+        ? "Continue with email"
+        : mode === "signup"
+          ? "Create account"
+          : mode === "reset"
+            ? "Send verification code"
+            : recoveryVerified
+              ? "Update password"
+              : "Verify code";
+  const showGoogle = mode === "signin" || mode === "signup";
+  const showPasswordField = mode === "signin" || mode === "signup" || (mode === "recover" && recoveryVerified);
+  const needsCaptcha = mode !== "recover";
 
   return (
-    <main className="strap-auth-main">
-      <div className="strap-auth-card">
-        <aside className="strap-auth-aside">
-          <svg
-            className="strap-auth-rings"
-            aria-hidden="true"
-            viewBox="0 0 700 700"
-            fill="none"
-            stroke="#C6F432"
-            strokeWidth="2"
-          >
-            <circle cx="350" cy="350" r="60" />
-            <circle cx="350" cy="350" r="120" strokeOpacity=".7" />
-            <circle cx="350" cy="350" r="180" strokeOpacity=".5" />
-            <circle cx="350" cy="350" r="240" strokeOpacity=".32" />
-            <circle cx="350" cy="350" r="300" strokeOpacity=".18" />
-            <circle cx="350" cy="110" r="9" fill="#C6F432" stroke="none" />
-            <circle cx="562" cy="472" r="9" fill="#C6F432" stroke="none" />
-            <circle cx="230" cy="530" r="9" fill="#C6F432" stroke="none" />
-          </svg>
-          <StrapLogo />
-          <div className="strap-auth-hero">
-            <h2>Your shop. Your sales. Your next move.</h2>
-            <p>Run your business. Not around it.</p>
+    <main className="ref-screen">
+      <Brand />
+      <section className="ref-sheet">
+        <div className="ref-sheet-inner">
+          <div className="ref-heading">
+            <h2>{title}</h2>
+            <p>{subtitle}</p>
           </div>
-          <small className="strap-auth-copy">© 2026 Strap by Kryonara</small>
-        </aside>
 
-        <section className="strap-auth-form-panel">
-          <div className="strap-auth-box">
-            <h1 className="strap-auth-title">{title}</h1>
-            <p className="strap-auth-sub">{subtitle}</p>
+          {showGoogle && (
+            <>
+              <button type="button" className="ref-btn ref-ghost" disabled={busy || googleLoading} onClick={() => void handleGoogleSignIn()}>
+                {googleLoading ? <LoaderCircle className="animate-spin" size={20} /> : <GoogleMark />}
+                {googleLoading ? "Connecting to Google…" : "Continue with Google"}
+              </button>
+              <div className="ref-or">or</div>
+            </>
+          )}
 
-            {(mode === "signin" || mode === "signup") && (
-              <div style={{ display: "grid", gap: 14, marginBottom: 18 }}>
-                <Button
-                  type="button"
-                  disabled={busy || googleLoading}
-                  onClick={() => void handleGoogleSignIn()}
-                  className="strap-btn strap-btn-google"
-                  style={{
-                    width: "100%",
-                    minHeight: 48,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 10,
-                    border: "1px solid var(--color-border)",
-                    background: "var(--color-surface)",
-                    color: "var(--color-foreground)",
-                  }}
-                >
-                  {!googleLoading && (
-                    <svg aria-hidden="true" viewBox="0 0 48 48" width="19" height="19">
-                      <path
-                        fill="#EA4335"
-                        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.04 13.22l7.98 6.19C11.93 13.72 17.48 9.5 24 9.5Z"
-                      />
-                      <path
-                        fill="#4285F4"
-                        d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.73 7.18l7.65 5.94c4.47-4.13 7.12-10.2 7.12-17.59Z"
-                      />
-                      <path
-                        fill="#FBBC05"
-                        d="M10.02 28.59A14.4 14.4 0 0 1 9.25 24c0-1.59.27-3.13.77-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.88.93 7.55 2.04 10.78l7.98-6.19Z"
-                      />
-                      <path
-                        fill="#34A853"
-                        d="M24 48c6.47 0 11.9-2.13 15.86-5.86l-7.65-5.94c-2.12 1.42-4.84 2.26-8.21 2.26-6.52 0-12.07-4.22-14.02-10.09l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"
-                      />
-                    </svg>
-                  )}
-                  {googleLoading ? (
-                    <>
-                      <LoaderCircle size={19} className="animate-spin" aria-hidden="true" />
-                      Connecting to Google…
-                    </>
-                  ) : (
-                    "Continue with Google"
-                  )}
-                </Button>
-                {googleLoading && (
-                  <p
-                    role="status"
-                    aria-live="polite"
-                    style={{
-                      margin: 0,
-                      textAlign: "center",
-                      fontSize: 13,
-                      color: "var(--color-muted-foreground)",
-                    }}
-                  >
-                    Redirecting securely. Please wait…
-                  </p>
-                )}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    color: "var(--color-muted-foreground)",
-                    fontSize: 12,
-                  }}
-                >
-                  <span style={{ height: 1, flex: 1, background: "var(--color-border)" }} />
-                  <span>or</span>
-                  <span style={{ height: 1, flex: 1, background: "var(--color-border)" }} />
+          <form className="ref-form" onSubmit={(event) => void handleSubmit(event)} aria-busy={busy || googleLoading}>
+            {mode === "signup" && (
+              <div className="ref-group">
+                <input className="ref-field" value={fullName} onChange={(event) => setFullName(event.target.value)} autoComplete="name" placeholder="Full name" aria-label="Full name" required />
+              </div>
+            )}
+            {(mode !== "recover" || !recoveryVerified) && (
+              <div className="ref-group">
+                <input className="ref-field" type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" inputMode="email" autoCapitalize="none" spellCheck={false} placeholder="example@email" aria-label="Email address" required />
+              </div>
+            )}
+            {mode === "recover" && !recoveryVerified && (
+              <div className="ref-group">
+                <input className="ref-field" value={recoveryCode} onChange={(event) => setRecoveryCode(event.target.value.replace(/\D/g, "").slice(0, 8))} inputMode="numeric" autoComplete="one-time-code" maxLength={8} placeholder="8-digit verification code" aria-label="8-digit verification code" required />
+              </div>
+            )}
+            {showPasswordField && (
+              <div className="ref-group">
+                {mode === "signin" && <button type="button" className="ref-link ref-forgot" onClick={() => { setMode("reset"); setNotice(null); }}>Forgot password?</button>}
+                <div className="ref-password">
+                  <input className="ref-field" type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete={mode === "signin" ? "current-password" : "new-password"} placeholder={mode === "signin" ? "Password" : "Create a password"} aria-label={mode === "signin" ? "Password" : "New password"} required />
+                  <button type="button" className="ref-eye" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "Hide password" : "Show password"}>{showPassword ? <EyeOff size={22} /> : <Eye size={22} />}</button>
                 </div>
               </div>
             )}
-
-            <form
-              onSubmit={handleSubmit}
-              className="strap-auth-form"
-              noValidate={false}
-              aria-busy={busy || googleLoading}
-            >
-              <fieldset
-                disabled={busy || googleLoading}
-                style={{
-                  border: 0,
-                  minWidth: 0,
-                  margin: 0,
-                  padding: 0,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 16,
-                }}
-              >
-                {mode === "signup" && (
-                  <div className="strap-field-wrap">
-                    <Label htmlFor="name" className="strap-label">
-                      Full name
-                    </Label>
-                    <Input
-                      id="name"
-                      value={fullName}
-                      onChange={(event) => setFullName(event.target.value)}
-                      className="strap-field"
-                      autoComplete="name"
-                      maxLength={120}
-                      placeholder="Your full name"
-                      required
-                    />
-                  </div>
-                )}
-
-                <div className="strap-field-wrap">
-                  <Label htmlFor="email" className="strap-label">
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    className="strap-field"
-                    autoComplete="email"
-                    inputMode="email"
-                    autoCapitalize="none"
-                    spellCheck={false}
-                    placeholder="example@email"
-                    required
-                  />
-                </div>
-
-                {mode === "recover" && !recoveryVerified && (
-                  <div className="strap-field-wrap">
-                    <Label htmlFor="recovery-code" className="strap-label">
-                      8-digit email verification code
-                    </Label>
-                    <Input
-                      id="recovery-code"
-                      value={recoveryCode}
-                      onChange={(event) =>
-                        setRecoveryCode(event.target.value.replace(/\D/g, "").slice(0, 8))
-                      }
-                      className="strap-field"
-                      inputMode="numeric"
-                      autoComplete="one-time-code"
-                      maxLength={8}
-                      placeholder="Enter the code from your email"
-                      required
-                    />
-                    <p className="strap-auth-sub" style={{ marginTop: 6 }}>
-                      {notice?.includes("Google")
-                        ? "If this account was created with Google and has no password yet, this securely adds password sign-in to the same account."
-                        : "The code confirms you own this email before Strap changes your password."}
-                    </p>
-                  </div>
-                )}
-
-                {mode !== "reset" && (mode !== "recover" || recoveryVerified) && (
-                  <div className="strap-field-wrap">
-                    <div className="strap-field-row">
-                      <Label htmlFor="password" className="strap-label">
-                        {mode === "recover" ? "New password" : "Password"}
-                      </Label>
-                      {mode === "signin" && (
-                        <button
-                          type="button"
-                          className="strap-link"
-                          disabled={busy || googleLoading}
-                          onClick={() => {
-                            setMode("reset");
-                            setNotice(null);
-                          }}
-                        >
-                          Forgot password?
-                        </button>
-                      )}
-                    </div>
-                    <div className="strap-pw">
-                      <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                        className="strap-field"
-                        autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                        placeholder={mode === "signin" ? "Password" : "Create a password"}
-                        required
-                      />
-                      <button
-                        type="button"
-                        className="strap-eye"
-                        onClick={() => setShowPassword((value) => !value)}
-                        aria-label={showPassword ? "Hide password" : "Show password"}
-                        aria-pressed={showPassword}
-                      >
-                        {showPassword ? (
-                          <EyeOff size={22} aria-hidden="true" />
-                        ) : (
-                          <Eye size={22} aria-hidden="true" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {mode === "signup" && (
-                  <label className="strap-terms">
-                    <Checkbox
-                      checked={accepted}
-                      onCheckedChange={(value) => setAccepted(value === true)}
-                      className="strap-check"
-                      aria-label="Accept terms and privacy policy"
-                    />
-                    <span>
-                      I agree to the <Link to="/terms">Terms</Link> and{" "}
-                      <Link to="/privacy">Privacy Policy</Link>.
-                    </span>
-                  </label>
-                )}
-
-                {(mode === "signin" || mode === "signup" || mode === "reset") && (
-                  <TurnstileCaptcha key={captchaResetKey} onTokenChange={setCaptchaToken} />
-                )}
-
-                {notice && (
-                  <div className="strap-notice" role="status">
-                    {notice}
-                  </div>
-                )}
-
-                <Button
-                  type="submit"
-                  disabled={busy || googleLoading}
-                  className="strap-btn strap-btn-primary"
-                >
-                  {busy ? "Please wait…" : pendingOtpEmail ? "Send verification code" : submitLabel}
-                </Button>
-              </fieldset>
-            </form>
-
-            {(mode === "signin" || mode === "signup") && (
-              <>
-                <p className="strap-auth-alt" style={{ marginTop: 20 }}>
-                  {mode === "signin" ? "New to Strap?" : "Already have an account?"}{" "}
-                  <button
-                    type="button"
-                    className="strap-link"
-                    disabled={busy || googleLoading}
-                    onClick={() => {
-                      setMode(switchMode);
-                      setPendingOtpEmail(null);
-                      setCaptchaToken(null);
-                      setCaptchaResetKey((value) => value + 1);
-                      setNotice(null);
-                      setEmail("");
-                      setPassword("");
-                      setRecoveryCode("");
-                    }}
-                  >
-                    {mode === "signin" ? "Create an account" : "Log in"}
-                  </button>
-                </p>
-              </>
+            {mode === "signup" && (
+              <label className="ref-terms">
+                <input type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} />
+                <span>I agree to the <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.</span>
+              </label>
             )}
+            {needsCaptcha && <div className="ref-captcha"><TurnstileCaptcha key={captchaResetKey} onTokenChange={setCaptchaToken} /></div>}
+            {notice && <div className="ref-notice" role="status">{notice}</div>}
+            <button type="submit" className="ref-btn ref-primary" disabled={busy || googleLoading || (mode !== "recover" && !captchaToken)}>
+              {busy ? <LoaderCircle className="animate-spin" size={18} /> : null}
+              {submitLabel}
+            </button>
+          </form>
 
-            {(mode === "reset" || mode === "recover") && (
-              <button
-                type="button"
-                className="strap-link strap-auth-back"
-                disabled={busy || googleLoading}
-                onClick={() => {
-                  setMode("signin");
-                  setNotice(null);
-                  setPassword("");
-                  setRecoveryCode("");
-                  setRecoveryVerified(false);
-                  setGoogleOnlyRecovery(false);
-                }}
-              >
-                Back to log in
-              </button>
-            )}
-          </div>
-        </section>
-      </div>
+          {mode === "signin" && (
+            <p className="ref-links">New to Strap? <button type="button" className="ref-link" onClick={() => { setMode("signup"); setPendingOtpEmail(null); setNotice(null); resetCaptcha(); }}>Create an account</button></p>
+          )}
+          {mode === "signup" && (
+            <p className="ref-links">Already have an account? <button type="button" className="ref-link" onClick={() => { setMode("signin"); setNotice(null); resetCaptcha(); }}>Log in</button></p>
+          )}
+          {(mode === "reset" || mode === "recover") && (
+            <p className="ref-links"><button type="button" className="ref-link" onClick={() => { setMode("signin"); setNotice(null); setPassword(""); setRecoveryCode(""); setRecoveryVerified(false); setGoogleOnlyRecovery(false); resetCaptcha(); }}>Back to log in</button></p>
+          )}
+          {mode === "signin" && <p className="ref-terms-copy">By continuing you accept our policy and terms of use</p>}
+        </div>
+      </section>
     </main>
+  );
+}
+
+function GoogleMark() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#FFC107" d="M43.6 20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-4z"/>
+      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
+      <path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.7-.4-4z"/>
+    </svg>
   );
 }

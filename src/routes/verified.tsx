@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthBrand } from "@/components/auth/AuthBrand";
 import "@/strap-auth.css";
+import "@/strap-reference.css";
 
 export const Route = createFileRoute("/verified")({ ssr: false, component: VerifiedPage });
 
