@@ -49,7 +49,7 @@ type Props = {
   product: ProductWithStock | null;
   onSaved: () => Promise<void> | void;
   businessMode?: BusinessModeKey;
-  profileFields?: Array<{ id: string; label: string; type: string; required: boolean; column?: string; runtimeReady: boolean; surfaces: string[] }>;
+  profileFields?: Array<{ id: string; label: string; type: string; required: boolean; column?: string; source?: string; runtimeReady: boolean; surfaces: string[] }>;
 };
 type ProductImage = { id: string; image_url: string; sort_order: number };
 type PendingImage = { file: File; preview: string };
@@ -142,7 +142,7 @@ export function ProductFormDialog({
     setColors("");
     setMaterial("");
     setStyleNotes("");
-    setProfileValues(Object.fromEntries(profileFields.filter((field) => field.runtimeReady && field.column && /^[a-z][a-z0-9_]*$/.test(field.column)).map((field) => [field.id, String((p as any)?.[field.column!] ?? "")])));
+    setProfileValues({});
     setVariantInventory("");
     setProductLoadError(false);
 
@@ -150,7 +150,7 @@ export function ProductFormDialog({
       void (async () => {
         const db = supabase as any;
         try {
-          const [{ data: images, error: imagesError }, { data: details, error: detailsError }] =
+          const [{ data: images, error: imagesError }, { data: details, error: detailsError }, { data: modeDetails, error: modeDetailsError }] =
             await Promise.all([
               db
                 .from("product_images")
@@ -164,9 +164,18 @@ export function ProductFormDialog({
                     .eq("product_id", product.id)
                     .maybeSingle()
                 : Promise.resolve({ data: null, error: null }),
+              profileFields.some((field) => field.runtimeReady && field.source === "product_mode_details.details")
+                ? db
+                    .from("product_mode_details")
+                    .select("details")
+                    .eq("store_id", storeId)
+                    .eq("product_id", product.id)
+                    .eq("mode_key", businessMode)
+                    .maybeSingle()
+                : Promise.resolve({ data: null, error: null }),
             ]);
           if (cancelled) return;
-          if (imagesError || detailsError) {
+          if (imagesError || detailsError || modeDetailsError) {
             setProductLoadError(true);
             toast.error(
               "We couldn't load this product's saved details. Check your connection and reopen it before saving.",
@@ -174,6 +183,15 @@ export function ProductFormDialog({
             return;
           }
           setExistingImages((images ?? []) as ProductImage[]);
+          const savedModeDetails = (modeDetails?.details ?? {}) as Record<string, unknown>;
+          setProfileValues(Object.fromEntries(
+            profileFields
+              .filter((field) => field.runtimeReady && field.source === "product_mode_details.details")
+              .map((field) => {
+                const value = savedModeDetails[field.id];
+                return [field.id, Array.isArray(value) ? value.join(", ") : value === null || value === undefined ? "" : String(value)];
+              }),
+          ));
           if (details) {
             setSizes((details.size_options ?? []).join(", "));
             setColors((details.color_options ?? []).join(", "));
@@ -472,20 +490,10 @@ export function ProductFormDialog({
       const v = parsed.data;
       const normalizedPiecePrice = packMode ? v.piecePrice : v.price;
       const normalizedPackPrice = packMode ? v.packPrice : 0;
-      const mappedProfileFields = Object.fromEntries(
-        profileFields
-          .filter((field) => field.runtimeReady && field.column && /^[a-z][a-z0-9_]*$/.test(field.column) && field.id !== "name" && field.id !== "price" && field.id !== "cost" && field.id !== "sku" && field.id !== "barcode" && field.id !== "category" && field.id !== "lowStockThreshold" && field.id !== "quantity")
-          .map((field) => {
-            const raw = profileValues[field.id] ?? "";
-            const value = raw.trim() === "" ? null : ["integer", "money"].includes(field.type) ? Number(raw) : raw;
-            if (field.required && (value === null || (typeof value === "number" && !Number.isFinite(value)))) {
-              throw new Error(`${field.label} is required and must be valid.`);
-            }
-            return [field.column!, value];
-          }),
+      const profileDetailFields = profileFields.filter(
+        (field) => field.runtimeReady && field.source === "product_mode_details.details",
       );
       const payload = {
-        ...mappedProfileFields,
         store_id: storeId,
         name: v.name,
         sku: v.sku,
@@ -538,6 +546,38 @@ export function ProductFormDialog({
       await saveImages(productId);
       await saveFashionDetails(productId);
       await saveFashionVariantStock(productId, v.quantity);
+      if (profileDetailFields.length) {
+        const details = Object.fromEntries(profileDetailFields.map((field) => {
+          const raw = profileValues[field.id] ?? "";
+          const trimmed = raw.trim();
+          if (field.required && !trimmed) {
+            throw new Error(`${field.label} is required.`);
+          }
+          if (!trimmed) return [field.id, null];
+          if (field.type === "boolean") return [field.id, raw === "true"];
+          if (field.type === "integer" || field.type === "money") {
+            const value = Number(trimmed);
+            if (!Number.isFinite(value) || (field.type === "integer" && !Number.isInteger(value))) {
+              throw new Error(`${field.label} must be a valid ${field.type === "integer" ? "whole number" : "amount"}.`);
+            }
+            return [field.id, value];
+          }
+          if (["tag-list", "modifier-list", "recipe-list", "variant-option"].includes(field.type)) {
+            return [field.id, trimmed.split(/[\\n,]/).map((item) => item.trim()).filter(Boolean)];
+          }
+          return [field.id, trimmed];
+        }));
+        const { error: modeDetailsError } = await (supabase as any)
+          .from("product_mode_details")
+          .upsert({
+            store_id: storeId,
+            product_id: productId,
+            mode_key: businessMode,
+            details,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "store_id,product_id,mode_key" });
+        if (modeDetailsError) throw new Error(modeDetailsError.message);
+      }
       await onSaved();
       toast.success(product ? "Product updated" : "Product added");
       onOpenChange(false);
@@ -862,6 +902,52 @@ export function ProductFormDialog({
                       <Input value={profileValues[field.id] ?? ""} onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: event.target.value }))} className="h-12" inputMode={field.type === "integer" || field.type === "money" ? "decimal" : undefined} type={field.type === "long-text" ? "text" : "text"} maxLength={240} />
                     </Field>
                   ))}
+                </div>
+              </section>
+            )}
+            {profileFields.some((field) => field.runtimeReady && field.source === "product_mode_details.details") && (
+              <section className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
+                <div>
+                  <p className="text-sm font-semibold">Business-specific details</p>
+                  <p className="mt-1 text-xs text-muted-foreground">These fields are saved privately with this product and your selected business profile.</p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {profileFields
+                    .filter((field) => field.runtimeReady && field.source === "product_mode_details.details")
+                    .map((field) => (
+                      <Field key={field.id} label={field.label}>
+                        {field.type === "long-text" ? (
+                          <textarea
+                            value={profileValues[field.id] ?? ""}
+                            onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: event.target.value }))}
+                            className="min-h-24 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
+                            maxLength={2000}
+                            placeholder={field.label}
+                          />
+                        ) : field.type === "boolean" ? (
+                          <label className="flex h-12 items-center gap-3 rounded-xl border border-input bg-background px-3 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={profileValues[field.id] === "true"}
+                              onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: String(event.target.checked) }))}
+                              className="size-4 accent-current"
+                            />
+                            Yes
+                          </label>
+                        ) : (
+                          <Input
+                            value={profileValues[field.id] ?? ""}
+                            onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: event.target.value }))}
+                            className="h-12"
+                            type={field.type === "date" ? "date" : field.type === "integer" || field.type === "money" ? "number" : "text"}
+                            inputMode={field.type === "integer" || field.type === "money" ? "decimal" : undefined}
+                            min={field.type === "integer" || field.type === "money" ? 0 : undefined}
+                            maxLength={field.type === "long-text" ? 2000 : 240}
+                            placeholder={["tag-list", "modifier-list", "recipe-list", "variant-option"].includes(field.type) ? "Separate values with commas" : field.label}
+                          />
+                        )}
+                      </Field>
+                    ))}
                 </div>
               </section>
             )}
