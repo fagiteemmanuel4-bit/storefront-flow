@@ -469,7 +469,7 @@ export function resolveBusinessMode(value: unknown): BusinessMode | null {
     else if (/\b(pharmacy|chemist|medicine|medication|drugstore)\b/.test(normalized)) key = "pharmacy";
     else if (/\b(beauty|cosmetic|skincare|skin care|salon|personal care)\b/.test(normalized)) key = "beauty-personal-care";
     else if (/\b(service|services|repair|consultant|consulting|studio|appointment)\b/.test(normalized)) key = "services";
-    else if (/\b(retail|shop|store|market|general)\b/.test(normalized)) key = "general-retail";
+    else if (/\b(retail|general merchandise|department store|convenience store)\b/.test(normalized)) key = "general-retail";
   }
   return BUSINESS_MODES.find((mode) => mode.key === key) ?? null;
 }
