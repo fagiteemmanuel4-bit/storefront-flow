@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/_authenticated/compliance-setup")({
 
 function ComplianceSetupPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { memberships, isLoading, error, userId } = useStoreContext();
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -53,7 +55,10 @@ function ComplianceSetupPage() {
   const [businessPhoto, setBusinessPhoto] = useState<File | null>(null);
   const [existingPhotoUrl, setExistingPhotoUrl] = useState("");
 
-  const ownedMemberships = memberships.filter((membership) => membership.store.owner_id === userId);
+  const ownedMemberships = useMemo(
+    () => memberships.filter((membership) => membership.store.owner_id === userId),
+    [memberships, userId],
+  );
   const selectedMembership = ownedMemberships.find((membership) => membership.store.id === storeId);
 
   useEffect(() => {
@@ -534,8 +539,7 @@ function ComplianceSetupPage() {
                   onChange={(event) => {
                     const value = event.target.value as WebsiteStatus;
                     setWebsiteStatus(value);
-                    if (value === "strap") setWantsStrapWebsite(true);
-                    if (value === "none") setWantsStrapWebsite(false);
+                    setWantsStrapWebsite(value === "strap");
                   }}
                   required
                 >
