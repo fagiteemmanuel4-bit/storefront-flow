@@ -650,4 +650,3 @@ function OnboardingPage() {
     </main>
   );
 }
-}
