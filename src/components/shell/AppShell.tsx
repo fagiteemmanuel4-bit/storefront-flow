@@ -68,6 +68,7 @@ import {
 } from "@/lib/staff-session";
 import { BusinessCalculatorFab } from "@/components/pos/BusinessCalculatorFab";
 import { FirstVisitTour } from "@/components/shell/FirstVisitTour";
+import { WelcomeTour } from "@/components/shell/WelcomeTour";
 import { getBusinessMode } from "@/lib/business-modes";
 import { getStoreSubscription } from "@/lib/plan-access";
 import { hasEntitlement, type StrapTier } from "@/lib/commerceEntitlements";
@@ -1077,6 +1078,7 @@ export function AppShell({
         </div>
       </SecurityModal>
       <FirstVisitTour pageKey={pathname} />
+      <WelcomeTour />
     </div>
   );
 }
