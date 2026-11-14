@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Compass, Play } from "lucide-react";
 import { AppShell } from "@/components/shell/AppShell";
-import { WelcomeTour } from "@/components/shell/WelcomeTour";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/quick-tour")({
@@ -41,7 +40,6 @@ function QuickTourPage() {
           </Button>
         </section>
       </div>
-      <WelcomeTour />
     </AppShell>
   );
 }
