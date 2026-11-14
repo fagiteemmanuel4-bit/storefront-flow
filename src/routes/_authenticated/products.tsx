@@ -621,6 +621,7 @@ function ProductsPage() {
         branchId={branchId!}
         product={editing}
         businessMode={businessMode.key}
+        profileFields={physicalProfileFields}
         onSaved={refresh}
       />
       {!isFashion && (
