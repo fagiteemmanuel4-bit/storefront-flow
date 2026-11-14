@@ -373,7 +373,7 @@ function StoreBuilder() {
     );
   const publicUrl = slug ? `/store/${slug}` : "/online-store/setup";
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background" data-tour="main-content">
       <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
@@ -769,8 +769,9 @@ function StoreBuilder() {
   );
 }
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+  const tourTarget = title === "Templates" ? "template-list" : title === "Add section" ? "section-list" : title === "Theme" ? "theme-controls" : undefined;
   return (
-    <section className="rounded-2xl border border-border bg-surface p-4">
+    <section data-tour={tourTarget} className="rounded-2xl border border-border bg-surface p-4">
       <h2 className="mb-4 font-semibold">{title}</h2>
       {children}
     </section>
