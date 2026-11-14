@@ -49,6 +49,7 @@ type Props = {
   product: ProductWithStock | null;
   onSaved: () => Promise<void> | void;
   businessMode?: BusinessModeKey;
+  profileFields?: Array<{ id: string; label: string; type: string; required: boolean; column?: string; surfaces: string[] }>;
 };
 type ProductImage = { id: string; image_url: string; sort_order: number };
 type PendingImage = { file: File; preview: string };
@@ -61,6 +62,7 @@ export function ProductFormDialog({
   product,
   onSaved,
   businessMode = "general-retail",
+  profileFields = [],
 }: Props) {
   const isFashion = businessMode === "fashion";
   const isGrocery = businessMode === "grocery-provision";
@@ -90,6 +92,7 @@ export function ProductFormDialog({
   const [colors, setColors] = useState("");
   const [material, setMaterial] = useState("");
   const [styleNotes, setStyleNotes] = useState("");
+  const [profileValues, setProfileValues] = useState<Record<string, string>>({});
   const [variantInventory, setVariantInventory] = useState("");
   const [loadingFashionVariants, setLoadingFashionVariants] = useState(false);
   const [productLoadError, setProductLoadError] = useState(false);
@@ -139,6 +142,7 @@ export function ProductFormDialog({
     setColors("");
     setMaterial("");
     setStyleNotes("");
+    setProfileValues(Object.fromEntries(profileFields.filter((field) => field.column && /^[a-z][a-z0-9_]*$/.test(field.column)).map((field) => [field.id, String((p as any)?.[field.column!] ?? "")])));
     setVariantInventory("");
     setProductLoadError(false);
 
@@ -188,7 +192,7 @@ export function ProductFormDialog({
     return () => {
       cancelled = true;
     };
-  }, [open, product, isFashion]);
+  }, [open, product, isFashion, profileFields]);
 
   useEffect(() => {
     if (!open || !product?.id || !isFashion) {
@@ -468,7 +472,20 @@ export function ProductFormDialog({
       const v = parsed.data;
       const normalizedPiecePrice = packMode ? v.piecePrice : v.price;
       const normalizedPackPrice = packMode ? v.packPrice : 0;
+      const mappedProfileFields = Object.fromEntries(
+        profileFields
+          .filter((field) => field.column && /^[a-z][a-z0-9_]*$/.test(field.column) && field.id !== "name" && field.id !== "price" && field.id !== "cost" && field.id !== "sku" && field.id !== "barcode" && field.id !== "category" && field.id !== "lowStockThreshold" && field.id !== "quantity")
+          .map((field) => {
+            const raw = profileValues[field.id] ?? "";
+            const value = raw.trim() === "" ? null : ["integer", "money"].includes(field.type) ? Number(raw) : raw;
+            if (field.required && (value === null || (typeof value === "number" && !Number.isFinite(value)))) {
+              throw new Error(`${field.label} is required and must be valid.`);
+            }
+            return [field.column!, value];
+          }),
+      );
       const payload = {
+        ...mappedProfileFields,
         store_id: storeId,
         name: v.name,
         sku: v.sku,
@@ -832,6 +849,21 @@ export function ProductFormDialog({
                   </section>
                 )}
               </div>
+            )}
+            {profileFields.some((field) => field.column && !["name","price","cost","sku","barcode","category","lowStockThreshold","quantity"].includes(field.id)) && (
+              <section className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
+                <div>
+                  <p className="text-sm font-semibold">Business-specific details</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Fields are shown from your business profile. Only fields with verified product-column mappings can be saved here.</p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {profileFields.filter((field) => field.column && /^[a-z][a-z0-9_]*$/.test(field.column) && !["name","price","cost","sku","barcode","category","lowStockThreshold","quantity"].includes(field.id)).map((field) => (
+                    <Field key={field.id} label={field.label}>
+                      <Input value={profileValues[field.id] ?? ""} onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: event.target.value }))} className="h-12" inputMode={field.type === "integer" || field.type === "money" ? "decimal" : undefined} type={field.type === "long-text" ? "text" : "text"} maxLength={240} />
+                    </Field>
+                  ))}
+                </div>
+              </section>
             )}
             <div className="grid gap-4 sm:grid-cols-2">
               <Field
