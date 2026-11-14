@@ -159,7 +159,7 @@ function OnboardingPage() {
     if (step === 1) return businessType.trim().length >= 2;
     if (step === 2) return Boolean(businessMode);
     if (step === 3) return Boolean(websiteStatus);
-    if (step === 4) return /^https?:\\/\\//i.test(websiteUrl.trim());
+    if (step === 4) return /^(https?:\\/\\/)?([a-z0-9-]+\\.)+[a-z]{2,}(\\/\\S*)?$/i.test(websiteUrl.trim());
     if (step === 5) {
       if (!dateOfBirth) return false;
       const born = new Date(dateOfBirth + "T00:00:00");
