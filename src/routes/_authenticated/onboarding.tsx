@@ -123,7 +123,7 @@ const GOAL_OPTIONS = [
 function OnboardingPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { memberships, isLoading, error, refresh, setActiveStore } = useStoreContext();
+  const { memberships, isLoading, error, refresh, setActiveStore, userId } = useStoreContext();
   const [step, setStep] = useState(0);
   const [plan, setPlan] = useState<Plan | "">("");
   const [billing, setBilling] = useState<Billing>("month");
@@ -140,10 +140,21 @@ function OnboardingPage() {
   const [teamSize, setTeamSize] = useState("Just me");
   const [goal, setGoal] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [personalCountry, setPersonalCountry] = useState("");
+  const [registrationStatus, setRegistrationStatus] = useState<"registered" | "not_registered" | "in_progress">("not_registered");
+  const [registrationNumber, setRegistrationNumber] = useState("");
+  const [declaredBranchCount, setDeclaredBranchCount] = useState<"1" | "2-5" | "6-20" | "20+">("1");
+  const [businessCountry, setBusinessCountry] = useState("");
+  const [businessState, setBusinessState] = useState("");
+  const [businessCity, setBusinessCity] = useState("");
+  const [businessStreet, setBusinessStreet] = useState("");
+  const [businessLandmark, setBusinessLandmark] = useState("");
+  const [businessPostcode, setBusinessPostcode] = useState("");
+  const [businessPhoto, setBusinessPhoto] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [checking, setChecking] = useState(false);
-  const totalSteps = 7;
+  const totalSteps = 10;
 
   useEffect(() => {
     if (!isLoading && !error && memberships.length > 0)
@@ -166,9 +177,18 @@ function OnboardingPage() {
       return websiteStatus === "existing"
         ? /^https?:\/\//i.test(websiteUrl.trim())
         : Boolean(websiteStatus);
-    if (step === 3) return businessName.trim().length >= 2 && branchName.trim().length >= 1;
-    if (step === 4) return Boolean(teamSize && goal && currency);
-    if (step === 5) return Boolean(plan);
+    if (step === 3) {
+      if (!dateOfBirth || !personalCountry) return false;
+      const born = new Date(dateOfBirth + "T00:00:00");
+      const cutoff = new Date();
+      cutoff.setFullYear(cutoff.getFullYear() - 18);
+      return Number.isFinite(born.getTime()) && born <= cutoff;
+    }
+    if (step === 4) return businessName.trim().length >= 2 && branchName.trim().length >= 1;
+    if (step === 5) return Boolean(registrationStatus && declaredBranchCount);
+    if (step === 6) return Boolean(businessCountry && businessState.trim() && businessCity.trim() && businessStreet.trim());
+    if (step === 7) return Boolean(teamSize && goal);
+    if (step === 8) return Boolean(plan);
     return true;
   }
 
@@ -346,7 +366,7 @@ function OnboardingPage() {
   ][step];
 
   return (
-    <main className="sa ob">
+    <main className="sa ob ob-redesign">
       <section className="sa-l">
         <div className="sa-logo">
           <span className="sa-dot" aria-hidden="true" />
@@ -686,7 +706,7 @@ function OnboardingPage() {
               </>
             )}
 
-            {step === 5 && (
+            {step === 8 && (
               <>
                 <div className="ob-seg" role="group" aria-label="Billing period">
                   <button
@@ -753,7 +773,7 @@ function OnboardingPage() {
               </>
             )}
 
-            {step === 6 && (
+            {step === 9 && (
               <>
                 <div className="ob-sum">
                   <p className="k">Ready to build</p>
@@ -807,7 +827,7 @@ function OnboardingPage() {
               <ArrowLeft className="size-4" />
               Back
             </button>
-            {step < 6 ? (
+            {step < 9 ? (
               <button
                 type="button"
                 className="sa-b p"
