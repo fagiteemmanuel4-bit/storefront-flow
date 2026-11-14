@@ -1,0 +1,716 @@
+{
+  "schemaVersion": 1,
+  "product": "Strap Online Store",
+  "baseMode": "normal",
+  "count": 75,
+  "note": "This is the Normal Business baseline. Features marked mode-specific change per business mode: read the mode profile (modes/<mode>/mode.json) instead of hard-coding. Other modes (fashion, electronics and the rest) copy this file and add, remove or change features. Two additional storefront capabilities requested for planning are appended with status proposed; they are not approved for implementation until their scope is reviewed.",
+  "priorities": {
+    "P0": "must work before any release",
+    "P1": "important, next",
+    "P2": "nice to have, last"
+  },
+  "groups": {
+    "onboarding": "Seller onboarding",
+    "products": "Products",
+    "sync": "Physical ↔ Online sync",
+    "orders": "Orders & fulfilment",
+    "customers": "Customers & shopper account",
+    "storefront": "Storefront & design",
+    "checkout": "Cart, checkout & payments",
+    "marketing": "Marketing",
+    "analytics": "Analytics",
+    "settings": "Settings & admin",
+    "platform": "Platform quality"
+  },
+  "features": [
+    {
+      "id": "ob.email-verify",
+      "group": "onboarding",
+      "name": "Email verification",
+      "description": "6-digit code with resend countdown and paste support",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "ob.save-resume",
+      "group": "onboarding",
+      "name": "Save and resume",
+      "description": "Progress saved at every step; back arrow never loses data",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "ob.slug-check",
+      "group": "onboarding",
+      "name": "Store link availability",
+      "description": "Live check, suggestions, reserved names blocked",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "ob.mode-select",
+      "group": "onboarding",
+      "name": "Business mode selection",
+      "description": "Seller picks or confirms business mode; it configures the rest of the app",
+      "priority": "P0",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Core of the mode system"
+    },
+    {
+      "id": "ob.logo-upload",
+      "group": "onboarding",
+      "name": "Logo upload with circle crop",
+      "description": "Skip or add logo",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "ob.setup-checklist",
+      "group": "onboarding",
+      "name": "Setup checklist",
+      "description": "Dashboard checklist for skipped steps",
+      "priority": "P1",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Items differ per mode"
+    },
+    {
+      "id": "pr.crud",
+      "group": "products",
+      "name": "Create, edit, duplicate, delete products",
+      "description": "With confirmation and undo for destructive actions",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pr.images",
+      "group": "products",
+      "name": "Multi-image upload",
+      "description": "Reorder, crop, compress, lazy-load",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pr.variants",
+      "group": "products",
+      "name": "Variants",
+      "description": "Options and per-variant price, stock, SKU",
+      "priority": "P0",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Fashion: size/color. Electronics: storage/color. Food: portion size."
+    },
+    {
+      "id": "pr.mode-fields",
+      "group": "products",
+      "name": "Mode-specific product fields",
+      "description": "Fields come from the mode profile, not hard-coded",
+      "priority": "P0",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Fashion: fit, material. Electronics: specs, warranty, serial. Food: ingredients, allergens, prep time."
+    },
+    {
+      "id": "pr.categories",
+      "group": "products",
+      "name": "Categories and collections",
+      "description": "Manual and rule-based collections",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pr.bulk-actions",
+      "group": "products",
+      "name": "Bulk actions",
+      "description": "Publish, unpublish, price change, delete, categorize",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pr.csv-import-export",
+      "group": "products",
+      "name": "CSV import and export",
+      "description": "Template download, validation report, partial-failure handling",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pr.draft-publish",
+      "group": "products",
+      "name": "Draft / published status",
+      "description": "Per product online visibility",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pr.seo-fields",
+      "group": "products",
+      "name": "Product SEO fields",
+      "description": "Title, description, URL handle, share image",
+      "priority": "P2",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sy.publish-button",
+      "group": "sync",
+      "name": "Publish button on physical products",
+      "description": "Existing button creates or updates the online listing",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sy.import-from-store",
+      "group": "sync",
+      "name": "Import from Store screen",
+      "description": "Multi-select, filters, progress and result summary",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sy.unpublish",
+      "group": "sync",
+      "name": "Unpublish",
+      "description": "Removes the listing from the storefront without deleting the product",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sy.field-overrides",
+      "group": "sync",
+      "name": "Synced vs overridden fields",
+      "description": "Online-only overrides with Reset to store value",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sy.stock-single-source",
+      "group": "sync",
+      "name": "One stock count for both channels",
+      "description": "Atomic transactions; overselling impossible; optional online reserve",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sy.sync-log",
+      "group": "sync",
+      "name": "Sync log with retry",
+      "description": "Failures visible in Needs attention, idempotent retries",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sy.auto-unpublish",
+      "group": "sync",
+      "name": "Auto-unpublish on delete or archive",
+      "description": "Seller is told why",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "or.list-filter",
+      "group": "orders",
+      "name": "Order list with status tabs and search",
+      "description": "",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "or.status-flow",
+      "group": "orders",
+      "name": "Configurable status flow",
+      "description": "Statuses come from the mode profile",
+      "priority": "P0",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Normal: Placed→Delivered. Food: Accepted→Preparing→Out for delivery. Services: Booked→Completed."
+    },
+    {
+      "id": "or.detail-timeline",
+      "group": "orders",
+      "name": "Order detail with timeline",
+      "description": "Items, customer, address, payment, notes",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "or.notifications",
+      "group": "orders",
+      "name": "Customer email on status change",
+      "description": "Templates per status",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "or.invoice-packing",
+      "group": "orders",
+      "name": "Invoice and packing slip",
+      "description": "Printable / PDF",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "or.cancel-refund",
+      "group": "orders",
+      "name": "Cancel and refund",
+      "description": "Restocks items, records reason",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "or.delivery-pickup",
+      "group": "orders",
+      "name": "Delivery or pickup choice",
+      "description": "Zones, pickup times",
+      "priority": "P1",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Food: delivery slots. Services: appointment time."
+    },
+    {
+      "id": "or.internal-notes",
+      "group": "orders",
+      "name": "Internal order notes and tags",
+      "description": "",
+      "priority": "P2",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "cu.list-profile",
+      "group": "customers",
+      "name": "Customer list and profile",
+      "description": "Orders, spend, notes, tags",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "cu.merge-channels",
+      "group": "customers",
+      "name": "One customer across in-store and online",
+      "description": "Match by email or phone",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "cu.shopper-account",
+      "group": "customers",
+      "name": "Shopper mini account",
+      "description": "Sign up, login, scoped to one store",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "cu.order-tracking",
+      "group": "customers",
+      "name": "Order tracking timeline",
+      "description": "Logged-in and guest (order number + email)",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "cu.wishlist",
+      "group": "customers",
+      "name": "Wishlist",
+      "description": "",
+      "priority": "P2",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "cu.saved-addresses",
+      "group": "customers",
+      "name": "Saved addresses and profile",
+      "description": "",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sf.template-gallery",
+      "group": "storefront",
+      "name": "Template gallery with live preview",
+      "description": "Filtered by business mode",
+      "priority": "P0",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Each mode has its own templates"
+    },
+    {
+      "id": "sf.theme-editor",
+      "group": "storefront",
+      "name": "Theme editor",
+      "description": "Colors, fonts, radius, light/dark, instant preview",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sf.section-editor",
+      "group": "storefront",
+      "name": "Section editor",
+      "description": "Reorder, show/hide, edit text and images",
+      "priority": "P0",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Allowed sections come from the mode profile"
+    },
+    {
+      "id": "sf.draft-publish-versions",
+      "group": "storefront",
+      "name": "Draft, publish and version history",
+      "description": "Rollback",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sf.custom-css-js",
+      "group": "storefront",
+      "name": "Custom CSS and sandboxed JS",
+      "description": "CSS sanitized; JS only inside sandboxed iframe",
+      "priority": "P2",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sf.subdomain-domain",
+      "group": "storefront",
+      "name": "Store link and custom domain",
+      "description": "Wildcard subdomain, SSL, domain verification",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sf.search-filter-sort",
+      "group": "storefront",
+      "name": "Search, filters and sorting",
+      "description": "Filters adapt to product fields",
+      "priority": "P0",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Fashion: size/color. Electronics: brand/specs."
+    },
+    {
+      "id": "sf.product-page",
+      "group": "storefront",
+      "name": "Product page",
+      "description": "Gallery, variants, stock badge, related products",
+      "priority": "P0",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Layout differs per mode"
+    },
+    {
+      "id": "sf.reviews",
+      "group": "storefront",
+      "name": "Reviews and ratings",
+      "description": "Moderation by seller",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sf.seo-og",
+      "group": "storefront",
+      "name": "SEO, Open Graph, sitemap",
+      "description": "",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "ck.cart-drawer",
+      "group": "checkout",
+      "name": "Cart drawer",
+      "description": "Quantity, remove, stock limits",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "ck.guest-and-account",
+      "group": "checkout",
+      "name": "Guest or account checkout",
+      "description": "",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "ck.discount-codes",
+      "group": "checkout",
+      "name": "Discount codes",
+      "description": "Percent or fixed, expiry, limits",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "ck.shipping-tax",
+      "group": "checkout",
+      "name": "Shipping rates and taxes",
+      "description": "Zones, free-shipping threshold",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "ck.payments",
+      "group": "checkout",
+      "name": "Payment providers",
+      "description": "Cards, transfer, cash on delivery; webhooks idempotent",
+      "priority": "P0",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Providers depend on seller country"
+    },
+    {
+      "id": "ck.mode-fields",
+      "group": "checkout",
+      "name": "Mode-specific checkout fields",
+      "description": "From the mode profile",
+      "priority": "P1",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Food: delivery notes. Services: appointment. Electronics: warranty registration."
+    },
+    {
+      "id": "ck.abandoned-cart",
+      "group": "checkout",
+      "name": "Abandoned cart reminder",
+      "description": "",
+      "priority": "P2",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "mk.announcement-bar",
+      "group": "marketing",
+      "name": "Announcement bar",
+      "description": "",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "mk.newsletter",
+      "group": "marketing",
+      "name": "Newsletter signup and list",
+      "description": "Export",
+      "priority": "P2",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "mk.share-qr",
+      "group": "marketing",
+      "name": "Share link, QR code, social share",
+      "description": "",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "mk.banners",
+      "group": "marketing",
+      "name": "Promo banners and sale badges",
+      "description": "",
+      "priority": "P2",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "an.dashboard-cards",
+      "group": "analytics",
+      "name": "Dashboard cards",
+      "description": "Cards come from the mode profile",
+      "priority": "P0",
+      "availability": "mode-specific",
+      "status": "todo",
+      "modeNotes": "Fashion: returns rate. Food: orders today. Electronics: low stock."
+    },
+    {
+      "id": "an.sales-chart",
+      "group": "analytics",
+      "name": "Sales chart",
+      "description": "By day, week, month",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "an.top-products",
+      "group": "analytics",
+      "name": "Top products and sources",
+      "description": "",
+      "priority": "P2",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "an.channel-compare",
+      "group": "analytics",
+      "name": "In-store vs online comparison",
+      "description": "",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "st.store-profile",
+      "group": "settings",
+      "name": "Store profile",
+      "description": "Name, logo, contact, currency, timezone",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "st.policies",
+      "group": "settings",
+      "name": "Policy pages",
+      "description": "Shipping, returns, privacy, terms",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "st.roles",
+      "group": "settings",
+      "name": "Roles and team",
+      "description": "Owner, Manager, Cashier, Online fulfilment",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "st.notifications",
+      "group": "settings",
+      "name": "Notification settings",
+      "description": "Email and push",
+      "priority": "P2",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "st.data-export",
+      "group": "settings",
+      "name": "Data export",
+      "description": "",
+      "priority": "P2",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pl.states",
+      "group": "platform",
+      "name": "Loading, empty, error and success states on every screen",
+      "description": "",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pl.security",
+      "group": "platform",
+      "name": "Row-level security, validation, rate limits",
+      "description": "",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pl.audit-log",
+      "group": "platform",
+      "name": "Audit log",
+      "description": "",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pl.feature-flags",
+      "group": "platform",
+      "name": "Feature flags per feature id",
+      "description": "Unfinished work stays hidden",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pl.monitoring",
+      "group": "platform",
+      "name": "Error monitoring and logs",
+      "description": "",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pl.accessibility-performance",
+      "group": "platform",
+      "name": "Accessibility AA and performance budget",
+      "description": "LCP under 2.5s on mobile",
+      "priority": "P1",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "pl.e2e-tests",
+      "group": "platform",
+      "name": "End-to-end tests for critical flows",
+      "description": "",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "todo"
+    },
+    {
+      "id": "sf.preview-responsive",
+      "group": "storefront",
+      "name": "Responsive storefront previewer",
+      "description": "Dedicated isolated preview with desktop, tablet and mobile viewport presets, zoom/fit, page/route selection and draft-only rendering",
+      "priority": "P0",
+      "availability": "all-modes",
+      "status": "proposed"
+    },
+    {
+      "id": "sf.template-library",
+      "group": "storefront",
+      "name": "Expanded template library and profiles",
+      "description": "Curated template families with style/use-case tags, search, mode compatibility, profile/version metadata and rich previews",
+      "priority": "P0",
+      "availability": "mode-specific",
+      "status": "proposed",
+      "modeNotes": "Template profiles and compatible template sets are supplied by the active mode profile; no mode-specific templates are hard-coded."
+    }
+  ]
+}

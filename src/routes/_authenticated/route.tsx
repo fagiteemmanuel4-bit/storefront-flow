@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreProvider } from "@/components/shell/StoreProvider";
-import { WelcomeTour } from "@/components/shell/WelcomeTour";
 import { StrapReviewPrompt } from "@/components/site/StrapReviewPrompt";
 import { RouteLoadingOverlay } from "@/components/shell/RouteLoadingOverlay";
 import { isPaidArea } from "@/lib/plan-access";
@@ -91,7 +90,6 @@ function AuthenticatedLayout() {
       <RouteLoadingOverlay />
       <AccountStatusModal status={accountStatus} reason={statusReason} />
       <Outlet />
-      <WelcomeTour />
       <StrapReviewPrompt />
     </StoreProvider>
   );

@@ -144,8 +144,8 @@ export function WelcomeTour() {
       setTargetRect(null);
       setTooltipPosition(null);
     };
-    window.addEventListener("strap-start-guided-tour", startTour);
-    return () => window.removeEventListener("strap-start-guided-tour", startTour);
+    window.addEventListener("strap-start-welcome-tour", startTour);
+    return () => window.removeEventListener("strap-start-welcome-tour", startTour);
   }, []);
 
   useLayoutEffect(() => {

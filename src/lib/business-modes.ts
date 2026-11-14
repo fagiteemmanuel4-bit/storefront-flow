@@ -428,7 +428,11 @@ export const BUSINESS_MODES: BusinessMode[] = [
   },
 ];
 
-export function getBusinessMode(value: unknown): BusinessMode {
+/**
+ * Resolve a persisted mode or supported legacy alias without silently defaulting.
+ * Use this when a profile or mode-specific workflow must fail closed for unknown values.
+ */
+export function resolveBusinessMode(value: unknown): BusinessMode | null {
   const normalized = typeof value === "string" ? value.trim().toLowerCase() : "";
   const aliases: Record<string, BusinessModeKey> = {
     retail: "general-retail",
@@ -451,8 +455,26 @@ export function getBusinessMode(value: unknown): BusinessMode {
     beauty: "beauty-personal-care",
     services: "services",
   };
-  const key = BUSINESS_MODES.some((mode) => mode.key === normalized)
+  let key = BUSINESS_MODES.some((mode) => mode.key === normalized)
     ? (normalized as BusinessModeKey)
     : aliases[normalized];
-  return BUSINESS_MODES.find((mode) => mode.key === key) ?? BUSINESS_MODES[0]!;
+
+  // Older workspaces stored free-text business descriptions rather than a mode key.
+  // Resolve common descriptions so existing stores can use the profile-driven UI.
+  if (!key) {
+    if (/\b(grocery|groceries|provision|supermarket|foodstuff|mini.?mart)\b/.test(normalized)) key = "grocery-provision";
+    else if (/\b(fashion|clothing|cloth|boutique|footwear|shoes|bags|apparel)\b/.test(normalized)) key = "fashion";
+    else if (/\b(electronic|electronics|phone|mobile|computer|laptop|gadget)\b/.test(normalized)) key = "electronics";
+    else if (/\b(restaurant|cafe|café|bakery|catering|takeaway|food service)\b/.test(normalized)) key = "food-service";
+    else if (/\b(pharmacy|chemist|medicine|medication|drugstore)\b/.test(normalized)) key = "pharmacy";
+    else if (/\b(beauty|cosmetic|skincare|skin care|salon|personal care)\b/.test(normalized)) key = "beauty-personal-care";
+    else if (/\b(service|services|repair|consultant|consulting|studio|appointment)\b/.test(normalized)) key = "services";
+    else if (/\b(retail|general merchandise|department store|convenience store)\b/.test(normalized)) key = "general-retail";
+  }
+  return BUSINESS_MODES.find((mode) => mode.key === key) ?? null;
+}
+
+/** Legacy presentation helper; profile-sensitive code should use resolveBusinessMode. */
+export function getBusinessMode(value: unknown): BusinessMode {
+  return resolveBusinessMode(value) ?? BUSINESS_MODES[0]!;
 }

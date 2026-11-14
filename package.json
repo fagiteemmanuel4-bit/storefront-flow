@@ -11,7 +11,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "check:migrations": "node scripts/check-migration-versions.mjs",
-    "check:dependency-patches": "node scripts/check-dependency-patches.mjs"
+    "check:dependency-patches": "node scripts/check-dependency-patches.mjs",
+    "check:business-mode-profiles": "node scripts/check-business-mode-profiles.mjs && bun run test:business-mode-profile-schema",
+    "test:business-mode-profile-schema": "bun test scripts/business-mode-profile-schema.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

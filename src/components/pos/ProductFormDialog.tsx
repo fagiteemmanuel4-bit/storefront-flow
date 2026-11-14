@@ -4,6 +4,7 @@ import { ArrowLeft, ImagePlus, Package, Plus, ScanLine, X } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { errorMessage } from "@/lib/format";
 import type { ProductWithStock } from "@/lib/pos-types";
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,7 @@ type Props = {
   product: ProductWithStock | null;
   onSaved: () => Promise<void> | void;
   businessMode?: BusinessModeKey;
+  profileFields?: Array<{ id: string; label: string; type: string; required: boolean; column?: string; source?: string; runtimeReady: boolean; surfaces: string[] }>;
 };
 type ProductImage = { id: string; image_url: string; sort_order: number };
 type PendingImage = { file: File; preview: string };
@@ -61,6 +63,7 @@ export function ProductFormDialog({
   product,
   onSaved,
   businessMode = "general-retail",
+  profileFields = [],
 }: Props) {
   const isFashion = businessMode === "fashion";
   const isGrocery = businessMode === "grocery-provision";
@@ -90,6 +93,7 @@ export function ProductFormDialog({
   const [colors, setColors] = useState("");
   const [material, setMaterial] = useState("");
   const [styleNotes, setStyleNotes] = useState("");
+  const [profileValues, setProfileValues] = useState<Record<string, string>>({});
   const [variantInventory, setVariantInventory] = useState("");
   const [loadingFashionVariants, setLoadingFashionVariants] = useState(false);
   const [productLoadError, setProductLoadError] = useState(false);
@@ -139,6 +143,7 @@ export function ProductFormDialog({
     setColors("");
     setMaterial("");
     setStyleNotes("");
+    setProfileValues({});
     setVariantInventory("");
     setProductLoadError(false);
 
@@ -146,23 +151,44 @@ export function ProductFormDialog({
       void (async () => {
         const db = supabase as any;
         try {
-          const [{ data: images, error: imagesError }, { data: details, error: detailsError }] =
-            await Promise.all([
-              db
-                .from("product_images")
-                .select("id,image_url,sort_order")
-                .eq("product_id", product.id)
-                .order("sort_order"),
-              isFashion
-                ? db
-                    .from("product_fashion_details")
-                    .select("size_options,color_options,material,style_notes")
-                    .eq("product_id", product.id)
-                    .maybeSingle()
-                : Promise.resolve({ data: null, error: null }),
-            ]);
+          const [
+            { data: images, error: imagesError },
+            { data: details, error: detailsError },
+            { data: modeDetails, error: modeDetailsError },
+            { data: onlineProduct, error: onlineProductError },
+          ] = await Promise.all([
+            db
+              .from("product_images")
+              .select("id,image_url,sort_order")
+              .eq("product_id", product.id)
+              .order("sort_order"),
+            isFashion
+              ? db
+                  .from("product_fashion_details")
+                  .select("size_options,color_options,material,style_notes")
+                  .eq("product_id", product.id)
+                  .maybeSingle()
+              : Promise.resolve({ data: null, error: null }),
+            profileFields.some((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""))
+              ? db
+                  .from("product_mode_details")
+                  .select("details")
+                  .eq("store_id", storeId)
+                  .eq("product_id", product.id)
+                  .eq("mode_key", businessMode)
+                  .maybeSingle()
+              : Promise.resolve({ data: null, error: null }),
+            profileFields.some((field) => field.runtimeReady && field.source === "online_products.description")
+              ? onlineSupabase
+                  .from("online_products")
+                  .select("description")
+                  .eq("store_id", storeId)
+                  .eq("product_id", product.id)
+                  .maybeSingle()
+              : Promise.resolve({ data: null, error: null }),
+          ]);
           if (cancelled) return;
-          if (imagesError || detailsError) {
+          if (imagesError || detailsError || modeDetailsError || onlineProductError) {
             setProductLoadError(true);
             toast.error(
               "We couldn't load this product's saved details. Check your connection and reopen it before saving.",
@@ -170,6 +196,17 @@ export function ProductFormDialog({
             return;
           }
           setExistingImages((images ?? []) as ProductImage[]);
+          const savedModeDetails = (modeDetails?.details ?? {}) as Record<string, unknown>;
+          setProfileValues(Object.fromEntries(
+            profileFields
+              .filter((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""))
+              .map((field) => {
+                const value = field.source === "online_products.description"
+                  ? onlineProduct?.description
+                  : savedModeDetails[field.id];
+                return [field.id, Array.isArray(value) ? value.join(", ") : value === null || value === undefined ? "" : String(value)];
+              }),
+          ));
           if (details) {
             setSizes((details.size_options ?? []).join(", "));
             setColors((details.color_options ?? []).join(", "));
@@ -188,7 +225,7 @@ export function ProductFormDialog({
     return () => {
       cancelled = true;
     };
-  }, [open, product, isFashion]);
+  }, [open, product, isFashion, profileFields]);
 
   useEffect(() => {
     if (!open || !product?.id || !isFashion) {
@@ -468,6 +505,27 @@ export function ProductFormDialog({
       const v = parsed.data;
       const normalizedPiecePrice = packMode ? v.piecePrice : v.price;
       const normalizedPackPrice = packMode ? v.packPrice : 0;
+      const profileDetailFields = profileFields.filter(
+        (field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""),
+      );
+      const profileDetails = Object.fromEntries(profileDetailFields.map((field) => {
+        const raw = profileValues[field.id] ?? "";
+        const trimmed = raw.trim();
+        if (field.required && !trimmed) throw new Error(`${field.label} is required.`);
+        if (!trimmed) return [field.id, null];
+        if (field.type === "boolean") return [field.id, raw === "true"];
+        if (field.type === "integer" || field.type === "money") {
+          const value = Number(trimmed);
+          if (!Number.isFinite(value) || (field.type === "integer" && !Number.isInteger(value))) {
+            throw new Error(`${field.label} must be a valid ${field.type === "integer" ? "whole number" : "amount"}.`);
+          }
+          return [field.id, value];
+        }
+        if (["tag-list", "modifier-list", "recipe-list", "variant-option"].includes(field.type)) {
+          return [field.id, trimmed.split(/[\n,]/).map((item) => item.trim()).filter(Boolean)];
+        }
+        return [field.id, trimmed];
+      }));
       const payload = {
         store_id: storeId,
         name: v.name,
@@ -521,6 +579,44 @@ export function ProductFormDialog({
       await saveImages(productId);
       await saveFashionDetails(productId);
       await saveFashionVariantStock(productId, v.quantity);
+      const privateProfileDetails = Object.fromEntries(
+        profileDetailFields
+          .filter((field) => field.source === "product_mode_details.details")
+          .map((field) => [field.id, profileDetails[field.id]]),
+      );
+      if (Object.keys(privateProfileDetails).length) {
+        const { error: modeDetailsError } = await (supabase as any)
+          .from("product_mode_details")
+          .upsert({
+            store_id: storeId,
+            product_id: productId,
+            mode_key: businessMode,
+            details: privateProfileDetails,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "store_id,product_id,mode_key" });
+        if (modeDetailsError) throw new Error(modeDetailsError.message);
+      }
+      const onlineDescriptionField = profileDetailFields.find((field) => field.source === "online_products.description");
+      if (onlineDescriptionField) {
+        const description = String(profileDetails[onlineDescriptionField.id] ?? "");
+        const { data: existingOnlineProduct, error: onlineLookupError } = await onlineSupabase
+          .from("online_products")
+          .select("id")
+          .eq("store_id", storeId)
+          .eq("product_id", productId)
+          .maybeSingle();
+        if (onlineLookupError) throw new Error(onlineLookupError.message);
+        const onlineSave = existingOnlineProduct
+          ? await onlineSupabase.from("online_products").update({ description }).eq("id", existingOnlineProduct.id)
+          : await onlineSupabase.from("online_products").insert({
+              store_id: storeId,
+              product_id: productId,
+              slug: `${v.name.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48)}-${productId.slice(0, 8)}`,
+              description,
+              enabled: false,
+            });
+        if (onlineSave.error) throw new Error(onlineSave.error.message);
+      }
       await onSaved();
       toast.success(product ? "Product updated" : "Product added");
       onOpenChange(false);
@@ -832,6 +928,52 @@ export function ProductFormDialog({
                   </section>
                 )}
               </div>
+            )}
+            {profileFields.some((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? "")) && (
+              <section className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
+                <div>
+                  <p className="text-sm font-semibold">Business-specific details</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Business-specific fields are saved to the private product profile. The online description is saved to the online catalogue and stays hidden until you publish that product.</p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {profileFields
+                    .filter((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""))
+                    .map((field) => (
+                      <Field key={field.id} label={field.label}>
+                        {field.type === "long-text" ? (
+                          <textarea
+                            value={profileValues[field.id] ?? ""}
+                            onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: event.target.value }))}
+                            className="min-h-24 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
+                            maxLength={2000}
+                            placeholder={field.label}
+                          />
+                        ) : field.type === "boolean" ? (
+                          <label className="flex h-12 items-center gap-3 rounded-xl border border-input bg-background px-3 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={profileValues[field.id] === "true"}
+                              onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: String(event.target.checked) }))}
+                              className="size-4 accent-current"
+                            />
+                            Yes
+                          </label>
+                        ) : (
+                          <Input
+                            value={profileValues[field.id] ?? ""}
+                            onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: event.target.value }))}
+                            className="h-12"
+                            type={field.type === "date" ? "date" : field.type === "integer" || field.type === "money" ? "number" : "text"}
+                            inputMode={field.type === "integer" || field.type === "money" ? "decimal" : undefined}
+                            min={field.type === "integer" || field.type === "money" ? 0 : undefined}
+                            maxLength={field.type === "long-text" ? 2000 : 240}
+                            placeholder={["tag-list", "modifier-list", "recipe-list", "variant-option"].includes(field.type) ? "Separate values with commas" : field.label}
+                          />
+                        )}
+                      </Field>
+                    ))}
+                </div>
+              </section>
             )}
             <div className="grid gap-4 sm:grid-cols-2">
               <Field

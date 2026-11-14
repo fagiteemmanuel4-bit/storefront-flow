@@ -40,7 +40,8 @@ import {
   BottomSheetTitle,
 } from "@/components/ui/bottom-sheet";
 import { cn } from "@/lib/utils";
-import { getBusinessMode } from "@/lib/business-modes";
+import { BUSINESS_MODES, getBusinessMode, resolveBusinessMode, type BusinessModeKey } from "@/lib/business-modes";
+import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { fetchAllRows } from "@/lib/supabase-pagination";
 
@@ -92,7 +93,7 @@ export async function fetchProductsWithStock(
 
 type Filter = "all" | "low" | "out" | "published";
 function ProductsPage() {
-  const { store, branch, role } = useStoreContext();
+  const { store, branch, role, refresh: refreshStore } = useStoreContext();
   const client = useQueryClient();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
@@ -102,15 +103,65 @@ function ProductsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [scanOpen, setScanOpen] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
+  const [profileModeChoice, setProfileModeChoice] = useState<BusinessModeKey | "">("");
+  const [showProfilePicker, setShowProfilePicker] = useState(false);
+  const [savingProfileMode, setSavingProfileMode] = useState(false);
   const canManage = canManageCatalog(role);
+  const canManageProfile = role === "owner" || role === "manager";
   const storeId = store?.id ?? null;
   const branchId = branch?.id ?? null;
   const currency = store?.currency ?? "NGN";
-  const businessMode = getBusinessMode(
-    (store?.storefront_settings as any)?.businessMode ?? store?.business_type,
-  );
+  const businessModeValue =
+    (store?.storefront_settings as any)?.businessMode ?? store?.business_type;
+  const resolvedBusinessMode = resolveBusinessMode(businessModeValue);
+  const businessMode = resolvedBusinessMode ?? getBusinessMode(null);
   const isFashion = businessMode.key === "fashion";
+  const modeProfileResult = resolvedBusinessMode
+    ? getBusinessModeProfile(resolvedBusinessMode.key)
+    : null;
+  const modeProfile = modeProfileResult?.ok ? modeProfileResult.profile : null;
+  const productProfileFields = useMemo(
+    () => modeProfile?.product.fields.filter((field) => field.runtimeReady) ?? [],
+    [modeProfile],
+  );
   const isGrocery = businessMode.key === "grocery-provision";
+
+  async function saveBusinessModeProfile() {
+    if (!store || !profileModeChoice || !canManageProfile) return;
+    const profileResult = getBusinessModeProfile(profileModeChoice);
+    if (!profileResult.ok) {
+      toast.error("That business profile is not available.");
+      return;
+    }
+    setSavingProfileMode(true);
+    try {
+      const currentSettings = (store.storefront_settings ?? {}) as Record<string, unknown>;
+      const { error } = await supabase
+        .from("stores")
+        .update({
+          storefront_settings: {
+            ...currentSettings,
+            businessMode: profileModeChoice,
+            businessModeProfile: {
+              id: profileResult.profile.id,
+              version: profileResult.profile.profileVersion,
+              status: profileResult.profile.status,
+              runtimeReady: profileResult.profile.runtimeReady,
+            },
+          },
+        })
+        .eq("id", store.id);
+      if (error) throw new Error(error.message);
+      await refreshStore();
+      setProfileModeChoice("");
+      setShowProfilePicker(false);
+      toast.success("Business profile saved. Your catalogue is being updated.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save the business profile.");
+    } finally {
+      setSavingProfileMode(false);
+    }
+  }
   const query = useQuery({
     queryKey: ["products", storeId, branchId],
     enabled: Boolean(storeId && branchId),
@@ -385,6 +436,111 @@ function ProductsPage() {
       }
     >
       <div className="space-y-4">
+        {modeProfile ? (
+          <section
+            aria-label="Business mode configuration preview"
+            className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5">
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-[.16em] text-muted-foreground">
+                  Mode configuration
+                </p>
+                <h2 className="mt-1 truncate text-sm font-semibold">{modeProfile.name}</h2>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">
+                  Draft profile · fields available
+                </span>
+                {canManageProfile && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setProfileModeChoice(resolvedBusinessMode?.key ?? "");
+                      setShowProfilePicker((current) => !current);
+                    }}
+                  >
+                    Change profile
+                  </Button>
+                )}
+              </div>
+            </div>
+            {showProfilePicker && canManageProfile && (
+              <div className="flex flex-col gap-2 border-b border-border p-4 sm:flex-row sm:px-5">
+                <select
+                  value={profileModeChoice}
+                  onChange={(event) => setProfileModeChoice(event.target.value as BusinessModeKey | "")}
+                  className="h-11 min-w-0 flex-1 rounded-xl border border-input bg-background px-3 text-sm"
+                >
+                  {BUSINESS_MODES.map((mode) => (
+                    <option key={mode.key} value={mode.key}>{mode.label}</option>
+                  ))}
+                </select>
+                <Button
+                  type="button"
+                  onClick={() => void saveBusinessModeProfile()}
+                  disabled={!profileModeChoice || profileModeChoice === resolvedBusinessMode?.key || savingProfileMode}
+                >
+                  {savingProfileMode ? "Saving…" : "Save profile"}
+                </Button>
+              </div>
+            )}
+            <div className="grid gap-3 p-4 sm:grid-cols-[1fr_auto] sm:items-center sm:px-5">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {productProfileFields.length} profile-specific product fields are available in the editor.
+                  These fields appear in the product editor and are saved privately against the product and its business profile.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {productProfileFields.slice(0, 6).map((field) => (
+                    <span key={field.id} className="rounded-lg bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+                      {field.label}
+                    </span>
+                  ))}
+                  {productProfileFields.length > 6 && (
+                    <span className="rounded-lg bg-secondary px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                      +{productProfileFields.length - 6} more
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="text-left sm:text-right">
+                <p className="text-xs font-semibold text-muted-foreground">Variants</p>
+                <p className="mt-1 text-sm font-semibold">{modeProfile.product.variants.enabled ? "Configured" : "Not configured"}</p>
+                <p className="mt-1 text-[11px] text-muted-foreground">Feature flags remain off</p>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section role="status" className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
+            <p className="text-sm font-semibold">Choose your business profile</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              This workspace’s saved business description does not match a known profile. Choose the closest fit to enable its product fields and Store Studio templates. Unknown workspaces are never silently assigned to General Retail.
+            </p>
+            {canManageProfile && (
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                <select
+                  value={profileModeChoice}
+                  onChange={(event) => setProfileModeChoice(event.target.value as BusinessModeKey | "")}
+                  className="h-11 min-w-0 flex-1 rounded-xl border border-input bg-background px-3 text-sm"
+                >
+                  <option value="">Choose a business profile</option>
+                  {BUSINESS_MODES.map((mode) => (
+                    <option key={mode.key} value={mode.key}>{mode.label}</option>
+                  ))}
+                </select>
+                <Button onClick={() => void saveBusinessModeProfile()} disabled={!profileModeChoice || savingProfileMode}>
+                  {savingProfileMode ? "Saving…" : "Save profile"}
+                </Button>
+              </div>
+            )}
+            {!canManageProfile && (
+              <p className="mt-2 text-xs font-medium text-muted-foreground">Ask a store owner or manager to choose the business profile.</p>
+            )}
+          </section>
+        )}
         <section
           aria-label="Find products"
           className="flex min-w-0 items-center gap-2 rounded-2xl border border-border bg-background p-2 shadow-sm transition-colors focus-within:border-accent/70 focus-within:ring-2 focus-within:ring-accent/15 sm:rounded-[20px] sm:p-2.5"
@@ -564,6 +720,7 @@ function ProductsPage() {
         branchId={branchId!}
         product={editing}
         businessMode={businessMode.key}
+        profileFields={productProfileFields}
         onSaved={refresh}
       />
       {!isFashion && (

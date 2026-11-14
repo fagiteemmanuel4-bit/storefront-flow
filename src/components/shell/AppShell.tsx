@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronUp,
   CloudUpload,
+  Compass,
   Cpu,
   Download,
   ExternalLink,
@@ -66,6 +67,8 @@ import {
   STAFF_ROLE_META,
 } from "@/lib/staff-session";
 import { BusinessCalculatorFab } from "@/components/pos/BusinessCalculatorFab";
+import { FirstVisitTour } from "@/components/shell/FirstVisitTour";
+import { WelcomeTour } from "@/components/shell/WelcomeTour";
 import { getBusinessMode } from "@/lib/business-modes";
 import { getStoreSubscription } from "@/lib/plan-access";
 import { hasEntitlement, type StrapTier } from "@/lib/commerceEntitlements";
@@ -840,7 +843,19 @@ export function AppShell({
                   className={menuItem}
                 >
                   <Sparkles className="size-[18px] shrink-0" />
-                  Guided tour
+                  Replay page guide
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setAccountOpen(false);
+                    void navigate({ to: "/quick-tour" });
+                  }}
+                  className={menuItem}
+                >
+                  <Compass className="size-[18px] shrink-0" />
+                  Full workspace tour
                 </button>
                 <button
                   type="button"
@@ -927,6 +942,7 @@ export function AppShell({
                   </p>
                 )}
                 <h1
+                  data-tour="page-heading"
                   className={cn(
                     "truncate font-display font-bold leading-tight tracking-tight",
                     pathname.startsWith("/settings")
@@ -1061,6 +1077,8 @@ export function AppShell({
           Strap will close the current session and return to sign-in. It does not delete your store.
         </div>
       </SecurityModal>
+      <FirstVisitTour pageKey={pathname} />
+      <WelcomeTour />
     </div>
   );
 }

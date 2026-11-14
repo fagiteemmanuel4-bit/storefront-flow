@@ -1,0 +1,1016 @@
+{
+  "schemaVersion": 1,
+  "sourceCatalog": "docs/online-store/strap-features.normal.json",
+  "modeKeys": [
+    "general-retail",
+    "grocery-provision",
+    "fashion",
+    "electronics",
+    "food-service",
+    "pharmacy",
+    "beauty-personal-care",
+    "services"
+  ],
+  "policy": "all-modes entries apply to every registered mode. mode-specific entries intentionally have no mapped modes until explicitly reviewed; absence means not applicable/unknown and must fail closed.",
+  "features": {
+    "ob.email-verify": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "ob.save-resume": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "ob.slug-check": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "ob.mode-select": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "ob.logo-upload": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "ob.setup-checklist": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "pr.crud": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pr.images": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pr.variants": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "pr.mode-fields": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "pr.categories": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pr.bulk-actions": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pr.csv-import-export": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pr.draft-publish": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pr.seo-fields": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sy.publish-button": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sy.import-from-store": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sy.unpublish": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sy.field-overrides": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sy.stock-single-source": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sy.sync-log": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sy.auto-unpublish": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "or.list-filter": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "or.status-flow": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "or.detail-timeline": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "or.notifications": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "or.invoice-packing": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "or.cancel-refund": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "or.delivery-pickup": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "or.internal-notes": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "cu.list-profile": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "cu.merge-channels": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "cu.shopper-account": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "cu.order-tracking": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "cu.wishlist": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "cu.saved-addresses": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sf.template-gallery": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "sf.theme-editor": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sf.section-editor": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "sf.draft-publish-versions": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sf.custom-css-js": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sf.subdomain-domain": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sf.search-filter-sort": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "sf.product-page": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "sf.reviews": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sf.seo-og": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "ck.cart-drawer": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "ck.guest-and-account": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "ck.discount-codes": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "ck.shipping-tax": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "ck.payments": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "ck.mode-fields": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "ck.abandoned-cart": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "mk.announcement-bar": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "mk.newsletter": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "mk.share-qr": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "mk.banners": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "an.dashboard-cards": {
+      "availability": "mode-specific",
+      "status": "todo",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    },
+    "an.sales-chart": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "an.top-products": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "an.channel-compare": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "st.store-profile": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "st.policies": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "st.roles": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "st.notifications": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "st.data-export": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pl.states": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pl.security": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pl.audit-log": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pl.feature-flags": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pl.monitoring": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pl.accessibility-performance": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "pl.e2e-tests": {
+      "availability": "all-modes",
+      "status": "todo",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sf.preview-responsive": {
+      "availability": "all-modes",
+      "status": "proposed",
+      "applicableModeKeys": [
+        "general-retail",
+        "grocery-provision",
+        "fashion",
+        "electronics",
+        "food-service",
+        "pharmacy",
+        "beauty-personal-care",
+        "services"
+      ],
+      "mappingStatus": "mapped-all-modes"
+    },
+    "sf.template-library": {
+      "availability": "mode-specific",
+      "status": "proposed",
+      "applicableModeKeys": [],
+      "mappingStatus": "requires-mode-review"
+    }
+  }
+}

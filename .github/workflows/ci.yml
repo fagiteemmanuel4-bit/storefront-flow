@@ -23,6 +23,8 @@ jobs:
           bun --version
       - name: Install dependencies
         run: bun install --no-save
+      - name: Validate business-mode profiles
+        run: bun run check:business-mode-profiles
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
