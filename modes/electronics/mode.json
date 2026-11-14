@@ -44,7 +44,7 @@
           "online"
         ],
         "searchable": true,
-        "source": "product_mode_details.details",
+        "source": "online_products.description",
         "runtimeReady": true
       },
       {
