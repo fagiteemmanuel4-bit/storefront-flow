@@ -691,6 +691,39 @@ function StoreBuilder() {
                 <option value="large">Large</option>
               </select>
             </label>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <label className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Body font</span>
+                <input
+                  className="field"
+                  value={theme.fontFamily}
+                  maxLength={60}
+                  onChange={(event) => setTheme((current) => ({ ...current, fontFamily: event.target.value }))}
+                  placeholder="Inter"
+                />
+              </label>
+              <label className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Heading font</span>
+                <input
+                  className="field"
+                  value={theme.headingFontFamily}
+                  maxLength={60}
+                  onChange={(event) => setTheme((current) => ({ ...current, headingFontFamily: event.target.value }))}
+                  placeholder="Inter"
+                />
+              </label>
+            </div>
+            <label className="mt-4 block space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Layout density</span>
+              <select
+                className="field"
+                value={theme.density}
+                onChange={(event) => setTheme((current) => ({ ...current, density: event.target.value as Theme["density"] }))}
+              >
+                <option value="comfortable">Comfortable</option>
+                <option value="compact">Compact</option>
+              </select>
+            </label>
           </Panel>
           {selectedSection &&
             (() => {
