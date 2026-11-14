@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertTriangle,
@@ -39,6 +39,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function DashboardPage() {
+  const navigate = useNavigate();
   const { store, branch } = useStoreContext();
   const storeId = store?.id ?? null;
   const currency = store?.currency ?? "NGN";
@@ -377,13 +378,18 @@ function DashboardPage() {
                     : "Your storefront is set up and ready to publish."
                   : "Set up your storefront to start receiving orders online."}
               </p>
-              <Link
-                to={online?.setup_completed ? "/online-store/orders" : "/online-store/setup"}
-                className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-foreground px-4 text-sm font-semibold text-background transition hover:opacity-90"
+              <button
+                type="button"
+                onClick={() =>
+                  void navigate({
+                    to: online?.setup_completed ? "/online-store/orders" : "/online-store/setup",
+                  })
+                }
+                className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-foreground px-4 text-sm font-semibold text-background transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 {online?.setup_completed ? "Review orders" : "Set up online store"}{" "}
                 <ArrowRight className="size-4" />
-              </Link>
+              </button>
             </div>
           </div>
         </section>
