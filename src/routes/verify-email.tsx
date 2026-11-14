@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AuthBrand } from "@/components/auth/AuthBrand";
 import { TurnstileCaptcha } from "@/components/auth/TurnstileCaptcha";
 import "@/strap-auth.css";
+import "@/strap-reference.css";
 
 export const Route = createFileRoute("/verify-email")({
   ssr: false,
