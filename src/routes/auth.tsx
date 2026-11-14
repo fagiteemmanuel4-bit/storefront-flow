@@ -413,14 +413,15 @@ function AuthPage() {
           : recoveryVerified
             ? "Your email is verified. Choose a new password."
             : "Enter the 8-digit password verification code sent to your email.";
+  const validAuthEmail = emailSchema.safeParse(normalizeEmail(email)).success;
   const submitLabel = busy
     ? "Please wait…"
     : pendingOtpEmail
       ? "Send verification code"
       : mode === "signin"
-        ? "Continue with email"
+        ? validAuthEmail ? "Sign in" : "Continue with email"
         : mode === "signup"
-          ? "Create account"
+          ? validAuthEmail ? "Create account" : "Continue"
           : mode === "reset"
             ? "Send verification code"
             : recoveryVerified
@@ -428,7 +429,7 @@ function AuthPage() {
               : "Verify code";
   const showGoogle = mode === "signin" || mode === "signup";
   const showPasswordField =
-    mode === "signin" || mode === "signup" || (mode === "recover" && recoveryVerified);
+    (mode === "signin" || mode === "signup") ? validAuthEmail : mode === "recover" && recoveryVerified;
   const needsCaptcha = mode !== "recover";
 
   return (
