@@ -1,0 +1,70 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap");
+:root{--ref-lemon:#e6f53a;--ref-black:#0a0a0a;--ref-ink:#141414;--ref-edge:#2b2b2b;--ref-muted:#8d8d86}
+.ref-screen{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--ref-lemon);color:#fff;font-family:"Sora","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.ref-hero{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--ref-lemon);padding:calc(env(safe-area-inset-top,0px) + clamp(32px,8vh,80px)) 24px clamp(32px,7vh,64px)}
+.ref-logo{width:clamp(88px,22vw + 40px,150px);height:auto;aspect-ratio:1}
+.ref-hero h1{margin-top:clamp(16px,3vh,28px);font-size:clamp(42px,9vw + 14px,68px);font-weight:700;letter-spacing:-.05em;line-height:1;color:var(--ref-black)}
+.ref-tagline{margin-top:clamp(10px,1.6vh,16px);font-size:clamp(12.5px,1vw + 10px,15px);font-weight:500;color:rgba(10,10,10,.75)}
+.ref-sheet{flex:0 0 auto;width:100%;background:var(--ref-black);color:#fff;border-radius:34px 34px 0 0;padding:14px clamp(20px,6vw,32px) calc(env(safe-area-inset-bottom,0px) + 24px)}
+.ref-sheet-inner{width:100%;max-width:440px;margin:0 auto}
+.ref-sheet-inner:before{content:"";display:block;width:38px;height:4px;border-radius:4px;background:var(--ref-edge);margin:0 auto 24px}
+.ref-heading h2{font-size:clamp(27px,7vw,34px);font-weight:700;letter-spacing:-.035em;line-height:1.15;margin:0 0 8px;color:#fff}
+.ref-heading p{font-size:14px;line-height:1.5;color:#a5a59e;margin:0 0 18px}
+.ref-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;padding:16px;border-radius:16px;font:600 16px "Sora",sans-serif;cursor:pointer;transition:transform .15s,background .2s,border-color .2s}
+.ref-btn:active{transform:scale(.985)}
+.ref-btn:disabled{opacity:.55;cursor:not-allowed}
+.ref-primary{margin-top:8px;background:var(--ref-lemon);color:var(--ref-black);border:1px solid var(--ref-lemon)}
+.ref-primary:hover,.ref-primary:focus-visible{background:#f0ff5e;outline:none}
+.ref-ghost{background:var(--ref-ink);color:#fff;border:1px solid var(--ref-edge)}
+.ref-ghost:hover,.ref-ghost:focus-visible{border-color:#fff;outline:none}
+.ref-or{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--ref-muted);font-size:12px}
+.ref-or:before,.ref-or:after{content:"";flex:1;height:1px;background:var(--ref-edge)}
+.ref-form{display:flex;flex-direction:column;gap:14px}
+.ref-group{position:relative;display:flex;flex-direction:column;gap:8px}
+.ref-field{width:100%;min-height:58px;background:var(--ref-ink);border:1px solid var(--ref-edge);border-radius:16px;color:#fff;font:400 16px "Sora",sans-serif;padding:17px 18px;outline:none;transition:border-color .2s,box-shadow .2s}
+.ref-field::placeholder{color:#6f6f69}
+.ref-field:focus{border-color:var(--ref-lemon);box-shadow:0 0 0 4px rgba(230,245,58,.14)}
+.ref-password{position:relative}
+.ref-password .ref-field{padding-right:62px}
+.ref-eye{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:46px;height:46px;display:grid;place-items:center;background:none;border:0;color:#a5aaa2;cursor:pointer}
+.ref-link{background:none;border:0;color:var(--ref-lemon);font:600 14px "Sora",sans-serif;cursor:pointer;padding:4px 0}
+.ref-forgot{align-self:flex-end;margin:0 4px 2px}
+.ref-links{text-align:center;font-size:13px;margin-top:22px;color:var(--ref-muted);line-height:1.8}
+.ref-links .ref-link{margin-left:4px}
+.ref-terms{display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.5;color:#a5a59e}
+.ref-terms input{width:18px;height:18px;accent-color:var(--ref-lemon);flex:none;margin-top:1px}
+.ref-terms a,.ref-terms-copy{color:var(--ref-lemon);text-decoration:none}
+.ref-terms-copy{text-align:center;font-size:11.5px;line-height:1.5;margin-top:10px;color:#66665f}
+.ref-notice{padding:12px 14px;border:1px solid #343434;border-radius:14px;background:#191919;color:#e9e9e4;font-size:13px;line-height:1.5}
+.ref-captcha{width:100%;max-width:100%;overflow:hidden;min-height:66px;display:flex;justify-content:center;align-items:center}
+.ref-captcha iframe{max-width:100%}
+@media(min-width:700px){.ref-screen{display:none}}
+@media(max-height:560px){.ref-hero{padding-top:20px;padding-bottom:20px}.ref-logo{width:64px}.ref-hero h1{font-size:36px;margin-top:10px}}
+@media(prefers-reduced-motion:reduce){.ref-screen *{transition:none!important}}
+/* Reference palette for the existing Supabase email-verification and workspace setup screens. */
+@media(max-width:699px){
+ .sa{display:flex!important;flex-direction:column!important;min-height:100dvh!important;background:var(--ref-lemon)!important;color:#fff!important;font-family:"Sora","Helvetica Neue",Arial,sans-serif!important}
+ .sa .sa-l{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:0!important;min-height:220px!important;padding:calc(env(safe-area-inset-top,0px) + 28px) 22px 26px!important;background:var(--ref-lemon)!important;color:var(--ref-black)!important;text-align:center!important}
+ .sa .sa-l .sa-logo{display:flex!important;flex-direction:column!important;align-items:center!important;gap:14px!important;color:var(--ref-black)!important;font:700 42px/1 "Sora",sans-serif!important}
+ .sa .sa-l .sa-dot{width:112px!important;height:112px!important;border:3px solid var(--ref-black)!important;background:radial-gradient(circle,var(--ref-lemon) 0 14%,var(--ref-black) 14.5% 72%,transparent 72.5%)!important}
+ .sa .sa-brand-tagline{display:block!important;margin:10px 0 0!important;color:rgba(10,10,10,.75)!important;font:500 13px "Sora",sans-serif!important}
+ .sa .sa-l .sa-ring,.sa .sa-l>div:not(.sa-logo),.sa .sa-l>small{display:none!important}
+ .sa .sa-r{display:flex!important;flex:0 0 auto!important;align-items:flex-start!important;justify-content:center!important;width:100%!important;min-height:0!important;padding:24px 20px calc(env(safe-area-inset-bottom,0px) + 28px)!important;border-radius:34px 34px 0 0!important;background:var(--ref-black)!important;color:#fff!important}
+ .sa .sa-box{width:100%!important;max-width:440px!important;color:#fff!important;font-family:"Sora",sans-serif!important}
+ .sa .sa-box h1{color:#fff!important;font:700 clamp(27px,7vw,34px)/1.15 "Sora",sans-serif!important;letter-spacing:-.035em!important}
+ .sa .sa-mut,.sa .sa-box p{color:#a5a59e!important;font-family:"Sora",sans-serif!important}
+ .sa .sa-in,.sa input.sa-in,.sa select.sa-in,.sa textarea.sa-in{min-height:56px!important;border:1px solid var(--ref-edge)!important;border-radius:16px!important;background:var(--ref-ink)!important;color:#fff!important;font:400 16px "Sora",sans-serif!important;box-shadow:none!important}
+ .sa .sa-in::placeholder{color:#6f6f69!important}
+ .sa .sa-b{min-height:54px!important;border:1px solid var(--ref-edge)!important;border-radius:16px!important;background:var(--ref-ink)!important;color:#fff!important;font:600 15px "Sora",sans-serif!important}
+ .sa .sa-b.p{border-color:var(--ref-lemon)!important;background:var(--ref-lemon)!important;color:var(--ref-black)!important}
+ .sa .sa-lk,.sa .sa-alt a,.sa .sa-alt button{color:var(--ref-lemon)!important;font-family:"Sora",sans-serif!important}
+ .sa .sa-label,.sa .sa-f label{color:#fff!important;font-family:"Sora",sans-serif!important}
+ .sa .sa-notice{border:1px solid #343434!important;border-radius:14px!important;background:#191919!important;color:#e9e9e4!important}
+ .sa .ob-opt,.sa .ob-panel,.sa .ob-stat,.sa .ob-seg{border:1px solid var(--ref-edge)!important;border-radius:16px!important;background:var(--ref-ink)!important;color:#fff!important}
+ .sa .ob-opt[aria-pressed=true]{border-color:var(--ref-lemon)!important;background:#20220f!important;color:#fff!important}
+ .sa .ob-prog{background:#30302b!important}.sa .ob-prog i{background:var(--ref-lemon)!important}
+ .sa .ob-seg button[aria-pressed=true]{background:var(--ref-lemon)!important;color:var(--ref-black)!important}
+ .sa .ob-nav{position:sticky!important;bottom:0!important;padding:12px 0 calc(env(safe-area-inset-bottom,0px) + 8px)!important;background:var(--ref-black)!important;border-color:var(--ref-edge)!important}
+ .sa .ob-sw[aria-checked=true]{background:var(--ref-lemon)!important}
+ .sa .ob-sw[aria-checked=true]::after{background:var(--ref-black)!important}
+}
