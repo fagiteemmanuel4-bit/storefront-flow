@@ -928,6 +928,7 @@ export function AppShell({
                   </p>
                 )}
                 <h1
+                  data-tour="page-heading"
                   className={cn(
                     "truncate font-display font-bold leading-tight tracking-tight",
                     pathname.startsWith("/settings")
