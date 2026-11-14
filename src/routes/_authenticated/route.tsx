@@ -24,6 +24,35 @@ export const Route = createFileRoute("/_authenticated")({
       sessionStorage.setItem("kudi_otp_email", data.user.email ?? "");
       throw redirect({ to: "/verify-email", search: { email: data.user.email ?? "" } });
     }
+    // Existing store owners must also complete the compliance profile once.
+    // Staff accounts are excluded because this is owner-level business information.
+    if (location.pathname !== "/compliance-setup") {
+      const { data: ownedStores } = await supabase
+        .from("stores")
+        .select("id")
+        .eq("owner_id", data.user.id);
+      const storeIds = (ownedStores ?? []).map((store) => store.id);
+      if (storeIds.length > 0) {
+        const [{ data: profile }, { data: complianceRows }] = await Promise.all([
+          supabase
+            .from("profiles")
+            .select("date_of_birth, country")
+            .eq("id", data.user.id)
+            .maybeSingle(),
+          supabase
+            .from("store_compliance_profiles")
+            .select("store_id")
+            .in("store_id", storeIds),
+        ]);
+        const completedStoreIds = new Set((complianceRows ?? []).map((row) => row.store_id));
+        const personalDetailsComplete = Boolean(profile?.date_of_birth && profile.country);
+        const businessDetailsComplete = storeIds.every((storeId) => completedStoreIds.has(storeId));
+        if (!personalDetailsComplete || !businessDetailsComplete) {
+          throw redirect({ to: "/compliance-setup", replace: true });
+        }
+      }
+    }
+
     if (isPaidArea(location.pathname)) {
       const { data: memberships } = await supabase
         .from("store_members")
