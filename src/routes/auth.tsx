@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TurnstileCaptcha } from "@/components/auth/TurnstileCaptcha";
+import "@/strap-auth.css";
 
 /* Strap favicon: lime ring and dot on ink. Inlined so no extra file is needed. */
 const FAVICON_SVG =
@@ -474,7 +475,7 @@ function AuthPage() {
           <StrapLogo />
           <div className="strap-auth-hero">
             <h2>Your shop. Your sales. Your next move.</h2>
-            <p>Everything you need to run your business, in one place.</p>
+            <p>Run your business. Not around it.</p>
           </div>
           <small className="strap-auth-copy">© 2026 Strap by Kryonara</small>
         </aside>
