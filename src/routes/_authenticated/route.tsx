@@ -11,7 +11,6 @@ export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async ({ location }) => {
     const hiddenDuringUpgrade = [
-      "/online-store",
       "/store-editor",
       "/settings/online-store",
       "/settings/appearance",
