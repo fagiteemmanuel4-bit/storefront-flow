@@ -116,7 +116,10 @@ function ProductsPage() {
     ? getBusinessModeProfile(resolvedBusinessMode.key)
     : null;
   const modeProfile = modeProfileResult?.ok ? modeProfileResult.profile : null;
-  const physicalProfileFields = modeProfile?.product.fields.filter((field) => field.surfaces.includes("physical")) ?? [];
+  const physicalProfileFields = useMemo(
+    () => modeProfile?.product.fields.filter((field) => field.surfaces.includes("physical")) ?? [],
+    [modeProfile],
+  );
   const isGrocery = businessMode.key === "grocery-provision";
   const query = useQuery({
     queryKey: ["products", storeId, branchId],
