@@ -58,11 +58,43 @@ const pageSteps: Record<string, TourStep[]> = {
     },
   ],
   "/online-store": [
-    {
-      selector: ['[data-tour="main-content"]'],
-      title: "Your storefront",
-      body: "This is what customers see when they shop online.",
-    },
+    { selector: ['[data-tour="main-content"]'], title: "Your storefront", body: "Review your public store, setup progress and the tools for managing products, orders and design." },
+  ],
+  "/online-store/builder": [
+    { selector: ['[data-tour="main-content"]', "main"], title: "Store Studio", body: "Choose a business-profile template and arrange only the section types supported by your store." },
+    { selector: ['[data-tour="template-list"]'], title: "Choose a template", body: "Templates provide a starting layout. Switching templates does not change your product catalogue, inventory or orders." },
+    { selector: ['[data-tour="section-list"]'], title: "Build your pages", body: "Add, remove and reorder sections, then select each section to edit its content." },
+    { selector: ['[data-tour="theme-controls"]'], title: "Brand your store", body: "Adjust your colours, logo, store description and search appearance before previewing." },
+  ],
+  "/online-store/setup": [
+    { selector: ['[data-tour="main-content"]', "main"], title: "Store identity", body: "Set your public store name, link, contact details and brand assets. Review the information carefully before publishing." },
+  ],
+  "/customers": [
+    { selector: ['[data-tour="main-content"]'], title: "Customer records", body: "Keep customer contact details and purchase history together so your team can support repeat business." },
+  ],
+  "/dashboard": [
+    { selector: ['[data-tour="page-heading"]', '[data-tour="main-content"]'], title: "Business overview", body: "Use this page to review recent activity and move into the workflows that need attention." },
+  ],
+  "/settings/inventory": [
+    { selector: ['[data-tour="main-content"]'], title: "Inventory controls", body: "Review stock settings before changing how quantities, alerts and branch-level inventory are handled." },
+  ],
+  "/food-service": [
+    { selector: ['[data-tour="main-content"]'], title: "Food service workspace", body: "Manage menu and kitchen workflows here. Check order and ingredient details before confirming stock-affecting actions." },
+  ],
+  "/grocery-inventory": [
+    { selector: ['[data-tour="main-content"]'], title: "Grocery inventory", body: "Review batches, expiry dates and replenishment needs. Keep expired or quarantined stock out of saleable quantities." },
+  ],
+  "/pharmacy": [
+    { selector: ['[data-tour="main-content"]'], title: "Pharmacy controls", body: "Use batch and expiry information to support traceability. Follow prescription and dispensing safeguards for restricted products." },
+  ],
+  "/electronics-workspace": [
+    { selector: ['[data-tour="main-content"]'], title: "Device workspace", body: "Keep device identifiers, warranty details and repair progress connected to the correct customer and product." },
+  ],
+  "/beauty": [
+    { selector: ['[data-tour="main-content"]'], title: "Beauty services", body: "Manage appointments, staff availability and treatment details while checking for schedule conflicts." },
+  ],
+  "/services": [
+    { selector: ['[data-tour="main-content"]'], title: "Service jobs", body: "Track customer jobs, estimates, due dates and payment progress from intake through completion." },
   ],
   "/settings": [
     {
@@ -102,9 +134,10 @@ export function FirstVisitTour({ pageKey }: { pageKey: string }) {
       .replace(/[-_]+/g, " ")
       .replace(/\b\w/g, (character) => character.toUpperCase());
   }, [pageKey]);
+  const normalizedPageKey = pageKey.replace(/\\/+$/, "") || "/dashboard";
   const steps = useMemo(
     () =>
-      pageSteps[pageKey] ?? [
+      pageSteps[normalizedPageKey] ?? [
         {
           selector: ['[data-tour="page-heading"]'],
           title: `${pageLabel} overview`,
@@ -116,18 +149,18 @@ export function FirstVisitTour({ pageKey }: { pageKey: string }) {
           body: `The controls and information for ${pageLabel.toLowerCase()} are grouped in this workspace. Follow the page actions and review details before confirming changes.`,
         },
       ],
-    [pageKey, pageLabel],
+    [normalizedPageKey, pageLabel],
   );
   const [step, setStep] = useState(-1);
   const [rect, setRect] = useState<Rect | null>(null);
 
   const close = useCallback(
     (remember = true) => {
-      if (remember) writeSeen(pageKey);
+      if (remember) writeSeen(normalizedPageKey);
       setStep(-1);
       setRect(null);
     },
-    [pageKey],
+    [normalizedPageKey],
   );
 
   const measure = useCallback(() => {
@@ -147,14 +180,15 @@ export function FirstVisitTour({ pageKey }: { pageKey: string }) {
   useEffect(() => {
     if (!steps.length) return;
     const seen = readSeen();
-    if (!seen[pageKey]) setStep(0);
+    setRect(null);
+    setStep(seen[normalizedPageKey] ? -1 : 0);
     const replay = () => {
       setRect(null);
       setStep(0);
     };
     window.addEventListener("strap-start-guided-tour", replay);
     return () => window.removeEventListener("strap-start-guided-tour", replay);
-  }, [pageKey, steps.length]);
+  }, [normalizedPageKey, steps.length]);
 
   useLayoutEffect(() => {
     if (step < 0) return;
