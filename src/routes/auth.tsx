@@ -419,9 +419,13 @@ function AuthPage() {
     : pendingOtpEmail
       ? "Send verification code"
       : mode === "signin"
-        ? validAuthEmail ? "Sign in" : "Continue with email"
+        ? validAuthEmail
+          ? "Sign in"
+          : "Continue with email"
         : mode === "signup"
-          ? validAuthEmail ? "Create account" : "Continue"
+          ? validAuthEmail
+            ? "Create account"
+            : "Continue"
           : mode === "reset"
             ? "Send verification code"
             : recoveryVerified
@@ -429,7 +433,9 @@ function AuthPage() {
               : "Verify code";
   const showGoogle = mode === "signin" || mode === "signup";
   const showPasswordField =
-    (mode === "signin" || mode === "signup") ? validAuthEmail : mode === "recover" && recoveryVerified;
+    mode === "signin" || mode === "signup"
+      ? validAuthEmail
+      : mode === "recover" && recoveryVerified;
   const needsCaptcha = mode !== "recover";
 
   return (

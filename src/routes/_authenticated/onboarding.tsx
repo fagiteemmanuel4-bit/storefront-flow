@@ -120,9 +120,23 @@ const GOAL_OPTIONS = [
   "Run multiple locations",
 ];
 const COUNTRY_OPTIONS = [
-  "Nigeria", "Ghana", "Kenya", "South Africa", "Egypt", "Uganda", "Tanzania",
-  "Rwanda", "Senegal", "Côte d’Ivoire", "Cameroon", "United Kingdom",
-  "United States", "Canada", "United Arab Emirates", "India", "Other",
+  "Nigeria",
+  "Ghana",
+  "Kenya",
+  "South Africa",
+  "Egypt",
+  "Uganda",
+  "Tanzania",
+  "Rwanda",
+  "Senegal",
+  "Côte d’Ivoire",
+  "Cameroon",
+  "United Kingdom",
+  "United States",
+  "Canada",
+  "United Arab Emirates",
+  "India",
+  "Other",
 ];
 
 function OnboardingPage() {
@@ -147,9 +161,13 @@ function OnboardingPage() {
   const [phone, setPhone] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [personalCountry, setPersonalCountry] = useState("");
-  const [registrationStatus, setRegistrationStatus] = useState<"registered" | "not_registered" | "in_progress" | "">("");
+  const [registrationStatus, setRegistrationStatus] = useState<
+    "registered" | "not_registered" | "in_progress" | ""
+  >("");
   const [registrationNumber, setRegistrationNumber] = useState("");
-  const [declaredBranchCount, setDeclaredBranchCount] = useState<"1" | "2-5" | "6-20" | "20+" | "">("");
+  const [declaredBranchCount, setDeclaredBranchCount] = useState<"1" | "2-5" | "6-20" | "20+" | "">(
+    "",
+  );
   const [businessCountry, setBusinessCountry] = useState("");
   const [businessState, setBusinessState] = useState("");
   const [businessCity, setBusinessCity] = useState("");
@@ -191,7 +209,10 @@ function OnboardingPage() {
     }
     if (step === 4) return businessName.trim().length >= 2 && branchName.trim().length >= 1;
     if (step === 5) return Boolean(registrationStatus && declaredBranchCount);
-    if (step === 6) return Boolean(businessCountry && businessState.trim() && businessCity.trim() && businessStreet.trim());
+    if (step === 6)
+      return Boolean(
+        businessCountry && businessState.trim() && businessCity.trim() && businessStreet.trim(),
+      );
     if (step === 7) return Boolean(teamSize && goal);
     if (step === 8) return Boolean(plan);
     return true;
@@ -219,7 +240,12 @@ function OnboardingPage() {
         throw new Error("Complete your personal details before continuing.");
       if (!registrationStatus || !declaredBranchCount)
         throw new Error("Complete the business registration and branch details before continuing.");
-      if (!businessCountry || !businessState.trim() || !businessCity.trim() || !businessStreet.trim())
+      if (
+        !businessCountry ||
+        !businessState.trim() ||
+        !businessCity.trim() ||
+        !businessStreet.trim()
+      )
         throw new Error("Complete the full business address before continuing.");
       const profileResult = getBusinessModeProfile(businessMode);
       if (!profileResult.ok) {
@@ -238,8 +264,11 @@ function OnboardingPage() {
         .eq("id", userId)
         .maybeSingle();
       if (profileLookupError) throw new Error(profileLookupError.message);
-      const profileName = existingProfile?.full_name ||
-        String(authResult.user.user_metadata?.full_name ?? authResult.user.user_metadata?.name ?? "");
+      const profileName =
+        existingProfile?.full_name ||
+        String(
+          authResult.user.user_metadata?.full_name ?? authResult.user.user_metadata?.name ?? "",
+        );
       const { error: profileError } = await supabase.from("profiles").upsert(
         {
           id: userId,
@@ -260,7 +289,9 @@ function OnboardingPage() {
         businessState.trim(),
         businessCountry.trim(),
         businessPostcode.trim(),
-      ].filter(Boolean).join(", ");
+      ]
+        .filter(Boolean)
+        .join(", ");
 
       const { data: storeId, error: createError } = await supabase.rpc("create_store", {
         _name: businessName.trim(),
@@ -274,7 +305,8 @@ function OnboardingPage() {
       let businessPhotoUrl = "";
       if (businessPhoto) {
         const extension = businessPhoto.name.split(".").pop()?.toLowerCase() || "jpg";
-        const photoPath = storeId + "/" + userId + "/business-profile-" + Date.now() + "." + extension;
+        const photoPath =
+          storeId + "/" + userId + "/business-profile-" + Date.now() + "." + extension;
         const { error: uploadError } = await supabase.storage
           .from("kudi-store-assets")
           .upload(photoPath, businessPhoto, {
@@ -283,9 +315,12 @@ function OnboardingPage() {
             cacheControl: "3600",
           });
         if (uploadError) {
-          toast.error("Your workspace will be created, but the profile photo could not be uploaded. You can add it later.");
+          toast.error(
+            "Your workspace will be created, but the profile photo could not be uploaded. You can add it later.",
+          );
         } else {
-          businessPhotoUrl = supabase.storage.from("kudi-store-assets").getPublicUrl(photoPath).data.publicUrl;
+          businessPhotoUrl = supabase.storage.from("kudi-store-assets").getPublicUrl(photoPath)
+            .data.publicUrl;
         }
       }
 
@@ -375,7 +410,15 @@ function OnboardingPage() {
         const { error: onlineError } = await supabase.from("online_stores").upsert(
           {
             store_id: storeId,
-            slug: businessName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48) + "-" + String(storeId).slice(0, 6),
+            slug:
+              businessName
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-|-$/g, "")
+                .slice(0, 48) +
+              "-" +
+              String(storeId).slice(0, 6),
             display_name: businessName.trim(),
             logo_url: businessPhotoUrl,
             display_email: authResult.user.email ?? "",
@@ -479,584 +522,696 @@ function OnboardingPage() {
       <section className="ref-sheet ob-sheet">
         <div className="ref-sheet-inner ob-sheet-inner">
           <div className="sa-box ob-box" key={step}>
-          <div
-            className="ob-prog"
-            role="progressbar"
-            aria-label="Setup progress"
-            aria-valuemin={1}
-            aria-valuemax={totalSteps}
-            aria-valuenow={step + 1}
-          >
-            <i style={{ width: `${((step + 1) / totalSteps) * 100}%` }} />
-          </div>
-          <p className="ob-kicker">
-            Step {step + 1} of {totalSteps}
-          </p>
-          <h1>{stepTitle}</h1>
-          <p className="sa-mut">{stepDescription}</p>
+            <div
+              className="ob-prog"
+              role="progressbar"
+              aria-label="Setup progress"
+              aria-valuemin={1}
+              aria-valuemax={totalSteps}
+              aria-valuenow={step + 1}
+            >
+              <i style={{ width: `${((step + 1) / totalSteps) * 100}%` }} />
+            </div>
+            <p className="ob-kicker">
+              Step {step + 1} of {totalSteps}
+            </p>
+            <h1>{stepTitle}</h1>
+            <p className="sa-mut">{stepDescription}</p>
 
-          <div className="ob-body">
-            {step === 0 && (
-              <>
-                <Choice
-                  selected={businessModel === "physical"}
-                  onClick={() => setBusinessModel("physical")}
-                  title="Physical business"
-                  description="I mainly sell from a shop, office, stall, studio or other physical location."
-                >
-                  <Store className="size-5" />
-                </Choice>
-                <Choice
-                  selected={businessModel === "online"}
-                  onClick={() => setBusinessModel("online")}
-                  title="Online business"
-                  description="Most of my sales happen online and I want Strap to support that workflow."
-                >
-                  <Globe2 className="size-5" />
-                </Choice>
-                <Choice
-                  selected={businessModel === "both"}
-                  onClick={() => setBusinessModel("both")}
-                  title="Physical + online"
-                  description="I sell in person and online and want one workspace for both."
-                >
-                  <Building2 className="size-5" />
-                </Choice>
-              </>
-            )}
-
-            {step === 1 && (
-              <>
-                <div className="sa-f">
-                  <label htmlFor="business-type">What does the business sell or provide?</label>
-                  <input
-                    id="business-type"
-                    className="sa-in"
-                    value={businessType}
-                    onChange={(e) => setBusinessType(e.target.value)}
-                    placeholder="e.g. women’s clothing, groceries, phone accessories…"
-                    autoFocus
-                  />
-                </div>
-                <div className="sa-f">
-                  <span className="sa-label">Choose a business mode</span>
-                  <p className="ob-hint">
-                    Strap will tailor the workspace shortcuts and setup guidance to this type of
-                    business.
-                  </p>
-                  <div className="ob-g2" style={{ marginTop: 8 }}>
-                    {BUSINESS_MODES.map((mode) => (
-                      <button
-                        key={mode.key}
-                        type="button"
-                        onClick={() => setBusinessMode(mode.key)}
-                        aria-pressed={businessMode === mode.key}
-                        className="ob-opt sm"
-                      >
-                        <span className="ob-chip">
-                          <Store className="size-4" />
-                        </span>
-                        <span className="grow">
-                          <span className="t">{mode.label}</span>
-                          <span className="d">{mode.description}</span>
-                        </span>
-                        <span className="ob-tick">
-                          {businessMode === mode.key && <Check className="size-3.5" />}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {step === 2 && (
-              <>
-                <Choice
-                  selected={websiteStatus === "existing"}
-                  onClick={() => setWebsiteStatus("existing")}
-                  title="I already have a store website"
-                  description="Keep my existing website as the main customer-facing store."
-                >
-                  <Globe2 className="size-5" />
-                </Choice>
-                {websiteStatus === "existing" && (
-                  <div className="ob-panel">
-                    <div className="sa-f">
-                      <label htmlFor="website">Existing store URL</label>
-                      <input
-                        id="website"
-                        className="sa-in"
-                        value={websiteUrl}
-                        onChange={(e) => setWebsiteUrl(e.target.value)}
-                        placeholder="https://myshop.com"
-                        inputMode="url"
-                      />
-                    </div>
-                  </div>
-                )}
-                <Choice
-                  selected={websiteStatus === "strap"}
-                  onClick={() => {
-                    setWebsiteStatus("strap");
-                    setOnlineStoreEnabled(true);
-                  }}
-                  title="I want to create my store with Strap"
-                  description="Use Strap's built-in online store when my plan supports it."
-                >
-                  <Store className="size-5" />
-                </Choice>
-                <Choice
-                  selected={websiteStatus === "none"}
-                  onClick={() => {
-                    setWebsiteStatus("none");
-                    setOnlineStoreEnabled(false);
-                  }}
-                  title="Not yet"
-                  description="I am starting physical-first and may turn on online selling later."
-                >
-                  <MapPin className="size-5" />
-                </Choice>
-                {websiteStatus !== "existing" && (
-                  <div className="ob-panel">
-                    <div className="ob-row">
-                      <div>
-                        <p className="t">Prepare Strap Online Store</p>
-                        <p className="ob-hint">
-                          You can keep this off and enable it later from Settings → Preferences →
-                          Strap Online Store.
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={onlineStoreEnabled}
-                        aria-label="Prepare Strap Online Store"
-                        className="ob-sw"
-                        onClick={() => setOnlineStoreEnabled(!onlineStoreEnabled)}
-                      />
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-
-            {step === 3 && (
-              <>
-                <div className="sa-f">
-                  <label htmlFor="date-of-birth">Date of birth</label>
-                  <input
-                    id="date-of-birth"
-                    className="sa-in"
-                    type="date"
-                    max={new Date().toISOString().slice(0, 10)}
-                    value={dateOfBirth}
-                    onChange={(e) => setDateOfBirth(e.target.value)}
-                    autoFocus
-                  />
-                  <p className="ob-hint">You must be at least 18 years old to create a Strap business account. This information is stored in your private account profile.</p>
-                </div>
-                <div className="sa-f">
-                  <label htmlFor="personal-country">Country of residence</label>
-                  <select
-                    id="personal-country"
-                    className="sa-in"
-                    value={personalCountry}
-                    onChange={(e) => setPersonalCountry(e.target.value)}
+            <div className="ob-body">
+              {step === 0 && (
+                <>
+                  <Choice
+                    selected={businessModel === "physical"}
+                    onClick={() => setBusinessModel("physical")}
+                    title="Physical business"
+                    description="I mainly sell from a shop, office, stall, studio or other physical location."
                   >
-                    <option value="">Select your country</option>
-                    {COUNTRY_OPTIONS.map((country) => <option key={country} value={country}>{country}</option>)}
-                  </select>
-                </div>
-              </>
-            )}
+                    <Store className="size-5" />
+                  </Choice>
+                  <Choice
+                    selected={businessModel === "online"}
+                    onClick={() => setBusinessModel("online")}
+                    title="Online business"
+                    description="Most of my sales happen online and I want Strap to support that workflow."
+                  >
+                    <Globe2 className="size-5" />
+                  </Choice>
+                  <Choice
+                    selected={businessModel === "both"}
+                    onClick={() => setBusinessModel("both")}
+                    title="Physical + online"
+                    description="I sell in person and online and want one workspace for both."
+                  >
+                    <Building2 className="size-5" />
+                  </Choice>
+                </>
+              )}
 
-            {step === 4 && (
-              <>
-                <div className="sa-f">
-                  <label htmlFor="business-name">Business / store name</label>
-                  <input
-                    id="business-name"
-                    className="sa-in"
-                    value={businessName}
-                    onChange={(e) => setBusinessName(e.target.value)}
-                    placeholder="Your business name"
-                    autoFocus
-                  />
-                </div>
-                <div className="sa-f">
-                  <label htmlFor="branch">First location name</label>
-                  <input
-                    id="branch"
-                    className="sa-in"
-                    value={branchName}
-                    onChange={(e) => setBranchName(e.target.value)}
-                    placeholder="Main branch"
-                  />
-                </div>
-                <div className="ob-g2">
+              {step === 1 && (
+                <>
                   <div className="sa-f">
-                    <label htmlFor="phone">Business phone</label>
+                    <label htmlFor="business-type">What does the business sell or provide?</label>
                     <input
-                      id="phone"
+                      id="business-type"
                       className="sa-in"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="080…"
-                      inputMode="tel"
+                      value={businessType}
+                      onChange={(e) => setBusinessType(e.target.value)}
+                      placeholder="e.g. women’s clothing, groceries, phone accessories…"
+                      autoFocus
                     />
                   </div>
                   <div className="sa-f">
-                    <label htmlFor="currency">Currency</label>
-                    <select
-                      id="currency"
+                    <span className="sa-label">Choose a business mode</span>
+                    <p className="ob-hint">
+                      Strap will tailor the workspace shortcuts and setup guidance to this type of
+                      business.
+                    </p>
+                    <div className="ob-g2" style={{ marginTop: 8 }}>
+                      {BUSINESS_MODES.map((mode) => (
+                        <button
+                          key={mode.key}
+                          type="button"
+                          onClick={() => setBusinessMode(mode.key)}
+                          aria-pressed={businessMode === mode.key}
+                          className="ob-opt sm"
+                        >
+                          <span className="ob-chip">
+                            <Store className="size-4" />
+                          </span>
+                          <span className="grow">
+                            <span className="t">{mode.label}</span>
+                            <span className="d">{mode.description}</span>
+                          </span>
+                          <span className="ob-tick">
+                            {businessMode === mode.key && <Check className="size-3.5" />}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {step === 2 && (
+                <>
+                  <Choice
+                    selected={websiteStatus === "existing"}
+                    onClick={() => setWebsiteStatus("existing")}
+                    title="I already have a store website"
+                    description="Keep my existing website as the main customer-facing store."
+                  >
+                    <Globe2 className="size-5" />
+                  </Choice>
+                  {websiteStatus === "existing" && (
+                    <div className="ob-panel">
+                      <div className="sa-f">
+                        <label htmlFor="website">Existing store URL</label>
+                        <input
+                          id="website"
+                          className="sa-in"
+                          value={websiteUrl}
+                          onChange={(e) => setWebsiteUrl(e.target.value)}
+                          placeholder="https://myshop.com"
+                          inputMode="url"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <Choice
+                    selected={websiteStatus === "strap"}
+                    onClick={() => {
+                      setWebsiteStatus("strap");
+                      setOnlineStoreEnabled(true);
+                    }}
+                    title="I want to create my store with Strap"
+                    description="Use Strap's built-in online store when my plan supports it."
+                  >
+                    <Store className="size-5" />
+                  </Choice>
+                  <Choice
+                    selected={websiteStatus === "none"}
+                    onClick={() => {
+                      setWebsiteStatus("none");
+                      setOnlineStoreEnabled(false);
+                    }}
+                    title="Not yet"
+                    description="I am starting physical-first and may turn on online selling later."
+                  >
+                    <MapPin className="size-5" />
+                  </Choice>
+                  {websiteStatus !== "existing" && (
+                    <div className="ob-panel">
+                      <div className="ob-row">
+                        <div>
+                          <p className="t">Prepare Strap Online Store</p>
+                          <p className="ob-hint">
+                            You can keep this off and enable it later from Settings → Preferences →
+                            Strap Online Store.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={onlineStoreEnabled}
+                          aria-label="Prepare Strap Online Store"
+                          className="ob-sw"
+                          onClick={() => setOnlineStoreEnabled(!onlineStoreEnabled)}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {step === 3 && (
+                <>
+                  <div className="sa-f">
+                    <label htmlFor="date-of-birth">Date of birth</label>
+                    <input
+                      id="date-of-birth"
                       className="sa-in"
-                      value={currency}
-                      onChange={(e) => setCurrency(e.target.value)}
+                      type="date"
+                      max={new Date().toISOString().slice(0, 10)}
+                      value={dateOfBirth}
+                      onChange={(e) => setDateOfBirth(e.target.value)}
+                      autoFocus
+                    />
+                    <p className="ob-hint">
+                      You must be at least 18 years old to create a Strap business account. This
+                      information is stored in your private account profile.
+                    </p>
+                  </div>
+                  <div className="sa-f">
+                    <label htmlFor="personal-country">Country of residence</label>
+                    <select
+                      id="personal-country"
+                      className="sa-in"
+                      value={personalCountry}
+                      onChange={(e) => setPersonalCountry(e.target.value)}
                     >
-                      {SUPPORTED_CURRENCIES.map((c) => (
-                        <option key={c.code} value={c.code}>
-                          {c.symbol} {c.code} — {c.label}
+                      <option value="">Select your country</option>
+                      {COUNTRY_OPTIONS.map((country) => (
+                        <option key={country} value={country}>
+                          {country}
                         </option>
                       ))}
                     </select>
                   </div>
-                </div>
-                <div className="sa-f">
-                  <div className="flex items-center justify-between gap-3">
-                    <label htmlFor="tax">Default sales tax (%)</label>
-                    <Link
-                      to="/tax-guide"
-                      className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-2 text-xs font-semibold text-primary hover:bg-accent-soft"
-                      aria-label="Learn how to choose a tax percentage"
-                      title="Learn about tax rates"
-                    >
-                      <CircleHelp className="size-4" />
-                    </Link>
-                  </div>
-                  <input
-                    id="tax"
-                    className="sa-in"
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="0.01"
-                    value={taxRate}
-                    onChange={(e) => setTaxRate(e.target.value)}
-                    inputMode="decimal"
-                    placeholder="0"
-                  />
-                </div>
-                <div className="sa-f">
-                  <label htmlFor="business-photo">Business profile picture <span className="ob-hint">(optional)</span></label>
-                  <input
-                    id="business-photo"
-                    className="sa-in ob-file"
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0] ?? null;
-                      if (file && !["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
-                        toast.error("Choose a PNG, JPG or WebP image.");
-                        e.target.value = "";
-                        setBusinessPhoto(null);
-                        return;
-                      }
-                      if (file && file.size > 5 * 1024 * 1024) {
-                        toast.error("Choose an image smaller than 5 MB.");
-                        e.target.value = "";
-                        setBusinessPhoto(null);
-                        return;
-                      }
-                      setBusinessPhoto(file);
-                    }}
-                  />
-                  <p className="ob-hint">{businessPhoto ? businessPhoto.name : "PNG, JPG or WebP. Maximum 5 MB."}</p>
-                </div>
-              </>
-            )}
+                </>
+              )}
 
-            {step === 5 && (
-              <>
-                <div className="sa-f">
-                  <span className="sa-label">Is this a registered business?</span>
+              {step === 4 && (
+                <>
+                  <div className="sa-f">
+                    <label htmlFor="business-name">Business / store name</label>
+                    <input
+                      id="business-name"
+                      className="sa-in"
+                      value={businessName}
+                      onChange={(e) => setBusinessName(e.target.value)}
+                      placeholder="Your business name"
+                      autoFocus
+                    />
+                  </div>
+                  <div className="sa-f">
+                    <label htmlFor="branch">First location name</label>
+                    <input
+                      id="branch"
+                      className="sa-in"
+                      value={branchName}
+                      onChange={(e) => setBranchName(e.target.value)}
+                      placeholder="Main branch"
+                    />
+                  </div>
                   <div className="ob-g2">
-                    {([
-                      ["Registered", "registered"],
-                      ["Not registered", "not_registered"],
-                      ["Registration in progress", "in_progress"],
-                    ] as const).map(([label, value]) => (
-                      <button key={value} type="button" className="ob-opt pill" aria-pressed={registrationStatus === value} onClick={() => setRegistrationStatus(value)}>{label}</button>
-                    ))}
-                  </div>
-                </div>
-                <div className="sa-f">
-                  <label htmlFor="registration-number">Business registration number <span className="ob-hint">(you can add this later)</span></label>
-                  <input
-                    id="registration-number"
-                    className="sa-in"
-                    value={registrationNumber}
-                    onChange={(e) => setRegistrationNumber(e.target.value)}
-                    placeholder="e.g. RC1234567"
-                    autoCapitalize="characters"
-                  />
-                </div>
-                <div className="sa-f">
-                  <label htmlFor="branch-count">How many branches do you operate?</label>
-                  <select id="branch-count" className="sa-in" value={declaredBranchCount} onChange={(e) => setDeclaredBranchCount(e.target.value as typeof declaredBranchCount)}>
-                    <option value="">Select branch count</option>
-                    <option value="1">1 (single location)</option>
-                    <option value="2-5">2 to 5</option>
-                    <option value="6-20">6 to 20</option>
-                    <option value="20+">More than 20</option>
-                  </select>
-                  <p className="ob-hint">This records your current business footprint. Additional branches can be configured in your workspace.</p>
-                </div>
-              </>
-            )}
-
-            {step === 6 && (
-              <>
-                <div className="sa-f">
-                  <label htmlFor="business-country">Business country</label>
-                  <select id="business-country" className="sa-in" value={businessCountry} onChange={(e) => setBusinessCountry(e.target.value)}>
-                    <option value="">Select country</option>
-                    {COUNTRY_OPTIONS.map((country) => <option key={country} value={country}>{country}</option>)}
-                  </select>
-                </div>
-                <div className="ob-g2">
-                  <div className="sa-f">
-                    <label htmlFor="business-state">State / region</label>
-                    <input id="business-state" className="sa-in" value={businessState} onChange={(e) => setBusinessState(e.target.value)} placeholder="State or region" autoComplete="address-level1" />
-                  </div>
-                  <div className="sa-f">
-                    <label htmlFor="business-city">City / town</label>
-                    <input id="business-city" className="sa-in" value={businessCity} onChange={(e) => setBusinessCity(e.target.value)} placeholder="City or town" autoComplete="address-level2" />
-                  </div>
-                </div>
-                <div className="sa-f">
-                  <label htmlFor="business-street">Street address</label>
-                  <input id="business-street" className="sa-in" value={businessStreet} onChange={(e) => setBusinessStreet(e.target.value)} placeholder="House number, street and area" autoComplete="street-address" />
-                </div>
-                <div className="ob-g2">
-                  <div className="sa-f">
-                    <label htmlFor="business-landmark">Landmark <span className="ob-hint">(optional)</span></label>
-                    <input id="business-landmark" className="sa-in" value={businessLandmark} onChange={(e) => setBusinessLandmark(e.target.value)} placeholder="Nearby landmark" />
-                  </div>
-                  <div className="sa-f">
-                    <label htmlFor="business-postcode">Postal code <span className="ob-hint">(optional)</span></label>
-                    <input id="business-postcode" className="sa-in" value={businessPostcode} onChange={(e) => setBusinessPostcode(e.target.value)} placeholder="Postal code" autoComplete="postal-code" />
-                  </div>
-                </div>
-              </>
-            )}
-
-            {step === 7 && (
-              <>
-                <div className="ob-panel">
-                  <div
-                    className="ob-row"
-                    style={{ justifyContent: "flex-start", alignItems: "flex-start" }}
-                  >
-                    <span className="ob-chip">
-                      <Users className="size-5" />
-                    </span>
-                    <div>
-                      <p className="t">Operational profile</p>
-                      <p className="ob-hint">
-                        This helps Strap choose sensible defaults. You can refine the details later.
-                      </p>
+                    <div className="sa-f">
+                      <label htmlFor="phone">Business phone</label>
+                      <input
+                        id="phone"
+                        className="sa-in"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="080…"
+                        inputMode="tel"
+                      />
+                    </div>
+                    <div className="sa-f">
+                      <label htmlFor="currency">Currency</label>
+                      <select
+                        id="currency"
+                        className="sa-in"
+                        value={currency}
+                        onChange={(e) => setCurrency(e.target.value)}
+                      >
+                        {SUPPORTED_CURRENCIES.map((c) => (
+                          <option key={c.code} value={c.code}>
+                            {c.symbol} {c.code} — {c.label}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
-                </div>
-                <div className="sa-f">
-                  <span className="sa-label">How do you expect your team to work?</span>
-                  <div className="ob-g2" style={{ marginTop: 6 }}>
-                    {TEAM_OPTIONS.map((x) => (
-                      <button
-                        key={x}
-                        type="button"
-                        aria-pressed={teamSize === x}
-                        onClick={() => setTeamSize(x)}
-                        className="ob-opt pill"
+                  <div className="sa-f">
+                    <div className="flex items-center justify-between gap-3">
+                      <label htmlFor="tax">Default sales tax (%)</label>
+                      <Link
+                        to="/tax-guide"
+                        className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-2 text-xs font-semibold text-primary hover:bg-accent-soft"
+                        aria-label="Learn how to choose a tax percentage"
+                        title="Learn about tax rates"
                       >
-                        {x}
-                      </button>
-                    ))}
+                        <CircleHelp className="size-4" />
+                      </Link>
+                    </div>
+                    <input
+                      id="tax"
+                      className="sa-in"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      value={taxRate}
+                      onChange={(e) => setTaxRate(e.target.value)}
+                      inputMode="decimal"
+                      placeholder="0"
+                    />
                   </div>
-                </div>
-                <div className="sa-f">
-                  <label htmlFor="goal2">Primary outcome</label>
-                  <select
-                    id="goal2"
-                    className="sa-in"
-                    value={goal}
-                    onChange={(e) => setGoal(e.target.value)}
-                  >
-                    <option value="">Choose one</option>
-                    {GOAL_OPTIONS.map((x) => (
-                      <option key={x}>{x}</option>
-                    ))}
-                  </select>
-                </div>
-              </>
-            )}
+                  <div className="sa-f">
+                    <label htmlFor="business-photo">
+                      Business profile picture <span className="ob-hint">(optional)</span>
+                    </label>
+                    <input
+                      id="business-photo"
+                      className="sa-in ob-file"
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] ?? null;
+                        if (
+                          file &&
+                          !["image/png", "image/jpeg", "image/webp"].includes(file.type)
+                        ) {
+                          toast.error("Choose a PNG, JPG or WebP image.");
+                          e.target.value = "";
+                          setBusinessPhoto(null);
+                          return;
+                        }
+                        if (file && file.size > 5 * 1024 * 1024) {
+                          toast.error("Choose an image smaller than 5 MB.");
+                          e.target.value = "";
+                          setBusinessPhoto(null);
+                          return;
+                        }
+                        setBusinessPhoto(file);
+                      }}
+                    />
+                    <p className="ob-hint">
+                      {businessPhoto ? businessPhoto.name : "PNG, JPG or WebP. Maximum 5 MB."}
+                    </p>
+                  </div>
+                </>
+              )}
 
-            {step === 8 && (
-              <>
-                <div className="ob-seg" role="group" aria-label="Billing period">
-                  <button
-                    type="button"
-                    aria-pressed={billing === "month"}
-                    onClick={() => setBilling("month")}
-                  >
-                    Monthly
-                  </button>
-                  <button
-                    type="button"
-                    aria-pressed={billing === "year"}
-                    onClick={() => setBilling("year")}
-                  >
-                    Yearly<em>Save 20%</em>
-                  </button>
-                </div>
-                <div className="ob-plans">
-                  {(Object.keys(PLANS) as Plan[]).map((code) => {
-                    const p = PLANS[code];
-                    const yearlySave = p.monthly
-                      ? Math.round((1 - p.yearly / (p.monthly * 12)) * 100)
-                      : 0;
-                    return (
-                      <button
-                        type="button"
-                        key={code}
-                        onClick={() => setPlan(code)}
-                        aria-pressed={plan === code}
-                        className="ob-opt ob-plan"
-                      >
-                        {code !== "free" && (
-                          <span className="ob-badge">
-                            {code === "pro" ? "Most complete" : "For growing shops"}
+              {step === 5 && (
+                <>
+                  <div className="sa-f">
+                    <span className="sa-label">Is this a registered business?</span>
+                    <div className="ob-g2">
+                      {(
+                        [
+                          ["Registered", "registered"],
+                          ["Not registered", "not_registered"],
+                          ["Registration in progress", "in_progress"],
+                        ] as const
+                      ).map(([label, value]) => (
+                        <button
+                          key={value}
+                          type="button"
+                          className="ob-opt pill"
+                          aria-pressed={registrationStatus === value}
+                          onClick={() => setRegistrationStatus(value)}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="sa-f">
+                    <label htmlFor="registration-number">
+                      Business registration number{" "}
+                      <span className="ob-hint">(you can add this later)</span>
+                    </label>
+                    <input
+                      id="registration-number"
+                      className="sa-in"
+                      value={registrationNumber}
+                      onChange={(e) => setRegistrationNumber(e.target.value)}
+                      placeholder="e.g. RC1234567"
+                      autoCapitalize="characters"
+                    />
+                  </div>
+                  <div className="sa-f">
+                    <label htmlFor="branch-count">How many branches do you operate?</label>
+                    <select
+                      id="branch-count"
+                      className="sa-in"
+                      value={declaredBranchCount}
+                      onChange={(e) =>
+                        setDeclaredBranchCount(e.target.value as typeof declaredBranchCount)
+                      }
+                    >
+                      <option value="">Select branch count</option>
+                      <option value="1">1 (single location)</option>
+                      <option value="2-5">2 to 5</option>
+                      <option value="6-20">6 to 20</option>
+                      <option value="20+">More than 20</option>
+                    </select>
+                    <p className="ob-hint">
+                      This records your current business footprint. Additional branches can be
+                      configured in your workspace.
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {step === 6 && (
+                <>
+                  <div className="sa-f">
+                    <label htmlFor="business-country">Business country</label>
+                    <select
+                      id="business-country"
+                      className="sa-in"
+                      value={businessCountry}
+                      onChange={(e) => setBusinessCountry(e.target.value)}
+                    >
+                      <option value="">Select country</option>
+                      {COUNTRY_OPTIONS.map((country) => (
+                        <option key={country} value={country}>
+                          {country}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="ob-g2">
+                    <div className="sa-f">
+                      <label htmlFor="business-state">State / region</label>
+                      <input
+                        id="business-state"
+                        className="sa-in"
+                        value={businessState}
+                        onChange={(e) => setBusinessState(e.target.value)}
+                        placeholder="State or region"
+                        autoComplete="address-level1"
+                      />
+                    </div>
+                    <div className="sa-f">
+                      <label htmlFor="business-city">City / town</label>
+                      <input
+                        id="business-city"
+                        className="sa-in"
+                        value={businessCity}
+                        onChange={(e) => setBusinessCity(e.target.value)}
+                        placeholder="City or town"
+                        autoComplete="address-level2"
+                      />
+                    </div>
+                  </div>
+                  <div className="sa-f">
+                    <label htmlFor="business-street">Street address</label>
+                    <input
+                      id="business-street"
+                      className="sa-in"
+                      value={businessStreet}
+                      onChange={(e) => setBusinessStreet(e.target.value)}
+                      placeholder="House number, street and area"
+                      autoComplete="street-address"
+                    />
+                  </div>
+                  <div className="ob-g2">
+                    <div className="sa-f">
+                      <label htmlFor="business-landmark">
+                        Landmark <span className="ob-hint">(optional)</span>
+                      </label>
+                      <input
+                        id="business-landmark"
+                        className="sa-in"
+                        value={businessLandmark}
+                        onChange={(e) => setBusinessLandmark(e.target.value)}
+                        placeholder="Nearby landmark"
+                      />
+                    </div>
+                    <div className="sa-f">
+                      <label htmlFor="business-postcode">
+                        Postal code <span className="ob-hint">(optional)</span>
+                      </label>
+                      <input
+                        id="business-postcode"
+                        className="sa-in"
+                        value={businessPostcode}
+                        onChange={(e) => setBusinessPostcode(e.target.value)}
+                        placeholder="Postal code"
+                        autoComplete="postal-code"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {step === 7 && (
+                <>
+                  <div className="ob-panel">
+                    <div
+                      className="ob-row"
+                      style={{ justifyContent: "flex-start", alignItems: "flex-start" }}
+                    >
+                      <span className="ob-chip">
+                        <Users className="size-5" />
+                      </span>
+                      <div>
+                        <p className="t">Operational profile</p>
+                        <p className="ob-hint">
+                          This helps Strap choose sensible defaults. You can refine the details
+                          later.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="sa-f">
+                    <span className="sa-label">How do you expect your team to work?</span>
+                    <div className="ob-g2" style={{ marginTop: 6 }}>
+                      {TEAM_OPTIONS.map((x) => (
+                        <button
+                          key={x}
+                          type="button"
+                          aria-pressed={teamSize === x}
+                          onClick={() => setTeamSize(x)}
+                          className="ob-opt pill"
+                        >
+                          {x}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="sa-f">
+                    <label htmlFor="goal2">Primary outcome</label>
+                    <select
+                      id="goal2"
+                      className="sa-in"
+                      value={goal}
+                      onChange={(e) => setGoal(e.target.value)}
+                    >
+                      <option value="">Choose one</option>
+                      {GOAL_OPTIONS.map((x) => (
+                        <option key={x}>{x}</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+
+              {step === 8 && (
+                <>
+                  <div className="ob-seg" role="group" aria-label="Billing period">
+                    <button
+                      type="button"
+                      aria-pressed={billing === "month"}
+                      onClick={() => setBilling("month")}
+                    >
+                      Monthly
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={billing === "year"}
+                      onClick={() => setBilling("year")}
+                    >
+                      Yearly<em>Save 20%</em>
+                    </button>
+                  </div>
+                  <div className="ob-plans">
+                    {(Object.keys(PLANS) as Plan[]).map((code) => {
+                      const p = PLANS[code];
+                      const yearlySave = p.monthly
+                        ? Math.round((1 - p.yearly / (p.monthly * 12)) * 100)
+                        : 0;
+                      return (
+                        <button
+                          type="button"
+                          key={code}
+                          onClick={() => setPlan(code)}
+                          aria-pressed={plan === code}
+                          className="ob-opt ob-plan"
+                        >
+                          {code !== "free" && (
+                            <span className="ob-badge">
+                              {code === "pro" ? "Most complete" : "For growing shops"}
+                            </span>
+                          )}
+                          <span className="nm">{p.name}</span>
+                          <span className="ds">{p.description}</span>
+                          <span className="pr">
+                            {p.monthly === 0
+                              ? "Free"
+                              : `₦${(billing === "year" ? p.yearly : p.monthly).toLocaleString()}`}
+                            <small>/{billing === "year" ? "year" : "month"}</small>
                           </span>
-                        )}
-                        <span className="nm">{p.name}</span>
-                        <span className="ds">{p.description}</span>
-                        <span className="pr">
-                          {p.monthly === 0
-                            ? "Free"
-                            : `₦${(billing === "year" ? p.yearly : p.monthly).toLocaleString()}`}
-                          <small>/{billing === "year" ? "year" : "month"}</small>
-                        </span>
-                        <ul>
-                          {p.features.map((f) => (
-                            <li key={f}>
-                              <Check className="size-3.5" />
-                              {f}
-                            </li>
-                          ))}
-                        </ul>
-                        {billing === "year" && yearlySave > 0 && (
-                          <span className="ob-save">Save {yearlySave}% annually</span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="ob-hint">
-                  Paid plans are selected now and marked pending until the payment provider is
-                  connected. Strap never unlocks paid features from a pending payment.
-                </p>
-              </>
-            )}
-
-            {step === 9 && (
-              <>
-                <div className="ob-sum">
-                  <p className="k">Ready to build</p>
-                  <h3>{businessName || "Your business"}</h3>
-                  <p>
-                    {businessType || "Business"} ·{" "}
-                    {BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ??
-                      "General retail"}{" "}
-                    ·{" "}
-                    {businessModel === "both"
-                      ? "Physical + online"
-                      : businessModel === "online"
-                        ? "Online"
-                        : "Physical"}
+                          <ul>
+                            {p.features.map((f) => (
+                              <li key={f}>
+                                <Check className="size-3.5" />
+                                {f}
+                              </li>
+                            ))}
+                          </ul>
+                          {billing === "year" && yearlySave > 0 && (
+                            <span className="ob-save">Save {yearlySave}% annually</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="ob-hint">
+                    Paid plans are selected now and marked pending until the payment provider is
+                    connected. Strap never unlocks paid features from a pending payment.
                   </p>
-                </div>
-                <div className="ob-st2">
-                  <div className="ob-stat">
-                    <small>Business profile</small>
-                    <b>{BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ?? "Not selected"}</b>
-                  </div>
-                  <div className="ob-stat">
-                    <small>Registration</small>
-                    <b>{registrationStatus === "registered" ? "Registered" : registrationStatus === "in_progress" ? "In progress" : "Not registered"}{registrationNumber.trim() ? " · " + registrationNumber.trim() : ""}</b>
-                  </div>
-                  <div className="ob-stat">
-                    <small>Locations</small>
-                    <b>{declaredBranchCount === "1" ? "1 branch" : declaredBranchCount + " branches"}</b>
-                  </div>
-                  <div className="ob-stat">
-                    <small>Business address</small>
-                    <b>{[businessStreet, businessLandmark, businessCity, businessState, businessCountry, businessPostcode].filter(Boolean).join(", ")}</b>
-                  </div>
-                  <div className="ob-stat">
-                    <small>Personal country</small>
-                    <b>{personalCountry}</b>
-                  </div>
-                  <div className="ob-stat">
-                    <small>Plan</small>
-                    <b>{selectedPlan?.name} · {priceLabel}</b>
-                  </div>
-                  <div className="ob-stat">
-                    <small>Online store</small>
-                    <b>{onlineStoreEnabled ? "Prepared" : "Off until you enable it"}</b>
-                  </div>
-                </div>
-                <div className="sa-notice">
-                  After setup, Strap will take you into the workspace and give you a guided tour.
-                  You can revisit preferences and online-store controls any time.
-                </div>
-              </>
-            )}
-          </div>
+                </>
+              )}
 
-          <div className="ob-nav">
-            <button
-              type="button"
-              className="sa-b"
-              disabled={step === 0 || submitting}
-              onClick={() => setStep((s) => Math.max(0, s - 1))}
-            >
-              <ArrowLeft className="size-4" />
-              Back
-            </button>
-            {step < 9 ? (
+              {step === 9 && (
+                <>
+                  <div className="ob-sum">
+                    <p className="k">Ready to build</p>
+                    <h3>{businessName || "Your business"}</h3>
+                    <p>
+                      {businessType || "Business"} ·{" "}
+                      {BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ??
+                        "General retail"}{" "}
+                      ·{" "}
+                      {businessModel === "both"
+                        ? "Physical + online"
+                        : businessModel === "online"
+                          ? "Online"
+                          : "Physical"}
+                    </p>
+                  </div>
+                  <div className="ob-st2">
+                    <div className="ob-stat">
+                      <small>Business profile</small>
+                      <b>
+                        {BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ??
+                          "Not selected"}
+                      </b>
+                    </div>
+                    <div className="ob-stat">
+                      <small>Registration</small>
+                      <b>
+                        {registrationStatus === "registered"
+                          ? "Registered"
+                          : registrationStatus === "in_progress"
+                            ? "In progress"
+                            : "Not registered"}
+                        {registrationNumber.trim() ? " · " + registrationNumber.trim() : ""}
+                      </b>
+                    </div>
+                    <div className="ob-stat">
+                      <small>Locations</small>
+                      <b>
+                        {declaredBranchCount === "1"
+                          ? "1 branch"
+                          : declaredBranchCount + " branches"}
+                      </b>
+                    </div>
+                    <div className="ob-stat">
+                      <small>Business address</small>
+                      <b>
+                        {[
+                          businessStreet,
+                          businessLandmark,
+                          businessCity,
+                          businessState,
+                          businessCountry,
+                          businessPostcode,
+                        ]
+                          .filter(Boolean)
+                          .join(", ")}
+                      </b>
+                    </div>
+                    <div className="ob-stat">
+                      <small>Personal country</small>
+                      <b>{personalCountry}</b>
+                    </div>
+                    <div className="ob-stat">
+                      <small>Plan</small>
+                      <b>
+                        {selectedPlan?.name} · {priceLabel}
+                      </b>
+                    </div>
+                    <div className="ob-stat">
+                      <small>Online store</small>
+                      <b>{onlineStoreEnabled ? "Prepared" : "Off until you enable it"}</b>
+                    </div>
+                  </div>
+                  <div className="sa-notice">
+                    After setup, Strap will take you into the workspace and give you a guided tour.
+                    You can revisit preferences and online-store controls any time.
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="ob-nav">
               <button
                 type="button"
-                className="sa-b p"
-                disabled={!canContinue()}
-                onClick={() => setStep((s) => s + 1)}
+                className="sa-b"
+                disabled={step === 0 || submitting}
+                onClick={() => setStep((s) => Math.max(0, s - 1))}
               >
-                Continue
-                <ArrowRight className="size-4" />
+                <ArrowLeft className="size-4" />
+                Back
               </button>
-            ) : (
-              <button
-                type="button"
-                className="sa-b p"
-                disabled={submitting || !plan}
-                onClick={() => void finish()}
-              >
-                {submitting ? "Creating workspace…" : "Enter Strap"}
-                <ArrowRight className="size-4" />
-              </button>
-            )}
+              {step < 9 ? (
+                <button
+                  type="button"
+                  className="sa-b p"
+                  disabled={!canContinue()}
+                  onClick={() => setStep((s) => s + 1)}
+                >
+                  Continue
+                  <ArrowRight className="size-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="sa-b p"
+                  disabled={submitting || !plan}
+                  onClick={() => void finish()}
+                >
+                  {submitting ? "Creating workspace…" : "Enter Strap"}
+                  <ArrowRight className="size-4" />
+                </button>
+              )}
+            </div>
           </div>
-        </div>
         </div>
       </section>
     </main>

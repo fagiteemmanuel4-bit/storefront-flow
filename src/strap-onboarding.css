@@ -457,7 +457,6 @@ select.sa-in {
   gap: 10px;
 }
 
-
 /* Onboarding refresh: the same lemon hero and black sheet used by the auth prototype. */
 .ob-screen {
   min-height: 100dvh;
@@ -504,19 +503,25 @@ select.sa-in {
 .ob-screen .ob-box h1 {
   margin: 0;
   color: #fff;
-  font: 700 clamp(27px, 5vw, 36px)/1.16 "Sora", sans-serif;
+  font:
+    700 clamp(27px, 5vw, 36px)/1.16 "Sora",
+    sans-serif;
   letter-spacing: -0.04em;
 }
 .ob-screen .ob-box > .sa-mut {
   margin: 9px 0 0;
   color: #aaa99f;
-  font: 400 14px/1.55 "Sora", sans-serif;
+  font:
+    400 14px/1.55 "Sora",
+    sans-serif;
 }
 .ob-screen .ob-kicker {
   margin: 0 0 12px;
   color: #e6f53a;
-  font: 600 11px "Sora", sans-serif;
-  letter-spacing: .1em;
+  font:
+    600 11px "Sora",
+    sans-serif;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 .ob-screen .ob-prog {
@@ -537,7 +542,9 @@ select.sa-in {
 .ob-screen .sa-f label,
 .ob-screen .sa-label {
   color: #f4f4ed;
-  font: 600 13px/1.4 "Sora", sans-serif;
+  font:
+    600 13px/1.4 "Sora",
+    sans-serif;
 }
 .ob-screen .sa-in {
   min-height: 54px;
@@ -545,7 +552,9 @@ select.sa-in {
   border-radius: 14px;
   background: #151515;
   color: #fff;
-  font: 500 14px "Sora", sans-serif;
+  font:
+    500 14px "Sora",
+    sans-serif;
   padding: 14px 16px;
 }
 .ob-screen .sa-in::placeholder {
@@ -553,11 +562,13 @@ select.sa-in {
 }
 .ob-screen .sa-in:focus {
   border-color: #e6f53a;
-  outline: 2px solid rgba(230, 245, 58, .2);
+  outline: 2px solid rgba(230, 245, 58, 0.2);
 }
 .ob-screen .ob-hint {
   color: #999990;
-  font: 400 12px/1.5 "Sora", sans-serif;
+  font:
+    400 12px/1.5 "Sora",
+    sans-serif;
 }
 .ob-screen .ob-g2 {
   gap: 10px;
@@ -574,7 +585,7 @@ select.sa-in {
 }
 .ob-screen .ob-opt[aria-pressed="true"] {
   border-color: #e6f53a;
-  background: rgba(230, 245, 58, .1);
+  background: rgba(230, 245, 58, 0.1);
   color: #fff;
 }
 .ob-screen .ob-opt .ob-chip {
@@ -615,7 +626,9 @@ select.sa-in {
   border-radius: 999px;
   background: transparent;
   color: #fff;
-  font: 600 13px "Sora", sans-serif;
+  font:
+    600 13px "Sora",
+    sans-serif;
 }
 .ob-screen .ob-nav .sa-b.p {
   border-color: #e6f53a;
@@ -623,7 +636,7 @@ select.sa-in {
   color: #0a0a0a;
 }
 .ob-screen .ob-nav .sa-b:disabled {
-  opacity: .45;
+  opacity: 0.45;
 }
 .ob-screen :is(button, input, select):focus-visible {
   outline: 2px solid #e6f53a;
@@ -639,7 +652,9 @@ select.sa-in {
   border-radius: 999px;
   background: #e6f53a;
   color: #0a0a0a;
-  font: 600 12px "Sora", sans-serif;
+  font:
+    600 12px "Sora",
+    sans-serif;
 }
 @media (min-width: 860px) {
   .ob-screen .ob-hero {

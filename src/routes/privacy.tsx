@@ -96,7 +96,9 @@ function Privacy() {
                 your account.
               </li>
               <li>
-                <strong className="text-foreground">Business verification and compliance data:</strong>{" "}
+                <strong className="text-foreground">
+                  Business verification and compliance data:
+                </strong>{" "}
                 business registration status and number (where available), declared branch count,
                 business country, state/region, city, street address, landmark, postal code, website
                 details and business profile image.

@@ -32,6 +32,7 @@ import { Route as AuthenticatedActivityRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedBeautyRouteImport } from './routes/_authenticated/beauty'
 import { Route as AuthenticatedBranchesRouteImport } from './routes/_authenticated/branches'
 import { Route as AuthenticatedCommandCenterRouteImport } from './routes/_authenticated/command-center'
+import { Route as AuthenticatedComplianceSetupRouteImport } from './routes/_authenticated/compliance-setup'
 import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedElectronicsWorkspaceRouteImport } from './routes/_authenticated/electronics-workspace'
@@ -203,6 +204,12 @@ const AuthenticatedCommandCenterRoute =
   AuthenticatedCommandCenterRouteImport.update({
     id: '/command-center',
     path: '/command-center',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedComplianceSetupRoute =
+  AuthenticatedComplianceSetupRouteImport.update({
+    id: '/compliance-setup',
+    path: '/compliance-setup',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCustomersRoute = AuthenticatedCustomersRouteImport.update({
@@ -548,6 +555,7 @@ export interface FileRoutesByFullPath {
   '/beauty': typeof AuthenticatedBeautyRoute
   '/branches': typeof AuthenticatedBranchesRoute
   '/command-center': typeof AuthenticatedCommandCenterRoute
+  '/compliance-setup': typeof AuthenticatedComplianceSetupRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/electronics-workspace': typeof AuthenticatedElectronicsWorkspaceRoute
@@ -629,6 +637,7 @@ export interface FileRoutesByTo {
   '/beauty': typeof AuthenticatedBeautyRoute
   '/branches': typeof AuthenticatedBranchesRoute
   '/command-center': typeof AuthenticatedCommandCenterRoute
+  '/compliance-setup': typeof AuthenticatedComplianceSetupRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/electronics-workspace': typeof AuthenticatedElectronicsWorkspaceRoute
@@ -711,6 +720,7 @@ export interface FileRoutesById {
   '/_authenticated/beauty': typeof AuthenticatedBeautyRoute
   '/_authenticated/branches': typeof AuthenticatedBranchesRoute
   '/_authenticated/command-center': typeof AuthenticatedCommandCenterRoute
+  '/_authenticated/compliance-setup': typeof AuthenticatedComplianceSetupRoute
   '/_authenticated/customers': typeof AuthenticatedCustomersRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/electronics-workspace': typeof AuthenticatedElectronicsWorkspaceRoute
@@ -794,6 +804,7 @@ export interface FileRouteTypes {
     | '/beauty'
     | '/branches'
     | '/command-center'
+    | '/compliance-setup'
     | '/customers'
     | '/dashboard'
     | '/electronics-workspace'
@@ -875,6 +886,7 @@ export interface FileRouteTypes {
     | '/beauty'
     | '/branches'
     | '/command-center'
+    | '/compliance-setup'
     | '/customers'
     | '/dashboard'
     | '/electronics-workspace'
@@ -956,6 +968,7 @@ export interface FileRouteTypes {
     | '/_authenticated/beauty'
     | '/_authenticated/branches'
     | '/_authenticated/command-center'
+    | '/_authenticated/compliance-setup'
     | '/_authenticated/customers'
     | '/_authenticated/dashboard'
     | '/_authenticated/electronics-workspace'
@@ -1202,6 +1215,13 @@ declare module '@tanstack/react-router' {
       path: '/command-center'
       fullPath: '/command-center'
       preLoaderRoute: typeof AuthenticatedCommandCenterRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/compliance-setup': {
+      id: '/_authenticated/compliance-setup'
+      path: '/compliance-setup'
+      fullPath: '/compliance-setup'
+      preLoaderRoute: typeof AuthenticatedComplianceSetupRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/customers': {
@@ -1672,6 +1692,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBeautyRoute: typeof AuthenticatedBeautyRoute
   AuthenticatedBranchesRoute: typeof AuthenticatedBranchesRoute
   AuthenticatedCommandCenterRoute: typeof AuthenticatedCommandCenterRoute
+  AuthenticatedComplianceSetupRoute: typeof AuthenticatedComplianceSetupRoute
   AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedElectronicsWorkspaceRoute: typeof AuthenticatedElectronicsWorkspaceRoute
@@ -1713,6 +1734,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBeautyRoute: AuthenticatedBeautyRoute,
   AuthenticatedBranchesRoute: AuthenticatedBranchesRoute,
   AuthenticatedCommandCenterRoute: AuthenticatedCommandCenterRoute,
+  AuthenticatedComplianceSetupRoute: AuthenticatedComplianceSetupRoute,
   AuthenticatedCustomersRoute: AuthenticatedCustomersRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedElectronicsWorkspaceRoute:

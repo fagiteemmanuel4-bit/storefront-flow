@@ -39,10 +39,7 @@ export const Route = createFileRoute("/_authenticated")({
             .select("date_of_birth, country")
             .eq("id", data.user.id)
             .maybeSingle(),
-          supabase
-            .from("store_compliance_profiles")
-            .select("store_id")
-            .in("store_id", storeIds),
+          supabase.from("store_compliance_profiles").select("store_id").in("store_id", storeIds),
         ]);
         const completedStoreIds = new Set((complianceRows ?? []).map((row) => row.store_id));
         const personalDetailsComplete = Boolean(profile?.date_of_birth && profile.country);

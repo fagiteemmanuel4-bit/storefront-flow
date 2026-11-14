@@ -15,9 +15,23 @@ type WebsiteStatus = "existing" | "strap" | "none" | "";
 type BranchCount = "1" | "2-5" | "6-20" | "20+" | "";
 
 const COUNTRY_OPTIONS = [
-  "Nigeria", "Ghana", "Kenya", "South Africa", "Egypt", "Uganda", "Tanzania",
-  "Rwanda", "Senegal", "Côte d’Ivoire", "Cameroon", "United Kingdom",
-  "United States", "Canada", "United Arab Emirates", "India", "Other",
+  "Nigeria",
+  "Ghana",
+  "Kenya",
+  "South Africa",
+  "Egypt",
+  "Uganda",
+  "Tanzania",
+  "Rwanda",
+  "Senegal",
+  "Côte d’Ivoire",
+  "Cameroon",
+  "United Kingdom",
+  "United States",
+  "Canada",
+  "United Arab Emirates",
+  "India",
+  "Other",
 ];
 
 export const Route = createFileRoute("/_authenticated/compliance-setup")({
@@ -79,15 +93,8 @@ function ComplianceSetupPage() {
     void (async () => {
       const storeIds = ownedMemberships.map((membership) => membership.store.id);
       const [profileResult, complianceResult] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select("date_of_birth, country")
-          .eq("id", userId)
-          .maybeSingle(),
-        supabase
-          .from("store_compliance_profiles")
-          .select("*")
-          .in("store_id", storeIds),
+        supabase.from("profiles").select("date_of_birth, country").eq("id", userId).maybeSingle(),
+        supabase.from("store_compliance_profiles").select("*").in("store_id", storeIds),
       ]);
       if (profileResult.error) throw new Error(profileResult.error.message);
       if (complianceResult.error) throw new Error(complianceResult.error.message);
@@ -97,17 +104,22 @@ function ComplianceSetupPage() {
         ownedMemberships.find((membership) => !completedStoreIds.has(membership.store.id)) ??
         ownedMemberships[0]!;
       const store = target.store;
-      const compliance = (complianceResult.data ?? []).find((row) => row.store_id === store.id) ?? null;
+      const compliance =
+        (complianceResult.data ?? []).find((row) => row.store_id === store.id) ?? null;
       const profile = profileResult.data;
-      const settings = store.storefront_settings && typeof store.storefront_settings === "object"
-        ? (store.storefront_settings as Record<string, unknown>)
-        : {};
-      const onboarding = settings.onboarding && typeof settings.onboarding === "object"
-        ? (settings.onboarding as Record<string, unknown>)
-        : {};
+      const settings =
+        store.storefront_settings && typeof store.storefront_settings === "object"
+          ? (store.storefront_settings as Record<string, unknown>)
+          : {};
+      const onboarding =
+        settings.onboarding && typeof settings.onboarding === "object"
+          ? (settings.onboarding as Record<string, unknown>)
+          : {};
       const fallbackWebsiteStatus = onboarding.websiteStatus;
       const validWebsiteStatus =
-        fallbackWebsiteStatus === "existing" || fallbackWebsiteStatus === "strap" || fallbackWebsiteStatus === "none"
+        fallbackWebsiteStatus === "existing" ||
+        fallbackWebsiteStatus === "strap" ||
+        fallbackWebsiteStatus === "none"
           ? fallbackWebsiteStatus
           : "";
 
@@ -128,7 +140,8 @@ function ComplianceSetupPage() {
       setWebsiteStatus((compliance?.website_status as WebsiteStatus) ?? validWebsiteStatus);
       setWebsiteUrl(compliance?.website_url ?? String(onboarding.websiteUrl ?? ""));
       setWantsStrapWebsite(
-        compliance?.wants_strap_website ?? Boolean(onboarding.onlineStoreEnabled ?? settings.onlineStoreEnabled),
+        compliance?.wants_strap_website ??
+          Boolean(onboarding.onlineStoreEnabled ?? settings.onlineStoreEnabled),
       );
       setExistingPhotoUrl(compliance?.business_profile_photo_url ?? store.logo_url ?? "");
       setLoading(false);
@@ -151,8 +164,16 @@ function ComplianceSetupPage() {
       toast.error("Enter a valid date of birth. You must be at least 18 years old.");
       return;
     }
-    if (!personalCountry || !registrationStatus || !branchCount || !businessCountry ||
-      !businessState.trim() || !businessCity.trim() || !businessStreet.trim() || !websiteStatus) {
+    if (
+      !personalCountry ||
+      !registrationStatus ||
+      !branchCount ||
+      !businessCountry ||
+      !businessState.trim() ||
+      !businessCity.trim() ||
+      !businessStreet.trim() ||
+      !websiteStatus
+    ) {
       toast.error("Complete all required personal and business details.");
       return;
     }
@@ -177,8 +198,11 @@ function ComplianceSetupPage() {
         .eq("id", userId)
         .maybeSingle();
       if (profileLookupError) throw new Error(profileLookupError.message);
-      const profileName = existingProfile?.full_name ||
-        String(authResult.user.user_metadata?.full_name ?? authResult.user.user_metadata?.name ?? "");
+      const profileName =
+        existingProfile?.full_name ||
+        String(
+          authResult.user.user_metadata?.full_name ?? authResult.user.user_metadata?.name ?? "",
+        );
       const { error: profileError } = await supabase.from("profiles").upsert(
         {
           id: userId,
@@ -199,7 +223,9 @@ function ComplianceSetupPage() {
         businessState.trim(),
         businessCountry.trim(),
         businessPostcode.trim(),
-      ].filter(Boolean).join(", ");
+      ]
+        .filter(Boolean)
+        .join(", ");
 
       let photoUrl = existingPhotoUrl;
       if (businessPhoto) {
@@ -213,19 +239,23 @@ function ComplianceSetupPage() {
             cacheControl: "3600",
           });
         if (uploadError) {
-          toast.error("Your details will be saved, but the profile photo could not be uploaded. You can add it later.");
+          toast.error(
+            "Your details will be saved, but the profile photo could not be uploaded. You can add it later.",
+          );
         } else {
           photoUrl = supabase.storage.from("kudi-store-assets").getPublicUrl(path).data.publicUrl;
         }
       }
 
-      const currentSettings = selectedMembership.store.storefront_settings &&
+      const currentSettings =
+        selectedMembership.store.storefront_settings &&
         typeof selectedMembership.store.storefront_settings === "object"
-        ? (selectedMembership.store.storefront_settings as Record<string, unknown>)
-        : {};
-      const currentOnboarding = currentSettings.onboarding && typeof currentSettings.onboarding === "object"
-        ? (currentSettings.onboarding as Record<string, unknown>)
-        : {};
+          ? (selectedMembership.store.storefront_settings as Record<string, unknown>)
+          : {};
+      const currentOnboarding =
+        currentSettings.onboarding && typeof currentSettings.onboarding === "object"
+          ? (currentSettings.onboarding as Record<string, unknown>)
+          : {};
       const storefrontSettings = {
         ...currentSettings,
         onboarding: {
@@ -337,7 +367,9 @@ function ComplianceSetupPage() {
             <div className="sa-box ob-box">
               <p className="ob-kicker">Account update</p>
               <h1>We couldn’t load your details</h1>
-              <p className="sa-mut" role="alert">{loadError}</p>
+              <p className="sa-mut" role="alert">
+                {loadError}
+              </p>
               <button type="button" className="sa-b p" onClick={() => window.location.reload()}>
                 Try again
               </button>
@@ -366,10 +398,12 @@ function ComplianceSetupPage() {
             <p className="ob-kicker">Required account update</p>
             <h1>Complete your business profile</h1>
             <p className="sa-mut">
-              We need these details for your account and business compliance records. You can continue using your workspace once the required information is saved.
+              We need these details for your account and business compliance records. You can
+              continue using your workspace once the required information is saved.
             </p>
             <p className="ob-hint">
-              Updating: <strong>{storeName}</strong>. Your details are private to your account and platform compliance administrators; ordinary store staff cannot view them.
+              Updating: <strong>{storeName}</strong>. Your details are private to your account and
+              platform compliance administrators; ordinary store staff cannot view them.
             </p>
 
             <form
@@ -403,7 +437,11 @@ function ComplianceSetupPage() {
                   required
                 >
                   <option value="">Select your country</option>
-                  {COUNTRY_OPTIONS.map((country) => <option key={country} value={country}>{country}</option>)}
+                  {COUNTRY_OPTIONS.map((country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -413,7 +451,9 @@ function ComplianceSetupPage() {
                   id="compliance-registration-status"
                   className="sa-in"
                   value={registrationStatus}
-                  onChange={(event) => setRegistrationStatus(event.target.value as RegistrationStatus)}
+                  onChange={(event) =>
+                    setRegistrationStatus(event.target.value as RegistrationStatus)
+                  }
                   required
                 >
                   <option value="">Select status</option>
@@ -424,7 +464,10 @@ function ComplianceSetupPage() {
               </div>
 
               <div className="sa-f">
-                <label htmlFor="compliance-registration-number">Business registration number <span className="ob-hint">(optional if not available yet)</span></label>
+                <label htmlFor="compliance-registration-number">
+                  Business registration number{" "}
+                  <span className="ob-hint">(optional if not available yet)</span>
+                </label>
                 <input
                   id="compliance-registration-number"
                   className="sa-in"
@@ -462,7 +505,11 @@ function ComplianceSetupPage() {
                   required
                 >
                   <option value="">Select country</option>
-                  {COUNTRY_OPTIONS.map((country) => <option key={country} value={country}>{country}</option>)}
+                  {COUNTRY_OPTIONS.map((country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -504,12 +551,17 @@ function ComplianceSetupPage() {
                   autoComplete="street-address"
                   required
                 />
-                <p className="ob-hint">If your previous address is prefilled as one line, separate the street, city and region into their respective fields.</p>
+                <p className="ob-hint">
+                  If your previous address is prefilled as one line, separate the street, city and
+                  region into their respective fields.
+                </p>
               </div>
 
               <div className="ob-g2">
                 <div className="sa-f">
-                  <label htmlFor="compliance-business-landmark">Landmark <span className="ob-hint">(optional)</span></label>
+                  <label htmlFor="compliance-business-landmark">
+                    Landmark <span className="ob-hint">(optional)</span>
+                  </label>
                   <input
                     id="compliance-business-landmark"
                     className="sa-in"
@@ -519,7 +571,9 @@ function ComplianceSetupPage() {
                   />
                 </div>
                 <div className="sa-f">
-                  <label htmlFor="compliance-business-postcode">Postal code <span className="ob-hint">(optional)</span></label>
+                  <label htmlFor="compliance-business-postcode">
+                    Postal code <span className="ob-hint">(optional)</span>
+                  </label>
                   <input
                     id="compliance-business-postcode"
                     className="sa-in"
@@ -582,7 +636,9 @@ function ComplianceSetupPage() {
               )}
 
               <div className="sa-f">
-                <label htmlFor="compliance-business-photo">Business profile picture <span className="ob-hint">(optional)</span></label>
+                <label htmlFor="compliance-business-photo">
+                  Business profile picture <span className="ob-hint">(optional)</span>
+                </label>
                 <input
                   id="compliance-business-photo"
                   className="sa-in ob-file"
@@ -605,7 +661,13 @@ function ComplianceSetupPage() {
                     setBusinessPhoto(file);
                   }}
                 />
-                <p className="ob-hint">{businessPhoto ? businessPhoto.name : existingPhotoUrl ? "A business profile picture is already saved. Choose a new one to replace it." : "PNG, JPG or WebP. Maximum 5 MB."}</p>
+                <p className="ob-hint">
+                  {businessPhoto
+                    ? businessPhoto.name
+                    : existingPhotoUrl
+                      ? "A business profile picture is already saved. Choose a new one to replace it."
+                      : "PNG, JPG or WebP. Maximum 5 MB."}
+                </p>
               </div>
 
               <div className="ob-nav">
