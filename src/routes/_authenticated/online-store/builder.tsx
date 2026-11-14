@@ -206,6 +206,13 @@ function makeSections(types: string[], prefix = String(Date.now())): Section[] {
 
 function StoreBuilder() {
   const { store } = useStoreContext();
+  const businessModeValue = (store?.storefront_settings as any)?.businessMode ?? store?.business_type;
+  const businessMode = resolveBusinessMode(businessModeValue);
+  const profileResult = businessMode ? getBusinessModeProfile(businessMode.key) : null;
+  const modeProfile = profileResult?.ok ? profileResult.profile : null;
+  const profileTemplates = modeProfile?.storefront.templates ?? [];
+  const allowedSectionTypes = modeProfile?.storefront.allowedSectionTypes ?? SECTION_TYPES;
+  const availableSectionTypes = allowedSectionTypes;
   const [template, setTemplate] = useState<Template>(DEFAULT_TEMPLATE);
   const [theme, setTheme] = useState(defaultTheme);
   const [branding, setBranding] = useState<Branding>(defaultBranding);
