@@ -139,15 +139,30 @@ function OnlineStoreSetupPage() {
       };
       const existingConfig = await onlineSupabase
         .from("storefront_configs")
-        .select("id")
+        .select("id,branding,seo")
         .eq("store_id", store.id)
         .maybeSingle();
       if (existingConfig.error) throw new Error(existingConfig.error.message);
 
       if (existingConfig.data) {
+        const savedBranding = (existingConfig.data.branding ?? {}) as Record<string, unknown>;
+        const savedSeo = (existingConfig.data.seo ?? {}) as Record<string, unknown>;
         const configResult = await onlineSupabase
           .from("storefront_configs")
-          .update({ is_published: true })
+          .update({
+            is_published: true,
+            branding: {
+              ...savedBranding,
+              storeName: form.displayName.trim(),
+              logoUrl: logoUrl || existing.data?.logo_url || "",
+              description: form.description.trim(),
+            },
+            seo: {
+              ...savedSeo,
+              title: form.displayName.trim(),
+              description: form.description.trim(),
+            },
+          })
           .eq("store_id", store.id);
         if (configResult.error) throw new Error(configResult.error.message);
       } else {
