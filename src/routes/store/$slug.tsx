@@ -136,7 +136,7 @@ function PublicStorefrontPage() {
     .replace(/url\s*\([^)]*\)/gi, "none")
     .replace(/expression\s*\([^)]*\)/gi, "none")
     .replace(/javascript\s*:/gi, "")
-    .replace(/<\s*\/\s*style/gi, "");
+    .replace(/\x3c\s*\/\s*style/gi, "");
   const bodyFont = safeFont(configuredTheme.fontFamily, "Inter");
   const headingFont = safeFont(configuredTheme.headingFontFamily, bodyFont);
   const radius = configuredTheme.buttonRadius === "small" ? "10px" : configuredTheme.buttonRadius === "large" ? "20px" : "14px";
