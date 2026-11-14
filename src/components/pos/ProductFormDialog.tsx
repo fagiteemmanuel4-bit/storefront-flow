@@ -4,6 +4,7 @@ import { ArrowLeft, ImagePlus, Package, Plus, ScanLine, X } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { errorMessage } from "@/lib/format";
 import type { ProductWithStock } from "@/lib/pos-types";
 import { Button } from "@/components/ui/button";
@@ -150,32 +151,44 @@ export function ProductFormDialog({
       void (async () => {
         const db = supabase as any;
         try {
-          const [{ data: images, error: imagesError }, { data: details, error: detailsError }, { data: modeDetails, error: modeDetailsError }] =
-            await Promise.all([
-              db
-                .from("product_images")
-                .select("id,image_url,sort_order")
-                .eq("product_id", product.id)
-                .order("sort_order"),
-              isFashion
-                ? db
-                    .from("product_fashion_details")
-                    .select("size_options,color_options,material,style_notes")
-                    .eq("product_id", product.id)
-                    .maybeSingle()
-                : Promise.resolve({ data: null, error: null }),
-              profileFields.some((field) => field.runtimeReady && field.source === "product_mode_details.details")
-                ? db
-                    .from("product_mode_details")
-                    .select("details")
-                    .eq("store_id", storeId)
-                    .eq("product_id", product.id)
-                    .eq("mode_key", businessMode)
-                    .maybeSingle()
-                : Promise.resolve({ data: null, error: null }),
-            ]);
+          const [
+            { data: images, error: imagesError },
+            { data: details, error: detailsError },
+            { data: modeDetails, error: modeDetailsError },
+            { data: onlineProduct, error: onlineProductError },
+          ] = await Promise.all([
+            db
+              .from("product_images")
+              .select("id,image_url,sort_order")
+              .eq("product_id", product.id)
+              .order("sort_order"),
+            isFashion
+              ? db
+                  .from("product_fashion_details")
+                  .select("size_options,color_options,material,style_notes")
+                  .eq("product_id", product.id)
+                  .maybeSingle()
+              : Promise.resolve({ data: null, error: null }),
+            profileFields.some((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""))
+              ? db
+                  .from("product_mode_details")
+                  .select("details")
+                  .eq("store_id", storeId)
+                  .eq("product_id", product.id)
+                  .eq("mode_key", businessMode)
+                  .maybeSingle()
+              : Promise.resolve({ data: null, error: null }),
+            profileFields.some((field) => field.runtimeReady && field.source === "online_products.description")
+              ? onlineSupabase
+                  .from("online_products")
+                  .select("description")
+                  .eq("store_id", storeId)
+                  .eq("product_id", product.id)
+                  .maybeSingle()
+              : Promise.resolve({ data: null, error: null }),
+          ]);
           if (cancelled) return;
-          if (imagesError || detailsError || modeDetailsError) {
+          if (imagesError || detailsError || modeDetailsError || onlineProductError) {
             setProductLoadError(true);
             toast.error(
               "We couldn't load this product's saved details. Check your connection and reopen it before saving.",
@@ -186,9 +199,11 @@ export function ProductFormDialog({
           const savedModeDetails = (modeDetails?.details ?? {}) as Record<string, unknown>;
           setProfileValues(Object.fromEntries(
             profileFields
-              .filter((field) => field.runtimeReady && field.source === "product_mode_details.details")
+              .filter((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""))
               .map((field) => {
-                const value = savedModeDetails[field.id];
+                const value = field.source === "online_products.description"
+                  ? onlineProduct?.description
+                  : savedModeDetails[field.id];
                 return [field.id, Array.isArray(value) ? value.join(", ") : value === null || value === undefined ? "" : String(value)];
               }),
           ));
@@ -491,7 +506,7 @@ export function ProductFormDialog({
       const normalizedPiecePrice = packMode ? v.piecePrice : v.price;
       const normalizedPackPrice = packMode ? v.packPrice : 0;
       const profileDetailFields = profileFields.filter(
-        (field) => field.runtimeReady && field.source === "product_mode_details.details",
+        (field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""),
       );
       const profileDetails = Object.fromEntries(profileDetailFields.map((field) => {
         const raw = profileValues[field.id] ?? "";
@@ -564,17 +579,42 @@ export function ProductFormDialog({
       await saveImages(productId);
       await saveFashionDetails(productId);
       await saveFashionVariantStock(productId, v.quantity);
-      if (profileDetailFields.length) {
+      const privateProfileDetails = Object.fromEntries(
+        profileDetailFields
+          .filter((field) => field.source === "product_mode_details.details")
+          .map((field) => [field.id, profileDetails[field.id]]),
+      );
+      if (Object.keys(privateProfileDetails).length) {
         const { error: modeDetailsError } = await (supabase as any)
           .from("product_mode_details")
           .upsert({
             store_id: storeId,
             product_id: productId,
             mode_key: businessMode,
-            details: profileDetails,
+            details: privateProfileDetails,
             updated_at: new Date().toISOString(),
           }, { onConflict: "store_id,product_id,mode_key" });
         if (modeDetailsError) throw new Error(modeDetailsError.message);
+      }
+      const onlineDescriptionField = profileDetailFields.find((field) => field.source === "online_products.description");
+      if (onlineDescriptionField) {
+        const description = String(profileDetails[onlineDescriptionField.id] ?? "");
+        const { data: existingOnlineProduct, error: onlineLookupError } = await onlineSupabase
+          .from("online_products")
+          .select("id")
+          .eq("store_id", storeId)
+          .eq("product_id", productId)
+          .maybeSingle();
+        if (onlineLookupError) throw new Error(onlineLookupError.message);
+        const onlineSave = existingOnlineProduct
+          ? await onlineSupabase.from("online_products").update({ description }).eq("id", existingOnlineProduct.id)
+          : await onlineSupabase.from("online_products").insert({
+              store_id: storeId,
+              product_id: productId,
+              description,
+              enabled: false,
+            });
+        if (onlineSave.error) throw new Error(onlineSave.error.message);
       }
       await onSaved();
       toast.success(product ? "Product updated" : "Product added");
@@ -888,15 +928,15 @@ export function ProductFormDialog({
                 )}
               </div>
             )}
-            {profileFields.some((field) => field.runtimeReady && field.source === "product_mode_details.details") && (
+            {profileFields.some((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? "")) && (
               <section className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
                 <div>
                   <p className="text-sm font-semibold">Business-specific details</p>
-                  <p className="mt-1 text-xs text-muted-foreground">These fields are saved privately with this product and your selected business profile.</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Business-specific fields are saved to the private product profile. The online description is saved to the online catalogue and stays hidden until you publish that product.</p>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {profileFields
-                    .filter((field) => field.runtimeReady && field.source === "product_mode_details.details")
+                    .filter((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""))
                     .map((field) => (
                       <Field key={field.id} label={field.label}>
                         {field.type === "long-text" ? (
