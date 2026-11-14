@@ -239,7 +239,7 @@ function StoreBuilder() {
       onlineSupabase.from("storefront_configs").select("*").eq("store_id", store.id).maybeSingle(),
       onlineSupabase
         .from("online_stores")
-        .select("slug,display_name,description,logo_url")
+        .select("slug,display_name,description,logo_url,is_published,setup_completed")
         .eq("store_id", store.id)
         .maybeSingle(),
     ]);
@@ -276,7 +276,7 @@ function StoreBuilder() {
       setSeoTitle(seo?.title ?? "");
       setSeoDescription(seo?.description ?? "");
       setCustomCss(existing.custom_css ?? "");
-      setPublished(Boolean(existing.is_published));
+      setPublished(Boolean(existing.is_published || onlineStore?.is_published));
     } else if (profileTemplates.length) {
       const firstTemplate = profileTemplates[0] as any;
       setTemplate(firstTemplate.id);
@@ -743,19 +743,13 @@ function StoreBuilder() {
             </label>
           </Panel>
           <Panel title="Publishing">
-            <label className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold">Publish storefront</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Only publish when the store is ready for customers.
-                </p>
-              </div>
-              <input
-                type="checkbox"
-                checked={published}
-                onChange={(e) => setPublished(e.target.checked)}
-              />
-            </label>
+            <p className="text-sm font-semibold">{published ? "Your storefront is published" : "Your storefront is still a draft"}</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+              Store availability, public terms and privacy acceptance are managed in Store Setup. Saving your design here never publishes an incomplete store.
+            </p>
+            <Link to="/online-store/setup" className="mt-3 inline-flex text-sm font-semibold underline underline-offset-4">
+              Open Store Setup
+            </Link>
           </Panel>
           <Panel title="Advanced">
             <label className="block space-y-1">
