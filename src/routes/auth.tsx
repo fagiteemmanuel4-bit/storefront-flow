@@ -425,7 +425,7 @@ function AuthPage() {
 
   const title =
     mode === "signin"
-      ? "Log in"
+      ? "Continue with email"
       : mode === "signup"
         ? "Create your account"
         : mode === "reset"
@@ -557,7 +557,7 @@ function AuthPage() {
                   }}
                 >
                   <span style={{ height: 1, flex: 1, background: "var(--color-border)" }} />
-                  <span>or continue with email</span>
+                  <span>or</span>
                   <span style={{ height: 1, flex: 1, background: "var(--color-border)" }} />
                 </div>
               </div>
@@ -613,7 +613,7 @@ function AuthPage() {
                     inputMode="email"
                     autoCapitalize="none"
                     spellCheck={false}
-                    placeholder="you@yourbusiness.com"
+                    placeholder="example@email"
                     required
                   />
                 </div>
@@ -673,7 +673,7 @@ function AuthPage() {
                         className="strap-field"
                         autoComplete={mode === "signin" ? "current-password" : "new-password"}
                         placeholder={
-                          mode === "signin" ? "Enter your password" : "Create a password"
+                          mode === "signin" ? "Password" : "Create a password"
                         }
                         required
                       />
