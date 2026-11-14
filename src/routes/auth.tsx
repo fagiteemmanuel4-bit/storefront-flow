@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TurnstileCaptcha } from "@/components/auth/TurnstileCaptcha";
+import "@/strap-auth.css";
 
 /* Strap favicon: lime ring and dot on ink. Inlined so no extra file is needed. */
 const FAVICON_SVG =
@@ -424,7 +425,7 @@ function AuthPage() {
 
   const title =
     mode === "signin"
-      ? "Log in"
+      ? "Continue with email"
       : mode === "signup"
         ? "Create your account"
         : mode === "reset"
@@ -441,7 +442,7 @@ function AuthPage() {
   const switchMode = mode === "signin" ? "signup" : "signin";
   const submitLabel =
     mode === "signin"
-      ? "Log in"
+      ? "Continue with email"
       : mode === "signup"
         ? "Create account"
         : mode === "reset"
@@ -474,7 +475,7 @@ function AuthPage() {
           <StrapLogo />
           <div className="strap-auth-hero">
             <h2>Your shop. Your sales. Your next move.</h2>
-            <p>Everything you need to run your business, in one place.</p>
+            <p>Run your business. Not around it.</p>
           </div>
           <small className="strap-auth-copy">© 2026 Strap by Kryonara</small>
         </aside>
@@ -556,7 +557,7 @@ function AuthPage() {
                   }}
                 >
                   <span style={{ height: 1, flex: 1, background: "var(--color-border)" }} />
-                  <span>or continue with email</span>
+                  <span>or</span>
                   <span style={{ height: 1, flex: 1, background: "var(--color-border)" }} />
                 </div>
               </div>
@@ -612,7 +613,7 @@ function AuthPage() {
                     inputMode="email"
                     autoCapitalize="none"
                     spellCheck={false}
-                    placeholder="you@yourbusiness.com"
+                    placeholder="example@email"
                     required
                   />
                 </div>
@@ -672,7 +673,7 @@ function AuthPage() {
                         className="strap-field"
                         autoComplete={mode === "signin" ? "current-password" : "new-password"}
                         placeholder={
-                          mode === "signin" ? "Enter your password" : "Create a password"
+                          mode === "signin" ? "Password" : "Create a password"
                         }
                         required
                       />
