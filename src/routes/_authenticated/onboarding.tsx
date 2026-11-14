@@ -147,9 +147,9 @@ function OnboardingPage() {
   const [phone, setPhone] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [personalCountry, setPersonalCountry] = useState("");
-  const [registrationStatus, setRegistrationStatus] = useState<"registered" | "not_registered" | "in_progress">("not_registered");
+  const [registrationStatus, setRegistrationStatus] = useState<"registered" | "not_registered" | "in_progress" | "">("");
   const [registrationNumber, setRegistrationNumber] = useState("");
-  const [declaredBranchCount, setDeclaredBranchCount] = useState<"1" | "2-5" | "6-20" | "20+">("1");
+  const [declaredBranchCount, setDeclaredBranchCount] = useState<"1" | "2-5" | "6-20" | "20+" | "">("");
   const [businessCountry, setBusinessCountry] = useState("");
   const [businessState, setBusinessState] = useState("");
   const [businessCity, setBusinessCity] = useState("");
@@ -319,6 +319,13 @@ function OnboardingPage() {
         })
         .eq("id", storeId);
       if (storeError) throw new Error(storeError.message);
+
+      const { error: branchAddressError } = await supabase
+        .from("branches")
+        .update({ address: fullBusinessAddress })
+        .eq("store_id", storeId)
+        .eq("is_default", true);
+      if (branchAddressError) throw new Error(branchAddressError.message);
 
       const { error: complianceError } = await supabase.from("store_compliance_profiles").upsert(
         {
@@ -635,7 +642,7 @@ function OnboardingPage() {
                     onChange={(e) => setDateOfBirth(e.target.value)}
                     autoFocus
                   />
-                  <p className="ob-hint">You must be at least 18 years old to create a Strap business account.</p>
+                  <p className="ob-hint">You must be at least 18 years old to create a Strap business account. This information is stored in your private account profile.</p>
                 </div>
                 <div className="sa-f">
                   <label htmlFor="personal-country">Country of residence</label>
@@ -737,6 +744,12 @@ function OnboardingPage() {
                     accept="image/png,image/jpeg,image/webp"
                     onChange={(e) => {
                       const file = e.target.files?.[0] ?? null;
+                      if (file && !["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+                        toast.error("Choose a PNG, JPG or WebP image.");
+                        e.target.value = "";
+                        setBusinessPhoto(null);
+                        return;
+                      }
                       if (file && file.size > 5 * 1024 * 1024) {
                         toast.error("Choose an image smaller than 5 MB.");
                         e.target.value = "";
@@ -779,6 +792,7 @@ function OnboardingPage() {
                 <div className="sa-f">
                   <label htmlFor="branch-count">How many branches do you operate?</label>
                   <select id="branch-count" className="sa-in" value={declaredBranchCount} onChange={(e) => setDeclaredBranchCount(e.target.value as typeof declaredBranchCount)}>
+                    <option value="">Select branch count</option>
                     <option value="1">1 (single location)</option>
                     <option value="2-5">2 to 5</option>
                     <option value="6-20">6 to 20</option>
