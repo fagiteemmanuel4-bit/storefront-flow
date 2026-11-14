@@ -676,7 +676,7 @@ function OnboardingPage() {
               </>
             )}
 
-            {step === 7 && (
+            {step === 4 && (
               <>
                 <div className="sa-f">
                   <label htmlFor="business-name">Business / store name</label>
@@ -849,7 +849,7 @@ function OnboardingPage() {
               </>
             )}
 
-            {step === 4 && (
+            {step === 7 && (
               <>
                 <div className="ob-panel">
                   <div
