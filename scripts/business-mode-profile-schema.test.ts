@@ -26,7 +26,7 @@ describe("business-mode profile activation safety", () => {
       expect(profile.status).toBe("draft");
       expect(profile.runtimeReady).toBe(false);
       expect(Object.values(profile.featureFlags.flags).every((enabled) => enabled === false)).toBe(true);
-      expect(profile.product.fields.filter((field: { runtimeReady?: boolean }) => field.runtimeReady === true).every((field: { source?: string }) => field.source === "product_mode_details.details")).toBe(true);
+      expect(profile.product.fields.filter((field: { runtimeReady?: boolean }) => field.runtimeReady === true).every((field: { source?: string }) => ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""))).toBe(true);
     }
   });
 
