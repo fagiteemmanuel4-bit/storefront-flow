@@ -69,7 +69,9 @@ function AuthPage() {
   });
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState(() =>
-    typeof window === "undefined" ? "" : new URLSearchParams(window.location.search).get("email") ?? "",
+    typeof window === "undefined"
+      ? ""
+      : (new URLSearchParams(window.location.search).get("email") ?? ""),
   );
   const [password, setPassword] = useState("");
   const [recoveryCode, setRecoveryCode] = useState("");
@@ -85,9 +87,12 @@ function AuthPage() {
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
   const [pendingOtpEmail, setPendingOtpEmail] = useState<string | null>(null);
 
-  useEffect(() => () => {
-    if (googleTimer.current !== null) window.clearTimeout(googleTimer.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (googleTimer.current !== null) window.clearTimeout(googleTimer.current);
+    },
+    [],
+  );
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -107,7 +112,9 @@ function AuthPage() {
         void navigate({ to: "/pos", replace: true });
       }
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [navigate]);
 
   function resetCaptcha() {
@@ -187,7 +194,9 @@ function AuthPage() {
           setGoogleOnlyRecovery(false);
           setPassword("");
           setMode("recover");
-          setNotice("If an account exists for this email, a secure verification code has been sent. Enter it below, then create a password for this same Strap account. If you originally joined with Google, this adds password sign-in without creating another account.");
+          setNotice(
+            "If an account exists for this email, a secure verification code has been sent. Enter it below, then create a password for this same Strap account. If you originally joined with Google, this adds password sign-in without creating another account.",
+          );
         } catch (error) {
           toast.error(errorMessage(error, "We couldn't send a password verification code."));
         } finally {
@@ -235,7 +244,9 @@ function AuthPage() {
               setEmail(normalizedEmail);
               setMode("signin");
               setPassword("");
-              setNotice("We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.");
+              setNotice(
+                "We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.",
+              );
               return;
             }
             throw new Error(error.message);
@@ -245,12 +256,18 @@ function AuthPage() {
             setEmail(normalizedEmail);
             setPassword("");
             setMode("signin");
-            setNotice("We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.");
+            setNotice(
+              "We couldn't create a new account with that email. If you already use Strap, sign in with your original method. If you joined with Google and want password sign-in, choose Forgot password to add a password to the same account.",
+            );
             return;
           }
           sessionStorage.setItem("strap_otp_email", normalizedEmail);
           sessionStorage.setItem("strap_otp_flow", "signup");
-          await navigate({ to: "/verify-email", search: { email: normalizedEmail }, replace: true });
+          await navigate({
+            to: "/verify-email",
+            search: { email: normalizedEmail },
+            replace: true,
+          });
           return;
         }
 
@@ -263,12 +280,15 @@ function AuthPage() {
           if (error.message.toLowerCase().includes("email not confirmed")) {
             setPendingOtpEmail(normalizedEmail);
             resetCaptcha();
-            setNotice("Your password is correct. Complete the security check again, then send your sign-in code.");
+            setNotice(
+              "Your password is correct. Complete the security check again, then send your sign-in code.",
+            );
             return;
           }
           throw new Error(error.message);
         }
-        if (!data.session || !data.user) throw new Error("Sign in did not complete. Please try again.");
+        if (!data.session || !data.user)
+          throw new Error("Sign in did not complete. Please try again.");
 
         const deviceToken = localStorage.getItem("strap_trusted_device_token");
         if (deviceToken) {
@@ -277,20 +297,26 @@ function AuthPage() {
             { body: { action: "check", token: deviceToken } },
           );
           if (!deviceError && deviceStatus?.trusted === true) {
-            if (deviceStatus.risk === "medium") toast.message("New network detected. Your device is still recognized.");
+            if (deviceStatus.risk === "medium")
+              toast.message("New network detected. Your device is still recognized.");
             toast.success("Welcome back to Strap!");
             void navigate({ to: "/dashboard", replace: true });
             return;
           }
-          if (deviceError) console.warn("Trusted-device check failed; requiring email verification.");
+          if (deviceError)
+            console.warn("Trusted-device check failed; requiring email verification.");
         }
 
         await supabase.auth.signOut();
         setPendingOtpEmail(normalizedEmail);
         resetCaptcha();
-        setNotice("This device needs an email verification. Complete the security check again, then send your sign-in code.");
+        setNotice(
+          "This device needs an email verification. Complete the security check again, then send your sign-in code.",
+        );
       } catch (error) {
-        toast.error(errorMessage(error, "That didn't work. Please check your details and try again."));
+        toast.error(
+          errorMessage(error, "That didn't work. Please check your details and try again."),
+        );
         resetCaptcha();
       } finally {
         setBusy(false);
@@ -319,14 +345,18 @@ function AuthPage() {
         });
         if (verifyError) throw new Error(verifyError.message);
         if (!recovery.user) throw new Error("We couldn't verify that code. Request a fresh one.");
-        const providers = Array.isArray(recovery.user.app_metadata?.providers) ? recovery.user.app_metadata.providers : [];
+        const providers = Array.isArray(recovery.user.app_metadata?.providers)
+          ? recovery.user.app_metadata.providers
+          : [];
         const isGoogleOnly = providers.includes("google") && !providers.includes("email");
         setGoogleOnlyRecovery(isGoogleOnly);
         setRecoveryVerified(true);
         setRecoveryCode("");
-        setNotice(isGoogleOnly
-          ? "This account was created with Google and doesn't have a password yet. Create a password now to connect email-and-password sign-in to this same Strap account."
-          : "Your email is verified. Create your new password below to finish the password update.");
+        setNotice(
+          isGoogleOnly
+            ? "This account was created with Google and doesn't have a password yet. Create a password now to connect email-and-password sign-in to this same Strap account."
+            : "Your email is verified. Create your new password below to finish the password update.",
+        );
       } catch (error) {
         toast.error(errorMessage(error, "We couldn't verify that code. Check it and try again."));
       } finally {
@@ -347,9 +377,11 @@ function AuthPage() {
       if (error) throw new Error(error.message);
       await supabase.auth.signOut();
       sessionStorage.removeItem("strap_password_recovery_email");
-      setNotice(googleOnlyRecovery
-        ? "Password created and connected to your Google-linked email. You can now sign in to this same Strap account with Google or with your email and new password."
-        : "Your password has been updated successfully. You can now sign in with your email and new password.");
+      setNotice(
+        googleOnlyRecovery
+          ? "Password created and connected to your Google-linked email. You can now sign in to this same Strap account with Google or with your email and new password."
+          : "Your password has been updated successfully. You can now sign in with your email and new password.",
+      );
       setPassword("");
       setRecoveryCode("");
       setRecoveryVerified(false);
@@ -361,16 +393,26 @@ function AuthPage() {
     }
   }
 
-  const title = mode === "signin" ? "Continue with email" : mode === "signup" ? "Create your account" : mode === "reset" ? "Reset your password" : recoveryVerified ? "Create a new password" : "Enter your code";
-  const subtitle = mode === "signin"
-    ? "Welcome back. Enter your details to continue."
-    : mode === "signup"
-      ? "Set up your shop in a few minutes."
-      : mode === "reset"
-        ? "Enter your account email and we'll send you an 8-digit code."
-        : recoveryVerified
-          ? "Your email is verified. Choose a new password."
-          : "Enter the 8-digit password verification code sent to your email.";
+  const title =
+    mode === "signin"
+      ? "Continue with email"
+      : mode === "signup"
+        ? "Create your account"
+        : mode === "reset"
+          ? "Reset your password"
+          : recoveryVerified
+            ? "Create a new password"
+            : "Enter your code";
+  const subtitle =
+    mode === "signin"
+      ? "Welcome back. Enter your details to continue."
+      : mode === "signup"
+        ? "Set up your shop in a few minutes."
+        : mode === "reset"
+          ? "Enter your account email and we'll send you an 8-digit code."
+          : recoveryVerified
+            ? "Your email is verified. Choose a new password."
+            : "Enter the 8-digit password verification code sent to your email.";
   const submitLabel = busy
     ? "Please wait…"
     : pendingOtpEmail
@@ -385,7 +427,8 @@ function AuthPage() {
               ? "Update password"
               : "Verify code";
   const showGoogle = mode === "signin" || mode === "signup";
-  const showPasswordField = mode === "signin" || mode === "signup" || (mode === "recover" && recoveryVerified);
+  const showPasswordField =
+    mode === "signin" || mode === "signup" || (mode === "recover" && recoveryVerified);
   const needsCaptcha = mode !== "recover";
 
   return (
@@ -400,63 +443,199 @@ function AuthPage() {
 
           {showGoogle && (
             <>
-              <button type="button" className="ref-btn ref-ghost" disabled={busy || googleLoading} onClick={() => void handleGoogleSignIn()}>
-                {googleLoading ? <LoaderCircle className="animate-spin" size={20} /> : <GoogleMark />}
+              <button
+                type="button"
+                className="ref-btn ref-ghost"
+                disabled={busy || googleLoading}
+                onClick={() => void handleGoogleSignIn()}
+              >
+                {googleLoading ? (
+                  <LoaderCircle className="animate-spin" size={20} />
+                ) : (
+                  <GoogleMark />
+                )}
                 {googleLoading ? "Connecting to Google…" : "Continue with Google"}
               </button>
               <div className="ref-or">or</div>
             </>
           )}
 
-          <form className="ref-form" onSubmit={(event) => void handleSubmit(event)} aria-busy={busy || googleLoading}>
+          <form
+            className="ref-form"
+            onSubmit={(event) => void handleSubmit(event)}
+            aria-busy={busy || googleLoading}
+          >
             {mode === "signup" && (
               <div className="ref-group">
-                <input className="ref-field" value={fullName} onChange={(event) => setFullName(event.target.value)} autoComplete="name" placeholder="Full name" aria-label="Full name" required />
+                <input
+                  className="ref-field"
+                  value={fullName}
+                  onChange={(event) => setFullName(event.target.value)}
+                  autoComplete="name"
+                  placeholder="Full name"
+                  aria-label="Full name"
+                  required
+                />
               </div>
             )}
             {(mode !== "recover" || !recoveryVerified) && (
               <div className="ref-group">
-                <input className="ref-field" type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" inputMode="email" autoCapitalize="none" spellCheck={false} placeholder="example@email" aria-label="Email address" required />
+                <input
+                  className="ref-field"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  autoComplete="email"
+                  inputMode="email"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  placeholder="example@email"
+                  aria-label="Email address"
+                  required
+                />
               </div>
             )}
             {mode === "recover" && !recoveryVerified && (
               <div className="ref-group">
-                <input className="ref-field" value={recoveryCode} onChange={(event) => setRecoveryCode(event.target.value.replace(/\D/g, "").slice(0, 8))} inputMode="numeric" autoComplete="one-time-code" maxLength={8} placeholder="8-digit verification code" aria-label="8-digit verification code" required />
+                <input
+                  className="ref-field"
+                  value={recoveryCode}
+                  onChange={(event) =>
+                    setRecoveryCode(event.target.value.replace(/\D/g, "").slice(0, 8))
+                  }
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={8}
+                  placeholder="8-digit verification code"
+                  aria-label="8-digit verification code"
+                  required
+                />
               </div>
             )}
             {showPasswordField && (
               <div className="ref-group">
-                {mode === "signin" && <button type="button" className="ref-link ref-forgot" onClick={() => { setMode("reset"); setNotice(null); }}>Forgot password?</button>}
+                {mode === "signin" && (
+                  <button
+                    type="button"
+                    className="ref-link ref-forgot"
+                    onClick={() => {
+                      setMode("reset");
+                      setNotice(null);
+                    }}
+                  >
+                    Forgot password?
+                  </button>
+                )}
                 <div className="ref-password">
-                  <input className="ref-field" type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete={mode === "signin" ? "current-password" : "new-password"} placeholder={mode === "signin" ? "Password" : "Create a password"} aria-label={mode === "signin" ? "Password" : "New password"} required />
-                  <button type="button" className="ref-eye" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "Hide password" : "Show password"}>{showPassword ? <EyeOff size={22} /> : <Eye size={22} />}</button>
+                  <input
+                    className="ref-field"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                    placeholder={mode === "signin" ? "Password" : "Create a password"}
+                    aria-label={mode === "signin" ? "Password" : "New password"}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="ref-eye"
+                    onClick={() => setShowPassword((value) => !value)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+                  </button>
                 </div>
               </div>
             )}
             {mode === "signup" && (
               <label className="ref-terms">
-                <input type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} />
-                <span>I agree to the <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.</span>
+                <input
+                  type="checkbox"
+                  checked={accepted}
+                  onChange={(event) => setAccepted(event.target.checked)}
+                />
+                <span>
+                  I agree to the <Link to="/terms">Terms</Link> and{" "}
+                  <Link to="/privacy">Privacy Policy</Link>.
+                </span>
               </label>
             )}
-            {needsCaptcha && <div className="ref-captcha"><TurnstileCaptcha key={captchaResetKey} onTokenChange={setCaptchaToken} /></div>}
-            {notice && <div className="ref-notice" role="status">{notice}</div>}
-            <button type="submit" className="ref-btn ref-primary" disabled={busy || googleLoading || (mode !== "recover" && !captchaToken)}>
+            {needsCaptcha && (
+              <div className="ref-captcha">
+                <TurnstileCaptcha key={captchaResetKey} onTokenChange={setCaptchaToken} />
+              </div>
+            )}
+            {notice && (
+              <div className="ref-notice" role="status">
+                {notice}
+              </div>
+            )}
+            <button
+              type="submit"
+              className="ref-btn ref-primary"
+              disabled={busy || googleLoading || (mode !== "recover" && !captchaToken)}
+            >
               {busy ? <LoaderCircle className="animate-spin" size={18} /> : null}
               {submitLabel}
             </button>
           </form>
 
           {mode === "signin" && (
-            <p className="ref-links">New to Strap? <button type="button" className="ref-link" onClick={() => { setMode("signup"); setPendingOtpEmail(null); setNotice(null); resetCaptcha(); }}>Create an account</button></p>
+            <p className="ref-links">
+              New to Strap?{" "}
+              <button
+                type="button"
+                className="ref-link"
+                onClick={() => {
+                  setMode("signup");
+                  setPendingOtpEmail(null);
+                  setNotice(null);
+                  resetCaptcha();
+                }}
+              >
+                Create an account
+              </button>
+            </p>
           )}
           {mode === "signup" && (
-            <p className="ref-links">Already have an account? <button type="button" className="ref-link" onClick={() => { setMode("signin"); setNotice(null); resetCaptcha(); }}>Log in</button></p>
+            <p className="ref-links">
+              Already have an account?{" "}
+              <button
+                type="button"
+                className="ref-link"
+                onClick={() => {
+                  setMode("signin");
+                  setNotice(null);
+                  resetCaptcha();
+                }}
+              >
+                Log in
+              </button>
+            </p>
           )}
           {(mode === "reset" || mode === "recover") && (
-            <p className="ref-links"><button type="button" className="ref-link" onClick={() => { setMode("signin"); setNotice(null); setPassword(""); setRecoveryCode(""); setRecoveryVerified(false); setGoogleOnlyRecovery(false); resetCaptcha(); }}>Back to log in</button></p>
+            <p className="ref-links">
+              <button
+                type="button"
+                className="ref-link"
+                onClick={() => {
+                  setMode("signin");
+                  setNotice(null);
+                  setPassword("");
+                  setRecoveryCode("");
+                  setRecoveryVerified(false);
+                  setGoogleOnlyRecovery(false);
+                  resetCaptcha();
+                }}
+              >
+                Back to log in
+              </button>
+            </p>
           )}
-          {mode === "signin" && <p className="ref-terms-copy">By continuing you accept our policy and terms of use</p>}
+          {mode === "signin" && (
+            <p className="ref-terms-copy">By continuing you accept our policy and terms of use</p>
+          )}
         </div>
       </section>
     </main>
@@ -466,10 +645,22 @@ function AuthPage() {
 function GoogleMark() {
   return (
     <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
-      <path fill="#FFC107" d="M43.6 20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-4z"/>
-      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
-      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
-      <path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.7-.4-4z"/>
+      <path
+        fill="#FFC107"
+        d="M43.6 20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-4z"
+      />
+      <path
+        fill="#FF3D00"
+        d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"
+      />
+      <path
+        fill="#4CAF50"
+        d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"
+      />
+      <path
+        fill="#1976D2"
+        d="M43.6 20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.7-.4-4z"
+      />
     </svg>
   );
 }
