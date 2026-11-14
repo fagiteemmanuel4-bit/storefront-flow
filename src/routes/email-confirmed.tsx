@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { AuthBrand } from "@/components/auth/AuthBrand";
 import "@/strap-auth.css";
+import "@/strap-reference.css";
 
 export const Route = createFileRoute("/email-confirmed")({
   ssr: false,
