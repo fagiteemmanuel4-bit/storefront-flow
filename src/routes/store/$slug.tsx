@@ -127,6 +127,8 @@ function PublicStorefrontPage() {
   const configuredBranding = (configQuery.data?.branding ?? {}) as { storeName?: string; logoUrl?: string; description?: string };
   const safeColor = (value: unknown, fallback: string) =>
     typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value) ? value : fallback;
+  const safeFont = (value: unknown, fallback: string) =>
+    typeof value === "string" && /^[a-z0-9 ,'-]{1,60}$/i.test(value) ? value : fallback;
   const configuredTheme = (configQuery.data?.theme ?? {}) as Record<string, unknown>;
   const customCss = typeof configQuery.data?.custom_css === "string" ? configQuery.data.custom_css : "";
   const safeCustomCss = customCss
@@ -135,13 +137,24 @@ function PublicStorefrontPage() {
     .replace(/expression\s*\([^)]*\)/gi, "none")
     .replace(/javascript\s*:/gi, "")
     .replace(/<\s*\/\s*style/gi, "");
+  const bodyFont = safeFont(configuredTheme.fontFamily, "Inter");
+  const headingFont = safeFont(configuredTheme.headingFontFamily, bodyFont);
+  const radius = configuredTheme.buttonRadius === "small" ? "10px" : configuredTheme.buttonRadius === "large" ? "20px" : "14px";
+  const density = configuredTheme.density === "compact" ? "0.8" : "1";
   const storefrontStyle = {
     "--store-primary": safeColor(configuredTheme.primaryColor, "#111827"),
     "--store-accent": safeColor(configuredTheme.accentColor, "#f59e0b"),
     "--store-text": safeColor(configuredTheme.textColor, "#111827"),
     "--store-background": safeColor(configuredTheme.backgroundColor, "#ffffff"),
+    "--store-surface": safeColor(configuredTheme.secondaryColor, "#f3f4f6"),
+    "--store-muted": safeColor(configuredTheme.mutedColor, "#73766f"),
+    "--store-font-body": bodyFont,
+    "--store-font-heading": headingFont,
+    "--store-radius": radius,
+    "--store-density": density,
     color: safeColor(configuredTheme.textColor, "#111827"),
     backgroundColor: safeColor(configuredTheme.backgroundColor, "#ffffff"),
+    fontFamily: `${bodyFont}, sans-serif`,
   } as CSSProperties;
 
   const catalogQuery = useQuery({
@@ -335,7 +348,7 @@ function PublicStorefrontPage() {
 
   return (
     <main className="storefront-shell min-h-screen bg-background" style={storefrontStyle}>
-      {safeCustomCss && <style>{safeCustomCss}</style>}
+      <style>{`.storefront-shell{font-family:var(--store-font-body),sans-serif}.storefront-shell h1,.storefront-shell h2,.storefront-shell h3,.storefront-shell h4{font-family:var(--store-font-heading),sans-serif}.storefront-card{border-radius:var(--store-radius)}.storefront-shell .storefront-section{--store-density-factor:var(--store-density)}${safeCustomCss}`}</style>
       {String(sectionSettings("announcement").text ?? "").trim() && (
         <div className="bg-foreground px-4 py-2 text-center text-xs font-semibold text-background">{String(sectionSettings("announcement").text)}</div>
       )}
