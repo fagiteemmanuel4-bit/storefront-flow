@@ -40,7 +40,7 @@ import {
   BottomSheetTitle,
 } from "@/components/ui/bottom-sheet";
 import { cn } from "@/lib/utils";
-import { getBusinessMode, resolveBusinessMode } from "@/lib/business-modes";
+import { BUSINESS_MODES, getBusinessMode, resolveBusinessMode, type BusinessModeKey } from "@/lib/business-modes";
 import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { fetchAllRows } from "@/lib/supabase-pagination";
@@ -93,7 +93,7 @@ export async function fetchProductsWithStock(
 
 type Filter = "all" | "low" | "out" | "published";
 function ProductsPage() {
-  const { store, branch, role } = useStoreContext();
+  const { store, branch, role, refresh: refreshStore } = useStoreContext();
   const client = useQueryClient();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
@@ -103,7 +103,10 @@ function ProductsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [scanOpen, setScanOpen] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
+  const [profileModeChoice, setProfileModeChoice] = useState<BusinessModeKey | "">("");
+  const [savingProfileMode, setSavingProfileMode] = useState(false);
   const canManage = canManageCatalog(role);
+  const canManageProfile = role === "owner" || role === "manager";
   const storeId = store?.id ?? null;
   const branchId = branch?.id ?? null;
   const currency = store?.currency ?? "NGN";
@@ -121,6 +124,42 @@ function ProductsPage() {
     [modeProfile],
   );
   const isGrocery = businessMode.key === "grocery-provision";
+
+  async function saveBusinessModeProfile() {
+    if (!store || !profileModeChoice || !canManageProfile) return;
+    const profileResult = getBusinessModeProfile(profileModeChoice);
+    if (!profileResult.ok) {
+      toast.error("That business profile is not available.");
+      return;
+    }
+    setSavingProfileMode(true);
+    try {
+      const currentSettings = (store.storefront_settings ?? {}) as Record<string, unknown>;
+      const { error } = await supabase
+        .from("stores")
+        .update({
+          storefront_settings: {
+            ...currentSettings,
+            businessMode: profileModeChoice,
+            businessModeProfile: {
+              id: profileResult.profile.id,
+              version: profileResult.profile.profileVersion,
+              status: profileResult.profile.status,
+              runtimeReady: profileResult.profile.runtimeReady,
+            },
+          },
+        })
+        .eq("id", store.id);
+      if (error) throw new Error(error.message);
+      await refreshStore();
+      setProfileModeChoice("");
+      toast.success("Business profile saved. Your catalogue is being updated.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save the business profile.");
+    } finally {
+      setSavingProfileMode(false);
+    }
+  }
   const query = useQuery({
     queryKey: ["products", storeId, branchId],
     enabled: Boolean(storeId && branchId),
@@ -439,10 +478,30 @@ function ProductsPage() {
           </section>
         ) : (
           <section role="status" className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
-            <p className="text-sm font-semibold">Mode profile needs attention</p>
+            <p className="text-sm font-semibold">Choose your business profile</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Product management is continuing with its existing workflow. Profile-driven configuration is unavailable until this mode profile is corrected.
+              This workspace’s saved business description does not match a known profile. Choose the closest fit to enable its product fields and Store Studio templates. Unknown workspaces are never silently assigned to General Retail.
             </p>
+            {canManageProfile && (
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                <select
+                  value={profileModeChoice}
+                  onChange={(event) => setProfileModeChoice(event.target.value as BusinessModeKey | "")}
+                  className="h-11 min-w-0 flex-1 rounded-xl border border-input bg-background px-3 text-sm"
+                >
+                  <option value="">Choose a business profile</option>
+                  {BUSINESS_MODES.map((mode) => (
+                    <option key={mode.key} value={mode.key}>{mode.label}</option>
+                  ))}
+                </select>
+                <Button onClick={() => void saveBusinessModeProfile()} disabled={!profileModeChoice || savingProfileMode}>
+                  {savingProfileMode ? "Saving…" : "Save profile"}
+                </Button>
+              </div>
+            )}
+            {!canManageProfile && (
+              <p className="mt-2 text-xs font-medium text-muted-foreground">Ask a store owner or manager to choose the business profile.</p>
+            )}
           </section>
         )}
         <section
