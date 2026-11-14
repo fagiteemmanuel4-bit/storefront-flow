@@ -72,7 +72,6 @@ const PLANS: Record<
   },
 };
 
-const STEP_LABELS = ["Usage", "Business", "Online", "Identity", "Team", "Plan", "Review"];
 const TEAM_OPTIONS = ["Just me", "2–5 people", "6–20 people", "21–50 people", "51+ people"];
 const GOAL_OPTIONS = [
   "Sell faster",
@@ -140,7 +139,6 @@ function OnboardingPage() {
   const [businessPhoto, setBusinessPhoto] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [checking, setChecking] = useState(false);
-  const totalSteps = 23;
 
   useEffect(() => {
     if (!isLoading && !error && memberships.length > 0)
@@ -512,7 +510,7 @@ function OnboardingPage() {
     return Math.max(0, step - 1);
   };
   const advance = () => setStep(nextStep());
-  const pick = (value: string, setter: (value: any) => void) => {
+  const pick = <T,>(value: T, setter: React.Dispatch<React.SetStateAction<T>>) => {
     setter(value);
     window.setTimeout(() => advance(), 120);
   };
@@ -549,7 +547,8 @@ function OnboardingPage() {
           {step === 3 && (
             <div className="ob-proto-options">
               <button type="button" className={`ob-proto-option ${websiteStatus === "existing" ? "selected" : ""}`} onClick={() => pick("existing", setWebsiteStatus)}>Yes, I have a website</button>
-              <button type="button" className={`ob-proto-option ${websiteStatus === "none" ? "selected" : ""}`} onClick={() => { setWebsiteStatus("none"); setOnlineStoreEnabled(false); window.setTimeout(advance,120); }}>No, not yet</button>
+              <button type="button" className={`ob-proto-option ${websiteStatus === "strap" ? "selected" : ""}`} onClick={() => { setWebsiteStatus("strap"); setOnlineStoreEnabled(true); window.setTimeout(advance,120); }}>I want Strap to set one up later</button>
+              <button type="button" className={`ob-proto-option ${websiteStatus === "none" ? "selected" : ""}`} onClick={() => { setWebsiteStatus("none"); setOnlineStoreEnabled(false); window.setTimeout(advance,120); }}>No, not now</button>
             </div>
           )}
           {step === 4 && <input className="ob-proto-field" autoFocus inputMode="url" value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} placeholder="www.mybusiness.com" />}
@@ -559,7 +558,12 @@ function OnboardingPage() {
               <option value="">Select your country</option>{COUNTRY_OPTIONS.map((country) => <option key={country}>{country}</option>)}
             </select>
           )}
-          {step === 7 && <input className="ob-proto-field" autoFocus value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} placeholder="e.g. NGN" maxLength={3} />}
+          {step === 7 && (
+            <select className="ob-proto-field ob-proto-select" autoFocus value={currency} onChange={(e) => setCurrency(e.target.value)}>
+              <option value="">Select currency</option>
+              {[["NGN","Nigerian naira (NGN)"],["GHS","Ghanaian cedi (GHS)"],["KES","Kenyan shilling (KES)"],["ZAR","South African rand (ZAR)"],["EGP","Egyptian pound (EGP)"],["UGX","Ugandan shilling (UGX)"],["TZS","Tanzanian shilling (TZS)"],["RWF","Rwandan franc (RWF)"],["XOF","West African CFA franc (XOF)"],["XAF","Central African CFA franc (XAF)"],["GBP","British pound (GBP)"],["USD","US dollar (USD)"],["EUR","Euro (EUR)"],["CAD","Canadian dollar (CAD)"],["AED","UAE dirham (AED)"],["INR","Indian rupee (INR)"]].map(([code,label]) => <option key={code} value={code}>{label}</option>)}
+            </select>
+          )}
           {step === 8 && <input className="ob-proto-field" autoFocus value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="Your business name" />}
           {step === 9 && (
             <div className="ob-proto-options">
