@@ -63,7 +63,7 @@ function OnboardingIllustration({ step }: { step: number }) {
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <label className="ob-field"><span>{label}</span>{children}</label>;
+  return <div className="ob-field"><span className="ob-field-label">{label}</span>{children}</div>;
 }
 
 function Option({ selected, title, description, icon: Icon, onClick }: {
@@ -229,7 +229,7 @@ function OnboardingPage() {
               {step === 1 && (
                 <>
                   <Field label="What does your business sell or provide?">
-                    <input className="ob-input" value={businessType} onChange={e => setBusinessType(e.target.value)} placeholder="e.g. Fashion, groceries, electronics…" autoFocus />
+                    <input className="ob-input" value={businessType} onChange={e => setBusinessType(e.target.value)} aria-label="What does your business sell or provide?" placeholder="e.g. Fashion, groceries, electronics…" autoFocus />
                   </Field>
                   <Field label="Choose your business category">
                     <div className="ob-mode-grid">
@@ -241,7 +241,7 @@ function OnboardingPage() {
                     </div>
                   </Field>
                   <Field label="What matters most right now?">
-                    <select className="ob-input" value={goal} onChange={e => setGoal(e.target.value)}>
+                    <select aria-label="What matters most right now?" className="ob-input" value={goal} onChange={e => setGoal(e.target.value)}>
                       <option value="">Choose your main goal</option>{GOAL_OPTIONS.map(x => <option key={x}>{x}</option>)}
                     </select>
                   </Field>
@@ -254,7 +254,7 @@ function OnboardingPage() {
               {step === 2 && (
                 <div className="ob-options">
                   <Option selected={websiteStatus === "existing"} onClick={() => { setWebsiteStatus("existing"); setOnlineStoreEnabled(false); }} icon={Globe2} title="I already have a website" description="Keep using your existing online store." />
-                  {websiteStatus === "existing" && <Field label="Website address"><input className="ob-input" value={websiteUrl} onChange={e => setWebsiteUrl(e.target.value)} placeholder="https://yourstore.com" inputMode="url" /></Field>}
+                  {websiteStatus === "existing" && <Field label="Website address"><input className="ob-input" value={websiteUrl} onChange={e => setWebsiteUrl(e.target.value)} aria-label="Existing website address" placeholder="https://yourstore.com" inputMode="url" /></Field>}
                   <Option selected={websiteStatus === "strap"} onClick={() => { setWebsiteStatus("strap"); setOnlineStoreEnabled(true); }} icon={ShoppingBag} title="Build my store with Strap" description="Create an online storefront when your plan supports it." />
                   <Option selected={websiteStatus === "none"} onClick={() => { setWebsiteStatus("none"); setOnlineStoreEnabled(false); }} icon={MapPin} title="Not right now" description="I’ll focus on in-person sales for now." />
                   {websiteStatus !== "existing" && websiteStatus !== "" && (
@@ -265,13 +265,13 @@ function OnboardingPage() {
 
               {step === 3 && (
                 <>
-                  <Field label="Business or store name"><input className="ob-input" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="Your business name" autoFocus /></Field>
-                  <Field label="First location name"><input className="ob-input" value={branchName} onChange={e => setBranchName(e.target.value)} placeholder="Main branch" /></Field>
+                  <Field label="Business or store name"><input className="ob-input" value={businessName} onChange={e => setBusinessName(e.target.value)} aria-label="Business or store name" placeholder="Your business name" autoFocus /></Field>
+                  <Field label="First location name"><input className="ob-input" value={branchName} onChange={e => setBranchName(e.target.value)} aria-label="First location name" placeholder="Main branch" /></Field>
                   <div className="ob-two-col">
-                    <Field label="Business phone"><input className="ob-input" value={phone} onChange={e => setPhone(e.target.value)} placeholder="080…" inputMode="tel" /></Field>
-                    <Field label="Currency"><select className="ob-input" value={currency} onChange={e => setCurrency(e.target.value)}>{SUPPORTED_CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.symbol} {c.code}</option>)}</select></Field>
+                    <Field label="Business phone"><input className="ob-input" value={phone} onChange={e => setPhone(e.target.value)} aria-label="Business phone" placeholder="080…" inputMode="tel" /></Field>
+                    <Field label="Currency"><select aria-label="Currency" className="ob-input" value={currency} onChange={e => setCurrency(e.target.value)}>{SUPPORTED_CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.symbol} {c.code}</option>)}</select></Field>
                   </div>
-                  <Field label="Business address (optional)"><input className="ob-input" value={address} onChange={e => setAddress(e.target.value)} placeholder="Street, area, city" /></Field>
+                  <Field label="Business address (optional)"><input className="ob-input" value={address} onChange={e => setAddress(e.target.value)} aria-label="Business address" placeholder="Street, area, city" /></Field>
                   <Field label="Default sales tax (%)"><input className="ob-input" type="number" min="0" max="100" step="0.01" value={taxRate} onChange={e => setTaxRate(e.target.value)} /></Field>
                 </>
               )}
