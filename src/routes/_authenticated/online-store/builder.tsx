@@ -5,23 +5,15 @@ import { toast } from "sonner";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
+import { resolveBusinessMode } from "@/lib/business-modes";
+import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 
 export const Route = createFileRoute("/_authenticated/online-store/builder")({
   ssr: false,
   component: StoreBuilder,
 });
 
-type Template =
-  | "fashion"
-  | "beauty"
-  | "electronics"
-  | "food"
-  | "retail"
-  | "jewelry"
-  | "furniture"
-  | "fitness"
-  | "luxury"
-  | "minimal-commerce";
+type Template = string;
 type Section = { id: string; type: string; enabled: boolean; settings: Record<string, string> };
 type Theme = {
   primaryColor: string;
@@ -226,7 +218,11 @@ function StoreBuilder() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
-  const selectedTemplate = useMemo(() => TEMPLATES.find((x) => x.id === template)!, [template]);
+  const selectedTemplate = useMemo(() => {
+    const profileTemplate = profileTemplates.find((item: any) => item.id === template);
+    if (profileTemplate) return { id: profileTemplate.id, name: profileTemplate.name, description: profileTemplate.positioning, sections: profileTemplate.pages?.home ?? [] };
+    return TEMPLATES.find((x) => x.id === template) ?? TEMPLATES.find((x) => x.id === DEFAULT_TEMPLATE)!;
+  }, [template, profileTemplates]);
   const loadConfig = useCallback(async () => {
     if (!store) return;
     setLoading(true);
@@ -272,16 +268,40 @@ function StoreBuilder() {
       setSeoDescription(seo?.description ?? "");
       setCustomCss(existing.custom_css ?? "");
       setPublished(Boolean(existing.is_published));
+    } else if (profileTemplates.length) {
+      const firstTemplate = profileTemplates[0] as any;
+      setTemplate(firstTemplate.id);
+      setSections(makeSections((firstTemplate.pages?.home ?? DEFAULT_TEMPLATE_SECTIONS).filter((type: string) => availableSectionTypes.includes(type))));
+      if (firstTemplate.theme) {
+        setTheme((current) => ({
+          ...current,
+          primaryColor: String(firstTemplate.theme.primary ?? current.primaryColor),
+          accentColor: String(firstTemplate.theme.accent ?? current.accentColor),
+          textColor: String(firstTemplate.theme.text ?? current.textColor),
+          backgroundColor: String(firstTemplate.theme.background ?? current.backgroundColor),
+        }));
+      }
     } else setSections(makeSections(DEFAULT_TEMPLATE_SECTIONS));
     setLoading(false);
-  }, [store]);
+  }, [store, profileTemplates, availableSectionTypes]);
   useEffect(() => {
     void loadConfig();
   }, [loadConfig]);
   function applyTemplate(next: Template) {
     if (next === template) return;
     setTemplate(next);
-    setSections(makeSections(TEMPLATES.find((x) => x.id === next)!.sections));
+    const profileTemplate = profileTemplates.find((item: any) => item.id === next) as any;
+    const templateSections = profileTemplate?.pages?.home ?? TEMPLATES.find((x) => x.id === next)?.sections ?? DEFAULT_TEMPLATE_SECTIONS;
+    setSections(makeSections(templateSections.filter((type: string) => availableSectionTypes.includes(type))));
+    if (profileTemplate?.theme) {
+      setTheme((current) => ({
+        ...current,
+        primaryColor: String(profileTemplate.theme.primary ?? current.primaryColor),
+        accentColor: String(profileTemplate.theme.accent ?? current.accentColor),
+        textColor: String(profileTemplate.theme.text ?? current.textColor),
+        backgroundColor: String(profileTemplate.theme.background ?? current.backgroundColor),
+      }));
+    }
     setSelectedSection(null);
     toast.message("Template changed", {
       description:
@@ -404,7 +424,7 @@ function StoreBuilder() {
         <aside className="space-y-4">
           <Panel title="Templates">
             <div className="space-y-2">
-              {TEMPLATES.map((item) => (
+              {(profileTemplates.length ? profileTemplates.map((item: any) => ({ id: item.id, name: item.name, description: item.positioning })) : TEMPLATES).map((item) => (
                 <button
                   key={item.id}
                   type="button"
@@ -419,7 +439,7 @@ function StoreBuilder() {
           </Panel>
           <Panel title="Add section">
             <div className="grid grid-cols-2 gap-2">
-              {SECTION_TYPES.map((type) => (
+              {availableSectionTypes.map((type) => (
                 <button
                   key={type}
                   type="button"
@@ -427,7 +447,7 @@ function StoreBuilder() {
                   className="rounded-lg border border-border px-2 py-2 text-xs font-semibold hover:bg-secondary"
                 >
                   <Plus className="mx-auto mb-1 size-3" />
-                  {LABELS[type]}
+                  {LABELS[type] ?? type.replace(/[-_]+/g, " ").replace(/\\b\\w/g, (letter) => letter.toUpperCase())}
                 </button>
               ))}
             </div>
@@ -512,7 +532,7 @@ function StoreBuilder() {
                     className="text-[10px] font-bold uppercase tracking-[.18em]"
                     style={{ color: theme.primaryColor }}
                   >
-                    {LABELS[section.type]}
+                    {LABELS[section.type] ?? section.type.replace(/[-_]+/g, " ").replace(/\\b\\w/g, (letter) => letter.toUpperCase())}
                   </p>
                 </div>
                 <h3 className="mt-2 font-display text-2xl font-bold">
@@ -643,9 +663,12 @@ function StoreBuilder() {
             (() => {
               const section = sections.find((x) => x.id === selectedSection);
               if (!section) return null;
-              const fields = sectionFields[section.type] ?? [];
+              const fields = sectionFields[section.type] ?? [
+                { key: "title", label: "Title", placeholder: "Section title" },
+                { key: "body", label: "Description", placeholder: "Add useful details for customers." },
+              ];
               return (
-                <Panel title={`Edit ${LABELS[section.type]}`}>
+                <Panel title={`Edit ${LABELS[section.type] ?? section.type.replace(/[-_]+/g, " ")}`}>
                   <label className="mb-4 flex items-center justify-between gap-3">
                     <span className="text-sm font-semibold">Visible</span>
                     <input
