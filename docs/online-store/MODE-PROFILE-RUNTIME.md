@@ -26,8 +26,11 @@ The check verifies profile count, draft/default-off release state, unique produc
 ## Not included in this milestone
 
 - No profile is activated or marked runtime-ready.
-- No product/order/storefront UI has been migrated to consume profiles yet.
-- No database schema, RLS policy, RPC, inventory allocation, or payment behavior is changed.
-- No production deployment is performed.
+- Product management consumes field-level profile mappings for private, non-inventory product details through `product_mode_details`. Fashion size/colour/material and variant stock continue to use their existing dedicated tables.
+- `product_mode_details` is tenant-scoped, RLS-protected, and available only to authenticated store members; anonymous storefront visitors cannot read it.
+- Store Studio reads each mode profile's templates and allowed section types. The public storefront reads saved published branding, theme, and enabled sections.
+- Onboarding persists the selected profile ID/version. Existing workspaces can resolve common legacy free-text business descriptions without silently treating unknown values as General Retail.
+- Profiles themselves remain draft and all feature flags remain OFF. This does not enable unverified inventory allocation, pharmacy dispensing, device serial reservations, recipe deductions, booking, or payment behavior.
+- The additive database migration is applied to the connected Supabase project and versioned in this repository.
 
 The next integration step must migrate one bounded surface at a time, beginning with read-only mode configuration, then product fields and storefront templates. Server-authoritative inventory and order workflows require separate tests and release gates.
