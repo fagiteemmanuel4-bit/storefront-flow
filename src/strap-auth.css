@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap");
+
 /* Strap redesign — auth screens (log in, create shop, reset, verify code).
  * Scoped to .sa so nothing else in the app is affected. Uses the Phase 1 tokens. */
 
@@ -556,8 +558,6 @@
 
 /* Strap reference authentication skin — faithful to strap-login-2.zip.
    This file intentionally scopes the reference treatment to auth and onboarding. */
-@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap");
-
 :root {
   --strap-ref-lemon: #e6f53a;
   --strap-ref-black: #0a0a0a;
