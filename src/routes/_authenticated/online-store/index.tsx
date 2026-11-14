@@ -153,12 +153,12 @@ function OnlineStoreHome() {
               </h2>
               <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
                 {modeProfile
-                  ? "These storefront directions come from the selected business-mode JSON profile. This is a read-only preview; publishing and customer-facing behavior remain unchanged."
+                  ? "Choose a business-profile template, customize its approved sections and save your design in Store Studio. Publishing still requires completing Store Setup and accepting the required documents."
                   : "The existing storefront remains available. A validated mode profile is required before profile-driven templates can be previewed."}
               </p>
             </div>
             <span className="inline-flex shrink-0 items-center rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">
-              Draft · preview only
+              Draft profile templates
             </span>
           </div>
           {storefrontTemplates.length > 0 ? (
