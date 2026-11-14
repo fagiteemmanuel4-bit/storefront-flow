@@ -116,8 +116,8 @@ function ProductsPage() {
     ? getBusinessModeProfile(resolvedBusinessMode.key)
     : null;
   const modeProfile = modeProfileResult?.ok ? modeProfileResult.profile : null;
-  const physicalProfileFields = useMemo(
-    () => modeProfile?.product.fields.filter((field) => field.surfaces.includes("physical") && field.runtimeReady) ?? [],
+  const productProfileFields = useMemo(
+    () => modeProfile?.product.fields.filter((field) => field.runtimeReady) ?? [],
     [modeProfile],
   );
   const isGrocery = businessMode.key === "grocery-provision";
@@ -624,7 +624,7 @@ function ProductsPage() {
         branchId={branchId!}
         product={editing}
         businessMode={businessMode.key}
-        profileFields={physicalProfileFields}
+        profileFields={productProfileFields}
         onSaved={refresh}
       />
       {!isFashion && (
