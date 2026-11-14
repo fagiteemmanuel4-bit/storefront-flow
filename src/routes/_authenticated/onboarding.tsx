@@ -446,17 +446,20 @@ function OnboardingPage() {
   ][step];
 
   return (
-    <main className="sa ob ob-redesign">
-      <section className="sa-l">
-        <div className="sa-logo">
-          <span className="sa-dot" aria-hidden="true" />
-          <span>Strap</span>
-        </div>
-        <p className="sa-brand-tagline">Run your business. Not around it.</p>
+    <main className="ref-screen ob-screen">
+      <section className="ref-hero ob-hero">
+        <svg className="ref-logo" viewBox="0 0 136 136" aria-label="Strap logo">
+          <circle cx="68" cy="68" r="65" fill="none" stroke="#0a0a0a" strokeWidth="3" />
+          <circle cx="68" cy="68" r="49" fill="#0a0a0a" />
+          <circle cx="68" cy="68" r="19" fill="#e6f53a" />
+        </svg>
+        <h1>Strap</h1>
+        <p className="ref-tagline">Run your business. Not around it.</p>
       </section>
 
-      <section className="sa-r">
-        <div className="sa-box ob-box" key={step}>
+      <section className="ref-sheet ob-sheet">
+        <div className="ref-sheet-inner ob-sheet-inner">
+          <div className="sa-box ob-box" key={step}>
           <div
             className="ob-prog"
             role="progressbar"
