@@ -8,8 +8,8 @@ import { activeStoreCache } from "@/lib/active-store";
 import { SUPPORTED_CURRENCIES } from "@/lib/currency";
 import { errorMessage } from "@/lib/format";
 import "@/strap-auth.css";
-import "@/strap-reference.css";
 import "@/strap-onboarding.css";
+import "@/strap-reference.css";
 import { BUSINESS_MODES, type BusinessModeKey } from "@/lib/business-modes";
 import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 import {
