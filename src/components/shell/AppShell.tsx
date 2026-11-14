@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronUp,
   CloudUpload,
+  Compass,
   Cpu,
   Download,
   ExternalLink,
