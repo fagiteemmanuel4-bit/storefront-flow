@@ -210,6 +210,8 @@ function OnboardingPage() {
     try {
       if (!businessMode)
         throw new Error("Choose a valid business mode before creating your workspace.");
+      if (!dateOfBirth || !personalCountry)
+        throw new Error("Complete your personal details before continuing.");
       const profileResult = getBusinessModeProfile(businessMode);
       if (!profileResult.ok) {
         throw new Error(
@@ -217,6 +219,32 @@ function OnboardingPage() {
         );
       }
       const selectedProfile = profileResult.profile;
+      const { data: authResult, error: authError } = await supabase.auth.getUser();
+      if (authError || !authResult.user || authResult.user.id !== userId)
+        throw new Error("Your session could not be verified. Please sign in again.");
+
+      const { error: profileError } = await supabase.from("profiles").upsert(
+        {
+          id: userId,
+          email: authResult.user.email ?? "",
+          full_name: String(authResult.user.user_metadata?.full_name ?? ""),
+          date_of_birth: dateOfBirth,
+          country: personalCountry,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "id" },
+      );
+      if (profileError) throw new Error(profileError.message);
+
+      const fullBusinessAddress = [
+        businessStreet.trim(),
+        businessLandmark.trim(),
+        businessCity.trim(),
+        businessState.trim(),
+        businessCountry.trim(),
+        businessPostcode.trim(),
+      ].filter(Boolean).join(", ");
+
       const { data: storeId, error: createError } = await supabase.rpc("create_store", {
         _name: businessName.trim(),
         _currency: currency,
@@ -226,9 +254,27 @@ function OnboardingPage() {
       if (createError) throw new Error(createError.message);
       if (!storeId) throw new Error("Strap could not create your workspace.");
 
+      let businessPhotoUrl = "";
+      if (businessPhoto) {
+        const extension = businessPhoto.name.split(".").pop()?.toLowerCase() || "jpg";
+        const photoPath = storeId + "/" + userId + "/business-profile-" + Date.now() + "." + extension;
+        const { error: uploadError } = await supabase.storage
+          .from("kudi-store-assets")
+          .upload(photoPath, businessPhoto, {
+            upsert: true,
+            contentType: businessPhoto.type || "image/jpeg",
+            cacheControl: "3600",
+          });
+        if (uploadError) {
+          toast.error("Your workspace will be created, but the profile photo could not be uploaded. You can add it later.");
+        } else {
+          businessPhotoUrl = supabase.storage.from("kudi-store-assets").getPublicUrl(photoPath).data.publicUrl;
+        }
+      }
+
       const storefrontSettings = {
         onboarding: {
-          version: 2,
+          version: 3,
           businessModel,
           businessType: businessType.trim(),
           businessMode,
@@ -237,8 +283,13 @@ function OnboardingPage() {
           onlineStoreEnabled,
           teamSize,
           goal,
-          address: address.trim(),
+          address: fullBusinessAddress,
           phone: phone.trim(),
+          declaredBranchCount,
+          registrationStatus,
+          businessCountry,
+          businessState: businessState.trim(),
+          businessCity: businessCity.trim(),
         },
         businessMode,
         businessModeProfile: {
@@ -254,14 +305,38 @@ function OnboardingPage() {
         .from("stores")
         .update({
           phone: phone.trim(),
-          address: address.trim(),
+          address: fullBusinessAddress,
           business_type: businessType.trim(),
           team_size: teamSize,
           business_goal: goal,
+          ...(businessPhotoUrl ? { logo_url: businessPhotoUrl } : {}),
           storefront_settings: storefrontSettings,
         })
         .eq("id", storeId);
       if (storeError) throw new Error(storeError.message);
+
+      const { error: complianceError } = await supabase.from("store_compliance_profiles").upsert(
+        {
+          store_id: storeId,
+          owner_id: userId,
+          registration_status: registrationStatus,
+          registration_number: registrationNumber.trim() || null,
+          declared_branch_count: declaredBranchCount,
+          business_country: businessCountry,
+          business_state: businessState.trim(),
+          business_city: businessCity.trim(),
+          business_street: businessStreet.trim(),
+          business_landmark: businessLandmark.trim() || null,
+          business_postcode: businessPostcode.trim() || null,
+          website_status: websiteStatus || "none",
+          website_url: websiteStatus === "existing" ? websiteUrl.trim() : null,
+          wants_strap_website: onlineStoreEnabled,
+          business_profile_photo_url: businessPhotoUrl || null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "store_id" },
+      );
+      if (complianceError) throw new Error(complianceError.message);
 
       const { error: subscriptionError } = await supabase.rpc("initialize_store_subscription", {
         _store_id: storeId,
@@ -276,15 +351,10 @@ function OnboardingPage() {
         const { error: onlineError } = await supabase.from("online_stores").upsert(
           {
             store_id: storeId,
-            slug: `${businessName
-              .trim()
-              .toLowerCase()
-              .replace(/[^a-z0-9]+/g, "-")
-              .replace(/^-|-$/g, "")
-              .slice(0, 48)}-${String(storeId).slice(0, 6)}`,
+            slug: businessName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48) + "-" + String(storeId).slice(0, 6),
             display_name: businessName.trim(),
-            logo_url: "",
-            display_email: "",
+            logo_url: businessPhotoUrl,
+            display_email: authResult.user.email ?? "",
             display_phone: phone.trim(),
             description: "",
             shipping_note: "",
@@ -312,7 +382,6 @@ function OnboardingPage() {
       setSubmitting(false);
     }
   }
-
   if (isLoading)
     return (
       <main className="sa ob ob-solo">
@@ -350,19 +419,25 @@ function OnboardingPage() {
     "How will you use Strap?",
     "Tell us about the business",
     "How do you sell online?",
-    "Give your workspace an identity",
+    "A little about you",
+    "Give your business an identity",
+    "Business registration details",
+    "Where is your business located?",
     "How does the team operate?",
     "Choose your Strap plan",
     "Your setup is ready",
   ][step];
   const stepDescription = [
-    "We use this to shape your workspace, navigation and future recommendations.",
-    "A little context lets Strap use better defaults for products, reports and workflows.",
-    "Keep an existing website, build with Strap, or stay physical for now. You can change this later.",
-    "These details become the foundation for your store profile and customer-facing identity.",
-    "Tell Strap how the business works today so the workspace starts in the right shape.",
-    "Choose one plan now. You can upgrade or change billing later from Settings.",
-    "Review your choices before creating the workspace.",
+    "Choose the setup that best reflects how your business operates.",
+    "Tell us what you sell so Strap can configure the right tools and workflows.",
+    "Keep your current website or prepare a Strap storefront for later.",
+    "Your date of birth and country help us maintain an accurate account profile.",
+    "Add the business name, first location, contact details and brand image.",
+    "Tell us the business registration status and how many locations you operate.",
+    "Add the full physical business address, including the country and region.",
+    "Help Strap choose sensible defaults for your team and business goals.",
+    "Choose a plan now. You can upgrade or change billing later from Settings.",
+    "Review your details before creating your workspace.",
   ][step];
 
   return (
