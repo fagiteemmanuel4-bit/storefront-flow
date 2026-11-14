@@ -69,7 +69,6 @@ function MenuLink({
   featured?: boolean;
   locked?: boolean;
 }) {
-  if (to.startsWith("/online-store")) return null;
   return (
     <Link
       to={(locked ? "/upgrade" : to) as any}
@@ -355,6 +354,15 @@ export function AppMenuSheet({
                 Manage
               </p>
               <div className="space-y-1.5">
+                <MenuLink
+                  to="/online-store"
+                  icon={Globe2}
+                  label="Online store"
+                  hint="Design, publish and manage your storefront"
+                  onClick={close}
+                  locked={!canOnlineStore}
+                  featured
+                />
                 <MenuLink
                   to="/products"
                   icon={Package}
