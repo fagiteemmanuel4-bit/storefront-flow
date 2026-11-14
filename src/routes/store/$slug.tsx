@@ -104,6 +104,37 @@ function PublicStorefrontPage() {
   });
   const store = storeQuery.data;
 
+  const configQuery = useQuery({
+    queryKey: ["public-store-config", store?.store_id],
+    enabled: Boolean(store?.store_id),
+    queryFn: async () => {
+      const { data, error } = await onlineSupabase
+        .from("storefront_configs")
+        .select("template,theme,branding,sections")
+        .eq("store_id", store!.store_id)
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    staleTime: 15_000,
+  });
+  const configuredSections = ((configQuery.data?.sections ?? []) as Array<{
+    id: string; type: string; enabled: boolean; settings?: Record<string, unknown>;
+  }>).filter((section) => section.enabled && section.settings && typeof section.settings === "object");
+  const sectionSettings = (type: string) =>
+    configuredSections.find((section) => section.type === type)?.settings ?? {};
+  const configuredHero = sectionSettings("hero");
+  const configuredBranding = (configQuery.data?.branding ?? {}) as { storeName?: string; logoUrl?: string; description?: string };
+  const safeColor = (value: unknown, fallback: string) =>
+    typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value) ? value : fallback;
+  const configuredTheme = (configQuery.data?.theme ?? {}) as Record<string, unknown>;
+  const storefrontStyle = {
+    "--store-primary": safeColor(configuredTheme.primaryColor, "#111827"),
+    "--store-accent": safeColor(configuredTheme.accentColor, "#f59e0b"),
+    "--store-text": safeColor(configuredTheme.textColor, "#111827"),
+    "--store-background": safeColor(configuredTheme.backgroundColor, "#ffffff"),
+  } as React.CSSProperties;
+
   const catalogQuery = useQuery({
     queryKey: ["public-store-products", slug],
     enabled: Boolean(store?.store_id),
@@ -294,14 +325,17 @@ function PublicStorefrontPage() {
   const activeHero = heroes[heroIndex];
 
   return (
-    <main className="storefront-shell min-h-screen bg-background">
+    <main className="storefront-shell min-h-screen bg-background" style={storefrontStyle}>
+      {String(sectionSettings("announcement").text ?? "").trim() && (
+        <div className="bg-foreground px-4 py-2 text-center text-xs font-semibold text-background">{String(sectionSettings("announcement").text)}</div>
+      )}
       <header className="sticky top-0 z-20 border-b border-border/80 bg-surface/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
           <div className="flex min-w-0 items-center gap-3">
-            {store.logo_url ? (
+            {(configuredBranding.logoUrl || store.logo_url) ? (
               <img
-                src={store.logo_url}
-                alt={`${store.display_name} logo`}
+                src={configuredBranding.logoUrl || store.logo_url}
+                alt={`${configuredBranding.storeName || store.display_name} logo`}
                 className="size-11 rounded-2xl border border-border object-cover"
               />
             ) : (
@@ -310,7 +344,7 @@ function PublicStorefrontPage() {
               </span>
             )}
             <div className="min-w-0">
-              <h1 className="truncate font-display text-lg font-bold">{store.display_name}</h1>
+              <h1 className="truncate font-display text-lg font-bold">{configuredBranding.storeName || store.display_name}</h1>
               <p className="truncate text-xs text-muted-foreground">Official online store</p>
             </div>
           </div>
@@ -341,11 +375,11 @@ function PublicStorefrontPage() {
             <div className="absolute inset-x-0 bottom-0 p-7 text-white sm:p-10 lg:p-12">
               <p className="text-label-caps text-white/70">{store.display_name}</p>
               <h2 className="mt-3 max-w-3xl font-display text-3xl font-bold tracking-tight sm:text-5xl">
-                {activeHero.title || "Everything you need, in one place."}
+                {String(configuredHero.headline ?? activeHero.title ?? "Everything you need, in one place.")}
               </h2>
-              {activeHero.subtitle && (
+              {(configuredHero.subheadline || activeHero.subtitle) && (
                 <p className="mt-4 max-w-2xl text-sm leading-6 text-white/80 sm:text-base">
-                  {activeHero.subtitle}
+                  {String(configuredHero.subheadline ?? activeHero.subtitle)}
                 </p>
               )}
             </div>
@@ -389,7 +423,7 @@ function PublicStorefrontPage() {
             <div className="relative max-w-3xl">
               <p className="text-label-caps text-accent-ink">{store.display_name}</p>
               <h2 className="text-display-lg mt-4">
-                {store.description || "Everything you need, in one place."}
+                {configuredBranding.description || store.description || "Everything you need, in one place."}
               </h2>
               <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground">
                 Browse our latest products and place an order directly with the store.
@@ -417,6 +451,28 @@ function PublicStorefrontPage() {
             </a>
           )}
         </div>
+      </section>
+      <section className="mx-auto max-w-6xl space-y-5 px-5 pb-8 lg:px-8">
+        {configuredSections.filter((section) => !["hero","announcement","featured-products","product-grid","categories","footer"].includes(section.type)).map((section) => {
+          const settings = section.settings ?? {};
+          if (section.type === "about" || section.type === "promotional-banner") return (
+            <article key={section.id} className="storefront-card p-6 sm:p-8">
+              <h3 className="text-xl font-bold">{String(settings.title ?? settings.headline ?? (section.type === "about" ? "About us" : "Special offer"))}</h3>
+              {Boolean(settings.body) && <p className="mt-3 max-w-3xl whitespace-pre-wrap text-sm leading-7 text-muted-foreground">{String(settings.body)}</p>}
+            </article>
+          );
+          if (section.type === "testimonials" || section.type === "social-proof" || section.type === "faq" || section.type === "newsletter" || section.type === "contact") return (
+            <article key={section.id} className="storefront-card p-6">
+              <h3 className="text-lg font-bold">{String(settings.title ?? (section.type === "faq" ? "Frequently asked questions" : section.type === "contact" ? "Contact us" : section.type === "newsletter" ? "Stay in the loop" : "What customers say"))}</h3>
+              {Boolean(settings.body) && <p className="mt-2 text-sm leading-6 text-muted-foreground">{String(settings.body)}</p>}
+              {section.type === "contact" && <div className="mt-3 flex flex-wrap gap-3 text-sm">{store.display_phone && <a href={`tel:${store.display_phone}`} className="underline">{store.display_phone}</a>}{store.display_email && <a href={`mailto:${store.display_email}`} className="underline">{store.display_email}</a>}</div>}
+            </article>
+          );
+          if (section.type === "gallery") return (
+            <article key={section.id} className="storefront-card p-6"><h3 className="text-lg font-bold">{String(settings.title ?? "Gallery")}</h3>{Boolean(settings.imageUrl) && <img src={String(settings.imageUrl)} alt="" loading="lazy" className="mt-4 max-h-80 w-full rounded-xl object-cover" />}</article>
+          );
+          return null;
+        })}
       </section>
       <section className="mx-auto max-w-6xl px-5 pb-24 lg:px-8">
         <div className="mb-7 flex items-end justify-between gap-4">
