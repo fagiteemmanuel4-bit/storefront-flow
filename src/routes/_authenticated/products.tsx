@@ -408,24 +408,24 @@ function ProductsPage() {
                 <h2 className="mt-1 truncate text-sm font-semibold">{modeProfile.name}</h2>
               </div>
               <span className="inline-flex items-center rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">
-                Draft · preview only
+                Draft profile · fields available
               </span>
             </div>
             <div className="grid gap-3 p-4 sm:grid-cols-[1fr_auto] sm:items-center sm:px-5">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  {physicalProfileFields.length} physical-store product fields are defined in this profile.
-                  They are shown for review only; the existing product form and database remain unchanged.
+                  {productProfileFields.length} profile-specific product fields are available in the editor.
+                  These fields appear in the product editor and are saved privately against the product and its business profile.
                 </p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
-                  {physicalProfileFields.slice(0, 6).map((field) => (
+                  {productProfileFields.slice(0, 6).map((field) => (
                     <span key={field.id} className="rounded-lg bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
                       {field.label}
                     </span>
                   ))}
-                  {physicalProfileFields.length > 6 && (
+                  {productProfileFields.length > 6 && (
                     <span className="rounded-lg bg-secondary px-2.5 py-1 text-xs font-medium text-muted-foreground">
-                      +{physicalProfileFields.length - 6} more
+                      +{productProfileFields.length - 6} more
                     </span>
                   )}
                 </div>
