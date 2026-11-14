@@ -117,7 +117,7 @@ function ProductsPage() {
     : null;
   const modeProfile = modeProfileResult?.ok ? modeProfileResult.profile : null;
   const physicalProfileFields = useMemo(
-    () => modeProfile?.product.fields.filter((field) => field.surfaces.includes("physical")) ?? [],
+    () => modeProfile?.product.fields.filter((field) => field.surfaces.includes("physical") && field.runtimeReady) ?? [],
     [modeProfile],
   );
   const isGrocery = businessMode.key === "grocery-provision";
