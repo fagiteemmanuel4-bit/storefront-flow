@@ -39,8 +39,8 @@ function Privacy() {
             Strap-powered storefront, contact support, or otherwise interact with us.
           </p>
           <p className="mt-3 text-sm text-muted-foreground">
-            <strong>Effective date:</strong> 8 November 2026 · <strong>Last updated:</strong> 19
-            August 2026
+            <strong>Effective date:</strong> 8 November 2026 · <strong>Last updated:</strong> 14
+            November 2026
           </p>
         </div>
         <div className="mt-10 space-y-8 text-[15px] leading-7 text-muted-foreground">
