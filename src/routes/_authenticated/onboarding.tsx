@@ -10,8 +10,8 @@ import { errorMessage } from "@/lib/format";
 import { BUSINESS_MODES, type BusinessModeKey } from "@/lib/business-modes";
 import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 import {
-  ArrowLeft, ArrowRight, Check, ChevronRight, Globe2, MapPin,
-  MonitorSmartphone, ShoppingBag, Store, Users, Wallet, Building2,
+  ArrowLeft, ArrowRight, Check, Globe2, MapPin,
+  MonitorSmartphone, ShoppingBag, Store, Wallet, Building2,
 } from "lucide-react";
 import "@/strap-onboarding.css";
 
