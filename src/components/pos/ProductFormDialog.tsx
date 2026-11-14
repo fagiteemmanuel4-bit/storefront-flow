@@ -507,7 +507,7 @@ export function ProductFormDialog({
           return [field.id, value];
         }
         if (["tag-list", "modifier-list", "recipe-list", "variant-option"].includes(field.type)) {
-          return [field.id, trimmed.split(/[\\n,]/).map((item) => item.trim()).filter(Boolean)];
+          return [field.id, trimmed.split(/[\n,]/).map((item) => item.trim()).filter(Boolean)];
         }
         return [field.id, trimmed];
       }));
