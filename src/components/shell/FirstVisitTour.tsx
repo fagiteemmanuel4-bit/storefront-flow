@@ -184,9 +184,15 @@ export function FirstVisitTour({ pageKey }: { pageKey: string }) {
       setRect(null);
       return;
     }
+    let welcomeTourPending = false;
+    try {
+      welcomeTourPending = window.localStorage.getItem("strap-welcome-tour-pending") === "1";
+    } catch {
+      /* local storage is optional */
+    }
     const seen = readSeen();
     setRect(null);
-    setStep(seen[normalizedPageKey] ? -1 : 0);
+    setStep(welcomeTourPending || seen[normalizedPageKey] ? -1 : 0);
     const replay = () => {
       setRect(null);
       setStep(0);
