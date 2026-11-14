@@ -232,11 +232,19 @@ function OnboardingPage() {
       if (authError || !authResult.user || authResult.user.id !== userId)
         throw new Error("Your session could not be verified. Please sign in again.");
 
+      const { data: existingProfile, error: profileLookupError } = await supabase
+        .from("profiles")
+        .select("email, full_name")
+        .eq("id", userId)
+        .maybeSingle();
+      if (profileLookupError) throw new Error(profileLookupError.message);
+      const profileName = existingProfile?.full_name ||
+        String(authResult.user.user_metadata?.full_name ?? authResult.user.user_metadata?.name ?? "");
       const { error: profileError } = await supabase.from("profiles").upsert(
         {
           id: userId,
-          email: authResult.user.email ?? "",
-          full_name: String(authResult.user.user_metadata?.full_name ?? ""),
+          email: existingProfile?.email || authResult.user.email || "",
+          full_name: profileName,
           date_of_birth: dateOfBirth,
           country: personalCountry,
           updated_at: new Date().toISOString(),
