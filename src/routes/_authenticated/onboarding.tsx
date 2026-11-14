@@ -545,33 +545,6 @@ function OnboardingPage() {
                     ))}
                   </div>
                 </div>
-                <div className="sa-f">
-                  <label htmlFor="goal">What is the biggest reason you are using Strap?</label>
-                  <select
-                    id="goal"
-                    className="sa-in"
-                    value={goal}
-                    onChange={(e) => setGoal(e.target.value)}
-                  >
-                    <option value="">Choose a primary goal</option>
-                    {GOAL_OPTIONS.map((x) => (
-                      <option key={x}>{x}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="sa-f">
-                  <label htmlFor="team">How large is the team today?</label>
-                  <select
-                    id="team"
-                    className="sa-in"
-                    value={teamSize}
-                    onChange={(e) => setTeamSize(e.target.value)}
-                  >
-                    {TEAM_OPTIONS.map((x) => (
-                      <option key={x}>{x}</option>
-                    ))}
-                  </select>
-                </div>
               </>
             )}
 
@@ -987,16 +960,27 @@ function OnboardingPage() {
                 <div className="ob-st2">
                   <div className="ob-stat">
                     <small>Business profile</small>
-                    <b>
-                      {BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ??
-                        "Not selected"}
-                    </b>
+                    <b>{BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ?? "Not selected"}</b>
+                  </div>
+                  <div className="ob-stat">
+                    <small>Registration</small>
+                    <b>{registrationStatus === "registered" ? "Registered" : registrationStatus === "in_progress" ? "In progress" : "Not registered"}{registrationNumber.trim() ? " · " + registrationNumber.trim() : ""}</b>
+                  </div>
+                  <div className="ob-stat">
+                    <small>Locations</small>
+                    <b>{declaredBranchCount === "1" ? "1 branch" : declaredBranchCount + " branches"}</b>
+                  </div>
+                  <div className="ob-stat">
+                    <small>Business address</small>
+                    <b>{[businessStreet, businessLandmark, businessCity, businessState, businessCountry, businessPostcode].filter(Boolean).join(", ")}</b>
+                  </div>
+                  <div className="ob-stat">
+                    <small>Personal country</small>
+                    <b>{personalCountry}</b>
                   </div>
                   <div className="ob-stat">
                     <small>Plan</small>
-                    <b>
-                      {selectedPlan?.name} · {priceLabel}
-                    </b>
+                    <b>{selectedPlan?.name} · {priceLabel}</b>
                   </div>
                   <div className="ob-stat">
                     <small>Online store</small>
