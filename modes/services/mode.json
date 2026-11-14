@@ -38,13 +38,14 @@
       {
         "id": "description",
         "label": "Description",
-        "column": "description",
         "type": "long-text",
         "required": false,
         "surfaces": [
           "online"
         ],
-        "searchable": true
+        "searchable": true,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "sku",
@@ -88,25 +89,27 @@
       {
         "id": "brand",
         "label": "Brand",
-        "column": "brand",
         "type": "text",
         "required": false,
         "surfaces": [
           "physical",
           "online"
         ],
-        "searchable": true
+        "searchable": true,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "unit",
         "label": "Selling unit",
-        "column": "unit",
         "type": "text",
         "required": false,
         "surfaces": [
           "physical",
           "online"
-        ]
+        ],
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "price",
@@ -178,7 +181,9 @@
           "online"
         ],
         "min": 0,
-        "searchable": false
+        "searchable": false,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "staffAssignment",
@@ -188,7 +193,9 @@
         "surfaces": [
           "physical"
         ],
-        "searchable": false
+        "searchable": false,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "bookingRequired",
@@ -198,7 +205,9 @@
         "surfaces": [
           "physical",
           "online"
-        ]
+        ],
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "depositAmount",
@@ -209,7 +218,9 @@
           "physical",
           "online"
         ],
-        "searchable": false
+        "searchable": false,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "serviceLocation",
@@ -220,7 +231,9 @@
           "physical",
           "online"
         ],
-        "searchable": false
+        "searchable": false,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       },
       {
         "id": "jobPriority",
@@ -230,7 +243,9 @@
         "surfaces": [
           "physical"
         ],
-        "searchable": false
+        "searchable": false,
+        "source": "product_mode_details.details",
+        "runtimeReady": true
       }
     ],
     "variants": {
