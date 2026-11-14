@@ -15,6 +15,8 @@ import {
 import { toast } from "sonner";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
+import { resolveBusinessMode } from "@/lib/business-modes";
+import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 
 export const Route = createFileRoute("/_authenticated/online-store/setup")({
   ssr: false,
@@ -135,11 +137,65 @@ function OnlineStoreSetupPage() {
         accepted_terms_at: new Date().toISOString(),
         accepted_privacy_at: new Date().toISOString(),
       };
-      const configResult = await onlineSupabase.from("storefront_configs").upsert(
-        { store_id: store.id, is_published: true },
-        { onConflict: "store_id" },
-      );
-      if (configResult.error) throw new Error(configResult.error.message);
+      const existingConfig = await onlineSupabase
+        .from("storefront_configs")
+        .select("id")
+        .eq("store_id", store.id)
+        .maybeSingle();
+      if (existingConfig.error) throw new Error(existingConfig.error.message);
+
+      if (existingConfig.data) {
+        const configResult = await onlineSupabase
+          .from("storefront_configs")
+          .update({ is_published: true })
+          .eq("store_id", store.id);
+        if (configResult.error) throw new Error(configResult.error.message);
+      } else {
+        const businessModeValue =
+          (store.storefront_settings as any)?.businessMode ?? store.business_type;
+        const resolvedMode = resolveBusinessMode(businessModeValue);
+        const profileResult = resolvedMode ? getBusinessModeProfile(resolvedMode.key) : null;
+        const profile = profileResult?.ok ? profileResult.profile : null;
+        const initialTemplate = profile?.storefront.templates[0];
+        const profileTheme = initialTemplate?.theme ?? {};
+        const radiusValue = Number.parseFloat(String(profileTheme.radius ?? "14"));
+        const initialTheme = {
+          primaryColor: String(profileTheme.primary ?? "#111827"),
+          secondaryColor: String(profileTheme.surface ?? "#f3f4f6"),
+          accentColor: String(profileTheme.accent ?? "#f59e0b"),
+          textColor: String(profileTheme.text ?? "#111827"),
+          backgroundColor: String(profileTheme.background ?? "#ffffff"),
+          buttonRadius: radiusValue <= 10 ? "small" : radiusValue >= 18 ? "large" : "medium",
+          fontFamily: String(profileTheme.fontBody ?? "Inter"),
+          headingFontFamily: String(profileTheme.fontHeading ?? "Inter"),
+          density: profileTheme.density === "compact" ? "compact" : "comfortable",
+        };
+        const initialSections = (initialTemplate?.pages?.home ?? ["hero", "featured-products", "product-grid", "footer"])
+          .map((type, index) => ({
+            id: `${type}-setup-${index}`,
+            type,
+            enabled: true,
+            settings: {},
+          }));
+        const configResult = await onlineSupabase.from("storefront_configs").insert({
+          store_id: store.id,
+          template: initialTemplate?.id ?? "minimal-commerce",
+          theme: initialTheme,
+          branding: {
+            logoUrl: logoUrl || existing.data?.logo_url || "",
+            faviconUrl: "",
+            storeName: form.displayName.trim(),
+            description: form.description.trim(),
+            tagline: "",
+          },
+          navigation: { links: [] },
+          sections: initialSections,
+          seo: { title: form.displayName.trim(), description: form.description.trim(), keywords: [], noIndex: false },
+          custom_css: "",
+          is_published: true,
+        });
+        if (configResult.error) throw new Error(configResult.error.message);
+      }
 
       const result = existing.data
         ? await onlineSupabase.from("online_stores").update(payload).eq("store_id", store.id)
