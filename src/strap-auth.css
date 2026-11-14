@@ -555,7 +555,6 @@
   color: #ffffff;
 }
 
-
 /* Strap reference authentication skin — faithful to strap-login-2.zip.
    This file intentionally scopes the reference treatment to auth and onboarding. */
 :root {
@@ -605,7 +604,9 @@
   width: max-content !important;
   color: var(--strap-ref-black) !important;
   text-decoration: none !important;
-  font: 700 clamp(44px, 9vw, 64px)/1 "Sora", sans-serif !important;
+  font:
+    700 clamp(44px, 9vw, 64px)/1 "Sora",
+    sans-serif !important;
   letter-spacing: -0.055em !important;
 }
 .sa .sa-dot {
@@ -615,13 +616,20 @@
   aspect-ratio: 1;
   border: 3px solid var(--strap-ref-black) !important;
   border-radius: 50% !important;
-  background: radial-gradient(circle, var(--strap-ref-lemon) 0 14%, var(--strap-ref-black) 14.5% 72%, transparent 72.5%) !important;
+  background: radial-gradient(
+    circle,
+    var(--strap-ref-lemon) 0 14%,
+    var(--strap-ref-black) 14.5% 72%,
+    transparent 72.5%
+  ) !important;
 }
 .sa .sa-brand-tagline {
   display: block !important;
   margin: 12px 0 0 !important;
-  color: rgba(10, 10, 10, .75) !important;
-  font: 500 clamp(12.5px, 1vw + 10px, 15px)/1.5 "Sora", sans-serif !important;
+  color: rgba(10, 10, 10, 0.75) !important;
+  font:
+    500 clamp(12.5px, 1vw + 10px, 15px)/1.5 "Sora",
+    sans-serif !important;
 }
 .sa .sa-r {
   display: flex !important;
@@ -645,15 +653,20 @@
 .sa .sa-box h1 {
   margin: 0 0 8px !important;
   color: #fff !important;
-  font: 700 clamp(26px, 6vw, 34px)/1.15 "Sora", sans-serif !important;
-  letter-spacing: -.035em !important;
+  font:
+    700 clamp(26px, 6vw, 34px)/1.15 "Sora",
+    sans-serif !important;
+  letter-spacing: -0.035em !important;
 }
 .sa .sa-mut,
 .sa .sa-box p {
   color: #a5a59e !important;
   font-family: "Sora", sans-serif !important;
 }
-.sa .sa-fm { gap: 14px !important; margin: 24px 0 !important; }
+.sa .sa-fm {
+  gap: 14px !important;
+  margin: 24px 0 !important;
+}
 .sa .sa-in,
 .sa input.sa-in,
 .sa select.sa-in,
@@ -663,13 +676,17 @@
   border-radius: 16px !important;
   background: var(--strap-ref-ink) !important;
   color: #fff !important;
-  font: 400 16px "Sora", sans-serif !important;
+  font:
+    400 16px "Sora",
+    sans-serif !important;
   box-shadow: none !important;
 }
-.sa .sa-in::placeholder { color: #6f6f69 !important; }
+.sa .sa-in::placeholder {
+  color: #6f6f69 !important;
+}
 .sa .sa-in:focus {
   border-color: var(--strap-ref-lemon) !important;
-  box-shadow: 0 0 0 4px rgba(230, 245, 58, .14) !important;
+  box-shadow: 0 0 0 4px rgba(230, 245, 58, 0.14) !important;
   outline: none !important;
 }
 .sa .sa-b {
@@ -678,15 +695,21 @@
   border-radius: 16px !important;
   background: var(--strap-ref-ink) !important;
   color: #fff !important;
-  font: 600 15px "Sora", sans-serif !important;
+  font:
+    600 15px "Sora",
+    sans-serif !important;
 }
 .sa .sa-b.p {
   border-color: var(--strap-ref-lemon) !important;
   background: var(--strap-ref-lemon) !important;
   color: var(--strap-ref-black) !important;
 }
-.sa .sa-b.p:hover:not(:disabled) { background: #d9ed2e !important; }
-.sa .sa-b:disabled { opacity: .45 !important; }
+.sa .sa-b.p:hover:not(:disabled) {
+  background: #d9ed2e !important;
+}
+.sa .sa-b:disabled {
+  opacity: 0.45 !important;
+}
 .sa .sa-lk,
 .sa .sa-alt a,
 .sa .sa-alt button {
@@ -694,7 +717,10 @@
   font-family: "Sora", sans-serif !important;
 }
 .sa .sa-label,
-.sa .sa-f label { color: #fff !important; font-family: "Sora", sans-serif !important; }
+.sa .sa-f label {
+  color: #fff !important;
+  font-family: "Sora", sans-serif !important;
+}
 .sa .sa-notice {
   border: 1px solid #343434 !important;
   border-radius: 14px !important;
@@ -702,22 +728,37 @@
   color: #e9e9e4 !important;
   font-family: "Sora", sans-serif !important;
 }
-.sa .sa-notice.err { background: #321b19 !important; color: #ffaaa1 !important; }
+.sa .sa-notice.err {
+  background: #321b19 !important;
+  color: #ffaaa1 !important;
+}
 .sa .sa-otp .sa-in {
   min-height: 54px !important;
   height: 54px !important;
   padding: 0 2px !important;
-  font: 600 clamp(15px, 4vw, 22px) "Sora", sans-serif !important;
+  font:
+    600 clamp(15px, 4vw, 22px) "Sora",
+    sans-serif !important;
 }
-.sa .sa-otp .sep { background: #55554e !important; }
-.sa .sa-ok { background: var(--strap-ref-lemon) !important; }
-.sa .sa-ok.err { background: #b42318 !important; }
+.sa .sa-otp .sep {
+  background: #55554e !important;
+}
+.sa .sa-ok {
+  background: var(--strap-ref-lemon) !important;
+}
+.sa .sa-ok.err {
+  background: #b42318 !important;
+}
 .sa :is(a, button, input):focus-visible {
   outline: 3px solid var(--strap-ref-lemon) !important;
   outline-offset: 2px !important;
 }
-.sa .ob-kicker { color: #a5a59e !important; }
-.sa .ob-body { gap: 12px !important; }
+.sa .ob-kicker {
+  color: #a5a59e !important;
+}
+.sa .ob-body {
+  gap: 12px !important;
+}
 .sa .ob-opt,
 .sa .ob-panel,
 .sa .ob-seg {
@@ -737,29 +778,63 @@
   background: var(--strap-ref-lemon) !important;
   color: var(--strap-ref-black) !important;
 }
-.sa .ob-prog { background: #30302b !important; }
-.sa .ob-prog i { background: var(--strap-ref-lemon) !important; }
-.sa .ob-sw[aria-checked="true"] { background: var(--strap-ref-lemon) !important; }
-.sa .ob-sw[aria-checked="true"]::after { background: var(--strap-ref-black) !important; }
+.sa .ob-prog {
+  background: #30302b !important;
+}
+.sa .ob-prog i {
+  background: var(--strap-ref-lemon) !important;
+}
+.sa .ob-sw[aria-checked="true"] {
+  background: var(--strap-ref-lemon) !important;
+}
+.sa .ob-sw[aria-checked="true"]::after {
+  background: var(--strap-ref-black) !important;
+}
 .sa .ob-plan,
-.sa .ob-plan * { color: inherit; }
-.sa.ob .sa-r { padding-top: 18px !important; }
-.sa.ob .sa-box.ob-box { max-width: 440px !important; }
-.sa.ob .ob-prog { margin-bottom: 20px !important; }
-.sa.ob .ob-body { margin-top: 20px !important; }
-.sa.ob .ob-steps { display: none !important; }
+.sa .ob-plan * {
+  color: inherit;
+}
+.sa.ob .sa-r {
+  padding-top: 18px !important;
+}
+.sa.ob .sa-box.ob-box {
+  max-width: 440px !important;
+}
+.sa.ob .ob-prog {
+  margin-bottom: 20px !important;
+}
+.sa.ob .ob-body {
+  margin-top: 20px !important;
+}
+.sa.ob .ob-steps {
+  display: none !important;
+}
 
 @media (min-width: 861px) {
-  .sa { grid-template-columns: none !important; }
-  .sa .sa-l { min-height: 300px; }
+  .sa {
+    grid-template-columns: none !important;
+  }
+  .sa .sa-l {
+    min-height: 300px;
+  }
 }
 @media (max-width: 520px) {
-  .sa .sa-l { min-height: 235px; padding-bottom: 26px !important; }
-  .sa .sa-r { padding-right: 20px !important; padding-left: 20px !important; }
-  .sa .sa-box { max-width: 440px !important; }
+  .sa .sa-l {
+    min-height: 235px;
+    padding-bottom: 26px !important;
+  }
+  .sa .sa-r {
+    padding-right: 20px !important;
+    padding-left: 20px !important;
+  }
+  .sa .sa-box {
+    max-width: 440px !important;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sa .sa-box { animation: none !important; }
+  .sa .sa-box {
+    animation: none !important;
+  }
 }
 
 /* Main / signup / password-recovery screen: exact yellow hero + dark bottom sheet. */
@@ -794,7 +869,9 @@
   color: var(--strap-ref-black) !important;
   text-align: center !important;
 }
-.strap-auth-rings { display: none !important; }
+.strap-auth-rings {
+  display: none !important;
+}
 .strap-logo {
   display: flex !important;
   flex-direction: column !important;
@@ -803,8 +880,10 @@
   gap: clamp(14px, 2.5vh, 22px) !important;
   color: var(--strap-ref-black) !important;
   text-decoration: none !important;
-  font: 700 clamp(44px, 9vw, 64px)/1 "Sora", sans-serif !important;
-  letter-spacing: -.055em !important;
+  font:
+    700 clamp(44px, 9vw, 64px)/1 "Sora",
+    sans-serif !important;
+  letter-spacing: -0.055em !important;
 }
 .strap-logo-mark {
   display: block !important;
@@ -813,19 +892,34 @@
   aspect-ratio: 1;
   border: 3px solid var(--strap-ref-black) !important;
   border-radius: 50% !important;
-  background: radial-gradient(circle, var(--strap-ref-lemon) 0 14%, var(--strap-ref-black) 14.5% 72%, transparent 72.5%) !important;
+  background: radial-gradient(
+    circle,
+    var(--strap-ref-lemon) 0 14%,
+    var(--strap-ref-black) 14.5% 72%,
+    transparent 72.5%
+  ) !important;
 }
-.strap-logo-word { color: var(--strap-ref-black) !important; }
-.strap-auth-hero { margin: 0 !important; }
-.strap-auth-hero h2 { display: none !important; }
+.strap-logo-word {
+  color: var(--strap-ref-black) !important;
+}
+.strap-auth-hero {
+  margin: 0 !important;
+}
+.strap-auth-hero h2 {
+  display: none !important;
+}
 .strap-auth-hero p,
 .strap-auth-tagline {
   display: block !important;
   margin: 12px 0 0 !important;
-  color: rgba(10, 10, 10, .75) !important;
-  font: 500 clamp(12.5px, 1vw + 10px, 15px)/1.5 "Sora", sans-serif !important;
+  color: rgba(10, 10, 10, 0.75) !important;
+  font:
+    500 clamp(12.5px, 1vw + 10px, 15px)/1.5 "Sora",
+    sans-serif !important;
 }
-.strap-auth-copy { display: none !important; }
+.strap-auth-copy {
+  display: none !important;
+}
 .strap-auth-form-panel {
   display: flex !important;
   flex: 0 0 auto !important;
@@ -849,17 +943,30 @@
 .strap-auth-title {
   margin: 0 0 8px !important;
   color: #fff !important;
-  font: 700 clamp(26px, 6vw, 34px)/1.15 "Sora", sans-serif !important;
-  letter-spacing: -.035em !important;
+  font:
+    700 clamp(26px, 6vw, 34px)/1.15 "Sora",
+    sans-serif !important;
+  letter-spacing: -0.035em !important;
 }
 .strap-auth-sub,
 .strap-auth-box p {
   color: #a5a59e !important;
   font-family: "Sora", sans-serif !important;
 }
-.strap-auth-form { margin-top: 22px !important; }
-.strap-field-wrap { display: flex !important; flex-direction: column !important; gap: 7px !important; }
-.strap-label { color: #fff !important; font: 500 13px "Sora", sans-serif !important; }
+.strap-auth-form {
+  margin-top: 22px !important;
+}
+.strap-field-wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+}
+.strap-label {
+  color: #fff !important;
+  font:
+    500 13px "Sora",
+    sans-serif !important;
+}
 .strap-field {
   width: 100% !important;
   min-height: 54px !important;
@@ -868,18 +975,31 @@
   border-radius: 16px !important;
   background: var(--strap-ref-ink) !important;
   color: #fff !important;
-  font: 400 16px "Sora", sans-serif !important;
+  font:
+    400 16px "Sora",
+    sans-serif !important;
   box-shadow: none !important;
 }
-.strap-field::placeholder { color: #6f6f69 !important; }
+.strap-field::placeholder {
+  color: #6f6f69 !important;
+}
 .strap-field:focus {
   border-color: var(--strap-ref-lemon) !important;
-  box-shadow: 0 0 0 4px rgba(230, 245, 58, .14) !important;
+  box-shadow: 0 0 0 4px rgba(230, 245, 58, 0.14) !important;
   outline: none !important;
 }
-.strap-field-row { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; }
-.strap-pw { position: relative !important; }
-.strap-pw .strap-field { padding-right: 56px !important; }
+.strap-field-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+.strap-pw {
+  position: relative !important;
+}
+.strap-pw .strap-field {
+  padding-right: 56px !important;
+}
 .strap-eye {
   position: absolute !important;
   top: 4px !important;
@@ -899,19 +1019,31 @@
   border: 0 !important;
   background: transparent !important;
   color: #fff !important;
-  font: 600 14px "Sora", sans-serif !important;
+  font:
+    600 14px "Sora",
+    sans-serif !important;
   text-decoration: none !important;
   cursor: pointer !important;
 }
-.strap-terms { color: #a5a59e !important; font: 400 13px/1.5 "Sora", sans-serif !important; }
-.strap-terms a { color: #fff !important; font-weight: 600 !important; }
+.strap-terms {
+  color: #a5a59e !important;
+  font:
+    400 13px/1.5 "Sora",
+    sans-serif !important;
+}
+.strap-terms a {
+  color: #fff !important;
+  font-weight: 600 !important;
+}
 .strap-notice {
   border: 1px solid #343434 !important;
   border-radius: 14px !important;
   background: #191919 !important;
   color: #e9e9e4 !important;
   padding: 12px 14px !important;
-  font: 400 13px/1.55 "Sora", sans-serif !important;
+  font:
+    400 13px/1.55 "Sora",
+    sans-serif !important;
 }
 .strap-btn {
   display: flex !important;
@@ -920,30 +1052,52 @@
   align-items: center !important;
   justify-content: center !important;
   border-radius: 16px !important;
-  font: 600 15px "Sora", sans-serif !important;
+  font:
+    600 15px "Sora",
+    sans-serif !important;
 }
 .strap-btn-primary {
   border: 1px solid var(--strap-ref-lemon) !important;
   background: var(--strap-ref-lemon) !important;
   color: var(--strap-ref-black) !important;
 }
-.strap-btn-primary:hover:not(:disabled) { background: #d9ed2e !important; }
+.strap-btn-primary:hover:not(:disabled) {
+  background: #d9ed2e !important;
+}
 .strap-btn-google {
   border: 1px solid var(--strap-ref-edge) !important;
   background: var(--strap-ref-ink) !important;
   color: #fff !important;
 }
-.strap-auth-alt { color: #a5a59e !important; font: 400 13px "Sora", sans-serif !important; }
-.strap-auth-alt .strap-link { color: var(--strap-ref-lemon) !important; }
-.strap-auth-back { margin-top: 10px !important; color: var(--strap-ref-lemon) !important; }
+.strap-auth-alt {
+  color: #a5a59e !important;
+  font:
+    400 13px "Sora",
+    sans-serif !important;
+}
+.strap-auth-alt .strap-link {
+  color: var(--strap-ref-lemon) !important;
+}
+.strap-auth-back {
+  margin-top: 10px !important;
+  color: var(--strap-ref-lemon) !important;
+}
 .strap-auth-box :is(a, button, input):focus-visible {
   outline: 3px solid var(--strap-ref-lemon) !important;
   outline-offset: 2px !important;
 }
 @media (max-width: 520px) {
-  .strap-auth-aside { min-height: 235px; padding-bottom: 26px !important; }
-  .strap-auth-form-panel { padding-right: 20px !important; padding-left: 20px !important; }
-  .strap-auth-box { max-width: 440px !important; }
+  .strap-auth-aside {
+    min-height: 235px;
+    padding-bottom: 26px !important;
+  }
+  .strap-auth-form-panel {
+    padding-right: 20px !important;
+    padding-left: 20px !important;
+  }
+  .strap-auth-box {
+    max-width: 440px !important;
+  }
 }
 
 /* The reference uses placeholder-led fields; keep labels available to assistive tech. */

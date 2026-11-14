@@ -672,9 +672,7 @@ function AuthPage() {
                         onChange={(event) => setPassword(event.target.value)}
                         className="strap-field"
                         autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                        placeholder={
-                          mode === "signin" ? "Password" : "Create a password"
-                        }
+                        placeholder={mode === "signin" ? "Password" : "Create a password"}
                         required
                       />
                       <button
