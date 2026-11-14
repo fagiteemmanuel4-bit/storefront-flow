@@ -456,3 +456,209 @@ select.sa-in {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
+
+
+/* Onboarding refresh: the same lemon hero and black sheet used by the auth prototype. */
+.ob-screen {
+  min-height: 100dvh;
+  background: #e6f53a;
+  color: #fff;
+  font-family: "Sora", "Helvetica Neue", Arial, sans-serif;
+}
+.ob-screen .ob-hero {
+  flex: 0 0 auto;
+  min-height: 220px;
+  padding: calc(env(safe-area-inset-top, 0px) + 28px) 24px 42px;
+}
+.ob-screen .ob-hero .ref-logo {
+  width: clamp(68px, 12vw, 104px);
+}
+.ob-screen .ob-hero h1 {
+  margin-top: 12px;
+  font-size: clamp(34px, 6vw, 48px);
+}
+.ob-screen .ob-hero .ref-tagline {
+  margin-top: 8px;
+}
+.ob-screen .ob-sheet {
+  flex: 1 0 auto;
+  min-height: 68vh;
+  padding-top: 14px;
+  background: #0a0a0a;
+  border-radius: 30px 30px 0 0;
+  color: #fff;
+}
+.ob-screen .ob-sheet-inner {
+  max-width: 720px;
+}
+.ob-screen .ob-box {
+  width: 100%;
+  max-width: 720px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #fff;
+}
+.ob-screen .ob-box h1 {
+  margin: 0;
+  color: #fff;
+  font: 700 clamp(27px, 5vw, 36px)/1.16 "Sora", sans-serif;
+  letter-spacing: -0.04em;
+}
+.ob-screen .ob-box > .sa-mut {
+  margin: 9px 0 0;
+  color: #aaa99f;
+  font: 400 14px/1.55 "Sora", sans-serif;
+}
+.ob-screen .ob-kicker {
+  margin: 0 0 12px;
+  color: #e6f53a;
+  font: 600 11px "Sora", sans-serif;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.ob-screen .ob-prog {
+  height: 5px;
+  margin-bottom: 22px;
+  background: #292929;
+}
+.ob-screen .ob-prog i {
+  background: #e6f53a;
+}
+.ob-screen .ob-body {
+  gap: 18px;
+  margin: 26px 0 10px;
+}
+.ob-screen .sa-f {
+  gap: 8px;
+}
+.ob-screen .sa-f label,
+.ob-screen .sa-label {
+  color: #f4f4ed;
+  font: 600 13px/1.4 "Sora", sans-serif;
+}
+.ob-screen .sa-in {
+  min-height: 54px;
+  border: 1px solid #393939;
+  border-radius: 14px;
+  background: #151515;
+  color: #fff;
+  font: 500 14px "Sora", sans-serif;
+  padding: 14px 16px;
+}
+.ob-screen .sa-in::placeholder {
+  color: #77776f;
+}
+.ob-screen .sa-in:focus {
+  border-color: #e6f53a;
+  outline: 2px solid rgba(230, 245, 58, .2);
+}
+.ob-screen .ob-hint {
+  color: #999990;
+  font: 400 12px/1.5 "Sora", sans-serif;
+}
+.ob-screen .ob-g2 {
+  gap: 10px;
+}
+.ob-screen .ob-opt {
+  border: 1px solid #383838;
+  border-radius: 15px;
+  background: #151515;
+  color: #f5f5ed;
+  font-family: "Sora", sans-serif;
+}
+.ob-screen .ob-opt:hover {
+  border-color: #777;
+}
+.ob-screen .ob-opt[aria-pressed="true"] {
+  border-color: #e6f53a;
+  background: rgba(230, 245, 58, .1);
+  color: #fff;
+}
+.ob-screen .ob-opt .ob-chip {
+  background: #252525;
+  color: #e6f53a;
+}
+.ob-screen .ob-opt .ob-tick {
+  border-color: #56564d;
+}
+.ob-screen .ob-opt[aria-pressed="true"] .ob-tick {
+  border-color: #e6f53a;
+  background: #e6f53a;
+  color: #0a0a0a;
+}
+.ob-screen .ob-panel,
+.ob-screen .ob-stat {
+  border: 1px solid #343434;
+  border-radius: 15px;
+  background: #141414;
+  color: #fff;
+}
+.ob-screen .ob-sum {
+  border: 1px solid #343434;
+  background: #151515;
+}
+.ob-screen .ob-nav {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin-top: 18px;
+  padding: 14px 0 calc(14px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid #292929;
+  background: #0a0a0a;
+}
+.ob-screen .ob-nav .sa-b {
+  min-height: 52px;
+  border: 1px solid #393939;
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  font: 600 13px "Sora", sans-serif;
+}
+.ob-screen .ob-nav .sa-b.p {
+  border-color: #e6f53a;
+  background: #e6f53a;
+  color: #0a0a0a;
+}
+.ob-screen .ob-nav .sa-b:disabled {
+  opacity: .45;
+}
+.ob-screen :is(button, input, select):focus-visible {
+  outline: 2px solid #e6f53a;
+  outline-offset: 3px;
+}
+.ob-screen .ob-file {
+  padding: 10px;
+}
+.ob-screen .ob-file::file-selector-button {
+  margin-right: 12px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #e6f53a;
+  color: #0a0a0a;
+  font: 600 12px "Sora", sans-serif;
+}
+@media (min-width: 860px) {
+  .ob-screen .ob-hero {
+    min-height: 270px;
+    padding-bottom: 50px;
+  }
+  .ob-screen .ob-sheet {
+    border-radius: 34px 34px 0 0;
+  }
+}
+@media (max-width: 600px) {
+  .ob-screen .ob-sheet {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .ob-screen .ob-st2 {
+    grid-template-columns: 1fr;
+  }
+  .ob-screen .ob-g2 {
+    grid-template-columns: 1fr;
+  }
+}

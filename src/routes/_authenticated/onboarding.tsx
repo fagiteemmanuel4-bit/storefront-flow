@@ -119,11 +119,16 @@ const GOAL_OPTIONS = [
   "Open an online channel",
   "Run multiple locations",
 ];
+const COUNTRY_OPTIONS = [
+  "Nigeria", "Ghana", "Kenya", "South Africa", "Egypt", "Uganda", "Tanzania",
+  "Rwanda", "Senegal", "Côte d’Ivoire", "Cameroon", "United Kingdom",
+  "United States", "Canada", "United Arab Emirates", "India", "Other",
+];
 
 function OnboardingPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { memberships, isLoading, error, refresh, setActiveStore } = useStoreContext();
+  const { memberships, isLoading, error, refresh, setActiveStore, userId } = useStoreContext();
   const [step, setStep] = useState(0);
   const [plan, setPlan] = useState<Plan | "">("");
   const [billing, setBilling] = useState<Billing>("month");
@@ -140,10 +145,21 @@ function OnboardingPage() {
   const [teamSize, setTeamSize] = useState("Just me");
   const [goal, setGoal] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [personalCountry, setPersonalCountry] = useState("");
+  const [registrationStatus, setRegistrationStatus] = useState<"registered" | "not_registered" | "in_progress" | "">("");
+  const [registrationNumber, setRegistrationNumber] = useState("");
+  const [declaredBranchCount, setDeclaredBranchCount] = useState<"1" | "2-5" | "6-20" | "20+" | "">("");
+  const [businessCountry, setBusinessCountry] = useState("");
+  const [businessState, setBusinessState] = useState("");
+  const [businessCity, setBusinessCity] = useState("");
+  const [businessStreet, setBusinessStreet] = useState("");
+  const [businessLandmark, setBusinessLandmark] = useState("");
+  const [businessPostcode, setBusinessPostcode] = useState("");
+  const [businessPhoto, setBusinessPhoto] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [checking, setChecking] = useState(false);
-  const totalSteps = 7;
+  const totalSteps = 10;
 
   useEffect(() => {
     if (!isLoading && !error && memberships.length > 0)
@@ -166,9 +182,18 @@ function OnboardingPage() {
       return websiteStatus === "existing"
         ? /^https?:\/\//i.test(websiteUrl.trim())
         : Boolean(websiteStatus);
-    if (step === 3) return businessName.trim().length >= 2 && branchName.trim().length >= 1;
-    if (step === 4) return Boolean(teamSize && goal && currency);
-    if (step === 5) return Boolean(plan);
+    if (step === 3) {
+      if (!dateOfBirth || !personalCountry) return false;
+      const born = new Date(dateOfBirth + "T00:00:00");
+      const cutoff = new Date();
+      cutoff.setFullYear(cutoff.getFullYear() - 18);
+      return Number.isFinite(born.getTime()) && born <= cutoff;
+    }
+    if (step === 4) return businessName.trim().length >= 2 && branchName.trim().length >= 1;
+    if (step === 5) return Boolean(registrationStatus && declaredBranchCount);
+    if (step === 6) return Boolean(businessCountry && businessState.trim() && businessCity.trim() && businessStreet.trim());
+    if (step === 7) return Boolean(teamSize && goal);
+    if (step === 8) return Boolean(plan);
     return true;
   }
 
@@ -190,6 +215,12 @@ function OnboardingPage() {
     try {
       if (!businessMode)
         throw new Error("Choose a valid business mode before creating your workspace.");
+      if (!dateOfBirth || !personalCountry)
+        throw new Error("Complete your personal details before continuing.");
+      if (!registrationStatus || !declaredBranchCount)
+        throw new Error("Complete the business registration and branch details before continuing.");
+      if (!businessCountry || !businessState.trim() || !businessCity.trim() || !businessStreet.trim())
+        throw new Error("Complete the full business address before continuing.");
       const profileResult = getBusinessModeProfile(businessMode);
       if (!profileResult.ok) {
         throw new Error(
@@ -197,6 +228,40 @@ function OnboardingPage() {
         );
       }
       const selectedProfile = profileResult.profile;
+      const { data: authResult, error: authError } = await supabase.auth.getUser();
+      if (authError || !authResult.user || authResult.user.id !== userId)
+        throw new Error("Your session could not be verified. Please sign in again.");
+
+      const { data: existingProfile, error: profileLookupError } = await supabase
+        .from("profiles")
+        .select("email, full_name")
+        .eq("id", userId)
+        .maybeSingle();
+      if (profileLookupError) throw new Error(profileLookupError.message);
+      const profileName = existingProfile?.full_name ||
+        String(authResult.user.user_metadata?.full_name ?? authResult.user.user_metadata?.name ?? "");
+      const { error: profileError } = await supabase.from("profiles").upsert(
+        {
+          id: userId,
+          email: existingProfile?.email || authResult.user.email || "",
+          full_name: profileName,
+          date_of_birth: dateOfBirth,
+          country: personalCountry,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "id" },
+      );
+      if (profileError) throw new Error(profileError.message);
+
+      const fullBusinessAddress = [
+        businessStreet.trim(),
+        businessLandmark.trim(),
+        businessCity.trim(),
+        businessState.trim(),
+        businessCountry.trim(),
+        businessPostcode.trim(),
+      ].filter(Boolean).join(", ");
+
       const { data: storeId, error: createError } = await supabase.rpc("create_store", {
         _name: businessName.trim(),
         _currency: currency,
@@ -206,9 +271,27 @@ function OnboardingPage() {
       if (createError) throw new Error(createError.message);
       if (!storeId) throw new Error("Strap could not create your workspace.");
 
+      let businessPhotoUrl = "";
+      if (businessPhoto) {
+        const extension = businessPhoto.name.split(".").pop()?.toLowerCase() || "jpg";
+        const photoPath = storeId + "/" + userId + "/business-profile-" + Date.now() + "." + extension;
+        const { error: uploadError } = await supabase.storage
+          .from("kudi-store-assets")
+          .upload(photoPath, businessPhoto, {
+            upsert: true,
+            contentType: businessPhoto.type || "image/jpeg",
+            cacheControl: "3600",
+          });
+        if (uploadError) {
+          toast.error("Your workspace will be created, but the profile photo could not be uploaded. You can add it later.");
+        } else {
+          businessPhotoUrl = supabase.storage.from("kudi-store-assets").getPublicUrl(photoPath).data.publicUrl;
+        }
+      }
+
       const storefrontSettings = {
         onboarding: {
-          version: 2,
+          version: 3,
           businessModel,
           businessType: businessType.trim(),
           businessMode,
@@ -217,8 +300,13 @@ function OnboardingPage() {
           onlineStoreEnabled,
           teamSize,
           goal,
-          address: address.trim(),
+          address: fullBusinessAddress,
           phone: phone.trim(),
+          declaredBranchCount,
+          registrationStatus,
+          businessCountry,
+          businessState: businessState.trim(),
+          businessCity: businessCity.trim(),
         },
         businessMode,
         businessModeProfile: {
@@ -234,14 +322,45 @@ function OnboardingPage() {
         .from("stores")
         .update({
           phone: phone.trim(),
-          address: address.trim(),
+          address: fullBusinessAddress,
           business_type: businessType.trim(),
           team_size: teamSize,
           business_goal: goal,
+          ...(businessPhotoUrl ? { logo_url: businessPhotoUrl } : {}),
           storefront_settings: storefrontSettings,
         })
         .eq("id", storeId);
       if (storeError) throw new Error(storeError.message);
+
+      const { error: branchAddressError } = await supabase
+        .from("branches")
+        .update({ address: fullBusinessAddress })
+        .eq("store_id", storeId)
+        .eq("is_default", true);
+      if (branchAddressError) throw new Error(branchAddressError.message);
+
+      const { error: complianceError } = await supabase.from("store_compliance_profiles").upsert(
+        {
+          store_id: storeId,
+          owner_id: userId,
+          registration_status: registrationStatus,
+          registration_number: registrationNumber.trim() || null,
+          declared_branch_count: declaredBranchCount,
+          business_country: businessCountry,
+          business_state: businessState.trim(),
+          business_city: businessCity.trim(),
+          business_street: businessStreet.trim(),
+          business_landmark: businessLandmark.trim() || null,
+          business_postcode: businessPostcode.trim() || null,
+          website_status: websiteStatus || "none",
+          website_url: websiteStatus === "existing" ? websiteUrl.trim() : null,
+          wants_strap_website: onlineStoreEnabled,
+          business_profile_photo_url: businessPhotoUrl || null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "store_id" },
+      );
+      if (complianceError) throw new Error(complianceError.message);
 
       const { error: subscriptionError } = await supabase.rpc("initialize_store_subscription", {
         _store_id: storeId,
@@ -256,15 +375,10 @@ function OnboardingPage() {
         const { error: onlineError } = await supabase.from("online_stores").upsert(
           {
             store_id: storeId,
-            slug: `${businessName
-              .trim()
-              .toLowerCase()
-              .replace(/[^a-z0-9]+/g, "-")
-              .replace(/^-|-$/g, "")
-              .slice(0, 48)}-${String(storeId).slice(0, 6)}`,
+            slug: businessName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48) + "-" + String(storeId).slice(0, 6),
             display_name: businessName.trim(),
-            logo_url: "",
-            display_email: "",
+            logo_url: businessPhotoUrl,
+            display_email: authResult.user.email ?? "",
             display_phone: phone.trim(),
             description: "",
             shipping_note: "",
@@ -292,7 +406,6 @@ function OnboardingPage() {
       setSubmitting(false);
     }
   }
-
   if (isLoading)
     return (
       <main className="sa ob ob-solo">
@@ -330,33 +443,42 @@ function OnboardingPage() {
     "How will you use Strap?",
     "Tell us about the business",
     "How do you sell online?",
-    "Give your workspace an identity",
+    "A little about you",
+    "Give your business an identity",
+    "Business registration details",
+    "Where is your business located?",
     "How does the team operate?",
     "Choose your Strap plan",
     "Your setup is ready",
   ][step];
   const stepDescription = [
-    "We use this to shape your workspace, navigation and future recommendations.",
-    "A little context lets Strap use better defaults for products, reports and workflows.",
-    "Keep an existing website, build with Strap, or stay physical for now. You can change this later.",
-    "These details become the foundation for your store profile and customer-facing identity.",
-    "Tell Strap how the business works today so the workspace starts in the right shape.",
-    "Choose one plan now. You can upgrade or change billing later from Settings.",
-    "Review your choices before creating the workspace.",
+    "Choose the setup that best reflects how your business operates.",
+    "Tell us what you sell so Strap can configure the right tools and workflows.",
+    "Keep your current website or prepare a Strap storefront for later.",
+    "Your date of birth and country help us maintain an accurate account profile.",
+    "Add the business name, first location, contact details and brand image.",
+    "Tell us the business registration status and how many locations you operate.",
+    "Add the full physical business address, including the country and region.",
+    "Help Strap choose sensible defaults for your team and business goals.",
+    "Choose a plan now. You can upgrade or change billing later from Settings.",
+    "Review your details before creating your workspace.",
   ][step];
 
   return (
-    <main className="sa ob">
-      <section className="sa-l">
-        <div className="sa-logo">
-          <span className="sa-dot" aria-hidden="true" />
-          <span>Strap</span>
-        </div>
-        <p className="sa-brand-tagline">Run your business. Not around it.</p>
+    <main className="ref-screen ob-screen">
+      <section className="ref-hero ob-hero">
+        <svg className="ref-logo" viewBox="0 0 136 136" aria-label="Strap logo">
+          <circle cx="68" cy="68" r="65" fill="none" stroke="#0a0a0a" strokeWidth="3" />
+          <circle cx="68" cy="68" r="49" fill="#0a0a0a" />
+          <circle cx="68" cy="68" r="19" fill="#e6f53a" />
+        </svg>
+        <h1>Strap</h1>
+        <p className="ref-tagline">Run your business. Not around it.</p>
       </section>
 
-      <section className="sa-r">
-        <div className="sa-box ob-box" key={step}>
+      <section className="ref-sheet ob-sheet">
+        <div className="ref-sheet-inner ob-sheet-inner">
+          <div className="sa-box ob-box" key={step}>
           <div
             className="ob-prog"
             role="progressbar"
@@ -445,33 +567,6 @@ function OnboardingPage() {
                     ))}
                   </div>
                 </div>
-                <div className="sa-f">
-                  <label htmlFor="goal">What is the biggest reason you are using Strap?</label>
-                  <select
-                    id="goal"
-                    className="sa-in"
-                    value={goal}
-                    onChange={(e) => setGoal(e.target.value)}
-                  >
-                    <option value="">Choose a primary goal</option>
-                    {GOAL_OPTIONS.map((x) => (
-                      <option key={x}>{x}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="sa-f">
-                  <label htmlFor="team">How large is the team today?</label>
-                  <select
-                    id="team"
-                    className="sa-in"
-                    value={teamSize}
-                    onChange={(e) => setTeamSize(e.target.value)}
-                  >
-                    {TEAM_OPTIONS.map((x) => (
-                      <option key={x}>{x}</option>
-                    ))}
-                  </select>
-                </div>
               </>
             )}
 
@@ -549,6 +644,36 @@ function OnboardingPage() {
             {step === 3 && (
               <>
                 <div className="sa-f">
+                  <label htmlFor="date-of-birth">Date of birth</label>
+                  <input
+                    id="date-of-birth"
+                    className="sa-in"
+                    type="date"
+                    max={new Date().toISOString().slice(0, 10)}
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    autoFocus
+                  />
+                  <p className="ob-hint">You must be at least 18 years old to create a Strap business account. This information is stored in your private account profile.</p>
+                </div>
+                <div className="sa-f">
+                  <label htmlFor="personal-country">Country of residence</label>
+                  <select
+                    id="personal-country"
+                    className="sa-in"
+                    value={personalCountry}
+                    onChange={(e) => setPersonalCountry(e.target.value)}
+                  >
+                    <option value="">Select your country</option>
+                    {COUNTRY_OPTIONS.map((country) => <option key={country} value={country}>{country}</option>)}
+                  </select>
+                </div>
+              </>
+            )}
+
+            {step === 4 && (
+              <>
+                <div className="sa-f">
                   <label htmlFor="business-name">Business / store name</label>
                   <input
                     id="business-name"
@@ -598,16 +723,6 @@ function OnboardingPage() {
                   </div>
                 </div>
                 <div className="sa-f">
-                  <label htmlFor="address">Business address</label>
-                  <input
-                    id="address"
-                    className="sa-in"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Street, area, city, state"
-                  />
-                </div>
-                <div className="sa-f">
                   <div className="flex items-center justify-between gap-3">
                     <label htmlFor="tax">Default sales tax (%)</label>
                     <Link
@@ -632,10 +747,111 @@ function OnboardingPage() {
                     placeholder="0"
                   />
                 </div>
+                <div className="sa-f">
+                  <label htmlFor="business-photo">Business profile picture <span className="ob-hint">(optional)</span></label>
+                  <input
+                    id="business-photo"
+                    className="sa-in ob-file"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] ?? null;
+                      if (file && !["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+                        toast.error("Choose a PNG, JPG or WebP image.");
+                        e.target.value = "";
+                        setBusinessPhoto(null);
+                        return;
+                      }
+                      if (file && file.size > 5 * 1024 * 1024) {
+                        toast.error("Choose an image smaller than 5 MB.");
+                        e.target.value = "";
+                        setBusinessPhoto(null);
+                        return;
+                      }
+                      setBusinessPhoto(file);
+                    }}
+                  />
+                  <p className="ob-hint">{businessPhoto ? businessPhoto.name : "PNG, JPG or WebP. Maximum 5 MB."}</p>
+                </div>
               </>
             )}
 
-            {step === 4 && (
+            {step === 5 && (
+              <>
+                <div className="sa-f">
+                  <span className="sa-label">Is this a registered business?</span>
+                  <div className="ob-g2">
+                    {([
+                      ["Registered", "registered"],
+                      ["Not registered", "not_registered"],
+                      ["Registration in progress", "in_progress"],
+                    ] as const).map(([label, value]) => (
+                      <button key={value} type="button" className="ob-opt pill" aria-pressed={registrationStatus === value} onClick={() => setRegistrationStatus(value)}>{label}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="sa-f">
+                  <label htmlFor="registration-number">Business registration number <span className="ob-hint">(you can add this later)</span></label>
+                  <input
+                    id="registration-number"
+                    className="sa-in"
+                    value={registrationNumber}
+                    onChange={(e) => setRegistrationNumber(e.target.value)}
+                    placeholder="e.g. RC1234567"
+                    autoCapitalize="characters"
+                  />
+                </div>
+                <div className="sa-f">
+                  <label htmlFor="branch-count">How many branches do you operate?</label>
+                  <select id="branch-count" className="sa-in" value={declaredBranchCount} onChange={(e) => setDeclaredBranchCount(e.target.value as typeof declaredBranchCount)}>
+                    <option value="">Select branch count</option>
+                    <option value="1">1 (single location)</option>
+                    <option value="2-5">2 to 5</option>
+                    <option value="6-20">6 to 20</option>
+                    <option value="20+">More than 20</option>
+                  </select>
+                  <p className="ob-hint">This records your current business footprint. Additional branches can be configured in your workspace.</p>
+                </div>
+              </>
+            )}
+
+            {step === 6 && (
+              <>
+                <div className="sa-f">
+                  <label htmlFor="business-country">Business country</label>
+                  <select id="business-country" className="sa-in" value={businessCountry} onChange={(e) => setBusinessCountry(e.target.value)}>
+                    <option value="">Select country</option>
+                    {COUNTRY_OPTIONS.map((country) => <option key={country} value={country}>{country}</option>)}
+                  </select>
+                </div>
+                <div className="ob-g2">
+                  <div className="sa-f">
+                    <label htmlFor="business-state">State / region</label>
+                    <input id="business-state" className="sa-in" value={businessState} onChange={(e) => setBusinessState(e.target.value)} placeholder="State or region" autoComplete="address-level1" />
+                  </div>
+                  <div className="sa-f">
+                    <label htmlFor="business-city">City / town</label>
+                    <input id="business-city" className="sa-in" value={businessCity} onChange={(e) => setBusinessCity(e.target.value)} placeholder="City or town" autoComplete="address-level2" />
+                  </div>
+                </div>
+                <div className="sa-f">
+                  <label htmlFor="business-street">Street address</label>
+                  <input id="business-street" className="sa-in" value={businessStreet} onChange={(e) => setBusinessStreet(e.target.value)} placeholder="House number, street and area" autoComplete="street-address" />
+                </div>
+                <div className="ob-g2">
+                  <div className="sa-f">
+                    <label htmlFor="business-landmark">Landmark <span className="ob-hint">(optional)</span></label>
+                    <input id="business-landmark" className="sa-in" value={businessLandmark} onChange={(e) => setBusinessLandmark(e.target.value)} placeholder="Nearby landmark" />
+                  </div>
+                  <div className="sa-f">
+                    <label htmlFor="business-postcode">Postal code <span className="ob-hint">(optional)</span></label>
+                    <input id="business-postcode" className="sa-in" value={businessPostcode} onChange={(e) => setBusinessPostcode(e.target.value)} placeholder="Postal code" autoComplete="postal-code" />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {step === 7 && (
               <>
                 <div className="ob-panel">
                   <div
@@ -686,7 +902,7 @@ function OnboardingPage() {
               </>
             )}
 
-            {step === 5 && (
+            {step === 8 && (
               <>
                 <div className="ob-seg" role="group" aria-label="Billing period">
                   <button
@@ -753,7 +969,7 @@ function OnboardingPage() {
               </>
             )}
 
-            {step === 6 && (
+            {step === 9 && (
               <>
                 <div className="ob-sum">
                   <p className="k">Ready to build</p>
@@ -773,16 +989,27 @@ function OnboardingPage() {
                 <div className="ob-st2">
                   <div className="ob-stat">
                     <small>Business profile</small>
-                    <b>
-                      {BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ??
-                        "Not selected"}
-                    </b>
+                    <b>{BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ?? "Not selected"}</b>
+                  </div>
+                  <div className="ob-stat">
+                    <small>Registration</small>
+                    <b>{registrationStatus === "registered" ? "Registered" : registrationStatus === "in_progress" ? "In progress" : "Not registered"}{registrationNumber.trim() ? " · " + registrationNumber.trim() : ""}</b>
+                  </div>
+                  <div className="ob-stat">
+                    <small>Locations</small>
+                    <b>{declaredBranchCount === "1" ? "1 branch" : declaredBranchCount + " branches"}</b>
+                  </div>
+                  <div className="ob-stat">
+                    <small>Business address</small>
+                    <b>{[businessStreet, businessLandmark, businessCity, businessState, businessCountry, businessPostcode].filter(Boolean).join(", ")}</b>
+                  </div>
+                  <div className="ob-stat">
+                    <small>Personal country</small>
+                    <b>{personalCountry}</b>
                   </div>
                   <div className="ob-stat">
                     <small>Plan</small>
-                    <b>
-                      {selectedPlan?.name} · {priceLabel}
-                    </b>
+                    <b>{selectedPlan?.name} · {priceLabel}</b>
                   </div>
                   <div className="ob-stat">
                     <small>Online store</small>
@@ -807,7 +1034,7 @@ function OnboardingPage() {
               <ArrowLeft className="size-4" />
               Back
             </button>
-            {step < 6 ? (
+            {step < 9 ? (
               <button
                 type="button"
                 className="sa-b p"
@@ -829,6 +1056,7 @@ function OnboardingPage() {
               </button>
             )}
           </div>
+        </div>
         </div>
       </section>
     </main>
