@@ -142,7 +142,6 @@ function NavItem({
   collapsed: boolean;
   locked: boolean;
 }) {
-  if (item.to.startsWith("/online-store")) return null;
   const active =
     pathname === item.to ||
     (item.to === "/online-store/orders" && pathname.startsWith("/online-store/orders")) ||
