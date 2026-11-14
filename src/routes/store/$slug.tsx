@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -18,9 +18,6 @@ import { formatMoney } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/store/$slug")({
-  beforeLoad: () => {
-    throw redirect({ to: "/" });
-  },
   ssr: false,
   component: PublicStorefrontPage,
 });
