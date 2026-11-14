@@ -347,44 +347,11 @@ function OnboardingPage() {
   return (
     <main className="sa ob">
       <section className="sa-l">
-        <svg
-          className="sa-ring"
-          aria-hidden="true"
-          viewBox="0 0 700 700"
-          fill="none"
-          stroke="#C6F432"
-          strokeWidth="2"
-        >
-          <circle cx="350" cy="350" r="60" />
-          <circle cx="350" cy="350" r="120" strokeOpacity=".7" />
-          <circle cx="350" cy="350" r="180" strokeOpacity=".5" />
-          <circle cx="350" cy="350" r="240" strokeOpacity=".32" />
-          <circle cx="350" cy="350" r="300" strokeOpacity=".18" />
-          <circle cx="350" cy="110" r="9" fill="#C6F432" stroke="none" />
-          <circle cx="562" cy="472" r="9" fill="#C6F432" stroke="none" />
-        </svg>
         <div className="sa-logo">
-          <span className="sa-dot" />
-          Strap
+          <span className="sa-dot" aria-hidden="true" />
+          <span>Strap</span>
         </div>
-        <div>
-          <p className="ob-kicker">Workspace setup</p>
-          <h2>Set up your shop in a few minutes.</h2>
-          <p className="sa-lead">No code or technical setup. You can change most choices later.</p>
-          <ol className="ob-steps">
-            {STEP_LABELS.map((label, i) => (
-              <li
-                key={label}
-                className={i < step ? "done" : i === step ? "cur" : ""}
-                aria-current={i === step ? "step" : undefined}
-              >
-                <b>{i < step ? "✓" : i + 1}</b>
-                {label}
-              </li>
-            ))}
-          </ol>
-        </div>
-        <small>© 2026 Strap by Kryonara</small>
+        <p className="sa-brand-tagline">Run your business. Not around it.</p>
       </section>
 
       <section className="sa-r">
