@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -510,7 +510,7 @@ function OnboardingPage() {
     return Math.max(0, step - 1);
   };
   const advance = () => setStep(nextStep());
-  const pick = <T,>(value: T, setter: React.Dispatch<React.SetStateAction<T>>) => {
+  const pick = <T,>(value: T, setter: Dispatch<SetStateAction<T>>) => {
     setter(value);
     window.setTimeout(() => advance(), 120);
   };
