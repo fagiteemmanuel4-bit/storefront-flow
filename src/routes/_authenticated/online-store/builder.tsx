@@ -394,7 +394,16 @@ function StoreBuilder() {
         <p className="text-muted-foreground">Loading store builder…</p>
       </main>
     );
-  const publicUrl = slug ? `/store/${slug}` : "/online-store/setup";
+  const publicUrl = slug ? "/store/" + slug : "/online-store/setup";
+  const safePreviewCss = customCss
+    .replace(/@import[^;]*;?/gi, "")
+    .replace(/url\s*\([^)]*\)/gi, "none")
+    .replace(/expression\s*\([^)]*\)/gi, "none")
+    .replace(/javascript\s*:/gi, "")
+    .replace(/\x3c\s*\/\s*style/gi, "");
+  const safePreviewHeadingFont = /^[a-z0-9 ,'-]{1,60}$/i.test(theme.headingFontFamily)
+    ? theme.headingFontFamily
+    : theme.fontFamily;
   return (
     <main className="min-h-screen bg-background" data-tour="main-content">
       <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
@@ -482,9 +491,10 @@ function StoreBuilder() {
             <span className="lg:hidden">Advanced editing is optimized for desktop.</span>
           </div>
           <div
-            className="mx-auto max-w-3xl overflow-hidden rounded-[1.5rem] border border-border bg-white shadow-lift"
+            className="storefront-shell mx-auto max-w-3xl overflow-hidden rounded-[1.5rem] border border-border bg-white shadow-lift"
             style={{ color: theme.textColor, backgroundColor: theme.backgroundColor, fontFamily: theme.fontFamily }}
           >
+            <style>{".storefront-shell h1,.storefront-shell h2,.storefront-shell h3{font-family:" + safePreviewHeadingFont + ",sans-serif}" + safePreviewCss}</style>
             <div
               className="flex items-center justify-between border-b px-5 py-4"
               style={{ borderColor: theme.secondaryColor }}
