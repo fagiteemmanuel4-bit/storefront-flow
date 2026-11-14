@@ -110,7 +110,7 @@ function PublicStorefrontPage() {
     queryFn: async () => {
       const { data, error } = await onlineSupabase
         .from("storefront_configs")
-        .select("template,theme,branding,sections")
+        .select("template,theme,branding,sections,custom_css,navigation,seo")
         .eq("store_id", store!.store_id)
         .maybeSingle();
       if (error) throw new Error(error.message);
@@ -128,6 +128,13 @@ function PublicStorefrontPage() {
   const safeColor = (value: unknown, fallback: string) =>
     typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value) ? value : fallback;
   const configuredTheme = (configQuery.data?.theme ?? {}) as Record<string, unknown>;
+  const customCss = typeof configQuery.data?.custom_css === "string" ? configQuery.data.custom_css : "";
+  const safeCustomCss = customCss
+    .replace(/@import[^;]*;?/gi, "")
+    .replace(/url\\s*\\([^)]*\\)/gi, "none")
+    .replace(/expression\\s*\\([^)]*\\)/gi, "none")
+    .replace(/javascript\\s*:/gi, "")
+    .replace(/<\\s*\\/\\s*style/gi, "");
   const storefrontStyle = {
     "--store-primary": safeColor(configuredTheme.primaryColor, "#111827"),
     "--store-accent": safeColor(configuredTheme.accentColor, "#f59e0b"),
@@ -328,6 +335,7 @@ function PublicStorefrontPage() {
 
   return (
     <main className="storefront-shell min-h-screen bg-background" style={storefrontStyle}>
+      {safeCustomCss && <style>{safeCustomCss}</style>}
       {String(sectionSettings("announcement").text ?? "").trim() && (
         <div className="bg-foreground px-4 py-2 text-center text-xs font-semibold text-background">{String(sectionSettings("announcement").text)}</div>
       )}
