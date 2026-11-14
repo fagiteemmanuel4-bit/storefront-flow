@@ -10,6 +10,7 @@ import { errorMessage } from "@/lib/format";
 import "@/strap-auth.css";
 import "@/strap-onboarding.css";
 import { BUSINESS_MODES, type BusinessModeKey } from "@/lib/business-modes";
+import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 import {
   ArrowLeft,
   ArrowRight,
@@ -186,6 +187,12 @@ function OnboardingPage() {
     }
     setSubmitting(true);
     try {
+      if (!businessMode) throw new Error("Choose a valid business mode before creating your workspace.");
+      const profileResult = getBusinessModeProfile(businessMode);
+      if (!profileResult.ok) {
+        throw new Error("The selected business profile is unavailable. Please choose another business mode.");
+      }
+      const selectedProfile = profileResult.profile;
       const { data: storeId, error: createError } = await supabase.rpc("create_store", {
         _name: businessName.trim(),
         _currency: currency,
@@ -210,6 +217,12 @@ function OnboardingPage() {
           phone: phone.trim(),
         },
         businessMode,
+        businessModeProfile: {
+          id: selectedProfile.id,
+          version: selectedProfile.profileVersion,
+          status: selectedProfile.status,
+          runtimeReady: selectedProfile.runtimeReady,
+        },
         onlineStoreEnabled,
         externalWebsite: websiteStatus === "existing" ? websiteUrl.trim() : "",
       };
@@ -787,6 +800,10 @@ function OnboardingPage() {
                   </p>
                 </div>
                 <div className="ob-st2">
+                  <div className="ob-stat">
+                    <small>Business profile</small>
+                    <b>{BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ?? "Not selected"}</b>
+                  </div>
                   <div className="ob-stat">
                     <small>Plan</small>
                     <b>
