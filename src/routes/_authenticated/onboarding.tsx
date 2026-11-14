@@ -217,6 +217,10 @@ function OnboardingPage() {
         throw new Error("Choose a valid business mode before creating your workspace.");
       if (!dateOfBirth || !personalCountry)
         throw new Error("Complete your personal details before continuing.");
+      if (!registrationStatus || !declaredBranchCount)
+        throw new Error("Complete the business registration and branch details before continuing.");
+      if (!businessCountry || !businessState.trim() || !businessCity.trim() || !businessStreet.trim())
+        throw new Error("Complete the full business address before continuing.");
       const profileResult = getBusinessModeProfile(businessMode);
       if (!profileResult.ok) {
         throw new Error(
