@@ -72,6 +72,7 @@ const pageSteps: Record<string, TourStep[]> = {
   "/customers": [
     { selector: ['[data-tour="main-content"]'], title: "Customer records", body: "Keep customer contact details and purchase history together so your team can support repeat business." },
   ],
+  "/quick-tour": [],
   "/dashboard": [
     { selector: ['[data-tour="page-heading"]', '[data-tour="main-content"]'], title: "Business overview", body: "Use this page to review recent activity and move into the workflows that need attention." },
   ],
