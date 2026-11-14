@@ -179,7 +179,11 @@ export function FirstVisitTour({ pageKey }: { pageKey: string }) {
   }, [step, steps]);
 
   useEffect(() => {
-    if (!steps.length) return;
+    if (!steps.length) {
+      setStep(-1);
+      setRect(null);
+      return;
+    }
     const seen = readSeen();
     setRect(null);
     setStep(seen[normalizedPageKey] ? -1 : 0);
