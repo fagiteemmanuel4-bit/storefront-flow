@@ -33,7 +33,8 @@
 - Regenerates Supabase TypeScript database types.
 - GitHub CI: formatting, lint, production build and TypeScript checks passed.
 - Static security and build checks passed.
-- A Vercel preview deployment could not be manually triggered because the team's deployment API quota was exhausted at the time of validation. The pull request is ready for review; it has not been merged into production.
+- Vercel Git integration produced a READY preview deployment at https://storefront-flow-fdirmeajk-kristens-projects-e3a8795a.vercel.app (preview access may require Vercel authentication).
+- The pull request remains open and has not been merged into production.
 
 ## Important compliance note
 This implementation collects and protects the requested fields. It does not, by itself, certify Strap's compliance or guarantee acceptance by a regulator. The privacy policy still contains legal-entity and privacy-contact placeholders that must be completed and reviewed by qualified Nigerian privacy/compliance counsel before publication.
