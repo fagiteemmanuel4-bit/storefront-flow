@@ -23,6 +23,8 @@ type Theme = {
   backgroundColor: string;
   buttonRadius: "small" | "medium" | "large";
   fontFamily: string;
+  headingFontFamily: string;
+  density: "comfortable" | "compact";
 };
 type Branding = { logoUrl: string; faviconUrl: string; storeName: string; description: string };
 
@@ -163,6 +165,8 @@ const defaultTheme: Theme = {
   backgroundColor: "#ffffff",
   buttonRadius: "medium",
   fontFamily: "Inter",
+  headingFontFamily: "Inter",
+  density: "comfortable",
 };
 const defaultBranding: Branding = { logoUrl: "", faviconUrl: "", storeName: "", description: "" };
 const sectionFields: Record<string, Array<{ key: string; label: string; placeholder: string }>> = {
@@ -285,9 +289,14 @@ function StoreBuilder() {
         setTheme((current) => ({
           ...current,
           primaryColor: String(firstTemplate.theme.primary ?? current.primaryColor),
+          secondaryColor: String(firstTemplate.theme.surface ?? current.secondaryColor),
           accentColor: String(firstTemplate.theme.accent ?? current.accentColor),
           textColor: String(firstTemplate.theme.text ?? current.textColor),
           backgroundColor: String(firstTemplate.theme.background ?? current.backgroundColor),
+          fontFamily: String(firstTemplate.theme.fontBody ?? current.fontFamily),
+          headingFontFamily: String(firstTemplate.theme.fontHeading ?? current.headingFontFamily),
+          density: firstTemplate.theme.density === "compact" ? "compact" : "comfortable",
+          buttonRadius: Number.parseFloat(String(firstTemplate.theme.radius ?? "14")) <= 10 ? "small" : Number.parseFloat(String(firstTemplate.theme.radius ?? "14")) >= 18 ? "large" : "medium",
         }));
       }
     } else setSections(makeSections(DEFAULT_TEMPLATE_SECTIONS));
@@ -306,9 +315,14 @@ function StoreBuilder() {
       setTheme((current) => ({
         ...current,
         primaryColor: String(profileTemplate.theme.primary ?? current.primaryColor),
+        secondaryColor: String(profileTemplate.theme.surface ?? current.secondaryColor),
         accentColor: String(profileTemplate.theme.accent ?? current.accentColor),
         textColor: String(profileTemplate.theme.text ?? current.textColor),
         backgroundColor: String(profileTemplate.theme.background ?? current.backgroundColor),
+        fontFamily: String(profileTemplate.theme.fontBody ?? current.fontFamily),
+        headingFontFamily: String(profileTemplate.theme.fontHeading ?? current.headingFontFamily),
+        density: profileTemplate.theme.density === "compact" ? "compact" : "comfortable",
+        buttonRadius: Number.parseFloat(String(profileTemplate.theme.radius ?? "14")) <= 10 ? "small" : Number.parseFloat(String(profileTemplate.theme.radius ?? "14")) >= 18 ? "large" : "medium",
       }));
     }
     setSelectedSection(null);
@@ -469,7 +483,7 @@ function StoreBuilder() {
           </div>
           <div
             className="mx-auto max-w-3xl overflow-hidden rounded-[1.5rem] border border-border bg-white shadow-lift"
-            style={{ color: theme.textColor, backgroundColor: theme.backgroundColor }}
+            style={{ color: theme.textColor, backgroundColor: theme.backgroundColor, fontFamily: theme.fontFamily }}
           >
             <div
               className="flex items-center justify-between border-b px-5 py-4"
