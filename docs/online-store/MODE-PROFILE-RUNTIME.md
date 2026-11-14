@@ -26,7 +26,7 @@ The check verifies profile count, draft/default-off release state, unique produc
 ## Not included in this milestone
 
 - No profile is activated or marked runtime-ready.
-- Product management consumes field-level profile mappings for private, non-inventory product details through `product_mode_details`. Fashion size/colour/material and variant stock continue to use their existing dedicated tables.
+- Product management consumes field-level profile mappings. Private non-inventory details use `product_mode_details`; the online description uses `online_products.description` and a newly created catalogue row stays disabled until the owner publishes it. Fashion size/colour/material and variant stock continue to use their existing dedicated tables.
 - `product_mode_details` is tenant-scoped, RLS-protected, and available only to authenticated store members; anonymous storefront visitors cannot read it.
 - Store Studio reads each mode profile's templates and allowed section types. The public storefront reads saved published branding, theme, and enabled sections.
 - Onboarding persists the selected profile ID/version. Existing workspaces can resolve common legacy free-text business descriptions without silently treating unknown values as General Retail.
