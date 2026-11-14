@@ -210,9 +210,11 @@ function StoreBuilder() {
   const businessMode = resolveBusinessMode(businessModeValue);
   const profileResult = businessMode ? getBusinessModeProfile(businessMode.key) : null;
   const modeProfile = profileResult?.ok ? profileResult.profile : null;
-  const profileTemplates = modeProfile?.storefront.templates ?? [];
-  const allowedSectionTypes = modeProfile?.storefront.allowedSectionTypes ?? SECTION_TYPES;
-  const availableSectionTypes = allowedSectionTypes;
+  const profileTemplates = useMemo(() => modeProfile?.storefront.templates ?? [], [modeProfile]);
+  const availableSectionTypes = useMemo(
+    () => modeProfile?.storefront.allowedSectionTypes ?? SECTION_TYPES,
+    [modeProfile],
+  );
   const [template, setTemplate] = useState<Template>(DEFAULT_TEMPLATE);
   const [theme, setTheme] = useState(defaultTheme);
   const [branding, setBranding] = useState<Branding>(defaultBranding);
