@@ -493,6 +493,24 @@ export function ProductFormDialog({
       const profileDetailFields = profileFields.filter(
         (field) => field.runtimeReady && field.source === "product_mode_details.details",
       );
+      const profileDetails = Object.fromEntries(profileDetailFields.map((field) => {
+        const raw = profileValues[field.id] ?? "";
+        const trimmed = raw.trim();
+        if (field.required && !trimmed) throw new Error(`${field.label} is required.`);
+        if (!trimmed) return [field.id, null];
+        if (field.type === "boolean") return [field.id, raw === "true"];
+        if (field.type === "integer" || field.type === "money") {
+          const value = Number(trimmed);
+          if (!Number.isFinite(value) || (field.type === "integer" && !Number.isInteger(value))) {
+            throw new Error(`${field.label} must be a valid ${field.type === "integer" ? "whole number" : "amount"}.`);
+          }
+          return [field.id, value];
+        }
+        if (["tag-list", "modifier-list", "recipe-list", "variant-option"].includes(field.type)) {
+          return [field.id, trimmed.split(/[\\n,]/).map((item) => item.trim()).filter(Boolean)];
+        }
+        return [field.id, trimmed];
+      }));
       const payload = {
         store_id: storeId,
         name: v.name,
@@ -547,33 +565,13 @@ export function ProductFormDialog({
       await saveFashionDetails(productId);
       await saveFashionVariantStock(productId, v.quantity);
       if (profileDetailFields.length) {
-        const details = Object.fromEntries(profileDetailFields.map((field) => {
-          const raw = profileValues[field.id] ?? "";
-          const trimmed = raw.trim();
-          if (field.required && !trimmed) {
-            throw new Error(`${field.label} is required.`);
-          }
-          if (!trimmed) return [field.id, null];
-          if (field.type === "boolean") return [field.id, raw === "true"];
-          if (field.type === "integer" || field.type === "money") {
-            const value = Number(trimmed);
-            if (!Number.isFinite(value) || (field.type === "integer" && !Number.isInteger(value))) {
-              throw new Error(`${field.label} must be a valid ${field.type === "integer" ? "whole number" : "amount"}.`);
-            }
-            return [field.id, value];
-          }
-          if (["tag-list", "modifier-list", "recipe-list", "variant-option"].includes(field.type)) {
-            return [field.id, trimmed.split(/[\\n,]/).map((item) => item.trim()).filter(Boolean)];
-          }
-          return [field.id, trimmed];
-        }));
         const { error: modeDetailsError } = await (supabase as any)
           .from("product_mode_details")
           .upsert({
             store_id: storeId,
             product_id: productId,
             mode_key: businessMode,
-            details,
+            details: profileDetails,
             updated_at: new Date().toISOString(),
           }, { onConflict: "store_id,product_id,mode_key" });
         if (modeDetailsError) throw new Error(modeDetailsError.message);
@@ -889,21 +887,6 @@ export function ProductFormDialog({
                   </section>
                 )}
               </div>
-            )}
-            {profileFields.some((field) => field.runtimeReady && field.column && !["name","price","cost","sku","barcode","category","lowStockThreshold","quantity"].includes(field.id)) && (
-              <section className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
-                <div>
-                  <p className="text-sm font-semibold">Business-specific details</p>
-                  <p className="mt-1 text-xs text-muted-foreground">Fields are shown from your business profile. Only fields with verified product-column mappings can be saved here.</p>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {profileFields.filter((field) => field.runtimeReady && field.column && /^[a-z][a-z0-9_]*$/.test(field.column) && !["name","price","cost","sku","barcode","category","lowStockThreshold","quantity"].includes(field.id)).map((field) => (
-                    <Field key={field.id} label={field.label}>
-                      <Input value={profileValues[field.id] ?? ""} onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: event.target.value }))} className="h-12" inputMode={field.type === "integer" || field.type === "money" ? "decimal" : undefined} type={field.type === "long-text" ? "text" : "text"} maxLength={240} />
-                    </Field>
-                  ))}
-                </div>
-              </section>
             )}
             {profileFields.some((field) => field.runtimeReady && field.source === "product_mode_details.details") && (
               <section className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
