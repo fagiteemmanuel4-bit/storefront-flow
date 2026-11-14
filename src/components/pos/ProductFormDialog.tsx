@@ -611,6 +611,7 @@ export function ProductFormDialog({
           : await onlineSupabase.from("online_products").insert({
               store_id: storeId,
               product_id: productId,
+              slug: `${v.name.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48)}-${productId.slice(0, 8)}`,
               description,
               enabled: false,
             });
