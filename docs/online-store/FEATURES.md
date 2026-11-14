@@ -17,12 +17,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pl.e2e-tests` — End-to-end tests for critical flows
 
-- **Priority:** P0  
-- **Group:** Platform quality  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Shared app shell; all feature screens; platform services.  
-- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.  
+- **Priority:** P0
+- **Group:** Platform quality
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Shared app shell; all feature screens; platform services.
+- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.
 - **Dependencies:** `pl.states`, `pl.security`, `pl.feature-flags`
 - **Acceptance criteria:**
   1. Critical seller and shopper journeys are covered from onboarding through product publish, stock sync, order creation and fulfilment.
@@ -32,13 +32,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pl.feature-flags` — Feature flags per feature id
 
-- **Priority:** P0  
-- **Group:** Platform quality  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Unfinished work stays hidden  
-- **Screens:** Shared app shell; all feature screens; platform services.  
-- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.  
+- **Priority:** P0
+- **Group:** Platform quality
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Unfinished work stays hidden
+- **Screens:** Shared app shell; all feature screens; platform services.
+- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.
 - **Dependencies:** Shared platform foundation / none listed.
 - **Acceptance criteria:**
   1. Every catalog feature is gated by a stable flag whose key exactly matches its feature id.
@@ -48,12 +48,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pl.security` — Row-level security, validation, rate limits
 
-- **Priority:** P0  
-- **Group:** Platform quality  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Shared app shell; all feature screens; platform services.  
-- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.  
+- **Priority:** P0
+- **Group:** Platform quality
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Shared app shell; all feature screens; platform services.
+- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.
 - **Dependencies:** Shared platform foundation / none listed.
 - **Acceptance criteria:**
   1. Every store-owned read/write is tenant-scoped and protected by verified RLS or trusted server authorization.
@@ -63,12 +63,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pl.states` — Loading, empty, error and success states on every screen
 
-- **Priority:** P0  
-- **Group:** Platform quality  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Shared app shell; all feature screens; platform services.  
-- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.  
+- **Priority:** P0
+- **Group:** Platform quality
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Shared app shell; all feature screens; platform services.
+- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.
 - **Dependencies:** Shared platform foundation / none listed.
 - **Acceptance criteria:**
   1. Every touched screen implements explicit loading, empty, recoverable error and success states with accessible announcements.
@@ -78,13 +78,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ob.email-verify` — Email verification
 
-- **Priority:** P0  
-- **Group:** Seller onboarding  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** 6-digit code with resend countdown and paste support  
-- **Screens:** Onboarding flow; account verification; store setup.  
-- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.  
+- **Priority:** P0
+- **Group:** Seller onboarding
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** 6-digit code with resend countdown and paste support
+- **Screens:** Onboarding flow; account verification; store setup.
+- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.
 - **Dependencies:** Shared platform foundation / none listed.
 - **Acceptance criteria:**
   1. A new seller receives a 6-digit code and can paste a complete code; invalid, expired and reused codes are rejected.
@@ -94,13 +94,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ob.mode-select` — Business mode selection
 
-- **Priority:** P0  
-- **Group:** Seller onboarding  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Seller picks or confirms business mode; it configures the rest of the app  
-- **Screens:** Onboarding flow; account verification; store setup.  
-- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.  
+- **Priority:** P0
+- **Group:** Seller onboarding
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Seller picks or confirms business mode; it configures the rest of the app
+- **Screens:** Onboarding flow; account verification; store setup.
+- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.
 - **Dependencies:** `ob.email-verify`
 - **Acceptance criteria:**
   1. The seller’s selected mode resolves to a validated mode profile and is persisted as the store’s configuration source.
@@ -110,13 +110,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ob.save-resume` — Save and resume
 
-- **Priority:** P0  
-- **Group:** Seller onboarding  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Progress saved at every step; back arrow never loses data  
-- **Screens:** Onboarding flow; account verification; store setup.  
-- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.  
+- **Priority:** P0
+- **Group:** Seller onboarding
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Progress saved at every step; back arrow never loses data
+- **Screens:** Onboarding flow; account verification; store setup.
+- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.
 - **Dependencies:** `ob.mode-select`
 - **Acceptance criteria:**
   1. Every completed onboarding step is persisted against the authenticated seller/store and restored after refresh or sign-in.
@@ -126,13 +126,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ob.slug-check` — Store link availability
 
-- **Priority:** P0  
-- **Group:** Seller onboarding  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Live check, suggestions, reserved names blocked  
-- **Screens:** Onboarding flow; account verification; store setup.  
-- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.  
+- **Priority:** P0
+- **Group:** Seller onboarding
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Live check, suggestions, reserved names blocked
+- **Screens:** Onboarding flow; account verification; store setup.
+- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.
 - **Dependencies:** `ob.save-resume`
 - **Acceptance criteria:**
   1. Availability is checked server-side with debouncing and clear available/taken/reserved/invalid outcomes.
@@ -142,13 +142,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pr.crud` — Create, edit, duplicate, delete products
 
-- **Priority:** P0  
-- **Group:** Products  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** With confirmation and undo for destructive actions  
-- **Screens:** Physical Products workspace; product editor; import/export.  
-- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.  
+- **Priority:** P0
+- **Group:** Products
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** With confirmation and undo for destructive actions
+- **Screens:** Physical Products workspace; product editor; import/export.
+- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.
 - **Dependencies:** `pl.security`, `pl.feature-flags`
 - **Acceptance criteria:**
   1. With confirmation and undo for destructive actions works end-to-end using persisted, store-scoped data and server-side validation.
@@ -158,13 +158,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pr.draft-publish` — Draft / published status
 
-- **Priority:** P0  
-- **Group:** Products  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Per product online visibility  
-- **Screens:** Physical Products workspace; product editor; import/export.  
-- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.  
+- **Priority:** P0
+- **Group:** Products
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Per product online visibility
+- **Screens:** Physical Products workspace; product editor; import/export.
+- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.
 - **Dependencies:** `pr.crud`
 - **Acceptance criteria:**
   1. Per product online visibility works end-to-end using persisted, store-scoped data and server-side validation.
@@ -174,13 +174,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pr.images` — Multi-image upload
 
-- **Priority:** P0  
-- **Group:** Products  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Reorder, crop, compress, lazy-load  
-- **Screens:** Physical Products workspace; product editor; import/export.  
-- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.  
+- **Priority:** P0
+- **Group:** Products
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Reorder, crop, compress, lazy-load
+- **Screens:** Physical Products workspace; product editor; import/export.
+- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.
 - **Dependencies:** `pr.crud`
 - **Acceptance criteria:**
   1. Reorder, crop, compress, lazy-load works end-to-end using persisted, store-scoped data and server-side validation.
@@ -190,13 +190,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pr.mode-fields` — Mode-specific product fields
 
-- **Priority:** P0  
-- **Group:** Products  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Fields come from the mode profile, not hard-coded  
-- **Screens:** Physical Products workspace; product editor; import/export.  
-- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.  
+- **Priority:** P0
+- **Group:** Products
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Fields come from the mode profile, not hard-coded
+- **Screens:** Physical Products workspace; product editor; import/export.
+- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.
 - **Dependencies:** `pr.crud`, `ob.mode-select`
 - **Acceptance criteria:**
   1. Product fields and validation are generated from the active mode profile; unsupported fields are not shown or accepted.
@@ -206,13 +206,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pr.variants` — Variants
 
-- **Priority:** P0  
-- **Group:** Products  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Options and per-variant price, stock, SKU  
-- **Screens:** Physical Products workspace; product editor; import/export.  
-- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.  
+- **Priority:** P0
+- **Group:** Products
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Options and per-variant price, stock, SKU
+- **Screens:** Physical Products workspace; product editor; import/export.
+- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.
 - **Dependencies:** `pr.crud`, `ob.mode-select`
 - **Acceptance criteria:**
   1. Variant options and per-variant price, stock and SKU are rendered from the active mode profile schema.
@@ -222,13 +222,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sy.field-overrides` — Synced vs overridden fields
 
-- **Priority:** P0  
-- **Group:** Physical ↔ Online sync  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Online-only overrides with Reset to store value  
-- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.  
-- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.  
+- **Priority:** P0
+- **Group:** Physical ↔ Online sync
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Online-only overrides with Reset to store value
+- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.
+- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.
 - **Dependencies:** `sy.publish-button`
 - **Acceptance criteria:**
   1. Online-only overrides with Reset to store value works end-to-end using persisted, store-scoped data and server-side validation.
@@ -238,13 +238,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sy.import-from-store` — Import from Store screen
 
-- **Priority:** P0  
-- **Group:** Physical ↔ Online sync  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Multi-select, filters, progress and result summary  
-- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.  
-- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.  
+- **Priority:** P0
+- **Group:** Physical ↔ Online sync
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Multi-select, filters, progress and result summary
+- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.
+- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.
 - **Dependencies:** `pr.crud`, `sy.publish-button`
 - **Acceptance criteria:**
   1. Multi-select, filters, progress and result summary works end-to-end using persisted, store-scoped data and server-side validation.
@@ -254,13 +254,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sy.publish-button` — Publish button on physical products
 
-- **Priority:** P0  
-- **Group:** Physical ↔ Online sync  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Existing button creates or updates the online listing  
-- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.  
-- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.  
+- **Priority:** P0
+- **Group:** Physical ↔ Online sync
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Existing button creates or updates the online listing
+- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.
+- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.
 - **Dependencies:** `pr.crud`, `pr.draft-publish`
 - **Acceptance criteria:**
   1. Existing button creates or updates the online listing works end-to-end using persisted, store-scoped data and server-side validation.
@@ -270,13 +270,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sy.stock-single-source` — One stock count for both channels
 
-- **Priority:** P0  
-- **Group:** Physical ↔ Online sync  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Atomic transactions; overselling impossible; optional online reserve  
-- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.  
-- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.  
+- **Priority:** P0
+- **Group:** Physical ↔ Online sync
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Atomic transactions; overselling impossible; optional online reserve
+- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.
+- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.
 - **Dependencies:** `pr.crud`, `sy.publish-button`, `pl.security`
 - **Acceptance criteria:**
   1. Physical and online channels read and update one store-scoped inventory source with atomic reservation/decrement operations.
@@ -286,13 +286,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sy.sync-log` — Sync log with retry
 
-- **Priority:** P0  
-- **Group:** Physical ↔ Online sync  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Failures visible in Needs attention, idempotent retries  
-- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.  
-- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.  
+- **Priority:** P0
+- **Group:** Physical ↔ Online sync
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Failures visible in Needs attention, idempotent retries
+- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.
+- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.
 - **Dependencies:** `sy.publish-button`, `sy.stock-single-source`, `pl.audit-log`
 - **Acceptance criteria:**
   1. Failures visible in Needs attention, idempotent retries works end-to-end using persisted, store-scoped data and server-side validation.
@@ -302,13 +302,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sy.unpublish` — Unpublish
 
-- **Priority:** P0  
-- **Group:** Physical ↔ Online sync  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Removes the listing from the storefront without deleting the product  
-- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.  
-- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.  
+- **Priority:** P0
+- **Group:** Physical ↔ Online sync
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Removes the listing from the storefront without deleting the product
+- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.
+- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.
 - **Dependencies:** `sy.publish-button`
 - **Acceptance criteria:**
   1. Removes the listing from the storefront without deleting the product works end-to-end using persisted, store-scoped data and server-side validation.
@@ -318,13 +318,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `or.detail-timeline` — Order detail with timeline
 
-- **Priority:** P0  
-- **Group:** Orders & fulfilment  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Items, customer, address, payment, notes  
-- **Screens:** Physical Orders workspace; order detail; fulfilment.  
-- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.  
+- **Priority:** P0
+- **Group:** Orders & fulfilment
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Items, customer, address, payment, notes
+- **Screens:** Physical Orders workspace; order detail; fulfilment.
+- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.
 - **Dependencies:** `or.list-filter`, `or.status-flow`
 - **Acceptance criteria:**
   1. Items, customer, address, payment, notes works end-to-end using persisted, store-scoped data and server-side validation.
@@ -334,12 +334,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `or.list-filter` — Order list with status tabs and search
 
-- **Priority:** P0  
-- **Group:** Orders & fulfilment  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Physical Orders workspace; order detail; fulfilment.  
-- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.  
+- **Priority:** P0
+- **Group:** Orders & fulfilment
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Physical Orders workspace; order detail; fulfilment.
+- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.
 - **Dependencies:** `sy.publish-button`
 - **Acceptance criteria:**
   1. Order list with status tabs and search works end-to-end using persisted, store-scoped data and server-side validation.
@@ -349,13 +349,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `or.notifications` — Customer email on status change
 
-- **Priority:** P0  
-- **Group:** Orders & fulfilment  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Templates per status  
-- **Screens:** Physical Orders workspace; order detail; fulfilment.  
-- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.  
+- **Priority:** P0
+- **Group:** Orders & fulfilment
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Templates per status
+- **Screens:** Physical Orders workspace; order detail; fulfilment.
+- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.
 - **Dependencies:** `or.detail-timeline`
 - **Acceptance criteria:**
   1. Templates per status works end-to-end using persisted, store-scoped data and server-side validation.
@@ -365,13 +365,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `or.status-flow` — Configurable status flow
 
-- **Priority:** P0  
-- **Group:** Orders & fulfilment  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Statuses come from the mode profile  
-- **Screens:** Physical Orders workspace; order detail; fulfilment.  
-- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.  
+- **Priority:** P0
+- **Group:** Orders & fulfilment
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Statuses come from the mode profile
+- **Screens:** Physical Orders workspace; order detail; fulfilment.
+- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.
 - **Dependencies:** `ob.mode-select`, `or.list-filter`
 - **Acceptance criteria:**
   1. Allowed order statuses and transitions are loaded from the active mode profile and enforced server-side.
@@ -381,13 +381,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `cu.order-tracking` — Order tracking timeline
 
-- **Priority:** P0  
-- **Group:** Customers & shopper account  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Logged-in and guest (order number + email)  
-- **Screens:** Customers workspace; shopper account; order tracking.  
-- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.  
+- **Priority:** P0
+- **Group:** Customers & shopper account
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Logged-in and guest (order number + email)
+- **Screens:** Customers workspace; shopper account; order tracking.
+- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.
 - **Dependencies:** `or.detail-timeline`, `cu.shopper-account`
 - **Acceptance criteria:**
   1. Logged-in and guest (order number + email) works end-to-end using persisted, store-scoped data and server-side validation.
@@ -397,13 +397,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `cu.shopper-account` — Shopper mini account
 
-- **Priority:** P0  
-- **Group:** Customers & shopper account  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Sign up, login, scoped to one store  
-- **Screens:** Customers workspace; shopper account; order tracking.  
-- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.  
+- **Priority:** P0
+- **Group:** Customers & shopper account
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Sign up, login, scoped to one store
+- **Screens:** Customers workspace; shopper account; order tracking.
+- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.
 - **Dependencies:** `pl.security`, `ob.email-verify`
 - **Acceptance criteria:**
   1. Sign up, login, scoped to one store works end-to-end using persisted, store-scoped data and server-side validation.
@@ -413,13 +413,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.draft-publish-versions` — Draft, publish and version history
 
-- **Priority:** P0  
-- **Group:** Storefront & design  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Rollback  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P0
+- **Group:** Storefront & design
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Rollback
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** `sf.template-gallery`, `sf.section-editor`
 - **Acceptance criteria:**
   1. Draft changes are isolated from the live storefront until an explicit publish action passes validation.
@@ -429,13 +429,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.preview-responsive` — Responsive storefront previewer
 
-- **Priority:** P0  
-- **Group:** Storefront & design  
-- **Availability:** `all-modes`  
-- **Status:** `proposed`  
-- **Catalog description:** Dedicated isolated preview with desktop, tablet and mobile viewport presets, zoom/fit, page/route selection and draft-only rendering  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P0
+- **Group:** Storefront & design
+- **Availability:** `all-modes`
+- **Status:** `proposed`
+- **Catalog description:** Dedicated isolated preview with desktop, tablet and mobile viewport presets, zoom/fit, page/route selection and draft-only rendering
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** Shared platform foundation / none listed.
 - **Acceptance criteria:**
   1. Preview renders the selected page/template using isolated draft configuration and fixture data; it never mutates or exposes the published storefront or live customer data.
@@ -446,13 +446,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.product-page` — Product page
 
-- **Priority:** P0  
-- **Group:** Storefront & design  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Gallery, variants, stock badge, related products  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P0
+- **Group:** Storefront & design
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Gallery, variants, stock badge, related products
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** `pr.crud`, `pr.variants`, `sf.draft-publish-versions`
 - **Acceptance criteria:**
   1. Gallery, variants, stock badge, related products works end-to-end using persisted, store-scoped data and server-side validation.
@@ -462,13 +462,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.search-filter-sort` — Search, filters and sorting
 
-- **Priority:** P0  
-- **Group:** Storefront & design  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Filters adapt to product fields  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P0
+- **Group:** Storefront & design
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Filters adapt to product fields
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** `pr.mode-fields`, `pr.variants`, `sf.draft-publish-versions`
 - **Acceptance criteria:**
   1. Filters adapt to product fields works end-to-end using persisted, store-scoped data and server-side validation.
@@ -478,13 +478,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.section-editor` — Section editor
 
-- **Priority:** P0  
-- **Group:** Storefront & design  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Reorder, show/hide, edit text and images  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P0
+- **Group:** Storefront & design
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Reorder, show/hide, edit text and images
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** `sf.template-gallery`, `sf.theme-editor`
 - **Acceptance criteria:**
   1. The section catalogue is derived from the active mode profile and only registered, compatible section types can be inserted.
@@ -494,13 +494,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.subdomain-domain` — Store link and custom domain
 
-- **Priority:** P0  
-- **Group:** Storefront & design  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Wildcard subdomain, SSL, domain verification  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P0
+- **Group:** Storefront & design
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Wildcard subdomain, SSL, domain verification
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** `sf.draft-publish-versions`, `st.store-profile`
 - **Acceptance criteria:**
   1. Wildcard subdomain, SSL, domain verification works end-to-end using persisted, store-scoped data and server-side validation.
@@ -510,13 +510,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.template-gallery` — Template gallery with live preview
 
-- **Priority:** P0  
-- **Group:** Storefront & design  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Filtered by business mode  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P0
+- **Group:** Storefront & design
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Filtered by business mode
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** `ob.mode-select`, `pl.feature-flags`
 - **Acceptance criteria:**
   1. Only templates compatible with the active mode profile are listed, with clear purpose, page coverage, style tags and preview imagery.
@@ -526,13 +526,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.template-library` — Expanded template library and profiles
 
-- **Priority:** P0  
-- **Group:** Storefront & design  
-- **Availability:** `mode-specific`  
-- **Status:** `proposed`  
-- **Catalog description:** Curated template families with style/use-case tags, search, mode compatibility, profile/version metadata and rich previews  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P0
+- **Group:** Storefront & design
+- **Availability:** `mode-specific`
+- **Status:** `proposed`
+- **Catalog description:** Curated template families with style/use-case tags, search, mode compatibility, profile/version metadata and rich previews
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** Shared platform foundation / none listed.
 - **Acceptance criteria:**
   1. Gallery supports curated template families, search and style/use-case filters, with compatibility derived from the active mode profile.
@@ -543,13 +543,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.theme-editor` — Theme editor
 
-- **Priority:** P0  
-- **Group:** Storefront & design  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Colors, fonts, radius, light/dark, instant preview  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P0
+- **Group:** Storefront & design
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Colors, fonts, radius, light/dark, instant preview
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** `sf.template-gallery`
 - **Acceptance criteria:**
   1. Global theme tokens (palette, typography, spacing, radii and color scheme) update the preview immediately without mutating the published version.
@@ -559,13 +559,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ck.cart-drawer` — Cart drawer
 
-- **Priority:** P0  
-- **Group:** Cart, checkout & payments  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Quantity, remove, stock limits  
-- **Screens:** Public storefront cart; checkout; order confirmation.  
-- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.  
+- **Priority:** P0
+- **Group:** Cart, checkout & payments
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Quantity, remove, stock limits
+- **Screens:** Public storefront cart; checkout; order confirmation.
+- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.
 - **Dependencies:** `sf.product-page`, `sy.stock-single-source`
 - **Acceptance criteria:**
   1. Quantity, remove, stock limits works end-to-end using persisted, store-scoped data and server-side validation.
@@ -575,12 +575,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ck.guest-and-account` — Guest or account checkout
 
-- **Priority:** P0  
-- **Group:** Cart, checkout & payments  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Public storefront cart; checkout; order confirmation.  
-- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.  
+- **Priority:** P0
+- **Group:** Cart, checkout & payments
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Public storefront cart; checkout; order confirmation.
+- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.
 - **Dependencies:** `ck.cart-drawer`, `cu.shopper-account`
 - **Acceptance criteria:**
   1. Guest or account checkout works end-to-end using persisted, store-scoped data and server-side validation.
@@ -590,13 +590,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ck.payments` — Payment providers
 
-- **Priority:** P0  
-- **Group:** Cart, checkout & payments  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Cards, transfer, cash on delivery; webhooks idempotent  
-- **Screens:** Public storefront cart; checkout; order confirmation.  
-- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.  
+- **Priority:** P0
+- **Group:** Cart, checkout & payments
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Cards, transfer, cash on delivery; webhooks idempotent
+- **Screens:** Public storefront cart; checkout; order confirmation.
+- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.
 - **Dependencies:** `ck.guest-and-account`, `ck.shipping-tax`, `ob.mode-select`
 - **Acceptance criteria:**
   1. Available payment methods are filtered by seller country, currency and provider capability; unsupported options cannot be selected.
@@ -606,13 +606,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ck.shipping-tax` — Shipping rates and taxes
 
-- **Priority:** P0  
-- **Group:** Cart, checkout & payments  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Zones, free-shipping threshold  
-- **Screens:** Public storefront cart; checkout; order confirmation.  
-- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.  
+- **Priority:** P0
+- **Group:** Cart, checkout & payments
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Zones, free-shipping threshold
+- **Screens:** Public storefront cart; checkout; order confirmation.
+- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.
 - **Dependencies:** `ck.cart-drawer`, `st.store-profile`
 - **Acceptance criteria:**
   1. Zones, free-shipping threshold works end-to-end using persisted, store-scoped data and server-side validation.
@@ -622,13 +622,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `an.dashboard-cards` — Dashboard cards
 
-- **Priority:** P0  
-- **Group:** Analytics  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Cards come from the mode profile  
-- **Screens:** Physical Store dashboard; Online Store analytics; channel comparison.  
-- **Data required:** Store-scoped orders, line items, products, inventory and channel attribution; mode-profile dashboard definitions.  
+- **Priority:** P0
+- **Group:** Analytics
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Cards come from the mode profile
+- **Screens:** Physical Store dashboard; Online Store analytics; channel comparison.
+- **Data required:** Store-scoped orders, line items, products, inventory and channel attribution; mode-profile dashboard definitions.
 - **Dependencies:** `ob.mode-select`, `or.list-filter`
 - **Acceptance criteria:**
   1. Cards come from the mode profile works end-to-end using persisted, store-scoped data and server-side validation.
@@ -638,13 +638,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `st.store-profile` — Store profile
 
-- **Priority:** P0  
-- **Group:** Settings & admin  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Name, logo, contact, currency, timezone  
-- **Screens:** Settings workspace; store profile; team and policy pages.  
-- **Data required:** Store identity and locale; policies; membership/roles; notification preferences; export/audit records.  
+- **Priority:** P0
+- **Group:** Settings & admin
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Name, logo, contact, currency, timezone
+- **Screens:** Settings workspace; store profile; team and policy pages.
+- **Data required:** Store identity and locale; policies; membership/roles; notification preferences; export/audit records.
 - **Dependencies:** `ob.save-resume`
 - **Acceptance criteria:**
   1. Name, logo, contact, currency, timezone works end-to-end using persisted, store-scoped data and server-side validation.
@@ -654,13 +654,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pl.accessibility-performance` — Accessibility AA and performance budget
 
-- **Priority:** P1  
-- **Group:** Platform quality  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** LCP under 2.5s on mobile  
-- **Screens:** Shared app shell; all feature screens; platform services.  
-- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.  
+- **Priority:** P1
+- **Group:** Platform quality
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** LCP under 2.5s on mobile
+- **Screens:** Shared app shell; all feature screens; platform services.
+- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.
 - **Dependencies:** `pl.states`
 - **Acceptance criteria:**
   1. LCP under 2.5s on mobile works end-to-end using persisted, store-scoped data and server-side validation.
@@ -670,12 +670,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pl.audit-log` — Audit log
 
-- **Priority:** P1  
-- **Group:** Platform quality  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Shared app shell; all feature screens; platform services.  
-- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.  
+- **Priority:** P1
+- **Group:** Platform quality
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Shared app shell; all feature screens; platform services.
+- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.
 - **Dependencies:** `pl.security`
 - **Acceptance criteria:**
   1. Audit log works end-to-end using persisted, store-scoped data and server-side validation.
@@ -685,12 +685,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pl.monitoring` — Error monitoring and logs
 
-- **Priority:** P1  
-- **Group:** Platform quality  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Shared app shell; all feature screens; platform services.  
-- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.  
+- **Priority:** P1
+- **Group:** Platform quality
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Shared app shell; all feature screens; platform services.
+- **Data required:** Feature-flag registry; RLS policies; validation schemas; rate-limit state; audit/error telemetry; test fixtures.
 - **Dependencies:** `pl.states`
 - **Acceptance criteria:**
   1. Error monitoring and logs works end-to-end using persisted, store-scoped data and server-side validation.
@@ -700,13 +700,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ob.logo-upload` — Logo upload with circle crop
 
-- **Priority:** P1  
-- **Group:** Seller onboarding  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Skip or add logo  
-- **Screens:** Onboarding flow; account verification; store setup.  
-- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.  
+- **Priority:** P1
+- **Group:** Seller onboarding
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Skip or add logo
+- **Screens:** Onboarding flow; account verification; store setup.
+- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.
 - **Dependencies:** `ob.save-resume`
 - **Acceptance criteria:**
   1. Skip or add logo works end-to-end using persisted, store-scoped data and server-side validation.
@@ -716,13 +716,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ob.setup-checklist` — Setup checklist
 
-- **Priority:** P1  
-- **Group:** Seller onboarding  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Dashboard checklist for skipped steps  
-- **Screens:** Onboarding flow; account verification; store setup.  
-- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.  
+- **Priority:** P1
+- **Group:** Seller onboarding
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Dashboard checklist for skipped steps
+- **Screens:** Onboarding flow; account verification; store setup.
+- **Data required:** User identity and verification state; onboarding draft/progress; selected mode profile; store slug and store identity.
 - **Dependencies:** `ob.mode-select`
 - **Acceptance criteria:**
   1. Dashboard checklist for skipped steps works end-to-end using persisted, store-scoped data and server-side validation.
@@ -732,13 +732,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pr.bulk-actions` — Bulk actions
 
-- **Priority:** P1  
-- **Group:** Products  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Publish, unpublish, price change, delete, categorize  
-- **Screens:** Physical Products workspace; product editor; import/export.  
-- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.  
+- **Priority:** P1
+- **Group:** Products
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Publish, unpublish, price change, delete, categorize
+- **Screens:** Physical Products workspace; product editor; import/export.
+- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.
 - **Dependencies:** `pr.crud`
 - **Acceptance criteria:**
   1. Publish, unpublish, price change, delete, categorize works end-to-end using persisted, store-scoped data and server-side validation.
@@ -748,13 +748,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pr.categories` — Categories and collections
 
-- **Priority:** P1  
-- **Group:** Products  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Manual and rule-based collections  
-- **Screens:** Physical Products workspace; product editor; import/export.  
-- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.  
+- **Priority:** P1
+- **Group:** Products
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Manual and rule-based collections
+- **Screens:** Physical Products workspace; product editor; import/export.
+- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.
 - **Dependencies:** `pr.crud`
 - **Acceptance criteria:**
   1. Manual and rule-based collections works end-to-end using persisted, store-scoped data and server-side validation.
@@ -764,13 +764,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pr.csv-import-export` — CSV import and export
 
-- **Priority:** P1  
-- **Group:** Products  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Template download, validation report, partial-failure handling  
-- **Screens:** Physical Products workspace; product editor; import/export.  
-- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.  
+- **Priority:** P1
+- **Group:** Products
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Template download, validation report, partial-failure handling
+- **Screens:** Physical Products workspace; product editor; import/export.
+- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.
 - **Dependencies:** `pr.crud`
 - **Acceptance criteria:**
   1. Template download, validation report, partial-failure handling works end-to-end using persisted, store-scoped data and server-side validation.
@@ -780,13 +780,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sy.auto-unpublish` — Auto-unpublish on delete or archive
 
-- **Priority:** P1  
-- **Group:** Physical ↔ Online sync  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Seller is told why  
-- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.  
-- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.  
+- **Priority:** P1
+- **Group:** Physical ↔ Online sync
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Seller is told why
+- **Screens:** Physical Products ↔ Online Store publishing and sync surfaces.
+- **Data required:** Store-scoped physical product and online listing IDs; field ownership/overrides; inventory ledger; idempotency keys; sync events.
 - **Dependencies:** `sy.unpublish`, `sy.sync-log`
 - **Acceptance criteria:**
   1. Seller is told why works end-to-end using persisted, store-scoped data and server-side validation.
@@ -796,13 +796,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `or.cancel-refund` — Cancel and refund
 
-- **Priority:** P1  
-- **Group:** Orders & fulfilment  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Restocks items, records reason  
-- **Screens:** Physical Orders workspace; order detail; fulfilment.  
-- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.  
+- **Priority:** P1
+- **Group:** Orders & fulfilment
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Restocks items, records reason
+- **Screens:** Physical Orders workspace; order detail; fulfilment.
+- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.
 - **Dependencies:** `or.detail-timeline`, `sy.stock-single-source`
 - **Acceptance criteria:**
   1. Restocks items, records reason works end-to-end using persisted, store-scoped data and server-side validation.
@@ -812,13 +812,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `or.delivery-pickup` — Delivery or pickup choice
 
-- **Priority:** P1  
-- **Group:** Orders & fulfilment  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** Zones, pickup times  
-- **Screens:** Physical Orders workspace; order detail; fulfilment.  
-- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.  
+- **Priority:** P1
+- **Group:** Orders & fulfilment
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** Zones, pickup times
+- **Screens:** Physical Orders workspace; order detail; fulfilment.
+- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.
 - **Dependencies:** `or.status-flow`, `ob.mode-select`
 - **Acceptance criteria:**
   1. Zones, pickup times works end-to-end using persisted, store-scoped data and server-side validation.
@@ -828,13 +828,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `or.invoice-packing` — Invoice and packing slip
 
-- **Priority:** P1  
-- **Group:** Orders & fulfilment  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Printable / PDF  
-- **Screens:** Physical Orders workspace; order detail; fulfilment.  
-- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.  
+- **Priority:** P1
+- **Group:** Orders & fulfilment
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Printable / PDF
+- **Screens:** Physical Orders workspace; order detail; fulfilment.
+- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.
 - **Dependencies:** `or.detail-timeline`
 - **Acceptance criteria:**
   1. Printable / PDF works end-to-end using persisted, store-scoped data and server-side validation.
@@ -844,13 +844,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `cu.list-profile` — Customer list and profile
 
-- **Priority:** P1  
-- **Group:** Customers & shopper account  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Orders, spend, notes, tags  
-- **Screens:** Customers workspace; shopper account; order tracking.  
-- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.  
+- **Priority:** P1
+- **Group:** Customers & shopper account
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Orders, spend, notes, tags
+- **Screens:** Customers workspace; shopper account; order tracking.
+- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.
 - **Dependencies:** `or.detail-timeline`
 - **Acceptance criteria:**
   1. Orders, spend, notes, tags works end-to-end using persisted, store-scoped data and server-side validation.
@@ -860,13 +860,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `cu.merge-channels` — One customer across in-store and online
 
-- **Priority:** P1  
-- **Group:** Customers & shopper account  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Match by email or phone  
-- **Screens:** Customers workspace; shopper account; order tracking.  
-- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.  
+- **Priority:** P1
+- **Group:** Customers & shopper account
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Match by email or phone
+- **Screens:** Customers workspace; shopper account; order tracking.
+- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.
 - **Dependencies:** `cu.list-profile`, `sy.publish-button`
 - **Acceptance criteria:**
   1. Match by email or phone works end-to-end using persisted, store-scoped data and server-side validation.
@@ -876,12 +876,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `cu.saved-addresses` — Saved addresses and profile
 
-- **Priority:** P1  
-- **Group:** Customers & shopper account  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Customers workspace; shopper account; order tracking.  
-- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.  
+- **Priority:** P1
+- **Group:** Customers & shopper account
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Customers workspace; shopper account; order tracking.
+- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.
 - **Dependencies:** `cu.shopper-account`
 - **Acceptance criteria:**
   1. Saved addresses and profile works end-to-end using persisted, store-scoped data and server-side validation.
@@ -891,13 +891,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.reviews` — Reviews and ratings
 
-- **Priority:** P1  
-- **Group:** Storefront & design  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Moderation by seller  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P1
+- **Group:** Storefront & design
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Moderation by seller
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** `sf.product-page`, `cu.shopper-account`
 - **Acceptance criteria:**
   1. Moderation by seller works end-to-end using persisted, store-scoped data and server-side validation.
@@ -907,12 +907,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.seo-og` — SEO, Open Graph, sitemap
 
-- **Priority:** P1  
-- **Group:** Storefront & design  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P1
+- **Group:** Storefront & design
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** `sf.product-page`, `sf.subdomain-domain`
 - **Acceptance criteria:**
   1. SEO, Open Graph, sitemap works end-to-end using persisted, store-scoped data and server-side validation.
@@ -922,13 +922,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ck.discount-codes` — Discount codes
 
-- **Priority:** P1  
-- **Group:** Cart, checkout & payments  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Percent or fixed, expiry, limits  
-- **Screens:** Public storefront cart; checkout; order confirmation.  
-- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.  
+- **Priority:** P1
+- **Group:** Cart, checkout & payments
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Percent or fixed, expiry, limits
+- **Screens:** Public storefront cart; checkout; order confirmation.
+- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.
 - **Dependencies:** `ck.cart-drawer`
 - **Acceptance criteria:**
   1. Percent or fixed, expiry, limits works end-to-end using persisted, store-scoped data and server-side validation.
@@ -938,13 +938,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ck.mode-fields` — Mode-specific checkout fields
 
-- **Priority:** P1  
-- **Group:** Cart, checkout & payments  
-- **Availability:** `mode-specific`  
-- **Status:** `todo`  
-- **Catalog description:** From the mode profile  
-- **Screens:** Public storefront cart; checkout; order confirmation.  
-- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.  
+- **Priority:** P1
+- **Group:** Cart, checkout & payments
+- **Availability:** `mode-specific`
+- **Status:** `todo`
+- **Catalog description:** From the mode profile
+- **Screens:** Public storefront cart; checkout; order confirmation.
+- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.
 - **Dependencies:** `ck.guest-and-account`, `ob.mode-select`
 - **Acceptance criteria:**
   1. From the mode profile works end-to-end using persisted, store-scoped data and server-side validation.
@@ -954,12 +954,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `mk.announcement-bar` — Announcement bar
 
-- **Priority:** P1  
-- **Group:** Marketing  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Store Studio marketing sections; campaign/share surfaces.  
-- **Data required:** Store-scoped content/settings; theme section configuration; subscriber consent; share metadata and public store URL.  
+- **Priority:** P1
+- **Group:** Marketing
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Store Studio marketing sections; campaign/share surfaces.
+- **Data required:** Store-scoped content/settings; theme section configuration; subscriber consent; share metadata and public store URL.
 - **Dependencies:** `sf.theme-editor`
 - **Acceptance criteria:**
   1. Announcement bar works end-to-end using persisted, store-scoped data and server-side validation.
@@ -969,12 +969,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `mk.share-qr` — Share link, QR code, social share
 
-- **Priority:** P1  
-- **Group:** Marketing  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Store Studio marketing sections; campaign/share surfaces.  
-- **Data required:** Store-scoped content/settings; theme section configuration; subscriber consent; share metadata and public store URL.  
+- **Priority:** P1
+- **Group:** Marketing
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Store Studio marketing sections; campaign/share surfaces.
+- **Data required:** Store-scoped content/settings; theme section configuration; subscriber consent; share metadata and public store URL.
 - **Dependencies:** `sf.subdomain-domain`
 - **Acceptance criteria:**
   1. Share link, QR code, social share works end-to-end using persisted, store-scoped data and server-side validation.
@@ -984,12 +984,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `an.channel-compare` — In-store vs online comparison
 
-- **Priority:** P1  
-- **Group:** Analytics  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Physical Store dashboard; Online Store analytics; channel comparison.  
-- **Data required:** Store-scoped orders, line items, products, inventory and channel attribution; mode-profile dashboard definitions.  
+- **Priority:** P1
+- **Group:** Analytics
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Physical Store dashboard; Online Store analytics; channel comparison.
+- **Data required:** Store-scoped orders, line items, products, inventory and channel attribution; mode-profile dashboard definitions.
 - **Dependencies:** `sy.stock-single-source`, `an.sales-chart`
 - **Acceptance criteria:**
   1. In-store vs online comparison works end-to-end using persisted, store-scoped data and server-side validation.
@@ -999,13 +999,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `an.sales-chart` — Sales chart
 
-- **Priority:** P1  
-- **Group:** Analytics  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** By day, week, month  
-- **Screens:** Physical Store dashboard; Online Store analytics; channel comparison.  
-- **Data required:** Store-scoped orders, line items, products, inventory and channel attribution; mode-profile dashboard definitions.  
+- **Priority:** P1
+- **Group:** Analytics
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** By day, week, month
+- **Screens:** Physical Store dashboard; Online Store analytics; channel comparison.
+- **Data required:** Store-scoped orders, line items, products, inventory and channel attribution; mode-profile dashboard definitions.
 - **Dependencies:** `an.dashboard-cards`, `or.detail-timeline`
 - **Acceptance criteria:**
   1. By day, week, month works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1015,13 +1015,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `st.policies` — Policy pages
 
-- **Priority:** P1  
-- **Group:** Settings & admin  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Shipping, returns, privacy, terms  
-- **Screens:** Settings workspace; store profile; team and policy pages.  
-- **Data required:** Store identity and locale; policies; membership/roles; notification preferences; export/audit records.  
+- **Priority:** P1
+- **Group:** Settings & admin
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Shipping, returns, privacy, terms
+- **Screens:** Settings workspace; store profile; team and policy pages.
+- **Data required:** Store identity and locale; policies; membership/roles; notification preferences; export/audit records.
 - **Dependencies:** `st.store-profile`, `sf.subdomain-domain`
 - **Acceptance criteria:**
   1. Shipping, returns, privacy, terms works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1031,13 +1031,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `st.roles` — Roles and team
 
-- **Priority:** P1  
-- **Group:** Settings & admin  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Owner, Manager, Cashier, Online fulfilment  
-- **Screens:** Settings workspace; store profile; team and policy pages.  
-- **Data required:** Store identity and locale; policies; membership/roles; notification preferences; export/audit records.  
+- **Priority:** P1
+- **Group:** Settings & admin
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Owner, Manager, Cashier, Online fulfilment
+- **Screens:** Settings workspace; store profile; team and policy pages.
+- **Data required:** Store identity and locale; policies; membership/roles; notification preferences; export/audit records.
 - **Dependencies:** `pl.security`, `st.store-profile`
 - **Acceptance criteria:**
   1. Owner, Manager, Cashier, Online fulfilment works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1047,13 +1047,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `pr.seo-fields` — Product SEO fields
 
-- **Priority:** P2  
-- **Group:** Products  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Title, description, URL handle, share image  
-- **Screens:** Physical Products workspace; product editor; import/export.  
-- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.  
+- **Priority:** P2
+- **Group:** Products
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Title, description, URL handle, share image
+- **Screens:** Physical Products workspace; product editor; import/export.
+- **Data required:** Store-scoped product records; mode-profile product schema; variants/SKUs; media assets; inventory and publication state.
 - **Dependencies:** `pr.crud`
 - **Acceptance criteria:**
   1. Title, description, URL handle, share image works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1063,12 +1063,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `or.internal-notes` — Internal order notes and tags
 
-- **Priority:** P2  
-- **Group:** Orders & fulfilment  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Physical Orders workspace; order detail; fulfilment.  
-- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.  
+- **Priority:** P2
+- **Group:** Orders & fulfilment
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Physical Orders workspace; order detail; fulfilment.
+- **Data required:** Store-scoped orders and line items; mode-profile status definitions; customer and fulfilment details; payment/refund state.
 - **Dependencies:** `or.detail-timeline`
 - **Acceptance criteria:**
   1. Internal order notes and tags works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1078,12 +1078,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `cu.wishlist` — Wishlist
 
-- **Priority:** P2  
-- **Group:** Customers & shopper account  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Customers workspace; shopper account; order tracking.  
-- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.  
+- **Priority:** P2
+- **Group:** Customers & shopper account
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Customers workspace; shopper account; order tracking.
+- **Data required:** Store-scoped customer identity; shopper auth; order history; consent; addresses; tags and notes.
 - **Dependencies:** `cu.shopper-account`, `pr.draft-publish`
 - **Acceptance criteria:**
   1. Wishlist works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1093,13 +1093,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `sf.custom-css-js` — Custom CSS and sandboxed JS
 
-- **Priority:** P2  
-- **Group:** Storefront & design  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** CSS sanitized; JS only inside sandboxed iframe  
-- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.  
-- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.  
+- **Priority:** P2
+- **Group:** Storefront & design
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** CSS sanitized; JS only inside sandboxed iframe
+- **Screens:** Online Store workspace; Store Studio; template gallery; visual editor; public storefront.
+- **Data required:** Store-scoped versioned JSON templates; mode profile; registered section/block schemas; theme tokens; product/collection data; draft/published versions.
 - **Dependencies:** `sf.theme-editor`, `pl.security`
 - **Acceptance criteria:**
   1. CSS sanitized; JS only inside sandboxed iframe works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1109,12 +1109,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `ck.abandoned-cart` — Abandoned cart reminder
 
-- **Priority:** P2  
-- **Group:** Cart, checkout & payments  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Public storefront cart; checkout; order confirmation.  
-- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.  
+- **Priority:** P2
+- **Group:** Cart, checkout & payments
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Public storefront cart; checkout; order confirmation.
+- **Data required:** Cart/session; customer/contact and address; mode-profile checkout fields; inventory reservation; shipping/tax quotes; payment intents/webhook events.
 - **Dependencies:** `ck.guest-and-account`, `ck.payments`
 - **Acceptance criteria:**
   1. Abandoned cart reminder works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1124,12 +1124,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `mk.banners` — Promo banners and sale badges
 
-- **Priority:** P2  
-- **Group:** Marketing  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Store Studio marketing sections; campaign/share surfaces.  
-- **Data required:** Store-scoped content/settings; theme section configuration; subscriber consent; share metadata and public store URL.  
+- **Priority:** P2
+- **Group:** Marketing
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Store Studio marketing sections; campaign/share surfaces.
+- **Data required:** Store-scoped content/settings; theme section configuration; subscriber consent; share metadata and public store URL.
 - **Dependencies:** `sf.theme-editor`
 - **Acceptance criteria:**
   1. Promo banners and sale badges works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1139,13 +1139,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `mk.newsletter` — Newsletter signup and list
 
-- **Priority:** P2  
-- **Group:** Marketing  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Export  
-- **Screens:** Store Studio marketing sections; campaign/share surfaces.  
-- **Data required:** Store-scoped content/settings; theme section configuration; subscriber consent; share metadata and public store URL.  
+- **Priority:** P2
+- **Group:** Marketing
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Export
+- **Screens:** Store Studio marketing sections; campaign/share surfaces.
+- **Data required:** Store-scoped content/settings; theme section configuration; subscriber consent; share metadata and public store URL.
 - **Dependencies:** `sf.theme-editor`, `pl.security`
 - **Acceptance criteria:**
   1. Export works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1155,12 +1155,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `an.top-products` — Top products and sources
 
-- **Priority:** P2  
-- **Group:** Analytics  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Physical Store dashboard; Online Store analytics; channel comparison.  
-- **Data required:** Store-scoped orders, line items, products, inventory and channel attribution; mode-profile dashboard definitions.  
+- **Priority:** P2
+- **Group:** Analytics
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Physical Store dashboard; Online Store analytics; channel comparison.
+- **Data required:** Store-scoped orders, line items, products, inventory and channel attribution; mode-profile dashboard definitions.
 - **Dependencies:** `an.sales-chart`, `pr.crud`
 - **Acceptance criteria:**
   1. Top products and sources works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1170,12 +1170,12 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `st.data-export` — Data export
 
-- **Priority:** P2  
-- **Group:** Settings & admin  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Screens:** Settings workspace; store profile; team and policy pages.  
-- **Data required:** Store identity and locale; policies; membership/roles; notification preferences; export/audit records.  
+- **Priority:** P2
+- **Group:** Settings & admin
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Screens:** Settings workspace; store profile; team and policy pages.
+- **Data required:** Store identity and locale; policies; membership/roles; notification preferences; export/audit records.
 - **Dependencies:** `pl.security`, `st.store-profile`
 - **Acceptance criteria:**
   1. Data export works end-to-end using persisted, store-scoped data and server-side validation.
@@ -1185,13 +1185,13 @@ A first Normal Business profile has now been authored at `modes/normal-business/
 
 ### `st.notifications` — Notification settings
 
-- **Priority:** P2  
-- **Group:** Settings & admin  
-- **Availability:** `all-modes`  
-- **Status:** `todo`  
-- **Catalog description:** Email and push  
-- **Screens:** Settings workspace; store profile; team and policy pages.  
-- **Data required:** Store identity and locale; policies; membership/roles; notification preferences; export/audit records.  
+- **Priority:** P2
+- **Group:** Settings & admin
+- **Availability:** `all-modes`
+- **Status:** `todo`
+- **Catalog description:** Email and push
+- **Screens:** Settings workspace; store profile; team and policy pages.
+- **Data required:** Store identity and locale; policies; membership/roles; notification preferences; export/audit records.
 - **Dependencies:** `st.store-profile`, `or.notifications`
 - **Acceptance criteria:**
   1. Email and push works end-to-end using persisted, store-scoped data and server-side validation.

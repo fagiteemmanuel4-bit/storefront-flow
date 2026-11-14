@@ -50,6 +50,7 @@ import { Route as AuthenticatedPosRouteImport } from './routes/_authenticated/po
 import { Route as AuthenticatedProductImportRouteImport } from './routes/_authenticated/product-import'
 import { Route as AuthenticatedProductsRouteImport } from './routes/_authenticated/products'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedQuickTourRouteImport } from './routes/_authenticated/quick-tour'
 import { Route as AuthenticatedReceiptDesignerRouteImport } from './routes/_authenticated/receipt-designer'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedServicesRouteImport } from './routes/_authenticated/services'
@@ -299,6 +300,11 @@ const AuthenticatedProductsRoute = AuthenticatedProductsRouteImport.update({
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedQuickTourRoute = AuthenticatedQuickTourRouteImport.update({
+  id: '/quick-tour',
+  path: '/quick-tour',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedReceiptDesignerRoute =
@@ -560,6 +566,7 @@ export interface FileRoutesByFullPath {
   '/product-import': typeof AuthenticatedProductImportRoute
   '/products': typeof AuthenticatedProductsRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/quick-tour': typeof AuthenticatedQuickTourRoute
   '/receipt-designer': typeof AuthenticatedReceiptDesignerRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/services': typeof AuthenticatedServicesRoute
@@ -640,6 +647,7 @@ export interface FileRoutesByTo {
   '/product-import': typeof AuthenticatedProductImportRoute
   '/products': typeof AuthenticatedProductsRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/quick-tour': typeof AuthenticatedQuickTourRoute
   '/receipt-designer': typeof AuthenticatedReceiptDesignerRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/services': typeof AuthenticatedServicesRoute
@@ -721,6 +729,7 @@ export interface FileRoutesById {
   '/_authenticated/product-import': typeof AuthenticatedProductImportRoute
   '/_authenticated/products': typeof AuthenticatedProductsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/quick-tour': typeof AuthenticatedQuickTourRoute
   '/_authenticated/receipt-designer': typeof AuthenticatedReceiptDesignerRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/services': typeof AuthenticatedServicesRoute
@@ -803,6 +812,7 @@ export interface FileRouteTypes {
     | '/product-import'
     | '/products'
     | '/profile'
+    | '/quick-tour'
     | '/receipt-designer'
     | '/reports'
     | '/services'
@@ -883,6 +893,7 @@ export interface FileRouteTypes {
     | '/product-import'
     | '/products'
     | '/profile'
+    | '/quick-tour'
     | '/receipt-designer'
     | '/reports'
     | '/services'
@@ -963,6 +974,7 @@ export interface FileRouteTypes {
     | '/_authenticated/product-import'
     | '/_authenticated/products'
     | '/_authenticated/profile'
+    | '/_authenticated/quick-tour'
     | '/_authenticated/receipt-designer'
     | '/_authenticated/reports'
     | '/_authenticated/services'
@@ -1318,6 +1330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/quick-tour': {
+      id: '/_authenticated/quick-tour'
+      path: '/quick-tour'
+      fullPath: '/quick-tour'
+      preLoaderRoute: typeof AuthenticatedQuickTourRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/receipt-designer': {
       id: '/_authenticated/receipt-designer'
       path: '/receipt-designer'
@@ -1671,6 +1690,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProductImportRoute: typeof AuthenticatedProductImportRoute
   AuthenticatedProductsRoute: typeof AuthenticatedProductsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedQuickTourRoute: typeof AuthenticatedQuickTourRoute
   AuthenticatedReceiptDesignerRoute: typeof AuthenticatedReceiptDesignerRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedServicesRoute: typeof AuthenticatedServicesRoute
@@ -1712,6 +1732,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProductImportRoute: AuthenticatedProductImportRoute,
   AuthenticatedProductsRoute: AuthenticatedProductsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedQuickTourRoute: AuthenticatedQuickTourRoute,
   AuthenticatedReceiptDesignerRoute: AuthenticatedReceiptDesignerRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedServicesRoute: AuthenticatedServicesRoute,

@@ -50,7 +50,16 @@ type Props = {
   product: ProductWithStock | null;
   onSaved: () => Promise<void> | void;
   businessMode?: BusinessModeKey;
-  profileFields?: Array<{ id: string; label: string; type: string; required: boolean; column?: string; source?: string; runtimeReady: boolean; surfaces: string[] }>;
+  profileFields?: Array<{
+    id: string;
+    label: string;
+    type: string;
+    required: boolean;
+    column?: string;
+    source?: string;
+    runtimeReady: boolean;
+    surfaces: string[];
+  }>;
 };
 type ProductImage = { id: string; image_url: string; sort_order: number };
 type PendingImage = { file: File; preview: string };
@@ -169,7 +178,13 @@ export function ProductFormDialog({
                   .eq("product_id", product.id)
                   .maybeSingle()
               : Promise.resolve({ data: null, error: null }),
-            profileFields.some((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""))
+            profileFields.some(
+              (field) =>
+                field.runtimeReady &&
+                ["product_mode_details.details", "online_products.description"].includes(
+                  field.source ?? "",
+                ),
+            )
               ? db
                   .from("product_mode_details")
                   .select("details")
@@ -178,7 +193,9 @@ export function ProductFormDialog({
                   .eq("mode_key", businessMode)
                   .maybeSingle()
               : Promise.resolve({ data: null, error: null }),
-            profileFields.some((field) => field.runtimeReady && field.source === "online_products.description")
+            profileFields.some(
+              (field) => field.runtimeReady && field.source === "online_products.description",
+            )
               ? onlineSupabase
                   .from("online_products")
                   .select("description")
@@ -197,16 +214,32 @@ export function ProductFormDialog({
           }
           setExistingImages((images ?? []) as ProductImage[]);
           const savedModeDetails = (modeDetails?.details ?? {}) as Record<string, unknown>;
-          setProfileValues(Object.fromEntries(
-            profileFields
-              .filter((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""))
-              .map((field) => {
-                const value = field.source === "online_products.description"
-                  ? onlineProduct?.description
-                  : savedModeDetails[field.id];
-                return [field.id, Array.isArray(value) ? value.join(", ") : value === null || value === undefined ? "" : String(value)];
-              }),
-          ));
+          setProfileValues(
+            Object.fromEntries(
+              profileFields
+                .filter(
+                  (field) =>
+                    field.runtimeReady &&
+                    ["product_mode_details.details", "online_products.description"].includes(
+                      field.source ?? "",
+                    ),
+                )
+                .map((field) => {
+                  const value =
+                    field.source === "online_products.description"
+                      ? onlineProduct?.description
+                      : savedModeDetails[field.id];
+                  return [
+                    field.id,
+                    Array.isArray(value)
+                      ? value.join(", ")
+                      : value === null || value === undefined
+                        ? ""
+                        : String(value),
+                  ];
+                }),
+            ),
+          );
           if (details) {
             setSizes((details.size_options ?? []).join(", "));
             setColors((details.color_options ?? []).join(", "));
@@ -506,26 +539,40 @@ export function ProductFormDialog({
       const normalizedPiecePrice = packMode ? v.piecePrice : v.price;
       const normalizedPackPrice = packMode ? v.packPrice : 0;
       const profileDetailFields = profileFields.filter(
-        (field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""),
+        (field) =>
+          field.runtimeReady &&
+          ["product_mode_details.details", "online_products.description"].includes(
+            field.source ?? "",
+          ),
       );
-      const profileDetails = Object.fromEntries(profileDetailFields.map((field) => {
-        const raw = profileValues[field.id] ?? "";
-        const trimmed = raw.trim();
-        if (field.required && !trimmed) throw new Error(`${field.label} is required.`);
-        if (!trimmed) return [field.id, null];
-        if (field.type === "boolean") return [field.id, raw === "true"];
-        if (field.type === "integer" || field.type === "money") {
-          const value = Number(trimmed);
-          if (!Number.isFinite(value) || (field.type === "integer" && !Number.isInteger(value))) {
-            throw new Error(`${field.label} must be a valid ${field.type === "integer" ? "whole number" : "amount"}.`);
+      const profileDetails = Object.fromEntries(
+        profileDetailFields.map((field) => {
+          const raw = profileValues[field.id] ?? "";
+          const trimmed = raw.trim();
+          if (field.required && !trimmed) throw new Error(`${field.label} is required.`);
+          if (!trimmed) return [field.id, null];
+          if (field.type === "boolean") return [field.id, raw === "true"];
+          if (field.type === "integer" || field.type === "money") {
+            const value = Number(trimmed);
+            if (!Number.isFinite(value) || (field.type === "integer" && !Number.isInteger(value))) {
+              throw new Error(
+                `${field.label} must be a valid ${field.type === "integer" ? "whole number" : "amount"}.`,
+              );
+            }
+            return [field.id, value];
           }
-          return [field.id, value];
-        }
-        if (["tag-list", "modifier-list", "recipe-list", "variant-option"].includes(field.type)) {
-          return [field.id, trimmed.split(/[\n,]/).map((item) => item.trim()).filter(Boolean)];
-        }
-        return [field.id, trimmed];
-      }));
+          if (["tag-list", "modifier-list", "recipe-list", "variant-option"].includes(field.type)) {
+            return [
+              field.id,
+              trimmed
+                .split(/[\n,]/)
+                .map((item) => item.trim())
+                .filter(Boolean),
+            ];
+          }
+          return [field.id, trimmed];
+        }),
+      );
       const payload = {
         store_id: storeId,
         name: v.name,
@@ -587,16 +634,21 @@ export function ProductFormDialog({
       if (Object.keys(privateProfileDetails).length) {
         const { error: modeDetailsError } = await (supabase as any)
           .from("product_mode_details")
-          .upsert({
-            store_id: storeId,
-            product_id: productId,
-            mode_key: businessMode,
-            details: privateProfileDetails,
-            updated_at: new Date().toISOString(),
-          }, { onConflict: "store_id,product_id,mode_key" });
+          .upsert(
+            {
+              store_id: storeId,
+              product_id: productId,
+              mode_key: businessMode,
+              details: privateProfileDetails,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "store_id,product_id,mode_key" },
+          );
         if (modeDetailsError) throw new Error(modeDetailsError.message);
       }
-      const onlineDescriptionField = profileDetailFields.find((field) => field.source === "online_products.description");
+      const onlineDescriptionField = profileDetailFields.find(
+        (field) => field.source === "online_products.description",
+      );
       if (onlineDescriptionField) {
         const description = String(profileDetails[onlineDescriptionField.id] ?? "");
         const { data: existingOnlineProduct, error: onlineLookupError } = await onlineSupabase
@@ -607,11 +659,19 @@ export function ProductFormDialog({
           .maybeSingle();
         if (onlineLookupError) throw new Error(onlineLookupError.message);
         const onlineSave = existingOnlineProduct
-          ? await onlineSupabase.from("online_products").update({ description }).eq("id", existingOnlineProduct.id)
+          ? await onlineSupabase
+              .from("online_products")
+              .update({ description })
+              .eq("id", existingOnlineProduct.id)
           : await onlineSupabase.from("online_products").insert({
               store_id: storeId,
               product_id: productId,
-              slug: `${v.name.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48)}-${productId.slice(0, 8)}`,
+              slug: `${v.name
+                .toLowerCase()
+                .normalize("NFKD")
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-|-$/g, "")
+                .slice(0, 48)}-${productId.slice(0, 8)}`,
               description,
               enabled: false,
             });
@@ -929,21 +989,42 @@ export function ProductFormDialog({
                 )}
               </div>
             )}
-            {profileFields.some((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? "")) && (
+            {profileFields.some(
+              (field) =>
+                field.runtimeReady &&
+                ["product_mode_details.details", "online_products.description"].includes(
+                  field.source ?? "",
+                ),
+            ) && (
               <section className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
                 <div>
                   <p className="text-sm font-semibold">Business-specific details</p>
-                  <p className="mt-1 text-xs text-muted-foreground">Business-specific fields are saved to the private product profile. The online description is saved to the online catalogue and stays hidden until you publish that product.</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Business-specific fields are saved to the private product profile. The online
+                    description is saved to the online catalogue and stays hidden until you publish
+                    that product.
+                  </p>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {profileFields
-                    .filter((field) => field.runtimeReady && ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""))
+                    .filter(
+                      (field) =>
+                        field.runtimeReady &&
+                        ["product_mode_details.details", "online_products.description"].includes(
+                          field.source ?? "",
+                        ),
+                    )
                     .map((field) => (
                       <Field key={field.id} label={field.label}>
                         {field.type === "long-text" ? (
                           <textarea
                             value={profileValues[field.id] ?? ""}
-                            onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: event.target.value }))}
+                            onChange={(event) =>
+                              setProfileValues((current) => ({
+                                ...current,
+                                [field.id]: event.target.value,
+                              }))
+                            }
                             className="min-h-24 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
                             maxLength={2000}
                             placeholder={field.label}
@@ -953,7 +1034,12 @@ export function ProductFormDialog({
                             <input
                               type="checkbox"
                               checked={profileValues[field.id] === "true"}
-                              onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: String(event.target.checked) }))}
+                              onChange={(event) =>
+                                setProfileValues((current) => ({
+                                  ...current,
+                                  [field.id]: String(event.target.checked),
+                                }))
+                              }
                               className="size-4 accent-current"
                             />
                             Yes
@@ -961,13 +1047,37 @@ export function ProductFormDialog({
                         ) : (
                           <Input
                             value={profileValues[field.id] ?? ""}
-                            onChange={(event) => setProfileValues((current) => ({ ...current, [field.id]: event.target.value }))}
+                            onChange={(event) =>
+                              setProfileValues((current) => ({
+                                ...current,
+                                [field.id]: event.target.value,
+                              }))
+                            }
                             className="h-12"
-                            type={field.type === "date" ? "date" : field.type === "integer" || field.type === "money" ? "number" : "text"}
-                            inputMode={field.type === "integer" || field.type === "money" ? "decimal" : undefined}
+                            type={
+                              field.type === "date"
+                                ? "date"
+                                : field.type === "integer" || field.type === "money"
+                                  ? "number"
+                                  : "text"
+                            }
+                            inputMode={
+                              field.type === "integer" || field.type === "money"
+                                ? "decimal"
+                                : undefined
+                            }
                             min={field.type === "integer" || field.type === "money" ? 0 : undefined}
                             maxLength={field.type === "long-text" ? 2000 : 240}
-                            placeholder={["tag-list", "modifier-list", "recipe-list", "variant-option"].includes(field.type) ? "Separate values with commas" : field.label}
+                            placeholder={
+                              [
+                                "tag-list",
+                                "modifier-list",
+                                "recipe-list",
+                                "variant-option",
+                              ].includes(field.type)
+                                ? "Separate values with commas"
+                                : field.label
+                            }
                           />
                         )}
                       </Field>

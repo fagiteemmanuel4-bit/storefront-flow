@@ -22,19 +22,19 @@ Milestones are small and gated. Work on one milestone at a time. After each mile
 
 ### Foundation order (P0 first)
 
-| Sequence | Milestone | Features | Exit condition |
-|---:|---|---|---|
-| F0 | Platform safety and feature control | `pl.states`, `pl.security`, `pl.feature-flags` | Feature registry/flags, tenant boundaries and lifecycle state patterns tested; no unfinished flag enabled. |
-| F1 | Seller onboarding | `ob.email-verify`, `ob.save-resume`, `ob.slug-check`, `ob.mode-select` | Verified seller can resume setup, choose a validated mode profile and reserve a unique store link. |
-| F2 | Product foundation | `pr.crud`, `pr.images`, `pr.variants`, `pr.mode-fields`, `pr.draft-publish` | Normal Business product CRUD/media/variants/fields and online visibility pass; variants/fields require the profile. |
-| F3 | Physical ↔ Online sync | `sy.publish-button`, `sy.import-from-store`, `sy.unpublish`, `sy.field-overrides`, `sy.stock-single-source`, `sy.sync-log` | Publishing, import, override reset and inventory concurrency are idempotent and cannot oversell. |
-| F4 | Orders and fulfilment | `or.list-filter`, `or.status-flow`, `or.detail-timeline`, `or.notifications` | Order lifecycle comes from the mode profile; order detail and customer notifications pass. |
-| F5 | Online storefront foundation | `sf.template-gallery`, `sf.theme-editor`, `sf.section-editor`, `sf.draft-publish-versions`, `sf.subdomain-domain`, `sf.search-filter-sort`, `sf.product-page`, `sf.preview-responsive`, `sf.template-library` | Mode-filtered templates render in safe preview; section/theme editing is draft-only until validated; public store pages resolve correctly. |
-| F6 | Checkout and shopper experience | `cu.shopper-account`, `cu.order-tracking`, `ck.cart-drawer`, `ck.guest-and-account`, `ck.shipping-tax`, `ck.payments` | Guest/account ordering, stock reservation, shipping/tax and verified payment lifecycle pass end-to-end. |
-| F7 | Remaining P0 readiness | `pl.e2e-tests` | Critical seller/shopper E2E, failure recovery and tenant isolation pass. |
-| F8 | P1 onboarding/product/order/customer expansion | `ob.logo-upload`, `ob.setup-checklist`, `pr.categories`, `pr.bulk-actions`, `pr.csv-import-export`, `or.invoice-packing`, `or.cancel-refund`, `or.delivery-pickup`, `cu.list-profile`, `cu.merge-channels`, `cu.saved-addresses` | Seller setup, catalog management, fulfilment and customer management enhancements pass. |
-| F9 | P1 storefront/marketing/analytics/admin | `sf.reviews`, `sf.seo-og`, `mk.announcement-bar`, `mk.share-qr`, `an.sales-chart`, `an.channel-compare`, `st.policies`, `st.roles`, `pl.audit-log`, `pl.monitoring`, `pl.accessibility-performance` | Store discovery, reporting, policy/team controls and platform quality pass. |
-| F10 | P2 enhancements | `pr.seo-fields`, `or.internal-notes`, `cu.wishlist`, `sf.custom-css-js`, `ck.abandoned-cart`, `mk.newsletter`, `mk.banners`, `an.top-products`, `st.notifications`, `st.data-export` | Optional capabilities pass security, usability and performance gates before enablement. |
+| Sequence | Milestone                                      | Features                                                                                                                                                                                                                         | Exit condition                                                                                                                             |
+| -------: | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+|       F0 | Platform safety and feature control            | `pl.states`, `pl.security`, `pl.feature-flags`                                                                                                                                                                                   | Feature registry/flags, tenant boundaries and lifecycle state patterns tested; no unfinished flag enabled.                                 |
+|       F1 | Seller onboarding                              | `ob.email-verify`, `ob.save-resume`, `ob.slug-check`, `ob.mode-select`                                                                                                                                                           | Verified seller can resume setup, choose a validated mode profile and reserve a unique store link.                                         |
+|       F2 | Product foundation                             | `pr.crud`, `pr.images`, `pr.variants`, `pr.mode-fields`, `pr.draft-publish`                                                                                                                                                      | Normal Business product CRUD/media/variants/fields and online visibility pass; variants/fields require the profile.                        |
+|       F3 | Physical ↔ Online sync                         | `sy.publish-button`, `sy.import-from-store`, `sy.unpublish`, `sy.field-overrides`, `sy.stock-single-source`, `sy.sync-log`                                                                                                       | Publishing, import, override reset and inventory concurrency are idempotent and cannot oversell.                                           |
+|       F4 | Orders and fulfilment                          | `or.list-filter`, `or.status-flow`, `or.detail-timeline`, `or.notifications`                                                                                                                                                     | Order lifecycle comes from the mode profile; order detail and customer notifications pass.                                                 |
+|       F5 | Online storefront foundation                   | `sf.template-gallery`, `sf.theme-editor`, `sf.section-editor`, `sf.draft-publish-versions`, `sf.subdomain-domain`, `sf.search-filter-sort`, `sf.product-page`, `sf.preview-responsive`, `sf.template-library`                    | Mode-filtered templates render in safe preview; section/theme editing is draft-only until validated; public store pages resolve correctly. |
+|       F6 | Checkout and shopper experience                | `cu.shopper-account`, `cu.order-tracking`, `ck.cart-drawer`, `ck.guest-and-account`, `ck.shipping-tax`, `ck.payments`                                                                                                            | Guest/account ordering, stock reservation, shipping/tax and verified payment lifecycle pass end-to-end.                                    |
+|       F7 | Remaining P0 readiness                         | `pl.e2e-tests`                                                                                                                                                                                                                   | Critical seller/shopper E2E, failure recovery and tenant isolation pass.                                                                   |
+|       F8 | P1 onboarding/product/order/customer expansion | `ob.logo-upload`, `ob.setup-checklist`, `pr.categories`, `pr.bulk-actions`, `pr.csv-import-export`, `or.invoice-packing`, `or.cancel-refund`, `or.delivery-pickup`, `cu.list-profile`, `cu.merge-channels`, `cu.saved-addresses` | Seller setup, catalog management, fulfilment and customer management enhancements pass.                                                    |
+|       F9 | P1 storefront/marketing/analytics/admin        | `sf.reviews`, `sf.seo-og`, `mk.announcement-bar`, `mk.share-qr`, `an.sales-chart`, `an.channel-compare`, `st.policies`, `st.roles`, `pl.audit-log`, `pl.monitoring`, `pl.accessibility-performance`                              | Store discovery, reporting, policy/team controls and platform quality pass.                                                                |
+|      F10 | P2 enhancements                                | `pr.seo-fields`, `or.internal-notes`, `cu.wishlist`, `sf.custom-css-js`, `ck.abandoned-cart`, `mk.newsletter`, `mk.banners`, `an.top-products`, `st.notifications`, `st.data-export`                                             | Optional capabilities pass security, usability and performance gates before enablement.                                                    |
 
 ## Dependency and implementation rules
 
@@ -62,21 +62,20 @@ Milestones are small and gated. Work on one milestone at a time. After each mile
 5. Feature flag remains OFF until verified and explicitly reviewed.
 6. User approves production release; otherwise no Vercel production deployment.
 
-
 ## Business-mode profile foundation
 
 All eight business-mode profiles are now authored under `modes/<mode>/mode.json`:
 
-| Business mode | Profile |
-| --- | --- |
-| General retail | `modes/normal-business/mode.json` |
-| Groceries & provision | `modes/grocery-provision/mode.json` |
-| Fashion & boutiques | `modes/fashion/mode.json` |
-| Electronics & phones | `modes/electronics/mode.json` |
-| Food & restaurants | `modes/food-service/mode.json` |
-| Pharmacy & health products | `modes/pharmacy/mode.json` |
-| Beauty & personal care | `modes/beauty-personal-care/mode.json` |
-| Services & appointments | `modes/services/mode.json` |
+| Business mode              | Profile                                |
+| -------------------------- | -------------------------------------- |
+| General retail             | `modes/normal-business/mode.json`      |
+| Groceries & provision      | `modes/grocery-provision/mode.json`    |
+| Fashion & boutiques        | `modes/fashion/mode.json`              |
+| Electronics & phones       | `modes/electronics/mode.json`          |
+| Food & restaurants         | `modes/food-service/mode.json`         |
+| Pharmacy & health products | `modes/pharmacy/mode.json`             |
+| Beauty & personal care     | `modes/beauty-personal-care/mode.json` |
+| Services & appointments    | `modes/services/mode.json`             |
 
 These are draft configuration profiles, not runtime integrations. They were authored using the mode registry and the vertical workflow migrations currently present in the repository. Each profile keeps all feature flags OFF, includes a storefront template set and mode-specific section registry, and explicitly records domain-specific checkout restrictions.
 

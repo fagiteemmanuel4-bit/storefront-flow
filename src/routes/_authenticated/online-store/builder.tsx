@@ -210,7 +210,8 @@ function makeSections(types: string[], prefix = String(Date.now())): Section[] {
 
 function StoreBuilder() {
   const { store } = useStoreContext();
-  const businessModeValue = (store?.storefront_settings as any)?.businessMode ?? store?.business_type;
+  const businessModeValue =
+    (store?.storefront_settings as any)?.businessMode ?? store?.business_type;
   const businessMode = resolveBusinessMode(businessModeValue);
   const profileResult = businessMode ? getBusinessModeProfile(businessMode.key) : null;
   const modeProfile = profileResult?.ok ? profileResult.profile : null;
@@ -233,8 +234,16 @@ function StoreBuilder() {
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const selectedTemplate = useMemo(() => {
     const profileTemplate = profileTemplates.find((item: any) => item.id === template);
-    if (profileTemplate) return { id: profileTemplate.id, name: profileTemplate.name, description: profileTemplate.positioning, sections: profileTemplate.pages?.home ?? [] };
-    return TEMPLATES.find((x) => x.id === template) ?? TEMPLATES.find((x) => x.id === DEFAULT_TEMPLATE)!;
+    if (profileTemplate)
+      return {
+        id: profileTemplate.id,
+        name: profileTemplate.name,
+        description: profileTemplate.positioning,
+        sections: profileTemplate.pages?.home ?? [],
+      };
+    return (
+      TEMPLATES.find((x) => x.id === template) ?? TEMPLATES.find((x) => x.id === DEFAULT_TEMPLATE)!
+    );
   }, [template, profileTemplates]);
   const loadConfig = useCallback(async () => {
     if (!store) return;
@@ -284,7 +293,13 @@ function StoreBuilder() {
     } else if (profileTemplates.length) {
       const firstTemplate = profileTemplates[0] as any;
       setTemplate(firstTemplate.id);
-      setSections(makeSections((firstTemplate.pages?.home ?? DEFAULT_TEMPLATE_SECTIONS).filter((type: string) => availableSectionTypes.includes(type))));
+      setSections(
+        makeSections(
+          (firstTemplate.pages?.home ?? DEFAULT_TEMPLATE_SECTIONS).filter((type: string) =>
+            availableSectionTypes.includes(type),
+          ),
+        ),
+      );
       if (firstTemplate.theme) {
         setTheme((current) => ({
           ...current,
@@ -296,7 +311,12 @@ function StoreBuilder() {
           fontFamily: String(firstTemplate.theme.fontBody ?? current.fontFamily),
           headingFontFamily: String(firstTemplate.theme.fontHeading ?? current.headingFontFamily),
           density: firstTemplate.theme.density === "compact" ? "compact" : "comfortable",
-          buttonRadius: Number.parseFloat(String(firstTemplate.theme.radius ?? "14")) <= 10 ? "small" : Number.parseFloat(String(firstTemplate.theme.radius ?? "14")) >= 18 ? "large" : "medium",
+          buttonRadius:
+            Number.parseFloat(String(firstTemplate.theme.radius ?? "14")) <= 10
+              ? "small"
+              : Number.parseFloat(String(firstTemplate.theme.radius ?? "14")) >= 18
+                ? "large"
+                : "medium",
         }));
       }
     } else setSections(makeSections(DEFAULT_TEMPLATE_SECTIONS));
@@ -309,8 +329,13 @@ function StoreBuilder() {
     if (next === template) return;
     setTemplate(next);
     const profileTemplate = profileTemplates.find((item: any) => item.id === next) as any;
-    const templateSections = profileTemplate?.pages?.home ?? TEMPLATES.find((x) => x.id === next)?.sections ?? DEFAULT_TEMPLATE_SECTIONS;
-    setSections(makeSections(templateSections.filter((type: string) => availableSectionTypes.includes(type))));
+    const templateSections =
+      profileTemplate?.pages?.home ??
+      TEMPLATES.find((x) => x.id === next)?.sections ??
+      DEFAULT_TEMPLATE_SECTIONS;
+    setSections(
+      makeSections(templateSections.filter((type: string) => availableSectionTypes.includes(type))),
+    );
     if (profileTemplate?.theme) {
       setTheme((current) => ({
         ...current,
@@ -322,7 +347,12 @@ function StoreBuilder() {
         fontFamily: String(profileTemplate.theme.fontBody ?? current.fontFamily),
         headingFontFamily: String(profileTemplate.theme.fontHeading ?? current.headingFontFamily),
         density: profileTemplate.theme.density === "compact" ? "compact" : "comfortable",
-        buttonRadius: Number.parseFloat(String(profileTemplate.theme.radius ?? "14")) <= 10 ? "small" : Number.parseFloat(String(profileTemplate.theme.radius ?? "14")) >= 18 ? "large" : "medium",
+        buttonRadius:
+          Number.parseFloat(String(profileTemplate.theme.radius ?? "14")) <= 10
+            ? "small"
+            : Number.parseFloat(String(profileTemplate.theme.radius ?? "14")) >= 18
+              ? "large"
+              : "medium",
       }));
     }
     setSelectedSection(null);
@@ -456,7 +486,14 @@ function StoreBuilder() {
         <aside className="space-y-4">
           <Panel title="Templates">
             <div className="space-y-2">
-              {(profileTemplates.length ? profileTemplates.map((item: any) => ({ id: item.id, name: item.name, description: item.positioning })) : TEMPLATES).map((item) => (
+              {(profileTemplates.length
+                ? profileTemplates.map((item: any) => ({
+                    id: item.id,
+                    name: item.name,
+                    description: item.positioning,
+                  }))
+                : TEMPLATES
+              ).map((item) => (
                 <button
                   key={item.id}
                   type="button"
@@ -479,7 +516,10 @@ function StoreBuilder() {
                   className="rounded-lg border border-border px-2 py-2 text-xs font-semibold hover:bg-secondary"
                 >
                   <Plus className="mx-auto mb-1 size-3" />
-                  {LABELS[type] ?? type.replace(/[-_]+/g, " ").replace(/\\b\\w/g, (letter) => letter.toUpperCase())}
+                  {LABELS[type] ??
+                    type
+                      .replace(/[-_]+/g, " ")
+                      .replace(/\\b\\w/g, (letter) => letter.toUpperCase())}
                 </button>
               ))}
             </div>
@@ -492,9 +532,18 @@ function StoreBuilder() {
           </div>
           <div
             className="storefront-shell mx-auto max-w-3xl overflow-hidden rounded-[1.5rem] border border-border bg-white shadow-lift"
-            style={{ color: theme.textColor, backgroundColor: theme.backgroundColor, fontFamily: theme.fontFamily }}
+            style={{
+              color: theme.textColor,
+              backgroundColor: theme.backgroundColor,
+              fontFamily: theme.fontFamily,
+            }}
           >
-            <style>{".storefront-shell h1,.storefront-shell h2,.storefront-shell h3{font-family:" + safePreviewHeadingFont + ",sans-serif}" + safePreviewCss}</style>
+            <style>
+              {".storefront-shell h1,.storefront-shell h2,.storefront-shell h3{font-family:" +
+                safePreviewHeadingFont +
+                ",sans-serif}" +
+                safePreviewCss}
+            </style>
             <div
               className="flex items-center justify-between border-b px-5 py-4"
               style={{ borderColor: theme.secondaryColor }}
@@ -565,7 +614,10 @@ function StoreBuilder() {
                     className="text-[10px] font-bold uppercase tracking-[.18em]"
                     style={{ color: theme.primaryColor }}
                   >
-                    {LABELS[section.type] ?? section.type.replace(/[-_]+/g, " ").replace(/\\b\\w/g, (letter) => letter.toUpperCase())}
+                    {LABELS[section.type] ??
+                      section.type
+                        .replace(/[-_]+/g, " ")
+                        .replace(/\\b\\w/g, (letter) => letter.toUpperCase())}
                   </p>
                 </div>
                 <h3 className="mt-2 font-display text-2xl font-bold">
@@ -693,32 +745,47 @@ function StoreBuilder() {
             </label>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <label className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Body font</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Body font
+                </span>
                 <input
                   className="field"
                   value={theme.fontFamily}
                   maxLength={60}
-                  onChange={(event) => setTheme((current) => ({ ...current, fontFamily: event.target.value }))}
+                  onChange={(event) =>
+                    setTheme((current) => ({ ...current, fontFamily: event.target.value }))
+                  }
                   placeholder="Inter"
                 />
               </label>
               <label className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Heading font</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Heading font
+                </span>
                 <input
                   className="field"
                   value={theme.headingFontFamily}
                   maxLength={60}
-                  onChange={(event) => setTheme((current) => ({ ...current, headingFontFamily: event.target.value }))}
+                  onChange={(event) =>
+                    setTheme((current) => ({ ...current, headingFontFamily: event.target.value }))
+                  }
                   placeholder="Inter"
                 />
               </label>
             </div>
             <label className="mt-4 block space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Layout density</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Layout density
+              </span>
               <select
                 className="field"
                 value={theme.density}
-                onChange={(event) => setTheme((current) => ({ ...current, density: event.target.value as Theme["density"] }))}
+                onChange={(event) =>
+                  setTheme((current) => ({
+                    ...current,
+                    density: event.target.value as Theme["density"],
+                  }))
+                }
               >
                 <option value="comfortable">Comfortable</option>
                 <option value="compact">Compact</option>
@@ -731,10 +798,16 @@ function StoreBuilder() {
               if (!section) return null;
               const fields = sectionFields[section.type] ?? [
                 { key: "title", label: "Title", placeholder: "Section title" },
-                { key: "body", label: "Description", placeholder: "Add useful details for customers." },
+                {
+                  key: "body",
+                  label: "Description",
+                  placeholder: "Add useful details for customers.",
+                },
               ];
               return (
-                <Panel title={`Edit ${LABELS[section.type] ?? section.type.replace(/[-_]+/g, " ")}`}>
+                <Panel
+                  title={`Edit ${LABELS[section.type] ?? section.type.replace(/[-_]+/g, " ")}`}
+                >
                   <label className="mb-4 flex items-center justify-between gap-3">
                     <span className="text-sm font-semibold">Visible</span>
                     <input
@@ -800,11 +873,17 @@ function StoreBuilder() {
             </label>
           </Panel>
           <Panel title="Publishing">
-            <p className="text-sm font-semibold">{published ? "Your storefront is published" : "Your storefront is still a draft"}</p>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">
-              Store availability, public terms and privacy acceptance are managed in Store Setup. Saving your design here never publishes an incomplete store.
+            <p className="text-sm font-semibold">
+              {published ? "Your storefront is published" : "Your storefront is still a draft"}
             </p>
-            <Link to="/online-store/setup" className="mt-3 inline-flex text-sm font-semibold underline underline-offset-4">
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+              Store availability, public terms and privacy acceptance are managed in Store Setup.
+              Saving your design here never publishes an incomplete store.
+            </p>
+            <Link
+              to="/online-store/setup"
+              className="mt-3 inline-flex text-sm font-semibold underline underline-offset-4"
+            >
               Open Store Setup
             </Link>
           </Panel>
@@ -829,7 +908,14 @@ function StoreBuilder() {
   );
 }
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
-  const tourTarget = title === "Templates" ? "template-list" : title === "Add section" ? "section-list" : title === "Theme" ? "theme-controls" : undefined;
+  const tourTarget =
+    title === "Templates"
+      ? "template-list"
+      : title === "Add section"
+        ? "section-list"
+        : title === "Theme"
+          ? "theme-controls"
+          : undefined;
   return (
     <section data-tour={tourTarget} className="rounded-2xl border border-border bg-surface p-4">
       <h2 className="mb-4 font-semibold">{title}</h2>

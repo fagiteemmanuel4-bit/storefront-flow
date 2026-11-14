@@ -40,7 +40,12 @@ import {
   BottomSheetTitle,
 } from "@/components/ui/bottom-sheet";
 import { cn } from "@/lib/utils";
-import { BUSINESS_MODES, getBusinessMode, resolveBusinessMode, type BusinessModeKey } from "@/lib/business-modes";
+import {
+  BUSINESS_MODES,
+  getBusinessMode,
+  resolveBusinessMode,
+  type BusinessModeKey,
+} from "@/lib/business-modes";
 import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { fetchAllRows } from "@/lib/supabase-pagination";
@@ -471,17 +476,25 @@ function ProductsPage() {
               <div className="flex flex-col gap-2 border-b border-border p-4 sm:flex-row sm:px-5">
                 <select
                   value={profileModeChoice}
-                  onChange={(event) => setProfileModeChoice(event.target.value as BusinessModeKey | "")}
+                  onChange={(event) =>
+                    setProfileModeChoice(event.target.value as BusinessModeKey | "")
+                  }
                   className="h-11 min-w-0 flex-1 rounded-xl border border-input bg-background px-3 text-sm"
                 >
                   {BUSINESS_MODES.map((mode) => (
-                    <option key={mode.key} value={mode.key}>{mode.label}</option>
+                    <option key={mode.key} value={mode.key}>
+                      {mode.label}
+                    </option>
                   ))}
                 </select>
                 <Button
                   type="button"
                   onClick={() => void saveBusinessModeProfile()}
-                  disabled={!profileModeChoice || profileModeChoice === resolvedBusinessMode?.key || savingProfileMode}
+                  disabled={
+                    !profileModeChoice ||
+                    profileModeChoice === resolvedBusinessMode?.key ||
+                    savingProfileMode
+                  }
                 >
                   {savingProfileMode ? "Saving…" : "Save profile"}
                 </Button>
@@ -490,12 +503,16 @@ function ProductsPage() {
             <div className="grid gap-3 p-4 sm:grid-cols-[1fr_auto] sm:items-center sm:px-5">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  {productProfileFields.length} profile-specific product fields are available in the editor.
-                  These fields appear in the product editor and are saved privately against the product and its business profile.
+                  {productProfileFields.length} profile-specific product fields are available in the
+                  editor. These fields appear in the product editor and are saved privately against
+                  the product and its business profile.
                 </p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {productProfileFields.slice(0, 6).map((field) => (
-                    <span key={field.id} className="rounded-lg bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+                    <span
+                      key={field.id}
+                      className="rounded-lg bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground"
+                    >
                       {field.label}
                     </span>
                   ))}
@@ -508,36 +525,52 @@ function ProductsPage() {
               </div>
               <div className="text-left sm:text-right">
                 <p className="text-xs font-semibold text-muted-foreground">Variants</p>
-                <p className="mt-1 text-sm font-semibold">{modeProfile.product.variants.enabled ? "Configured" : "Not configured"}</p>
+                <p className="mt-1 text-sm font-semibold">
+                  {modeProfile.product.variants.enabled ? "Configured" : "Not configured"}
+                </p>
                 <p className="mt-1 text-[11px] text-muted-foreground">Feature flags remain off</p>
               </div>
             </div>
           </section>
         ) : (
-          <section role="status" className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
+          <section
+            role="status"
+            className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4"
+          >
             <p className="text-sm font-semibold">Choose your business profile</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              This workspace’s saved business description does not match a known profile. Choose the closest fit to enable its product fields and Store Studio templates. Unknown workspaces are never silently assigned to General Retail.
+              This workspace’s saved business description does not match a known profile. Choose the
+              closest fit to enable its product fields and Store Studio templates. Unknown
+              workspaces are never silently assigned to General Retail.
             </p>
             {canManageProfile && (
               <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                 <select
                   value={profileModeChoice}
-                  onChange={(event) => setProfileModeChoice(event.target.value as BusinessModeKey | "")}
+                  onChange={(event) =>
+                    setProfileModeChoice(event.target.value as BusinessModeKey | "")
+                  }
                   className="h-11 min-w-0 flex-1 rounded-xl border border-input bg-background px-3 text-sm"
                 >
                   <option value="">Choose a business profile</option>
                   {BUSINESS_MODES.map((mode) => (
-                    <option key={mode.key} value={mode.key}>{mode.label}</option>
+                    <option key={mode.key} value={mode.key}>
+                      {mode.label}
+                    </option>
                   ))}
                 </select>
-                <Button onClick={() => void saveBusinessModeProfile()} disabled={!profileModeChoice || savingProfileMode}>
+                <Button
+                  onClick={() => void saveBusinessModeProfile()}
+                  disabled={!profileModeChoice || savingProfileMode}
+                >
                   {savingProfileMode ? "Saving…" : "Save profile"}
                 </Button>
               </div>
             )}
             {!canManageProfile && (
-              <p className="mt-2 text-xs font-medium text-muted-foreground">Ask a store owner or manager to choose the business profile.</p>
+              <p className="mt-2 text-xs font-medium text-muted-foreground">
+                Ask a store owner or manager to choose the business profile.
+              </p>
             )}
           </section>
         )}

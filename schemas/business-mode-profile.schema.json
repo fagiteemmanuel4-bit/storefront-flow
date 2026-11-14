@@ -39,11 +39,7 @@
       "minLength": 2
     },
     "status": {
-      "enum": [
-        "draft",
-        "active",
-        "deprecated"
-      ]
+      "enum": ["draft", "active", "deprecated"]
     },
     "runtimeReady": {
       "type": "boolean"
@@ -70,13 +66,7 @@
     },
     "product": {
       "type": "object",
-      "required": [
-        "entity",
-        "inventoryEntity",
-        "fields",
-        "variants",
-        "inventory"
-      ],
+      "required": ["entity", "inventoryEntity", "fields", "variants", "inventory"],
       "properties": {
         "entity": {
           "type": "string"
@@ -88,13 +78,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "id",
-              "label",
-              "type",
-              "required",
-              "surfaces"
-            ],
+            "required": ["id", "label", "type", "required", "surfaces"],
             "properties": {
               "id": {
                 "type": "string"
@@ -131,10 +115,7 @@
               "surfaces": {
                 "type": "array",
                 "items": {
-                  "enum": [
-                    "physical",
-                    "online"
-                  ]
+                  "enum": ["physical", "online"]
                 },
                 "uniqueItems": true
               },
@@ -156,10 +137,7 @@
         },
         "variants": {
           "type": "object",
-          "required": [
-            "enabled",
-            "strategy"
-          ],
+          "required": ["enabled", "strategy"],
           "properties": {
             "enabled": {
               "type": "boolean"
@@ -177,10 +155,7 @@
         },
         "inventory": {
           "type": "object",
-          "required": [
-            "sourceOfTruth",
-            "oversellPolicy"
-          ],
+          "required": ["sourceOfTruth", "oversellPolicy"],
           "properties": {
             "sourceOfTruth": {
               "type": "string"
@@ -198,11 +173,7 @@
               "type": "boolean"
             },
             "oversellPolicy": {
-              "enum": [
-                "deny",
-                "allow",
-                "backorder"
-              ]
+              "enum": ["deny", "allow", "backorder"]
             },
             "lowStockField": {
               "type": "string"
@@ -213,11 +184,7 @@
     },
     "orders": {
       "type": "object",
-      "required": [
-        "statuses",
-        "transitions",
-        "terminalStatuses"
-      ],
+      "required": ["statuses", "transitions", "terminalStatuses"],
       "properties": {
         "entity": {
           "type": "string"
@@ -226,11 +193,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "id",
-              "label",
-              "kind"
-            ],
+            "required": ["id", "label", "kind"],
             "properties": {
               "id": {
                 "type": "string"
@@ -239,11 +202,7 @@
                 "type": "string"
               },
               "kind": {
-                "enum": [
-                  "open",
-                  "fulfillment",
-                  "terminal"
-                ]
+                "enum": ["open", "fulfillment", "terminal"]
               },
               "customerVisible": {
                 "type": "boolean"
@@ -261,10 +220,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "from",
-              "to"
-            ],
+            "required": ["from", "to"],
             "properties": {
               "from": {
                 "type": "string"
@@ -294,20 +250,13 @@
     },
     "dashboard": {
       "type": "object",
-      "required": [
-        "cards"
-      ],
+      "required": ["cards"],
       "properties": {
         "cards": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "id",
-              "label",
-              "source",
-              "metric"
-            ],
+            "required": ["id", "label", "source", "metric"],
             "properties": {
               "id": {
                 "type": "string"
@@ -361,12 +310,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "id",
-              "label",
-              "category",
-              "settings"
-            ],
+            "required": ["id", "label", "category", "settings"],
             "properties": {
               "id": {
                 "type": "string"
@@ -396,14 +340,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "id",
-              "name",
-              "family",
-              "version",
-              "pages",
-              "theme"
-            ],
+            "required": ["id", "name", "family", "version", "pages", "theme"],
             "properties": {
               "id": {
                 "type": "string"
@@ -469,22 +406,13 @@
     },
     "checkout": {
       "type": "object",
-      "required": [
-        "fields",
-        "fulfillmentModes",
-        "paymentMethods"
-      ],
+      "required": ["fields", "fulfillmentModes", "paymentMethods"],
       "properties": {
         "fields": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "id",
-              "label",
-              "type",
-              "required"
-            ],
+            "required": ["id", "label", "type", "required"],
             "properties": {
               "id": {
                 "type": "string"
@@ -508,11 +436,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "id",
-              "label",
-              "enabled"
-            ],
+            "required": ["id", "label", "enabled"],
             "properties": {
               "id": {
                 "type": "string"
@@ -530,11 +454,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "id",
-              "label",
-              "enabled"
-            ],
+            "required": ["id", "label", "enabled"],
             "properties": {
               "id": {
                 "type": "string"
@@ -564,11 +484,7 @@
     },
     "featureFlags": {
       "type": "object",
-      "required": [
-        "default",
-        "flags",
-        "rule"
-      ],
+      "required": ["default", "flags", "rule"],
       "properties": {
         "default": {
           "const": "off"
@@ -586,12 +502,7 @@
     },
     "workspaces": {
       "type": "object",
-      "required": [
-        "physicalStore",
-        "onlineStore",
-        "shared",
-        "syncContract"
-      ],
+      "required": ["physicalStore", "onlineStore", "shared", "syncContract"],
       "properties": {
         "physicalStore": {
           "type": "object"

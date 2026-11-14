@@ -7,9 +7,7 @@
   "status": "draft",
   "runtimeReady": false,
   "baseCatalog": "normal",
-  "businessModeKeys": [
-    "electronics"
-  ],
+  "businessModeKeys": ["electronics"],
   "description": "Draft data-driven profile for the Electronics & Phones business mode. Grounded in the current mode registry and existing vertical workflow migrations; runtime integration and schema verification remain required.",
   "principles": [
     "All mode-specific product fields, variants, order statuses, checkout fields, dashboard cards, storefront sections, filters and templates are read from this profile.",
@@ -29,10 +27,7 @@
         "type": "text",
         "required": true,
         "maxLength": 120,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true
       },
       {
@@ -40,9 +35,7 @@
         "label": "Description",
         "type": "long-text",
         "required": false,
-        "surfaces": [
-          "online"
-        ],
+        "surfaces": ["online"],
         "searchable": true,
         "source": "online_products.description",
         "runtimeReady": true
@@ -54,10 +47,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true
       },
       {
@@ -67,9 +57,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical"
-        ],
+        "surfaces": ["physical"],
         "searchable": false
       },
       {
@@ -79,10 +67,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "filterable": true
       },
@@ -91,10 +76,7 @@
         "label": "Brand",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -104,10 +86,7 @@
         "label": "Selling unit",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "source": "product_mode_details.details",
         "runtimeReady": true
       },
@@ -118,10 +97,7 @@
         "type": "money",
         "required": true,
         "min": 0,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "sortable": true
       },
       {
@@ -131,9 +107,7 @@
         "type": "money",
         "required": false,
         "min": 0,
-        "surfaces": [
-          "physical"
-        ]
+        "surfaces": ["physical"]
       },
       {
         "id": "lowStockThreshold",
@@ -142,9 +116,7 @@
         "type": "integer",
         "required": false,
         "min": 0,
-        "surfaces": [
-          "physical"
-        ]
+        "surfaces": ["physical"]
       },
       {
         "id": "quantity",
@@ -153,10 +125,7 @@
         "type": "integer",
         "required": false,
         "readOnly": true,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "notes": "Aggregated or branch-scoped from the inventory ledger; never written directly by storefront JSON."
       },
       {
@@ -166,20 +135,14 @@
         "type": "image-list",
         "required": false,
         "maxItems": 6,
-        "surfaces": [
-          "physical",
-          "online"
-        ]
+        "surfaces": ["physical", "online"]
       },
       {
         "id": "manufacturer",
         "label": "Manufacturer",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -189,10 +152,7 @@
         "label": "Model",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -202,9 +162,7 @@
         "label": "Serial number",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical"
-        ],
+        "surfaces": ["physical"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -214,9 +172,7 @@
         "label": "IMEI",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical"
-        ],
+        "surfaces": ["physical"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -226,10 +182,7 @@
         "label": "Warranty duration",
         "type": "integer",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "min": 0,
         "searchable": false,
         "source": "product_mode_details.details",
@@ -240,10 +193,7 @@
         "label": "Condition",
         "type": "enum",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": false,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -252,11 +202,7 @@
     "variants": {
       "enabled": true,
       "strategy": "serialized-unit",
-      "optionGroups": [
-        "device-model",
-        "storage",
-        "colour"
-      ],
+      "optionGroups": ["device-model", "storage", "colour"],
       "notes": "Serialized units are individually tracked. IMEI/serial allocation is server-side; public checkout stays disabled until reservation/release is proven atomic."
     },
     "inventory": {
@@ -326,39 +272,24 @@
     "transitions": [
       {
         "from": "pending",
-        "to": [
-          "confirmed",
-          "cancelled"
-        ]
+        "to": ["confirmed", "cancelled"]
       },
       {
         "from": "confirmed",
-        "to": [
-          "processing",
-          "shipped",
-          "cancelled"
-        ]
+        "to": ["processing", "shipped", "cancelled"]
       },
       {
         "from": "processing",
-        "to": [
-          "shipped",
-          "cancelled"
-        ]
+        "to": ["shipped", "cancelled"]
       },
       {
         "from": "ready",
-        "to": [
-          "completed",
-          "cancelled"
-        ],
+        "to": ["completed", "cancelled"],
         "legacyPath": true
       },
       {
         "from": "shipped",
-        "to": [
-          "completed"
-        ]
+        "to": ["completed"]
       },
       {
         "from": "completed",
@@ -373,11 +304,7 @@
         "to": []
       }
     ],
-    "terminalStatuses": [
-      "completed",
-      "cancelled",
-      "refunded"
-    ],
+    "terminalStatuses": ["completed", "cancelled", "refunded"],
     "notes": "This mirrors the current database transition guard. Do not add transitions until the server-side guard and order UI are updated and tested together. Mode-specific fulfillment requirements: Public checkout for serialized devices is disabled until individual serial reservation, payment failure release, cancellation and refund handling are tested."
   },
   "dashboard": {
@@ -412,9 +339,7 @@
         "source": "online_orders.status",
         "metric": "count",
         "filter": {
-          "statuses": [
-            "pending"
-          ]
+          "statuses": ["pending"]
         },
         "scope": "store",
         "priority": 4
@@ -631,25 +556,15 @@
         }
       }
     ],
-    "templateIds": [
-      "tech-gallery",
-      "device-store",
-      "modern-electronics"
-    ],
+    "templateIds": ["tech-gallery", "device-store", "modern-electronics"],
     "templates": [
       {
         "id": "tech-gallery",
         "name": "Tech Gallery",
         "family": "Editorial",
         "positioning": "A mode-aware storefront direction for electronics & phones, with clear product discovery and responsive layouts.",
-        "recommendedFor": [
-          "Electronics & Phones"
-        ],
-        "styleTags": [
-          "responsive",
-          "premium",
-          "editorial"
-        ],
+        "recommendedFor": ["Electronics & Phones"],
+        "styleTags": ["responsive", "premium", "editorial"],
         "version": 1,
         "preview": {
           "fixture": "electronics-demo-v1",
@@ -679,24 +594,9 @@
             "about",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "faq", "contact", "footer"]
         }
       },
       {
@@ -704,14 +604,8 @@
         "name": "Device Store",
         "family": "Commerce",
         "positioning": "A mode-aware storefront direction for electronics & phones, with clear product discovery and responsive layouts.",
-        "recommendedFor": [
-          "Electronics & Phones"
-        ],
-        "styleTags": [
-          "responsive",
-          "premium",
-          "discovery"
-        ],
+        "recommendedFor": ["Electronics & Phones"],
+        "styleTags": ["responsive", "premium", "discovery"],
         "version": 1,
         "preview": {
           "fixture": "electronics-demo-v1",
@@ -741,24 +635,9 @@
             "about",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "faq", "contact", "footer"]
         }
       },
       {
@@ -766,14 +645,8 @@
         "name": "Modern Electronics",
         "family": "Catalog",
         "positioning": "A mode-aware storefront direction for electronics & phones, with clear product discovery and responsive layouts.",
-        "recommendedFor": [
-          "Electronics & Phones"
-        ],
-        "styleTags": [
-          "responsive",
-          "premium",
-          "catalog-first"
-        ],
+        "recommendedFor": ["Electronics & Phones"],
+        "styleTags": ["responsive", "premium", "catalog-first"],
         "version": 1,
         "preview": {
           "fixture": "electronics-demo-v1",
@@ -803,24 +676,9 @@
             "about",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "faq", "contact", "footer"]
         }
       }
     ],
@@ -847,10 +705,7 @@
           "label": "Availability",
           "source": "inventory.available_quantity",
           "type": "enum",
-          "values": [
-            "in-stock",
-            "out-of-stock"
-          ]
+          "values": ["in-stock", "out-of-stock"]
         },
         {
           "id": "price",
@@ -895,22 +750,12 @@
       "showRelatedProducts": true,
       "variantSelector": false
     },
-    "pages": [
-      "home",
-      "collection",
-      "product",
-      "cart",
-      "content"
-    ],
+    "pages": ["home", "collection", "product", "cart", "content"],
     "preview": {
       "fixtureSet": "electronics-demo-v1",
       "allowLiveCustomerData": false,
       "allowPublishedWrites": false,
-      "viewportPresets": [
-        "mobile-390",
-        "tablet-768",
-        "desktop-1440"
-      ],
+      "viewportPresets": ["mobile-390", "tablet-768", "desktop-1440"],
       "defaultViewport": "desktop"
     }
   },
@@ -1065,11 +910,7 @@
   "workspaces": {
     "physicalStore": {
       "purpose": "In-person POS, branch stock, product operations and physical sales.",
-      "owns": [
-        "branch_stock",
-        "physical_sales",
-        "physical_receipts"
-      ]
+      "owns": ["branch_stock", "physical_sales", "physical_receipts"]
     },
     "onlineStore": {
       "purpose": "Store Studio, JSON templates, storefront publishing, online carts, customer orders and online fulfilment.",
@@ -1096,10 +937,7 @@
   },
   "compatibility": {
     "databaseStatus": "draft-profile-not-runtime-integrated",
-    "verifiedAgainst": [
-      "src/lib/business-modes.ts",
-      "vertical migrations for electronics"
-    ],
+    "verifiedAgainst": ["src/lib/business-modes.ts", "vertical migrations for electronics"],
     "knownLimitations": [
       "Profile fields and template settings are an initial draft; confirm exact DB columns and service contracts before runtime use.",
       "Mode-specific features remain gated OFF until acceptance tests, lifecycle states, mobile/desktop QA and server-side validation pass.",

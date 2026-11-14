@@ -187,10 +187,13 @@ function OnboardingPage() {
     }
     setSubmitting(true);
     try {
-      if (!businessMode) throw new Error("Choose a valid business mode before creating your workspace.");
+      if (!businessMode)
+        throw new Error("Choose a valid business mode before creating your workspace.");
       const profileResult = getBusinessModeProfile(businessMode);
       if (!profileResult.ok) {
-        throw new Error("The selected business profile is unavailable. Please choose another business mode.");
+        throw new Error(
+          "The selected business profile is unavailable. Please choose another business mode.",
+        );
       }
       const selectedProfile = profileResult.profile;
       const { data: storeId, error: createError } = await supabase.rpc("create_store", {
@@ -802,7 +805,10 @@ function OnboardingPage() {
                 <div className="ob-st2">
                   <div className="ob-stat">
                     <small>Business profile</small>
-                    <b>{BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ?? "Not selected"}</b>
+                    <b>
+                      {BUSINESS_MODES.find((mode) => mode.key === businessMode)?.label ??
+                        "Not selected"}
+                    </b>
                   </div>
                   <div className="ob-stat">
                     <small>Plan</small>

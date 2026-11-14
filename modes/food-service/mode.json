@@ -7,9 +7,7 @@
   "status": "draft",
   "runtimeReady": false,
   "baseCatalog": "normal",
-  "businessModeKeys": [
-    "food-service"
-  ],
+  "businessModeKeys": ["food-service"],
   "description": "Draft data-driven profile for the Food & Restaurants business mode. Grounded in the current mode registry and existing vertical workflow migrations; runtime integration and schema verification remain required.",
   "principles": [
     "All mode-specific product fields, variants, order statuses, checkout fields, dashboard cards, storefront sections, filters and templates are read from this profile.",
@@ -29,10 +27,7 @@
         "type": "text",
         "required": true,
         "maxLength": 120,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true
       },
       {
@@ -40,9 +35,7 @@
         "label": "Description",
         "type": "long-text",
         "required": false,
-        "surfaces": [
-          "online"
-        ],
+        "surfaces": ["online"],
         "searchable": true,
         "source": "online_products.description",
         "runtimeReady": true
@@ -54,10 +47,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true
       },
       {
@@ -67,9 +57,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical"
-        ],
+        "surfaces": ["physical"],
         "searchable": false
       },
       {
@@ -79,10 +67,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "filterable": true
       },
@@ -91,10 +76,7 @@
         "label": "Brand",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -104,10 +86,7 @@
         "label": "Selling unit",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "source": "product_mode_details.details",
         "runtimeReady": true
       },
@@ -118,10 +97,7 @@
         "type": "money",
         "required": true,
         "min": 0,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "sortable": true
       },
       {
@@ -131,9 +107,7 @@
         "type": "money",
         "required": false,
         "min": 0,
-        "surfaces": [
-          "physical"
-        ]
+        "surfaces": ["physical"]
       },
       {
         "id": "lowStockThreshold",
@@ -142,9 +116,7 @@
         "type": "integer",
         "required": false,
         "min": 0,
-        "surfaces": [
-          "physical"
-        ]
+        "surfaces": ["physical"]
       },
       {
         "id": "quantity",
@@ -153,10 +125,7 @@
         "type": "integer",
         "required": false,
         "readOnly": true,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "notes": "Aggregated or branch-scoped from the inventory ledger; never written directly by storefront JSON."
       },
       {
@@ -166,20 +135,14 @@
         "type": "image-list",
         "required": false,
         "maxItems": 6,
-        "surfaces": [
-          "physical",
-          "online"
-        ]
+        "surfaces": ["physical", "online"]
       },
       {
         "id": "menuCategory",
         "label": "Menu category",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -189,10 +152,7 @@
         "label": "Portion",
         "type": "modifier",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": false,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -202,10 +162,7 @@
         "label": "Add-ons / modifiers",
         "type": "modifier-list",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": false,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -215,9 +172,7 @@
         "label": "Recipe ingredients",
         "type": "recipe-list",
         "required": false,
-        "surfaces": [
-          "physical"
-        ],
+        "surfaces": ["physical"],
         "searchable": false,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -227,10 +182,7 @@
         "label": "Preparation notes",
         "type": "long-text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": false,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -240,10 +192,7 @@
         "label": "Allergen information",
         "type": "tag-list",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": false,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -252,11 +201,7 @@
     "variants": {
       "enabled": true,
       "strategy": "menu-modifiers",
-      "optionGroups": [
-        "portion",
-        "add-ons",
-        "preparation-options"
-      ],
+      "optionGroups": ["portion", "add-ons", "preparation-options"],
       "notes": "Menu modifiers and ingredient recipes are distinct from inventory variants. Priced modifiers and ingredient deductions require server-side validation."
     },
     "inventory": {
@@ -326,39 +271,24 @@
     "transitions": [
       {
         "from": "pending",
-        "to": [
-          "confirmed",
-          "cancelled"
-        ]
+        "to": ["confirmed", "cancelled"]
       },
       {
         "from": "confirmed",
-        "to": [
-          "processing",
-          "shipped",
-          "cancelled"
-        ]
+        "to": ["processing", "shipped", "cancelled"]
       },
       {
         "from": "processing",
-        "to": [
-          "shipped",
-          "cancelled"
-        ]
+        "to": ["shipped", "cancelled"]
       },
       {
         "from": "ready",
-        "to": [
-          "completed",
-          "cancelled"
-        ],
+        "to": ["completed", "cancelled"],
         "legacyPath": true
       },
       {
         "from": "shipped",
-        "to": [
-          "completed"
-        ]
+        "to": ["completed"]
       },
       {
         "from": "completed",
@@ -373,11 +303,7 @@
         "to": []
       }
     ],
-    "terminalStatuses": [
-      "completed",
-      "cancelled",
-      "refunded"
-    ],
+    "terminalStatuses": ["completed", "cancelled", "refunded"],
     "notes": "This mirrors the current database transition guard. Do not add transitions until the server-side guard and order UI are updated and tested together. Mode-specific fulfillment requirements: Menu modifiers, recipe ingredient deductions, kitchen tickets, delivery capacity and order dispatch must be atomic and verified before public online food checkout is enabled."
   },
   "dashboard": {
@@ -412,9 +338,7 @@
         "source": "online_orders.status",
         "metric": "count",
         "filter": {
-          "statuses": [
-            "pending"
-          ]
+          "statuses": ["pending"]
         },
         "scope": "store",
         "priority": 4
@@ -631,25 +555,15 @@
         }
       }
     ],
-    "templateIds": [
-      "bistro",
-      "quick-bites",
-      "table-and-takeaway"
-    ],
+    "templateIds": ["bistro", "quick-bites", "table-and-takeaway"],
     "templates": [
       {
         "id": "bistro",
         "name": "Bistro",
         "family": "Editorial",
         "positioning": "A mode-aware storefront direction for food & restaurants, with clear product discovery and responsive layouts.",
-        "recommendedFor": [
-          "Food & Restaurants"
-        ],
-        "styleTags": [
-          "responsive",
-          "premium",
-          "editorial"
-        ],
+        "recommendedFor": ["Food & Restaurants"],
+        "styleTags": ["responsive", "premium", "editorial"],
         "version": 1,
         "preview": {
           "fixture": "food-service-demo-v1",
@@ -679,24 +593,9 @@
             "about",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "faq", "contact", "footer"]
         }
       },
       {
@@ -704,14 +603,8 @@
         "name": "Quick Bites",
         "family": "Commerce",
         "positioning": "A mode-aware storefront direction for food & restaurants, with clear product discovery and responsive layouts.",
-        "recommendedFor": [
-          "Food & Restaurants"
-        ],
-        "styleTags": [
-          "responsive",
-          "premium",
-          "discovery"
-        ],
+        "recommendedFor": ["Food & Restaurants"],
+        "styleTags": ["responsive", "premium", "discovery"],
         "version": 1,
         "preview": {
           "fixture": "food-service-demo-v1",
@@ -741,24 +634,9 @@
             "about",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "faq", "contact", "footer"]
         }
       },
       {
@@ -766,14 +644,8 @@
         "name": "Table & Takeaway",
         "family": "Catalog",
         "positioning": "A mode-aware storefront direction for food & restaurants, with clear product discovery and responsive layouts.",
-        "recommendedFor": [
-          "Food & Restaurants"
-        ],
-        "styleTags": [
-          "responsive",
-          "premium",
-          "catalog-first"
-        ],
+        "recommendedFor": ["Food & Restaurants"],
+        "styleTags": ["responsive", "premium", "catalog-first"],
         "version": 1,
         "preview": {
           "fixture": "food-service-demo-v1",
@@ -803,35 +675,14 @@
             "about",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "faq", "contact", "footer"]
         }
       }
     ],
     "productDiscovery": {
-      "searchableFields": [
-        "name",
-        "description",
-        "category",
-        "brand",
-        "menuCategory"
-      ],
+      "searchableFields": ["name", "description", "category", "brand", "menuCategory"],
       "filters": [
         {
           "id": "category",
@@ -844,10 +695,7 @@
           "label": "Availability",
           "source": "inventory.available_quantity",
           "type": "enum",
-          "values": [
-            "in-stock",
-            "out-of-stock"
-          ]
+          "values": ["in-stock", "out-of-stock"]
         },
         {
           "id": "price",
@@ -892,22 +740,12 @@
       "showRelatedProducts": true,
       "variantSelector": false
     },
-    "pages": [
-      "home",
-      "collection",
-      "product",
-      "cart",
-      "content"
-    ],
+    "pages": ["home", "collection", "product", "cart", "content"],
     "preview": {
       "fixtureSet": "food-service-demo-v1",
       "allowLiveCustomerData": false,
       "allowPublishedWrites": false,
-      "viewportPresets": [
-        "mobile-390",
-        "tablet-768",
-        "desktop-1440"
-      ],
+      "viewportPresets": ["mobile-390", "tablet-768", "desktop-1440"],
       "defaultViewport": "desktop"
     }
   },
@@ -1062,11 +900,7 @@
   "workspaces": {
     "physicalStore": {
       "purpose": "In-person POS, branch stock, product operations and physical sales.",
-      "owns": [
-        "branch_stock",
-        "physical_sales",
-        "physical_receipts"
-      ]
+      "owns": ["branch_stock", "physical_sales", "physical_receipts"]
     },
     "onlineStore": {
       "purpose": "Store Studio, JSON templates, storefront publishing, online carts, customer orders and online fulfilment.",
@@ -1093,10 +927,7 @@
   },
   "compatibility": {
     "databaseStatus": "draft-profile-not-runtime-integrated",
-    "verifiedAgainst": [
-      "src/lib/business-modes.ts",
-      "vertical migrations for food-service"
-    ],
+    "verifiedAgainst": ["src/lib/business-modes.ts", "vertical migrations for food-service"],
     "knownLimitations": [
       "Profile fields and template settings are an initial draft; confirm exact DB columns and service contracts before runtime use.",
       "Mode-specific features remain gated OFF until acceptance tests, lifecycle states, mobile/desktop QA and server-side validation pass.",

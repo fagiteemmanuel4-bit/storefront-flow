@@ -7,9 +7,7 @@
   "status": "draft",
   "runtimeReady": false,
   "baseCatalog": "normal",
-  "businessModeKeys": [
-    "beauty-personal-care"
-  ],
+  "businessModeKeys": ["beauty-personal-care"],
   "description": "Draft data-driven profile for the Beauty & Personal Care business mode. Grounded in the current mode registry and existing vertical workflow migrations; runtime integration and schema verification remain required.",
   "principles": [
     "All mode-specific product fields, variants, order statuses, checkout fields, dashboard cards, storefront sections, filters and templates are read from this profile.",
@@ -29,10 +27,7 @@
         "type": "text",
         "required": true,
         "maxLength": 120,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true
       },
       {
@@ -40,9 +35,7 @@
         "label": "Description",
         "type": "long-text",
         "required": false,
-        "surfaces": [
-          "online"
-        ],
+        "surfaces": ["online"],
         "searchable": true,
         "source": "online_products.description",
         "runtimeReady": true
@@ -54,10 +47,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true
       },
       {
@@ -67,9 +57,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical"
-        ],
+        "surfaces": ["physical"],
         "searchable": false
       },
       {
@@ -79,10 +67,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "filterable": true
       },
@@ -91,10 +76,7 @@
         "label": "Brand",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -104,10 +86,7 @@
         "label": "Selling unit",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "source": "product_mode_details.details",
         "runtimeReady": true
       },
@@ -118,10 +97,7 @@
         "type": "money",
         "required": true,
         "min": 0,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "sortable": true
       },
       {
@@ -131,9 +107,7 @@
         "type": "money",
         "required": false,
         "min": 0,
-        "surfaces": [
-          "physical"
-        ]
+        "surfaces": ["physical"]
       },
       {
         "id": "lowStockThreshold",
@@ -142,9 +116,7 @@
         "type": "integer",
         "required": false,
         "min": 0,
-        "surfaces": [
-          "physical"
-        ]
+        "surfaces": ["physical"]
       },
       {
         "id": "quantity",
@@ -153,10 +125,7 @@
         "type": "integer",
         "required": false,
         "readOnly": true,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "notes": "Aggregated or branch-scoped from the inventory ledger; never written directly by storefront JSON."
       },
       {
@@ -166,20 +135,14 @@
         "type": "image-list",
         "required": false,
         "maxItems": 6,
-        "surfaces": [
-          "physical",
-          "online"
-        ]
+        "surfaces": ["physical", "online"]
       },
       {
         "id": "shade",
         "label": "Shade / tone",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -189,10 +152,7 @@
         "label": "Skin type",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -202,10 +162,7 @@
         "label": "Volume / size",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -215,9 +172,7 @@
         "label": "Ingredients",
         "type": "long-text",
         "required": false,
-        "surfaces": [
-          "online"
-        ],
+        "surfaces": ["online"],
         "searchable": false,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -227,9 +182,7 @@
         "label": "Usage instructions",
         "type": "long-text",
         "required": false,
-        "surfaces": [
-          "online"
-        ],
+        "surfaces": ["online"],
         "searchable": false,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -239,9 +192,7 @@
         "label": "Expiry date",
         "type": "date",
         "required": false,
-        "surfaces": [
-          "physical"
-        ],
+        "surfaces": ["physical"],
         "searchable": false,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -250,11 +201,7 @@
     "variants": {
       "enabled": true,
       "strategy": "shade-and-size-options",
-      "optionGroups": [
-        "shade",
-        "size",
-        "scent"
-      ],
+      "optionGroups": ["shade", "size", "scent"],
       "notes": "Only activate option-level stock when option SKUs and inventory allocation are backed by the same stock service. Appointment/service inventory is separate."
     },
     "inventory": {
@@ -324,39 +271,24 @@
     "transitions": [
       {
         "from": "pending",
-        "to": [
-          "confirmed",
-          "cancelled"
-        ]
+        "to": ["confirmed", "cancelled"]
       },
       {
         "from": "confirmed",
-        "to": [
-          "processing",
-          "shipped",
-          "cancelled"
-        ]
+        "to": ["processing", "shipped", "cancelled"]
       },
       {
         "from": "processing",
-        "to": [
-          "shipped",
-          "cancelled"
-        ]
+        "to": ["shipped", "cancelled"]
       },
       {
         "from": "ready",
-        "to": [
-          "completed",
-          "cancelled"
-        ],
+        "to": ["completed", "cancelled"],
         "legacyPath": true
       },
       {
         "from": "shipped",
-        "to": [
-          "completed"
-        ]
+        "to": ["completed"]
       },
       {
         "from": "completed",
@@ -371,11 +303,7 @@
         "to": []
       }
     ],
-    "terminalStatuses": [
-      "completed",
-      "cancelled",
-      "refunded"
-    ],
+    "terminalStatuses": ["completed", "cancelled", "refunded"],
     "notes": "This mirrors the current database transition guard. Do not add transitions until the server-side guard and order UI are updated and tested together. Mode-specific fulfillment requirements: Product options must map to actual stock-keeping units. Service bookings, deposits and consumable usage must remain a separate booking workflow."
   },
   "dashboard": {
@@ -410,9 +338,7 @@
         "source": "online_orders.status",
         "metric": "count",
         "filter": {
-          "statuses": [
-            "pending"
-          ]
+          "statuses": ["pending"]
         },
         "scope": "store",
         "priority": 4
@@ -640,25 +566,15 @@
         }
       }
     ],
-    "templateIds": [
-      "skin-studio",
-      "glow-market",
-      "beauty-editorial"
-    ],
+    "templateIds": ["skin-studio", "glow-market", "beauty-editorial"],
     "templates": [
       {
         "id": "skin-studio",
         "name": "Skin Studio",
         "family": "Editorial",
         "positioning": "A mode-aware storefront direction for beauty & personal care, with clear product discovery and responsive layouts.",
-        "recommendedFor": [
-          "Beauty & Personal Care"
-        ],
-        "styleTags": [
-          "responsive",
-          "premium",
-          "editorial"
-        ],
+        "recommendedFor": ["Beauty & Personal Care"],
+        "styleTags": ["responsive", "premium", "editorial"],
         "version": 1,
         "preview": {
           "fixture": "beauty-personal-care-demo-v1",
@@ -688,24 +604,9 @@
             "about",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "faq", "contact", "footer"]
         }
       },
       {
@@ -713,14 +614,8 @@
         "name": "Glow Market",
         "family": "Commerce",
         "positioning": "A mode-aware storefront direction for beauty & personal care, with clear product discovery and responsive layouts.",
-        "recommendedFor": [
-          "Beauty & Personal Care"
-        ],
-        "styleTags": [
-          "responsive",
-          "premium",
-          "discovery"
-        ],
+        "recommendedFor": ["Beauty & Personal Care"],
+        "styleTags": ["responsive", "premium", "discovery"],
         "version": 1,
         "preview": {
           "fixture": "beauty-personal-care-demo-v1",
@@ -750,24 +645,9 @@
             "about",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "faq", "contact", "footer"]
         }
       },
       {
@@ -775,14 +655,8 @@
         "name": "Beauty Editorial",
         "family": "Catalog",
         "positioning": "A mode-aware storefront direction for beauty & personal care, with clear product discovery and responsive layouts.",
-        "recommendedFor": [
-          "Beauty & Personal Care"
-        ],
-        "styleTags": [
-          "responsive",
-          "premium",
-          "catalog-first"
-        ],
+        "recommendedFor": ["Beauty & Personal Care"],
+        "styleTags": ["responsive", "premium", "catalog-first"],
         "version": 1,
         "preview": {
           "fixture": "beauty-personal-care-demo-v1",
@@ -812,24 +686,9 @@
             "about",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "faq", "contact", "footer"]
         }
       }
     ],
@@ -855,10 +714,7 @@
           "label": "Availability",
           "source": "inventory.available_quantity",
           "type": "enum",
-          "values": [
-            "in-stock",
-            "out-of-stock"
-          ]
+          "values": ["in-stock", "out-of-stock"]
         },
         {
           "id": "price",
@@ -903,22 +759,12 @@
       "showRelatedProducts": true,
       "variantSelector": false
     },
-    "pages": [
-      "home",
-      "collection",
-      "product",
-      "cart",
-      "content"
-    ],
+    "pages": ["home", "collection", "product", "cart", "content"],
     "preview": {
       "fixtureSet": "beauty-personal-care-demo-v1",
       "allowLiveCustomerData": false,
       "allowPublishedWrites": false,
-      "viewportPresets": [
-        "mobile-390",
-        "tablet-768",
-        "desktop-1440"
-      ],
+      "viewportPresets": ["mobile-390", "tablet-768", "desktop-1440"],
       "defaultViewport": "desktop"
     }
   },
@@ -1073,11 +919,7 @@
   "workspaces": {
     "physicalStore": {
       "purpose": "In-person POS, branch stock, product operations and physical sales.",
-      "owns": [
-        "branch_stock",
-        "physical_sales",
-        "physical_receipts"
-      ]
+      "owns": ["branch_stock", "physical_sales", "physical_receipts"]
     },
     "onlineStore": {
       "purpose": "Store Studio, JSON templates, storefront publishing, online carts, customer orders and online fulfilment.",

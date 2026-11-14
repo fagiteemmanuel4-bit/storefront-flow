@@ -25,14 +25,27 @@ describe("business-mode profile activation safety", () => {
       expect(businessModeProfileSchema.safeParse(profile).success).toBe(true);
       expect(profile.status).toBe("draft");
       expect(profile.runtimeReady).toBe(false);
-      expect(Object.values(profile.featureFlags.flags).every((enabled) => enabled === false)).toBe(true);
-      expect(profile.product.fields.filter((field: { runtimeReady?: boolean }) => field.runtimeReady === true).every((field: { source?: string }) => ["product_mode_details.details", "online_products.description"].includes(field.source ?? ""))).toBe(true);
+      expect(Object.values(profile.featureFlags.flags).every((enabled) => enabled === false)).toBe(
+        true,
+      );
+      expect(
+        profile.product.fields
+          .filter((field: { runtimeReady?: boolean }) => field.runtimeReady === true)
+          .every((field: { source?: string }) =>
+            ["product_mode_details.details", "online_products.description"].includes(
+              field.source ?? "",
+            ),
+          ),
+      ).toBe(true);
     }
   });
 
   test("every profile storefront template is accepted by the database save function", async () => {
     const migration = await readFile(
-      new URL("../supabase/migrations/20261114084229_allow_profile_storefront_templates.sql", import.meta.url),
+      new URL(
+        "../supabase/migrations/20261114084229_allow_profile_storefront_templates.sql",
+        import.meta.url,
+      ),
       "utf8",
     );
     for (const path of profilePaths) {
@@ -54,7 +67,11 @@ describe("business-mode profile activation safety", () => {
     const result = businessModeProfileSchema.safeParse(profile);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues.some((issue) => issue.path[0] === "product" && issue.path[1] === "fields")).toBe(true);
+      expect(
+        result.error.issues.some(
+          (issue) => issue.path[0] === "product" && issue.path[1] === "fields",
+        ),
+      ).toBe(true);
     }
   });
 
@@ -69,7 +86,14 @@ describe("business-mode profile activation safety", () => {
     const result = businessModeProfileSchema.safeParse(profile);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues.some((issue) => issue.path[0] === "product" && issue.path[1] === "fields" && issue.path[3] === "runtimeReady")).toBe(true);
+      expect(
+        result.error.issues.some(
+          (issue) =>
+            issue.path[0] === "product" &&
+            issue.path[1] === "fields" &&
+            issue.path[3] === "runtimeReady",
+        ),
+      ).toBe(true);
     }
   });
 

@@ -171,16 +171,23 @@ function OnlineStoreHome() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <h3 className="font-semibold">{template.name}</h3>
-                      <p className="mt-1 text-xs text-muted-foreground">{template.family} direction</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {template.family} direction
+                      </p>
                     </div>
                     <span className="rounded-lg bg-secondary px-2 py-1 text-[10px] font-semibold text-muted-foreground">
                       v{template.version}
                     </span>
                   </div>
-                  <p className="mt-3 text-xs leading-5 text-muted-foreground">{template.positioning}</p>
+                  <p className="mt-3 text-xs leading-5 text-muted-foreground">
+                    {template.positioning}
+                  </p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {template.styleTags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="rounded-full bg-secondary px-2 py-1 text-[10px] font-medium text-secondary-foreground">
+                      <span
+                        key={tag}
+                        className="rounded-full bg-secondary px-2 py-1 text-[10px] font-medium text-secondary-foreground"
+                      >
                         {tag}
                       </span>
                     ))}

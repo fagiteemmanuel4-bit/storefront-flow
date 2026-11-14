@@ -7,9 +7,7 @@
   "status": "draft",
   "runtimeReady": false,
   "baseCatalog": "normal",
-  "businessModeKeys": [
-    "general-retail"
-  ],
+  "businessModeKeys": ["general-retail"],
   "description": "The Normal Business baseline profile for general retail and mixed everyday product shops. It is the first data-driven mode profile for Strap Online Store.",
   "principles": [
     "All mode-specific product fields, variants, order statuses, checkout fields, dashboard cards, storefront sections, filters and templates are read from this profile.",
@@ -29,10 +27,7 @@
         "type": "text",
         "required": true,
         "maxLength": 120,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true
       },
       {
@@ -40,9 +35,7 @@
         "label": "Description",
         "type": "long-text",
         "required": false,
-        "surfaces": [
-          "online"
-        ],
+        "surfaces": ["online"],
         "searchable": true,
         "source": "online_products.description",
         "runtimeReady": true
@@ -54,10 +47,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true
       },
       {
@@ -67,9 +57,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical"
-        ],
+        "surfaces": ["physical"],
         "searchable": false
       },
       {
@@ -79,10 +67,7 @@
         "type": "text",
         "required": false,
         "maxLength": 60,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "filterable": true
       },
@@ -91,10 +76,7 @@
         "label": "Brand",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -104,9 +86,7 @@
         "label": "Manufacturer",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical"
-        ],
+        "surfaces": ["physical"],
         "searchable": true,
         "source": "product_mode_details.details",
         "runtimeReady": true
@@ -116,10 +96,7 @@
         "label": "Selling unit",
         "type": "text",
         "required": false,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "source": "product_mode_details.details",
         "runtimeReady": true
       },
@@ -130,10 +107,7 @@
         "type": "money",
         "required": true,
         "min": 0,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "sortable": true
       },
       {
@@ -143,9 +117,7 @@
         "type": "money",
         "required": false,
         "min": 0,
-        "surfaces": [
-          "physical"
-        ]
+        "surfaces": ["physical"]
       },
       {
         "id": "lowStockThreshold",
@@ -154,9 +126,7 @@
         "type": "integer",
         "required": false,
         "min": 0,
-        "surfaces": [
-          "physical"
-        ]
+        "surfaces": ["physical"]
       },
       {
         "id": "quantity",
@@ -165,10 +135,7 @@
         "type": "integer",
         "required": false,
         "readOnly": true,
-        "surfaces": [
-          "physical",
-          "online"
-        ],
+        "surfaces": ["physical", "online"],
         "notes": "Aggregated or branch-scoped from the inventory ledger; never written directly by storefront JSON."
       },
       {
@@ -178,10 +145,7 @@
         "type": "image-list",
         "required": false,
         "maxItems": 6,
-        "surfaces": [
-          "physical",
-          "online"
-        ]
+        "surfaces": ["physical", "online"]
       }
     ],
     "variants": {
@@ -257,39 +221,24 @@
     "transitions": [
       {
         "from": "pending",
-        "to": [
-          "confirmed",
-          "cancelled"
-        ]
+        "to": ["confirmed", "cancelled"]
       },
       {
         "from": "confirmed",
-        "to": [
-          "processing",
-          "shipped",
-          "cancelled"
-        ]
+        "to": ["processing", "shipped", "cancelled"]
       },
       {
         "from": "processing",
-        "to": [
-          "shipped",
-          "cancelled"
-        ]
+        "to": ["shipped", "cancelled"]
       },
       {
         "from": "ready",
-        "to": [
-          "completed",
-          "cancelled"
-        ],
+        "to": ["completed", "cancelled"],
         "legacyPath": true
       },
       {
         "from": "shipped",
-        "to": [
-          "completed"
-        ]
+        "to": ["completed"]
       },
       {
         "from": "completed",
@@ -304,11 +253,7 @@
         "to": []
       }
     ],
-    "terminalStatuses": [
-      "completed",
-      "cancelled",
-      "refunded"
-    ],
+    "terminalStatuses": ["completed", "cancelled", "refunded"],
     "notes": "This mirrors the current database transition guard. Do not add transitions until the server-side guard and order UI are updated and tested together."
   },
   "dashboard": {
@@ -343,9 +288,7 @@
         "source": "online_orders.status",
         "metric": "count",
         "filter": {
-          "statuses": [
-            "pending"
-          ]
+          "statuses": ["pending"]
         },
         "scope": "store",
         "priority": 4
@@ -543,16 +486,8 @@
         "name": "Everyday Edit",
         "family": "Modern retail",
         "positioning": "A confident, editorial storefront for mixed everyday catalogues.",
-        "recommendedFor": [
-          "general shops",
-          "mixed catalogues",
-          "lifestyle retailers"
-        ],
-        "styleTags": [
-          "editorial",
-          "balanced",
-          "modern"
-        ],
+        "recommendedFor": ["general shops", "mixed catalogues", "lifestyle retailers"],
+        "styleTags": ["editorial", "balanced", "modern"],
         "version": 1,
         "preview": {
           "fixture": "normal-demo-v1",
@@ -583,23 +518,9 @@
             "about",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "contact", "footer"]
         }
       },
       {
@@ -607,16 +528,8 @@
         "name": "Market Day",
         "family": "Warm commerce",
         "positioning": "A lively, approachable shop with clear categories and fast product discovery.",
-        "recommendedFor": [
-          "provision shops",
-          "neighbourhood stores",
-          "high-turnover retail"
-        ],
-        "styleTags": [
-          "warm",
-          "approachable",
-          "discovery"
-        ],
+        "recommendedFor": ["provision shops", "neighbourhood stores", "high-turnover retail"],
+        "styleTags": ["warm", "approachable", "discovery"],
         "version": 1,
         "preview": {
           "fixture": "normal-demo-v1",
@@ -646,24 +559,9 @@
             "social-proof",
             "footer"
           ],
-          "collection": [
-            "categories",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["categories", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "faq", "contact", "footer"]
         }
       },
       {
@@ -671,16 +569,8 @@
         "name": "Quiet Form",
         "family": "Minimal",
         "positioning": "A calm, spacious design that keeps the catalogue and photography in focus.",
-        "recommendedFor": [
-          "minimal brands",
-          "specialty retailers",
-          "small curated shops"
-        ],
-        "styleTags": [
-          "minimal",
-          "quiet",
-          "image-led"
-        ],
+        "recommendedFor": ["minimal brands", "specialty retailers", "small curated shops"],
+        "styleTags": ["minimal", "quiet", "image-led"],
         "version": 1,
         "preview": {
           "fixture": "normal-demo-v1",
@@ -701,31 +591,10 @@
           "density": "comfortable"
         },
         "pages": {
-          "home": [
-            "hero",
-            "featured-products",
-            "product-grid",
-            "about",
-            "faq",
-            "footer"
-          ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "contact",
-            "footer"
-          ]
+          "home": ["hero", "featured-products", "product-grid", "about", "faq", "footer"],
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "contact", "footer"]
         }
       },
       {
@@ -738,11 +607,7 @@
           "hardware and utility retail",
           "large catalogues"
         ],
-        "styleTags": [
-          "catalog-first",
-          "high-contrast",
-          "functional"
-        ],
+        "styleTags": ["catalog-first", "high-contrast", "functional"],
         "version": 1,
         "preview": {
           "fixture": "normal-demo-v1",
@@ -771,24 +636,9 @@
             "featured-products",
             "footer"
           ],
-          "collection": [
-            "categories",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["categories", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "footer"],
+          "content": ["hero", "about", "faq", "contact", "footer"]
         }
       },
       {
@@ -796,16 +646,8 @@
         "name": "Neighbourhood",
         "family": "Community retail",
         "positioning": "A friendly, trust-led shop with clear contact and store information.",
-        "recommendedFor": [
-          "local stores",
-          "family businesses",
-          "community retailers"
-        ],
-        "styleTags": [
-          "friendly",
-          "local",
-          "trust-led"
-        ],
+        "recommendedFor": ["local stores", "family businesses", "community retailers"],
+        "styleTags": ["friendly", "local", "trust-led"],
         "version": 1,
         "preview": {
           "fixture": "normal-demo-v1",
@@ -836,26 +678,9 @@
             "contact",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "contact",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "testimonials",
-            "faq",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "contact", "footer"],
+          "content": ["hero", "about", "testimonials", "faq", "contact", "footer"]
         }
       },
       {
@@ -863,16 +688,8 @@
         "name": "Signature Store",
         "family": "Premium",
         "positioning": "A refined, image-forward experience for carefully selected products.",
-        "recommendedFor": [
-          "specialty shops",
-          "premium general retail",
-          "curated collections"
-        ],
-        "styleTags": [
-          "premium",
-          "editorial",
-          "refined"
-        ],
+        "recommendedFor": ["specialty shops", "premium general retail", "curated collections"],
+        "styleTags": ["premium", "editorial", "refined"],
         "version": 1,
         "preview": {
           "fixture": "normal-demo-v1",
@@ -903,35 +720,14 @@
             "testimonials",
             "footer"
           ],
-          "collection": [
-            "hero",
-            "product-grid",
-            "footer"
-          ],
-          "product": [
-            "gallery",
-            "about",
-            "featured-products",
-            "testimonials",
-            "footer"
-          ],
-          "content": [
-            "hero",
-            "about",
-            "gallery",
-            "contact",
-            "footer"
-          ]
+          "collection": ["hero", "product-grid", "footer"],
+          "product": ["gallery", "about", "featured-products", "testimonials", "footer"],
+          "content": ["hero", "about", "gallery", "contact", "footer"]
         }
       }
     ],
     "productDiscovery": {
-      "searchableFields": [
-        "name",
-        "description",
-        "category",
-        "brand"
-      ],
+      "searchableFields": ["name", "description", "category", "brand"],
       "filters": [
         {
           "id": "category",
@@ -944,10 +740,7 @@
           "label": "Availability",
           "source": "inventory.available_quantity",
           "type": "enum",
-          "values": [
-            "in-stock",
-            "out-of-stock"
-          ]
+          "values": ["in-stock", "out-of-stock"]
         },
         {
           "id": "price",
@@ -992,22 +785,12 @@
       "showRelatedProducts": true,
       "variantSelector": false
     },
-    "pages": [
-      "home",
-      "collection",
-      "product",
-      "cart",
-      "content"
-    ],
+    "pages": ["home", "collection", "product", "cart", "content"],
     "preview": {
       "fixtureSet": "normal-demo-v1",
       "allowLiveCustomerData": false,
       "allowPublishedWrites": false,
-      "viewportPresets": [
-        "mobile-390",
-        "tablet-768",
-        "desktop-1440"
-      ],
+      "viewportPresets": ["mobile-390", "tablet-768", "desktop-1440"],
       "defaultViewport": "desktop"
     }
   },
@@ -1162,11 +945,7 @@
   "workspaces": {
     "physicalStore": {
       "purpose": "In-person POS, branch stock, product operations and physical sales.",
-      "owns": [
-        "branch_stock",
-        "physical_sales",
-        "physical_receipts"
-      ]
+      "owns": ["branch_stock", "physical_sales", "physical_receipts"]
     },
     "onlineStore": {
       "purpose": "Store Studio, JSON templates, storefront publishing, online carts, customer orders and online fulfilment.",

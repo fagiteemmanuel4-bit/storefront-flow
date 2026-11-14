@@ -185,13 +185,14 @@ function OnlineStoreSetupPage() {
           headingFontFamily: String(profileTheme.fontHeading ?? "Inter"),
           density: profileTheme.density === "compact" ? "compact" : "comfortable",
         };
-        const initialSections = (initialTemplate?.pages?.home ?? ["hero", "featured-products", "product-grid", "footer"])
-          .map((type, index) => ({
-            id: `${type}-setup-${index}`,
-            type,
-            enabled: true,
-            settings: {},
-          }));
+        const initialSections = (
+          initialTemplate?.pages?.home ?? ["hero", "featured-products", "product-grid", "footer"]
+        ).map((type, index) => ({
+          id: `${type}-setup-${index}`,
+          type,
+          enabled: true,
+          settings: {},
+        }));
         const configResult = await onlineSupabase.from("storefront_configs").insert({
           store_id: store.id,
           template: initialTemplate?.id ?? "minimal-commerce",
@@ -205,7 +206,12 @@ function OnlineStoreSetupPage() {
           },
           navigation: { links: [] },
           sections: initialSections,
-          seo: { title: form.displayName.trim(), description: form.description.trim(), keywords: [], noIndex: false },
+          seo: {
+            title: form.displayName.trim(),
+            description: form.description.trim(),
+            keywords: [],
+            noIndex: false,
+          },
           custom_css: "",
           is_published: true,
         });

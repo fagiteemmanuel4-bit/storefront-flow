@@ -30,9 +30,9 @@ function QuickTourPage() {
             Get comfortable with Strap.
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-            Take a guided walk through navigation, store and branch switching, quick search, updates,
-            connection status and workspace help. This guide stays separate from the page-specific
-            tours, so you can replay either one whenever you need it.
+            Take a guided walk through navigation, store and branch switching, quick search,
+            updates, connection status and workspace help. This guide stays separate from the
+            page-specific tours, so you can replay either one whenever you need it.
           </p>
           <Button onClick={startTour} className="mt-6">
             <Play className="mr-2 size-4" />

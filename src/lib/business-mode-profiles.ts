@@ -1,4 +1,7 @@
-import { businessModeProfileSchema, type BusinessModeProfile } from "./business-mode-profile.schema";
+import {
+  businessModeProfileSchema,
+  type BusinessModeProfile,
+} from "./business-mode-profile.schema";
 import featureApplicability from "../../modes/feature-applicability.json";
 
 type ProfileError = {
@@ -8,8 +11,7 @@ type ProfileError = {
 };
 
 export type BusinessModeProfileResult =
-  | { ok: true; profile: BusinessModeProfile }
-  | { ok: false; error: ProfileError };
+  { ok: true; profile: BusinessModeProfile } | { ok: false; error: ProfileError };
 
 type ImportedProfile = { default?: unknown } | unknown;
 
@@ -21,16 +23,17 @@ const profilesByMode = new Map<string, BusinessModeProfile>();
 const errorsByMode = new Map<string, ProfileError>();
 
 for (const [path, imported] of Object.entries(profileModules)) {
-  const raw = imported && typeof imported === "object" && "default" in imported
-    ? imported.default
-    : imported;
+  const raw =
+    imported && typeof imported === "object" && "default" in imported ? imported.default : imported;
   const parsed = businessModeProfileSchema.safeParse(raw);
   const pathModeKey = path.split("/").at(-2) ?? path;
 
   if (!parsed.success) {
     errorsByMode.set(pathModeKey, {
       modeKey: pathModeKey,
-      issues: parsed.error.issues.map((issue) => `${issue.path.join(".") || "profile"}: ${issue.message}`),
+      issues: parsed.error.issues.map(
+        (issue) => `${issue.path.join(".") || "profile"}: ${issue.message}`,
+      ),
     });
     continue;
   }
@@ -62,13 +65,20 @@ export function getBusinessModeProfile(modeKey: string): BusinessModeProfileResu
   if (!profile) {
     return {
       ok: false,
-      error: { modeKey: normalized, issues: [`No business-mode profile is registered for "${normalized}".`] },
+      error: {
+        modeKey: normalized,
+        issues: [`No business-mode profile is registered for "${normalized}".`],
+      },
     };
   }
   if (profile.status === "deprecated") {
     return {
       ok: false,
-      error: { modeKey: normalized, profileId: profile.id, issues: ["This business-mode profile is deprecated."] },
+      error: {
+        modeKey: normalized,
+        profileId: profile.id,
+        issues: ["This business-mode profile is deprecated."],
+      },
     };
   }
   return { ok: true, profile };
@@ -81,12 +91,18 @@ export function isBusinessModeFeatureEnabled(
   profile: BusinessModeProfile,
   featureId: string,
 ): boolean {
-  const applicability = (featureApplicability.features as Record<string, { applicableModeKeys: string[] }>)[featureId];
-  return profile.status === "active"
-    && profile.runtimeReady
-    && applicability !== undefined
-    && profile.businessModeKeys.some((modeKey) => applicability.applicableModeKeys.includes(modeKey))
-    && profile.featureFlags.flags[featureId] === true;
+  const applicability = (
+    featureApplicability.features as Record<string, { applicableModeKeys: string[] }>
+  )[featureId];
+  return (
+    profile.status === "active" &&
+    profile.runtimeReady &&
+    applicability !== undefined &&
+    profile.businessModeKeys.some((modeKey) =>
+      applicability.applicableModeKeys.includes(modeKey),
+    ) &&
+    profile.featureFlags.flags[featureId] === true
+  );
 }
 
 /** Exposed for diagnostics and validation tooling; does not activate any profile. */
