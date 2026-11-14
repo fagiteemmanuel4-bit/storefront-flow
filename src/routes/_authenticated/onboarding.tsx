@@ -1057,6 +1057,7 @@ function OnboardingPage() {
             )}
           </div>
         </div>
+        </div>
       </section>
     </main>
   );
