@@ -131,10 +131,10 @@ function PublicStorefrontPage() {
   const customCss = typeof configQuery.data?.custom_css === "string" ? configQuery.data.custom_css : "";
   const safeCustomCss = customCss
     .replace(/@import[^;]*;?/gi, "")
-    .replace(/url\\s*\\([^)]*\\)/gi, "none")
-    .replace(/expression\\s*\\([^)]*\\)/gi, "none")
-    .replace(/javascript\\s*:/gi, "")
-    .replace(/<\\s*\\/\\s*style/gi, "");
+    .replace(/url\s*\([^)]*\)/gi, "none")
+    .replace(/expression\s*\([^)]*\)/gi, "none")
+    .replace(/javascript\s*:/gi, "")
+    .replace(/<\s*\/\s*style/gi, "");
   const storefrontStyle = {
     "--store-primary": safeColor(configuredTheme.primaryColor, "#111827"),
     "--store-accent": safeColor(configuredTheme.accentColor, "#f59e0b"),
