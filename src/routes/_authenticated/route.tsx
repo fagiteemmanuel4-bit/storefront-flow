@@ -10,11 +10,7 @@ import { useState, useEffect } from "react";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async ({ location }) => {
-    const hiddenDuringUpgrade = [
-      "/store-editor",
-      "/settings/online-store",
-      "/settings/appearance",
-    ];
+    const hiddenDuringUpgrade = ["/store-editor", "/settings/online-store", "/settings/appearance"];
     if (
       hiddenDuringUpgrade.some(
         (path) => location.pathname === path || location.pathname.startsWith(`${path}/`),
