@@ -26,7 +26,7 @@ describe("business-mode profile activation safety", () => {
       expect(profile.status).toBe("draft");
       expect(profile.runtimeReady).toBe(false);
       expect(Object.values(profile.featureFlags.flags).every((enabled) => enabled === false)).toBe(true);
-      expect(profile.product.fields.every((field: { runtimeReady?: boolean }) => field.runtimeReady !== true)).toBe(true);
+      expect(profile.product.fields.filter((field: { runtimeReady?: boolean }) => field.runtimeReady === true).every((field: { source?: string }) => field.source === "product_mode_details.details")).toBe(true);
     }
   });
 
@@ -35,6 +35,8 @@ describe("business-mode profile activation safety", () => {
     profile.status = "active";
     profile.runtimeReady = true;
     for (const field of profile.product.fields) field.runtimeReady = true;
+    delete profile.product.fields[0].column;
+    delete profile.product.fields[0].source;
 
     const result = businessModeProfileSchema.safeParse(profile);
     expect(result.success).toBe(false);
@@ -76,6 +78,9 @@ describe("strict business-mode resolution", () => {
     expect(resolveBusinessMode("fashion")?.key).toBe("fashion");
     expect(resolveBusinessMode("boutique")?.key).toBe("fashion");
     expect(resolveBusinessMode("grocery and provision")?.key).toBe("grocery-provision");
+    expect(resolveBusinessMode("women’s clothing boutique")?.key).toBe("fashion");
+    expect(resolveBusinessMode("phone accessories")?.key).toBe("electronics");
+    expect(resolveBusinessMode("foodstuff shop")?.key).toBe("grocery-provision");
   });
 
   test("does not turn an unknown business name into General Retail", () => {
