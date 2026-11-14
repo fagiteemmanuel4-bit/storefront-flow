@@ -442,7 +442,7 @@ function AuthPage() {
   const switchMode = mode === "signin" ? "signup" : "signin";
   const submitLabel =
     mode === "signin"
-      ? "Log in"
+      ? "Continue with email"
       : mode === "signup"
         ? "Create account"
         : mode === "reset"
