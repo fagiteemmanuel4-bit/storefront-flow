@@ -30,6 +30,19 @@ describe("business-mode profile activation safety", () => {
     }
   });
 
+  test("every profile storefront template is accepted by the database save function", async () => {
+    const migration = await readFile(
+      new URL("../supabase/migrations/20261114084229_allow_profile_storefront_templates.sql", import.meta.url),
+      "utf8",
+    );
+    for (const path of profilePaths) {
+      const profile = await readProfile(path);
+      for (const template of profile.storefront.templates) {
+        expect(migration.includes(`'${template.id}'`)).toBe(true);
+      }
+    }
+  });
+
   test("activation is rejected when a product field has no persistence mapping", async () => {
     const profile = await readProfile(profilePaths[3]!);
     profile.status = "active";
