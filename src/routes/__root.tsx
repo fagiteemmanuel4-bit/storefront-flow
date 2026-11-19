@@ -18,6 +18,7 @@ import strapDesignSystemCss from "../strap-design-system.css?url";
 import strapLoadingOverridesCss from "../strap-loading-overrides.css?url";
 import strapMobileDensityCss from "../strap-mobile-density.css?url";
 import strapRedesignBaseCss from "../strap-redesign-base.css?url";
+import strapTemplateV8Css from "../strap-template-v8.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
@@ -215,6 +216,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: strapLoadingOverridesCss },
       { rel: "stylesheet", href: strapMobileDensityCss },
       { rel: "stylesheet", href: strapRedesignBaseCss },
+      { rel: "stylesheet", href: strapTemplateV8Css },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com" },
       {
