@@ -563,4 +563,504 @@ function StoreBuilder() {
               <ArrowLeft className="size-4" />
             </Link>
             <div>
-              <p 
+              <p className="text-xs font-semibold uppercase tracking-wider text-accent-ink">
+                Store Editor
+              </p>
+              <p className="font-semibold">{store.name}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".json,.xml,application/json,application/xml,text/xml"
+              className="hidden"
+              onChange={(event) => void importTemplateFile(event.target.files?.[0])}
+            />
+            <Button variant="outline" onClick={() => importInputRef.current?.click()}>
+              <Upload className="mr-2 size-4" />
+              Import
+            </Button>
+            <Button variant="outline" onClick={() => exportTemplate("json")}>
+              <Download className="mr-2 size-4" />
+              JSON
+            </Button>
+            <Button
+              variant="outline"
+              className="hidden md:inline-flex"
+              onClick={() => exportTemplate("xml")}
+            >
+              XML
+            </Button>
+            <span
+              className={`hidden rounded-full px-3 py-1 text-xs font-semibold sm:inline-flex ${published ? "bg-emerald-100 text-emerald-800" : "bg-secondary text-muted-foreground"}`}
+            >
+              {published ? "Published" : "Draft"}
+            </span>
+            <Link to="/settings/online-store" className="hidden sm:inline-flex">
+              <Button variant="outline">Legacy settings</Button>
+            </Link>
+            <Button
+              variant="outline"
+              disabled={!slug}
+              onClick={() => window.open(publicUrl, "_blank")}
+            >
+              <Eye className="mr-2 size-4" />
+              Preview
+            </Button>
+            <Button onClick={() => void save()} disabled={saving}>
+              {saving ? (
+                "Saving…"
+              ) : (
+                <>
+                  <Save className="mr-2 size-4" />
+                  Save
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </header>
+      <div className="mx-auto grid max-w-[1500px] gap-6 px-4 py-6 lg:grid-cols-[280px_minmax(0,1fr)_340px] sm:px-6">
+        <aside className="space-y-4">
+          <Panel title="Templates">
+            <div className="space-y-2">
+              {[
+                ...TEMPLATES,
+                ...profileTemplates
+                  .filter((profile: any) => !TEMPLATES.some((item) => item.id === profile.id))
+                  .map((item: any) => ({
+                    id: item.id,
+                    name: item.name,
+                    description: item.positioning,
+                  })),
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => applyTemplate(item.id)}
+                  className={`w-full rounded-xl border p-3 text-left transition ${template === item.id ? "border-foreground bg-secondary" : "border-border hover:border-accent/50"}`}
+                >
+                  <p className="font-semibold">{item.name}</p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">{item.description}</p>
+                </button>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Add section">
+            <div className="grid grid-cols-2 gap-2">
+              {availableSectionTypes.map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => addSection(type)}
+                  className="rounded-lg border border-border px-2 py-2 text-xs font-semibold hover:bg-secondary"
+                >
+                  <Plus className="mx-auto mb-1 size-3" />
+                  {LABELS[type] ??
+                    type
+                      .replace(/[-_]+/g, " ")
+                      .replace(/\\b\\w/g, (letter) => letter.toUpperCase())}
+                </button>
+              ))}
+            </div>
+          </Panel>
+        </aside>
+        <section className="min-w-0 rounded-[2rem] border border-border bg-secondary/50 p-4 sm:p-6">
+          <div className="mb-3 flex items-center justify-between text-xs text-muted-foreground">
+            <span>Desktop preview</span>
+            <span className="lg:hidden">Advanced editing is optimized for desktop.</span>
+          </div>
+          <div
+            className="storefront-shell mx-auto max-w-3xl overflow-hidden rounded-[1.5rem] border border-border bg-white shadow-lift"
+            style={{
+              color: theme.textColor,
+              backgroundColor: theme.backgroundColor,
+              fontFamily: theme.fontFamily,
+            }}
+          >
+            <style>
+              {".storefront-shell h1,.storefront-shell h2,.storefront-shell h3{font-family:" +
+                safePreviewHeadingFont +
+                ",sans-serif}" +
+                safePreviewCss}
+            </style>
+            <div
+              className="flex items-center justify-between border-b px-5 py-4"
+              style={{ borderColor: theme.secondaryColor }}
+            >
+              {branding.logoUrl ? (
+                <img
+                  src={branding.logoUrl}
+                  alt={branding.storeName}
+                  className="h-8 max-w-32 object-contain"
+                />
+              ) : (
+                <span className="font-bold">{branding.storeName || selectedTemplate.name}</span>
+              )}
+              <div className="flex gap-2 text-xs">
+                <span>Shop</span>
+                <span>Products</span>
+                <span>Contact</span>
+              </div>
+            </div>
+            {sections.map((section, index) => (
+              <div
+                key={section.id}
+                onClick={() => setSelectedSection(section.id)}
+                className={`relative cursor-pointer border-b px-6 py-8 transition ${selectedSection === section.id ? "ring-2 ring-inset" : ""}`}
+                style={{ borderColor: theme.secondaryColor, opacity: section.enabled ? 1 : 0.4 }}
+              >
+                <div className="absolute right-3 top-3 flex gap-1">
+                  <button
+                    type="button"
+                    aria-label="Move section up"
+                    disabled={index === 0}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      move(index, -1);
+                    }}
+                    className="rounded-md border bg-white p-1"
+                  >
+                    <ArrowUp className="size-3" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Move section down"
+                    disabled={index === sections.length - 1}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      move(index, 1);
+                    }}
+                    className="rounded-md border bg-white p-1"
+                  >
+                    <ArrowDown className="size-3" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Remove section"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSections((current) => current.filter((_, i) => i !== index));
+                      if (selectedSection === section.id) setSelectedSection(null);
+                    }}
+                    className="rounded-md border bg-white p-1 text-destructive"
+                  >
+                    <Trash2 className="size-3" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <GripVertical className="size-3 text-muted-foreground" />
+                  <p
+                    className="text-[10px] font-bold uppercase tracking-[.18em]"
+                    style={{ color: theme.primaryColor }}
+                  >
+                    {LABELS[section.type] ??
+                      section.type
+                        .replace(/[-_]+/g, " ")
+                        .replace(/\\b\\w/g, (letter) => letter.toUpperCase())}
+                  </p>
+                </div>
+                <h3 className="mt-2 font-display text-2xl font-bold">
+                  {section.settings.headline ||
+                    section.settings.title ||
+                    section.settings.text ||
+                    LABELS[section.type]}
+                </h3>
+                <p className="mt-2 max-w-xl text-sm opacity-65">
+                  {section.settings.subheadline ||
+                    section.settings.body ||
+                    "Live structural preview of this storefront section."}
+                </p>
+                {section.type === "hero" && (
+                  <button
+                    type="button"
+                    className="mt-5 rounded-lg px-4 py-2 text-sm font-semibold text-white"
+                    style={{ backgroundColor: theme.primaryColor }}
+                  >
+                    {section.settings.buttonText || "Shop now"}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+        <aside className="space-y-4">
+          <Panel title="Branding">
+            <label className="block space-y-1">
+              <span className="text-xs font-semibold">Store name</span>
+              <input
+                className="field"
+                value={branding.storeName}
+                onChange={(e) =>
+                  setBranding((current) => ({ ...current, storeName: e.target.value }))
+                }
+              />
+            </label>
+            <label className="mt-3 block space-y-1">
+              <span className="text-xs font-semibold">Logo URL</span>
+              <input
+                className="field"
+                value={branding.logoUrl}
+                onChange={(e) =>
+                  setBranding((current) => ({ ...current, logoUrl: e.target.value }))
+                }
+                placeholder="https://…"
+              />
+            </label>
+            <label className="mt-3 block space-y-1">
+              <span className="text-xs font-semibold">Favicon URL</span>
+              <input
+                className="field"
+                value={branding.faviconUrl}
+                onChange={(e) =>
+                  setBranding((current) => ({ ...current, faviconUrl: e.target.value }))
+                }
+                placeholder="https://…"
+              />
+            </label>
+            <label className="mt-3 block space-y-1">
+              <span className="text-xs font-semibold">Description</span>
+              <textarea
+                className="field min-h-20 resize-none"
+                value={branding.description}
+                onChange={(e) =>
+                  setBranding((current) => ({ ...current, description: e.target.value }))
+                }
+              />
+            </label>
+          </Panel>
+          <Panel title="Theme">
+            <div className="grid grid-cols-2 gap-3">
+              {(
+                [
+                  "primaryColor",
+                  "secondaryColor",
+                  "accentColor",
+                  "textColor",
+                  "backgroundColor",
+                ] as const
+              ).map((key) => (
+                <label key={key} className="space-y-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    {key.replace("Color", "")}
+                  </span>
+                  <div className="flex items-center gap-2 rounded-lg border border-border p-1">
+                    <input
+                      type="color"
+                      value={theme[key]}
+                      onChange={(e) =>
+                        setTheme((current) => ({ ...current, [key]: e.target.value }))
+                      }
+                      className="size-7 cursor-pointer border-0 bg-transparent"
+                    />
+                    <input
+                      value={theme[key]}
+                      onChange={(e) =>
+                        setTheme((current) => ({ ...current, [key]: e.target.value }))
+                      }
+                      className="min-w-0 w-full bg-transparent text-xs outline-none"
+                    />
+                  </div>
+                </label>
+              ))}
+            </div>
+            <label className="mt-4 block space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Button radius
+              </span>
+              <select
+                className="field"
+                value={theme.buttonRadius}
+                onChange={(e) =>
+                  setTheme((current) => ({
+                    ...current,
+                    buttonRadius: e.target.value as Theme["buttonRadius"],
+                  }))
+                }
+              >
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </label>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <label className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Body font
+                </span>
+                <input
+                  className="field"
+                  value={theme.fontFamily}
+                  maxLength={60}
+                  onChange={(event) =>
+                    setTheme((current) => ({ ...current, fontFamily: event.target.value }))
+                  }
+                  placeholder="Inter"
+                />
+              </label>
+              <label className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Heading font
+                </span>
+                <input
+                  className="field"
+                  value={theme.headingFontFamily}
+                  maxLength={60}
+                  onChange={(event) =>
+                    setTheme((current) => ({ ...current, headingFontFamily: event.target.value }))
+                  }
+                  placeholder="Inter"
+                />
+              </label>
+            </div>
+            <label className="mt-4 block space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Layout density
+              </span>
+              <select
+                className="field"
+                value={theme.density}
+                onChange={(event) =>
+                  setTheme((current) => ({
+                    ...current,
+                    density: event.target.value as Theme["density"],
+                  }))
+                }
+              >
+                <option value="comfortable">Comfortable</option>
+                <option value="compact">Compact</option>
+              </select>
+            </label>
+          </Panel>
+          {selectedSection &&
+            (() => {
+              const section = sections.find((x) => x.id === selectedSection);
+              if (!section) return null;
+              const fields = sectionFields[section.type] ?? [
+                { key: "title", label: "Title", placeholder: "Section title" },
+                {
+                  key: "body",
+                  label: "Description",
+                  placeholder: "Add useful details for customers.",
+                },
+              ];
+              return (
+                <Panel
+                  title={`Edit ${LABELS[section.type] ?? section.type.replace(/[-_]+/g, " ")}`}
+                >
+                  <label className="mb-4 flex items-center justify-between gap-3">
+                    <span className="text-sm font-semibold">Visible</span>
+                    <input
+                      type="checkbox"
+                      checked={section.enabled}
+                      onChange={(e) => updateSection(section.id, { enabled: e.target.checked })}
+                    />
+                  </label>
+                  {fields.length === 0 ? (
+                    <p className="text-xs leading-5 text-muted-foreground">
+                      This section is structurally configurable. More content controls will be added
+                      as the section renderer expands.
+                    </p>
+                  ) : (
+                    fields.map((field) => (
+                      <label key={field.key} className="mb-3 block space-y-1">
+                        <span className="text-xs font-semibold">{field.label}</span>
+                        {field.key === "body" || field.key === "subheadline" ? (
+                          <textarea
+                            className="field min-h-20 resize-none"
+                            value={section.settings[field.key] ?? ""}
+                            onChange={(e) =>
+                              updateSectionSetting(section.id, field.key, e.target.value)
+                            }
+                            placeholder={field.placeholder}
+                          />
+                        ) : (
+                          <input
+                            className="field"
+                            value={section.settings[field.key] ?? ""}
+                            onChange={(e) =>
+                              updateSectionSetting(section.id, field.key, e.target.value)
+                            }
+                            placeholder={field.placeholder}
+                          />
+                        )}
+                      </label>
+                    ))
+                  )}
+                </Panel>
+              );
+            })()}
+          <Panel title="SEO">
+            <label className="block space-y-1">
+              <span className="text-xs font-semibold">Page title</span>
+              <input
+                className="field"
+                maxLength={70}
+                value={seoTitle}
+                onChange={(e) => setSeoTitle(e.target.value)}
+                placeholder="Your store name"
+              />
+            </label>
+            <label className="mt-3 block space-y-1">
+              <span className="text-xs font-semibold">Meta description</span>
+              <textarea
+                className="field min-h-24 resize-none"
+                maxLength={160}
+                value={seoDescription}
+                onChange={(e) => setSeoDescription(e.target.value)}
+                placeholder="A clear description of your store."
+              />
+            </label>
+          </Panel>
+          <Panel title="Publishing">
+            <p className="text-sm font-semibold">
+              {published ? "Your storefront is published" : "Your storefront is still a draft"}
+            </p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+              Store availability, public terms and privacy acceptance are managed in Store Setup.
+              Saving your design here never publishes an incomplete store.
+            </p>
+            <Link
+              to="/online-store/setup"
+              className="mt-3 inline-flex text-sm font-semibold underline underline-offset-4"
+            >
+              Open Store Setup
+            </Link>
+          </Panel>
+          <Panel title="Advanced">
+            <label className="block space-y-1">
+              <span className="text-xs font-semibold">Custom CSS</span>
+              <textarea
+                className="field min-h-32 resize-y font-mono text-xs"
+                maxLength={20000}
+                value={customCss}
+                onChange={(e) => setCustomCss(e.target.value)}
+                placeholder="/* Premium customization */"
+              />
+            </label>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">
+              CSS only. Scripts and server secrets are never accepted here.
+            </p>
+          </Panel>
+        </aside>
+      </div>
+    </main>
+  );
+}
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+  const tourTarget =
+    title === "Templates"
+      ? "template-list"
+      : title === "Add section"
+        ? "section-list"
+        : title === "Theme"
+          ? "theme-controls"
+          : undefined;
+  return (
+    <section data-tour={tourTarget} className="rounded-2xl border border-border bg-surface p-4">
+      <h2 className="mb-4 font-semibold">{title}</h2>
+      {children}
+    </section>
+  );
+}
