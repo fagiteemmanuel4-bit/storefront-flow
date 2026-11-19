@@ -1,0 +1,161 @@
+/* Strap v8 — shared visual layer for the full application */
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap");
+
+:root {
+  --strap-blue-50: #f7fad7;
+  --strap-blue-100: #f0f7aa;
+  --strap-blue-200: #e9f47b;
+  --strap-blue-300: #e6f53a;
+  --strap-blue-500: #e6f53a;
+  --strap-blue-600: #d1e92d;
+  --strap-blue-700: #718000;
+  --strap-blue-800: #596300;
+  --strap-ink: #0a0a0a;
+  --strap-ink-soft: #242424;
+  --strap-muted: #6b6b65;
+  --strap-line: #e8e8e4;
+  --strap-canvas: #ffffff;
+  --strap-panel: #ffffff;
+  --strap-radius-sm: 10px;
+  --strap-radius-md: 14px;
+  --strap-radius-lg: 18px;
+  --strap-radius-xl: 24px;
+  --strap-radius-2xl: 30px;
+
+  --background: #ffffff !important;
+  --foreground: #0a0a0a !important;
+  --surface: #ffffff !important;
+  --card: #ffffff !important;
+  --card-foreground: #0a0a0a !important;
+  --popover: #ffffff !important;
+  --popover-foreground: #0a0a0a !important;
+  --primary: #e6f53a !important;
+  --primary-foreground: #0a0a0a !important;
+  --secondary: #f5f5f0 !important;
+  --secondary-foreground: #0a0a0a !important;
+  --muted: #f5f5f0 !important;
+  --muted-foreground: #6b6b65 !important;
+  --accent: #e6f53a !important;
+  --accent-foreground: #0a0a0a !important;
+  --accent-ink: #596300 !important;
+  --accent-soft: #f7fad7 !important;
+  --border: #e8e8e4 !important;
+  --input: #e8e8e4 !important;
+  --ring: #e6f53a !important;
+  --sidebar: #0a0a0a !important;
+  --sidebar-foreground: #ffffff !important;
+  --sidebar-primary: #e6f53a !important;
+  --sidebar-primary-foreground: #0a0a0a !important;
+  --sidebar-accent: #202020 !important;
+  --sidebar-accent-foreground: #ffffff !important;
+  --sidebar-border: #292929 !important;
+  --sidebar-ring: #e6f53a !important;
+}
+
+.dark {
+  --strap-ink: #ffffff;
+  --strap-ink-soft: #e8e8e4;
+  --strap-muted: #a5a5a0;
+  --strap-line: #292929;
+  --strap-canvas: #0a0a0a;
+  --strap-panel: #141414;
+  --background: #0a0a0a !important;
+  --foreground: #ffffff !important;
+  --surface: #141414 !important;
+  --card: #141414 !important;
+  --card-foreground: #ffffff !important;
+  --popover: #141414 !important;
+  --popover-foreground: #ffffff !important;
+  --primary: #e6f53a !important;
+  --primary-foreground: #0a0a0a !important;
+  --secondary: #202020 !important;
+  --secondary-foreground: #ffffff !important;
+  --muted: #202020 !important;
+  --muted-foreground: #a5a5a0 !important;
+  --accent: #e6f53a !important;
+  --accent-foreground: #0a0a0a !important;
+  --accent-ink: #e6f53a !important;
+  --accent-soft: #202a0d !important;
+  --border: #292929 !important;
+  --input: #292929 !important;
+  --ring: #e6f53a !important;
+  --sidebar: #0a0a0a !important;
+  --sidebar-foreground: #ffffff !important;
+  --sidebar-primary: #e6f53a !important;
+  --sidebar-primary-foreground: #0a0a0a !important;
+  --sidebar-accent: #202020 !important;
+  --sidebar-accent-foreground: #ffffff !important;
+  --sidebar-border: #292929 !important;
+  --sidebar-ring: #e6f53a !important;
+}
+
+html,
+body,
+button,
+input,
+textarea,
+select {
+  font-family: "Sora", "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.kudi-app-shell {
+  background: var(--background) !important;
+}
+
+.kudi-app-shell aside {
+  background: #0a0a0a !important;
+  border-color: #242424 !important;
+}
+
+.kudi-app-shell aside a[aria-current="page"],
+.kudi-app-shell aside a[data-active="true"] {
+  background: #e6f53a !important;
+  color: #0a0a0a !important;
+}
+
+.kudi-app-shell aside a[aria-current="page"] svg,
+.kudi-app-shell aside a[data-active="true"] svg {
+  color: #0a0a0a !important;
+}
+
+.kudi-app-shell main {
+  background: var(--background) !important;
+}
+
+.kudi-app-shell > [class*="lg:pl-60"] > header {
+  background: color-mix(in srgb, var(--background) 94%, transparent) !important;
+  border-color: var(--border) !important;
+  backdrop-filter: blur(16px);
+}
+
+.kudi-app-shell :is(input, textarea, select, [role="combobox"]) {
+  border-radius: 14px;
+}
+
+.kudi-app-shell [data-slot="card"] {
+  border-color: var(--border);
+  border-radius: 18px;
+}
+
+.strap-auth-main,
+.strap-auth-hero h2,
+.strap-auth-title,
+.strap-logo-word {
+  font-family: "Sora", "Helvetica Neue", Arial, sans-serif !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

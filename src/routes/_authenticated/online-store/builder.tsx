@@ -1,12 +1,24 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowDown, ArrowLeft, ArrowUp, Eye, GripVertical, Plus, Save, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  Download,
+  Eye,
+  GripVertical,
+  Plus,
+  Save,
+  Trash2,
+  Upload,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
 import { Button } from "@/components/ui/button";
 import { resolveBusinessMode } from "@/lib/business-modes";
 import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
+import { getTemplateSectionDefaults, STRAP_STORE_TEMPLATES } from "@/lib/strap-store-templates";
 
 export const Route = createFileRoute("/_authenticated/online-store/builder")({
   ssr: false,
@@ -28,115 +40,7 @@ type Theme = {
 };
 type Branding = { logoUrl: string; faviconUrl: string; storeName: string; description: string };
 
-const TEMPLATES: Array<{ id: Template; name: string; description: string; sections: string[] }> = [
-  {
-    id: "fashion",
-    name: "Fashion",
-    description: "Editorial hero, bold imagery and product-led collections.",
-    sections: [
-      "hero",
-      "featured-products",
-      "categories",
-      "product-grid",
-      "gallery",
-      "newsletter",
-      "footer",
-    ],
-  },
-  {
-    id: "beauty",
-    name: "Beauty",
-    description: "Soft hierarchy for beauty, skincare and cosmetics.",
-    sections: [
-      "announcement",
-      "hero",
-      "categories",
-      "featured-products",
-      "testimonials",
-      "faq",
-      "footer",
-    ],
-  },
-  {
-    id: "electronics",
-    name: "Electronics",
-    description: "Product-first layout built around discovery.",
-    sections: ["hero", "categories", "product-grid", "featured-products", "social-proof", "footer"],
-  },
-  {
-    id: "food",
-    name: "Food",
-    description: "Menu-forward presentation with clear ordering paths.",
-    sections: ["announcement", "hero", "categories", "product-grid", "about", "contact", "footer"],
-  },
-  {
-    id: "retail",
-    name: "General Retail",
-    description: "Balanced storefront for everyday commerce.",
-    sections: [
-      "hero",
-      "featured-products",
-      "categories",
-      "product-grid",
-      "promotional-banner",
-      "footer",
-    ],
-  },
-  {
-    id: "jewelry",
-    name: "Jewelry",
-    description: "Minimal luxury composition with large product imagery.",
-    sections: [
-      "hero",
-      "featured-products",
-      "gallery",
-      "about",
-      "testimonials",
-      "newsletter",
-      "footer",
-    ],
-  },
-  {
-    id: "furniture",
-    name: "Furniture & Home",
-    description: "Room-inspired editorial sections for home products.",
-    sections: ["hero", "gallery", "categories", "featured-products", "about", "contact", "footer"],
-  },
-  {
-    id: "fitness",
-    name: "Fitness",
-    description: "Energetic product grid with social proof.",
-    sections: [
-      "announcement",
-      "hero",
-      "featured-products",
-      "product-grid",
-      "social-proof",
-      "faq",
-      "footer",
-    ],
-  },
-  {
-    id: "luxury",
-    name: "Luxury",
-    description: "Dark editorial structure for premium brands.",
-    sections: [
-      "hero",
-      "featured-products",
-      "about",
-      "gallery",
-      "testimonials",
-      "contact",
-      "footer",
-    ],
-  },
-  {
-    id: "minimal-commerce",
-    name: "Minimal Commerce",
-    description: "Clean, fast and product-focused.",
-    sections: ["hero", "featured-products", "product-grid", "about", "faq", "footer"],
-  },
-];
+const TEMPLATES = STRAP_STORE_TEMPLATES;
 const LABELS: Record<string, string> = {
   hero: "Hero",
   "featured-products": "Featured products",
@@ -154,18 +58,18 @@ const LABELS: Record<string, string> = {
   footer: "Footer",
 };
 const SECTION_TYPES = Object.keys(LABELS);
-const DEFAULT_TEMPLATE: Template = "minimal-commerce";
+const DEFAULT_TEMPLATE: Template = "fresh";
 const DEFAULT_TEMPLATE_SECTIONS = TEMPLATES.find((item) => item.id === DEFAULT_TEMPLATE)!.sections;
 
 const defaultTheme: Theme = {
-  primaryColor: "#111827",
-  secondaryColor: "#f3f4f6",
-  accentColor: "#f59e0b",
-  textColor: "#111827",
+  primaryColor: "#0a0a0a",
+  secondaryColor: "#f5f5f0",
+  accentColor: "#e6f53a",
+  textColor: "#0a0a0a",
   backgroundColor: "#ffffff",
-  buttonRadius: "medium",
-  fontFamily: "Inter",
-  headingFontFamily: "Inter",
+  buttonRadius: "large",
+  fontFamily: "Sora",
+  headingFontFamily: "Sora",
   density: "comfortable",
 };
 const defaultBranding: Branding = { logoUrl: "", faviconUrl: "", storeName: "", description: "" };
@@ -204,7 +108,7 @@ function makeSections(types: string[], prefix = String(Date.now())): Section[] {
     id: `${type}-${prefix}-${index}`,
     type,
     enabled: true,
-    settings: {},
+    settings: getTemplateSectionDefaults(type),
   }));
 }
 
@@ -232,7 +136,10 @@ function StoreBuilder() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
+  const importInputRef = useRef<HTMLInputElement>(null);
   const selectedTemplate = useMemo(() => {
+    const builtInTemplate = TEMPLATES.find((item) => item.id === template);
+    if (builtInTemplate) return builtInTemplate;
     const profileTemplate = profileTemplates.find((item: any) => item.id === template);
     if (profileTemplate)
       return {
@@ -241,9 +148,7 @@ function StoreBuilder() {
         description: profileTemplate.positioning,
         sections: profileTemplate.pages?.home ?? [],
       };
-    return (
-      TEMPLATES.find((x) => x.id === template) ?? TEMPLATES.find((x) => x.id === DEFAULT_TEMPLATE)!
-    );
+    return TEMPLATES.find((item) => item.id === DEFAULT_TEMPLATE)!;
   }, [template, profileTemplates]);
   const loadConfig = useCallback(async () => {
     if (!store) return;
@@ -290,36 +195,28 @@ function StoreBuilder() {
       setSeoDescription(seo?.description ?? "");
       setCustomCss(existing.custom_css ?? "");
       setPublished(Boolean(existing.is_published || onlineStore?.is_published));
-    } else if (profileTemplates.length) {
-      const firstTemplate = profileTemplates[0] as any;
-      setTemplate(firstTemplate.id);
+    } else {
+      const initialTemplate = TEMPLATES.find((item) => item.id === DEFAULT_TEMPLATE)!;
+      setTemplate(initialTemplate.id);
       setSections(
         makeSections(
-          (firstTemplate.pages?.home ?? DEFAULT_TEMPLATE_SECTIONS).filter((type: string) =>
-            availableSectionTypes.includes(type),
-          ),
+          initialTemplate.sections.filter((type) => availableSectionTypes.includes(type)),
         ),
       );
-      if (firstTemplate.theme) {
-        setTheme((current) => ({
-          ...current,
-          primaryColor: String(firstTemplate.theme.primary ?? current.primaryColor),
-          secondaryColor: String(firstTemplate.theme.surface ?? current.secondaryColor),
-          accentColor: String(firstTemplate.theme.accent ?? current.accentColor),
-          textColor: String(firstTemplate.theme.text ?? current.textColor),
-          backgroundColor: String(firstTemplate.theme.background ?? current.backgroundColor),
-          fontFamily: String(firstTemplate.theme.fontBody ?? current.fontFamily),
-          headingFontFamily: String(firstTemplate.theme.fontHeading ?? current.headingFontFamily),
-          density: firstTemplate.theme.density === "compact" ? "compact" : "comfortable",
-          buttonRadius:
-            Number.parseFloat(String(firstTemplate.theme.radius ?? "14")) <= 10
-              ? "small"
-              : Number.parseFloat(String(firstTemplate.theme.radius ?? "14")) >= 18
-                ? "large"
-                : "medium",
-        }));
-      }
-    } else setSections(makeSections(DEFAULT_TEMPLATE_SECTIONS));
+      const radius = initialTemplate.theme.radius;
+      setTheme((current) => ({
+        ...current,
+        primaryColor: initialTemplate.theme.ink,
+        secondaryColor: initialTemplate.theme.bg,
+        accentColor: initialTemplate.theme.accent,
+        textColor: initialTemplate.theme.ink,
+        backgroundColor: initialTemplate.theme.bg,
+        fontFamily: initialTemplate.theme.font,
+        headingFontFamily: initialTemplate.theme.font,
+        buttonRadius: radius <= 10 ? "small" : radius >= 18 ? "large" : "medium",
+        density: "comfortable",
+      }));
+    }
     setLoading(false);
   }, [store, profileTemplates, availableSectionTypes]);
   useEffect(() => {
@@ -328,11 +225,12 @@ function StoreBuilder() {
   function applyTemplate(next: Template) {
     if (next === template) return;
     setTemplate(next);
-    const profileTemplate = profileTemplates.find((item: any) => item.id === next) as any;
+    const builtInTemplate = TEMPLATES.find((item) => item.id === next);
+    const profileTemplate = builtInTemplate
+      ? null
+      : (profileTemplates.find((item: any) => item.id === next) as any);
     const templateSections =
-      profileTemplate?.pages?.home ??
-      TEMPLATES.find((x) => x.id === next)?.sections ??
-      DEFAULT_TEMPLATE_SECTIONS;
+      builtInTemplate?.sections ?? profileTemplate?.pages?.home ?? DEFAULT_TEMPLATE_SECTIONS;
     setSections(
       makeSections(templateSections.filter((type: string) => availableSectionTypes.includes(type))),
     );
@@ -354,6 +252,22 @@ function StoreBuilder() {
               ? "large"
               : "medium",
       }));
+    } else {
+      if (builtInTemplate) {
+        const radius = builtInTemplate.theme.radius;
+        setTheme((current) => ({
+          ...current,
+          primaryColor: builtInTemplate.theme.ink,
+          secondaryColor: builtInTemplate.theme.bg,
+          accentColor: builtInTemplate.theme.accent,
+          textColor: builtInTemplate.theme.ink,
+          backgroundColor: builtInTemplate.theme.bg,
+          fontFamily: builtInTemplate.theme.font,
+          headingFontFamily: builtInTemplate.theme.font,
+          buttonRadius: radius <= 10 ? "small" : radius >= 18 ? "large" : "medium",
+          density: "comfortable",
+        }));
+      }
     }
     setSelectedSection(null);
     toast.message("Template changed", {
@@ -361,6 +275,209 @@ function StoreBuilder() {
         "Your products, inventory and orders are unchanged. Save when you're happy with the new layout.",
     });
   }
+  function exportTemplate(format: "json" | "xml" = "json") {
+    const portableType: Record<string, string> = {
+      announcement: "announcement",
+      hero: "hero",
+      "featured-products": "products",
+      "product-grid": "products",
+      "promotional-banner": "banner",
+      about: "about",
+      testimonials: "testimonials",
+      faq: "faq",
+      contact: "contact",
+      footer: "footer",
+    };
+    const config = {
+      v: 2,
+      template,
+      theme: {
+        font: theme.fontFamily,
+        accent: theme.accentColor,
+        bg: theme.backgroundColor,
+        ink: theme.textColor,
+        radius: theme.buttonRadius === "small" ? 6 : theme.buttonRadius === "large" ? 20 : 14,
+      },
+      sections: sections
+        .filter((section) => section.enabled)
+        .map((section) => ({
+          type: portableType[section.type] ?? "about",
+          title: section.settings.title ?? section.settings.headline ?? LABELS[section.type] ?? "",
+          text:
+            section.settings.text ??
+            section.settings.description ??
+            section.settings.subheadline ??
+            "",
+          cta: section.settings.buttonText ?? "",
+          style: section.settings.style ?? "center",
+          layout: section.settings.layout ?? "grid",
+          image: section.settings.image ?? "",
+        })),
+    };
+    const escapeXml = (value: unknown) =>
+      String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    const node = (key: string, value: any): string => {
+      if (Array.isArray(value))
+        return (
+          "<" + key + ">" + value.map((item) => node("item", item)).join("") + "</" + key + ">"
+        );
+      if (value && typeof value === "object")
+        return (
+          "<" +
+          key +
+          ">" +
+          Object.entries(value)
+            .map(([childKey, childValue]) => node(childKey, childValue))
+            .join("") +
+          "</" +
+          key +
+          ">"
+        );
+      return "<" + key + ">" + escapeXml(value) + "</" + key + ">";
+    };
+    const content =
+      format === "json"
+        ? JSON.stringify(config, null, 2)
+        : '<?xml version="1.0" encoding="UTF-8"?>\n<strap-template>' +
+          node("config", config) +
+          "</strap-template>";
+    const blob = new Blob([content], {
+      type: format === "json" ? "application/json" : "application/xml",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "strap-store-template." + format;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    toast.success("Template exported as " + format.toUpperCase());
+  }
+
+  async function importTemplateFile(file?: File) {
+    if (!file) return;
+    try {
+      const raw = await file.text();
+      let config: any;
+      if (file.name.toLowerCase().endsWith(".xml")) {
+        const documentXml = new DOMParser().parseFromString(raw, "application/xml");
+        if (documentXml.querySelector("parsererror"))
+          throw new Error("This XML file is not valid.");
+        const root = documentXml.querySelector("strap-template > config");
+        if (!root) throw new Error("Expected a strap-template/config XML root.");
+        const readNode = (element: Element): any => {
+          if (!element.children.length) return element.textContent ?? "";
+          const children = [...element.children];
+          if (children.every((child) => child.tagName === "item")) return children.map(readNode);
+          return Object.fromEntries(children.map((child) => [child.tagName, readNode(child)]));
+        };
+        config = readNode(root);
+      } else {
+        config = JSON.parse(raw);
+      }
+      config = config?.config ?? config;
+      if (!config || config.v !== 2 || !config.theme || !Array.isArray(config.sections)) {
+        throw new Error("Template must contain v: 2, theme and sections.");
+      }
+      if (config.sections.length > 30)
+        throw new Error("A template can contain at most 30 sections.");
+      const allowed = new Set([
+        "announcement",
+        "hero",
+        "billboard",
+        "banner",
+        "products",
+        "about",
+        "contact",
+        "testimonials",
+        "faq",
+        "policies",
+        "footer",
+      ]);
+      if (config.sections.some((section: any) => !section || !allowed.has(section.type))) {
+        throw new Error("The template contains an unsupported section type.");
+      }
+      if (!["Sora", "Inter", "DM Serif Display", "Space Mono"].includes(config.theme.font)) {
+        throw new Error("Theme font must be Sora, Inter, DM Serif Display or Space Mono.");
+      }
+      for (const key of ["accent", "bg", "ink"]) {
+        if (config.theme[key] && !/^#[0-9a-f]{6}$/i.test(config.theme[key])) {
+          throw new Error("Theme " + key + " must be a six-digit hex colour.");
+        }
+      }
+      const typeMap: Record<string, string> = {
+        announcement: "announcement",
+        hero: "hero",
+        billboard: "promotional-banner",
+        banner: "promotional-banner",
+        products: "featured-products",
+        about: "about",
+        contact: "contact",
+        testimonials: "testimonials",
+        faq: "faq",
+        policies: "faq",
+        footer: "footer",
+      };
+      const importedSections = config.sections.flatMap((item: any, index: number) => {
+        const type = typeMap[item.type];
+        if (!type || !availableSectionTypes.includes(type)) return [];
+        const base = makeSections([type], "import-" + Date.now() + "-" + index)[0];
+        return [
+          {
+            ...base,
+            enabled: true,
+            settings: {
+              ...base.settings,
+              title: String(item.title ?? ""),
+              headline: String(item.title ?? ""),
+              text: String(item.text ?? ""),
+              description: String(item.text ?? ""),
+              subheadline: String(item.text ?? ""),
+              buttonText: String(item.cta ?? ""),
+              style: String(item.style ?? "center"),
+              layout: String(item.layout ?? "grid"),
+              image: String(item.image ?? ""),
+            },
+          },
+        ];
+      });
+      if (!importedSections.length)
+        throw new Error("This template has no sections supported by the current editor.");
+      const font = ["Sora", "Inter", "DM Serif Display", "Space Mono"].includes(config.theme.font)
+        ? config.theme.font
+        : "Sora";
+      const radius = Number(config.theme.radius ?? 14);
+      setTemplate(String(config.template ?? "custom"));
+      setSections(importedSections);
+      setTheme((current) => ({
+        ...current,
+        primaryColor: String(config.theme.ink ?? current.primaryColor),
+        secondaryColor: String(config.theme.bg ?? current.secondaryColor),
+        accentColor: String(config.theme.accent ?? current.accentColor),
+        textColor: String(config.theme.ink ?? current.textColor),
+        backgroundColor: String(config.theme.bg ?? current.backgroundColor),
+        fontFamily: font,
+        headingFontFamily: font,
+        buttonRadius: radius <= 10 ? "small" : radius >= 18 ? "large" : "medium",
+      }));
+      setSelectedSection(null);
+      toast.success("Template imported", {
+        description:
+          "Only the storefront theme and sections were changed. Your products, domain, orders and account remain untouched.",
+      });
+    } catch (error) {
+      toast.error("Could not import template", {
+        description: error instanceof Error ? error.message : "Check the file and try again.",
+      });
+    } finally {
+      if (importInputRef.current) importInputRef.current.value = "";
+    }
+  }
+
   function move(index: number, direction: -1 | 1) {
     const target = index + direction;
     if (target < 0 || target >= sections.length) return;
@@ -453,6 +570,28 @@ function StoreBuilder() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".json,.xml,application/json,application/xml,text/xml"
+              className="hidden"
+              onChange={(event) => void importTemplateFile(event.target.files?.[0])}
+            />
+            <Button variant="outline" onClick={() => importInputRef.current?.click()}>
+              <Upload className="mr-2 size-4" />
+              Import
+            </Button>
+            <Button variant="outline" onClick={() => exportTemplate("json")}>
+              <Download className="mr-2 size-4" />
+              JSON
+            </Button>
+            <Button
+              variant="outline"
+              className="hidden md:inline-flex"
+              onClick={() => exportTemplate("xml")}
+            >
+              XML
+            </Button>
             <span
               className={`hidden rounded-full px-3 py-1 text-xs font-semibold sm:inline-flex ${published ? "bg-emerald-100 text-emerald-800" : "bg-secondary text-muted-foreground"}`}
             >
@@ -486,14 +625,16 @@ function StoreBuilder() {
         <aside className="space-y-4">
           <Panel title="Templates">
             <div className="space-y-2">
-              {(profileTemplates.length
-                ? profileTemplates.map((item: any) => ({
+              {[
+                ...TEMPLATES,
+                ...profileTemplates
+                  .filter((profile: any) => !TEMPLATES.some((item) => item.id === profile.id))
+                  .map((item: any) => ({
                     id: item.id,
                     name: item.name,
                     description: item.positioning,
-                  }))
-                : TEMPLATES
-              ).map((item) => (
+                  })),
+              ].map((item) => (
                 <button
                   key={item.id}
                   type="button"

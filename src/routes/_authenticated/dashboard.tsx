@@ -170,7 +170,7 @@ function DashboardPage() {
             <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap lg:justify-end">
               <Link
                 to="/pos"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#c6f432] px-4 text-sm font-bold text-[#101713] shadow-[0_8px_22px_rgba(155,198,35,.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d4ff50] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9ac51c] sm:px-5"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#e6f53a] px-4 text-sm font-bold text-[#101713] shadow-[0_8px_22px_rgba(230,245,58,.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#eefb7a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d1e92d] sm:px-5"
               >
                 <ScanLine className="size-4" /> Start selling
               </Link>
@@ -205,7 +205,7 @@ function DashboardPage() {
           aria-label="Business performance"
           className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
         >
-          <div className="relative overflow-hidden rounded-[26px] bg-[#c6f432] p-5 text-[#111713] shadow-[0_12px_32px_rgba(115,145,25,.12)] sm:col-span-2 sm:p-6">
+          <div className="relative overflow-hidden rounded-[26px] bg-[#e6f53a] p-5 text-[#111713] shadow-[0_12px_32px_rgba(120,128,0,.12)] sm:col-span-2 sm:p-6">
             <div className="absolute -right-10 -top-16 size-48 rounded-full border-[28px] border-black/[0.045]" />
             <div className="relative flex h-full min-h-[148px] flex-col justify-between gap-6">
               <div className="flex items-center justify-between gap-3">
