@@ -15,8 +15,7 @@ import {
 import { toast } from "sonner";
 import { onlineSupabase } from "@/integrations/supabase/online-client";
 import { useStoreContext } from "@/components/shell/StoreProvider";
-import { resolveBusinessMode } from "@/lib/business-modes";
-import { getBusinessModeProfile } from "@/lib/business-mode-profiles";
+import { getTemplateSectionDefaults, STRAP_STORE_TEMPLATES } from "@/lib/strap-store-templates";
 
 export const Route = createFileRoute("/_authenticated/online-store/setup")({
   ssr: false,
@@ -44,6 +43,7 @@ function OnlineStoreSetupPage() {
   const [setupComplete, setSetupComplete] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState("fresh");
   const [form, setForm] = useState({
     displayName: "",
     slug: "my-store",
@@ -166,36 +166,31 @@ function OnlineStoreSetupPage() {
           .eq("store_id", store.id);
         if (configResult.error) throw new Error(configResult.error.message);
       } else {
-        const businessModeValue =
-          (store.storefront_settings as any)?.businessMode ?? store.business_type;
-        const resolvedMode = resolveBusinessMode(businessModeValue);
-        const profileResult = resolvedMode ? getBusinessModeProfile(resolvedMode.key) : null;
-        const profile = profileResult?.ok ? profileResult.profile : null;
-        const initialTemplate = profile?.storefront.templates[0];
-        const profileTheme = initialTemplate?.theme ?? {};
-        const radiusValue = Number.parseFloat(String(profileTheme.radius ?? "14"));
+        const initialTemplate =
+          STRAP_STORE_TEMPLATES.find((item) => item.id === selectedTemplate) ??
+          STRAP_STORE_TEMPLATES[0];
+        const profileTheme = initialTemplate.theme;
+        const radiusValue = Number.parseFloat(String(profileTheme.radius));
         const initialTheme = {
-          primaryColor: String(profileTheme.primary ?? "#111827"),
-          secondaryColor: String(profileTheme.surface ?? "#f3f4f6"),
-          accentColor: String(profileTheme.accent ?? "#f59e0b"),
-          textColor: String(profileTheme.text ?? "#111827"),
-          backgroundColor: String(profileTheme.background ?? "#ffffff"),
+          primaryColor: profileTheme.ink,
+          secondaryColor: profileTheme.bg,
+          accentColor: profileTheme.accent,
+          textColor: profileTheme.ink,
+          backgroundColor: profileTheme.bg,
           buttonRadius: radiusValue <= 10 ? "small" : radiusValue >= 18 ? "large" : "medium",
-          fontFamily: String(profileTheme.fontBody ?? "Inter"),
-          headingFontFamily: String(profileTheme.fontHeading ?? "Inter"),
-          density: profileTheme.density === "compact" ? "compact" : "comfortable",
+          fontFamily: profileTheme.font,
+          headingFontFamily: profileTheme.font,
+          density: "comfortable",
         };
-        const initialSections = (
-          initialTemplate?.pages?.home ?? ["hero", "featured-products", "product-grid", "footer"]
-        ).map((type, index) => ({
-          id: `${type}-setup-${index}`,
+        const initialSections = initialTemplate.sections.map((type, index) => ({
+          id: type + "-setup-" + index,
           type,
           enabled: true,
-          settings: {},
+          settings: getTemplateSectionDefaults(type),
         }));
         const configResult = await onlineSupabase.from("storefront_configs").insert({
           store_id: store.id,
-          template: initialTemplate?.id ?? "minimal-commerce",
+          template: initialTemplate.id,
           theme: initialTheme,
           branding: {
             logoUrl: logoUrl || existing.data?.logo_url || "",
@@ -441,7 +436,7 @@ function OnlineStoreSetupPage() {
                 </div>
                 <h2 className="text-display-md mt-5">Make it feel like yours.</h2>
                 <p className="mt-3 max-w-xl text-muted-foreground">
-                  Add a logo and a checkout note to give customers a little more confidence.
+                  Choose one of the 21 storefront looks, add your logo and set a checkout note.
                 </p>
                 <div className="mt-8 grid gap-6 sm:grid-cols-[180px_1fr] sm:items-start">
                   <button
@@ -489,6 +484,48 @@ function OnlineStoreSetupPage() {
                     </label>
                   </div>
                 </div>
+                <div className="mt-8">
+                  <div className="mb-3">
+                    <h3 className="font-semibold">Choose your storefront look</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Pick a starting point. You can refine every section and colour later.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {STRAP_STORE_TEMPLATES.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setSelectedTemplate(item.id)}
+                        aria-pressed={selectedTemplate === item.id}
+                        className={
+                          selectedTemplate === item.id
+                            ? "rounded-2xl border border-foreground bg-secondary p-2 text-left ring-2 ring-accent"
+                            : "rounded-2xl border border-border p-2 text-left transition hover:border-foreground/40"
+                        }
+                      >
+                        <div
+                          className="mb-2 flex aspect-[5/3] flex-col justify-between overflow-hidden rounded-xl p-2"
+                          style={{ backgroundColor: item.theme.bg, color: item.theme.ink }}
+                        >
+                          <span
+                            className="h-2 w-1/3 rounded-full"
+                            style={{ backgroundColor: item.theme.accent }}
+                          />
+                          <span className="grid grid-cols-3 gap-1">
+                            <i className="h-7 rounded-md bg-current opacity-10" />
+                            <i className="h-7 rounded-md bg-current opacity-10" />
+                            <i className="h-7 rounded-md bg-current opacity-10" />
+                          </span>
+                        </div>
+                        <p className="text-xs font-bold">{item.name}</p>
+                        <p className="mt-1 line-clamp-2 text-[10px] leading-4 text-muted-foreground">
+                          {item.description}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 
@@ -513,6 +550,13 @@ function OnlineStoreSetupPage() {
                     <p className="text-xs text-muted-foreground">Contact</p>
                     <p className="mt-1 font-semibold">
                       {form.displayEmail || form.displayPhone || "Not shown"}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-border bg-secondary/50 p-4 sm:col-span-2">
+                    <p className="text-xs text-muted-foreground">Storefront look</p>
+                    <p className="mt-1 font-semibold">
+                      {STRAP_STORE_TEMPLATES.find((item) => item.id === selectedTemplate)?.name ??
+                        "Fresh"}
                     </p>
                   </div>
                 </div>
