@@ -18,6 +18,7 @@ import strapDesignSystemCss from "../strap-design-system.css?url";
 import strapLoadingOverridesCss from "../strap-loading-overrides.css?url";
 import strapMobileDensityCss from "../strap-mobile-density.css?url";
 import strapRedesignBaseCss from "../strap-redesign-base.css?url";
+import strapV8SkinCss from "../strap-v8-skin.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
@@ -171,7 +172,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "author", content: "Kryonara" },
       { name: "application-name", content: "Strap" },
       { name: "apple-mobile-web-app-title", content: "Strap" },
-      { name: "theme-color", content: "#f8fafc" },
+      { name: "theme-color", content: "#e6f53a" },
       {
         name: "robots",
         content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
@@ -215,11 +216,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: strapLoadingOverridesCss },
       { rel: "stylesheet", href: strapMobileDensityCss },
       { rel: "stylesheet", href: strapRedesignBaseCss },
+      { rel: "stylesheet", href: strapV8SkinCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap",
       },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "apple-touch-icon", href: "/favicon.svg" },
@@ -236,7 +238,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="strap-v8-skin">
         {children}
         <script
           type="application/ld+json"
