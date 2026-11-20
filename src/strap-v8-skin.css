@@ -625,3 +625,43 @@ body.strap-v8-skin .sa .ob-sw[aria-checked="true"]::after {
     max-width: 460px;
   }
 }
+
+
+/* AuthBrand is shared with onboarding and is mounted directly in ref-screen
+   on the sign-in route (not inside the onboarding .sa wrapper). */
+body.strap-v8-skin .ref-screen > .sa-l {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  width: 100%;
+  max-width: 460px;
+  min-height: 0 !important;
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 22px) 24px 18px !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+  text-align: left !important;
+}
+body.strap-v8-skin .ref-screen .sa-logo {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 10px !important;
+  color: #0a0a0a !important;
+  font: 700 22px/1 "Sora", sans-serif !important;
+  letter-spacing: -0.045em !important;
+  text-decoration: none !important;
+}
+body.strap-v8-skin .ref-screen .sa-dot {
+  display: block !important;
+  flex: 0 0 34px !important;
+  width: 34px !important;
+  height: 34px !important;
+  border: 2px solid #0a0a0a !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, #e6f53a 0 20%, #0a0a0a 20.5% 73%, #ffffff 73.5%) !important;
+}
+body.strap-v8-skin .ref-screen .sa-brand-tagline {
+  display: none !important;
+}
