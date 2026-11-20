@@ -333,3 +333,295 @@ body.strap-v8-skin .storefront-card {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* Authentication: white, typographic flow from the supplied V8 reference.
+ * The React form and Supabase OTP/password handlers remain the source of behavior.
+ */
+body.strap-v8-skin .ref-screen {
+  width: 100%;
+  max-width: none !important;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+  font-family: "Sora", "Helvetica Neue", Arial, sans-serif !important;
+}
+body.strap-v8-skin .ref-hero {
+  flex: 0 0 auto;
+  display: grid !important;
+  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  justify-content: start;
+  gap: 2px 12px;
+  width: 100%;
+  max-width: 460px;
+  min-height: 0;
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 22px) 24px 20px !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+  text-align: left !important;
+}
+body.strap-v8-skin .ref-logo {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 38px !important;
+  height: 38px;
+  aspect-ratio: 1;
+}
+body.strap-v8-skin .ref-hero h1 {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0 !important;
+  color: #0a0a0a !important;
+  font: 700 22px/1.05 "Sora", sans-serif !important;
+  letter-spacing: -0.045em !important;
+}
+body.strap-v8-skin .ref-tagline {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 1px 0 0 !important;
+  color: #77776f !important;
+  font: 500 11.5px/1.3 "Inter", sans-serif !important;
+}
+body.strap-v8-skin .ref-sheet {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: clamp(18px, 4vh, 34px) 24px calc(env(safe-area-inset-bottom, 0px) + 24px) !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .ref-sheet-inner {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+}
+body.strap-v8-skin .ref-sheet-inner::before {
+  display: none !important;
+}
+body.strap-v8-skin .ref-heading h2 {
+  margin: 0 0 8px;
+  color: #0a0a0a !important;
+  font: 700 clamp(30px, 8vw, 40px)/1.08 "Sora", sans-serif !important;
+  letter-spacing: -0.045em !important;
+}
+body.strap-v8-skin .ref-heading p {
+  margin: 0 0 22px;
+  color: #686860 !important;
+  font: 500 14px/1.55 "Inter", sans-serif !important;
+}
+body.strap-v8-skin .ref-form {
+  gap: 18px;
+}
+body.strap-v8-skin .ref-field,
+body.strap-v8-skin .ref-password .ref-field {
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 2px 12px !important;
+  border: 0 !important;
+  border-bottom: 2px solid #0a0a0a !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #0a0a0a !important;
+  box-shadow: none !important;
+  font: 500 17px/1.35 "Sora", sans-serif !important;
+}
+body.strap-v8-skin .ref-field::placeholder {
+  color: rgb(10 10 10 / 42%) !important;
+}
+body.strap-v8-skin .ref-field:focus {
+  padding-bottom: 11px !important;
+  border-bottom-width: 3px !important;
+  box-shadow: none !important;
+}
+body.strap-v8-skin .ref-password .ref-field {
+  padding-right: 58px !important;
+}
+body.strap-v8-skin .ref-eye {
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .ref-btn {
+  min-height: 56px;
+  padding: 16px 20px;
+  border-radius: 999px !important;
+  font: 600 16px "Sora", sans-serif !important;
+}
+body.strap-v8-skin .ref-primary {
+  border: 2px solid #0a0a0a !important;
+  background: #0a0a0a !important;
+  color: #e6f53a !important;
+}
+body.strap-v8-skin .ref-primary:hover,
+body.strap-v8-skin .ref-primary:focus-visible {
+  border-color: #0a0a0a !important;
+  background: #242424 !important;
+  color: #e6f53a !important;
+}
+body.strap-v8-skin .ref-ghost {
+  border: 2px solid #0a0a0a !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .ref-ghost:hover,
+body.strap-v8-skin .ref-ghost:focus-visible {
+  border-color: #0a0a0a !important;
+  background: #f7f7f3 !important;
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .ref-link {
+  color: #0a0a0a !important;
+  font-family: "Sora", sans-serif !important;
+}
+body.strap-v8-skin .ref-or {
+  color: #8d8d86 !important;
+}
+body.strap-v8-skin .ref-or::before,
+body.strap-v8-skin .ref-or::after {
+  background: #ececea !important;
+}
+body.strap-v8-skin .ref-links,
+body.strap-v8-skin .ref-terms,
+body.strap-v8-skin .ref-terms-copy {
+  color: #686860 !important;
+}
+body.strap-v8-skin .ref-terms a,
+body.strap-v8-skin .ref-terms-copy a {
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .ref-terms input {
+  accent-color: #0a0a0a !important;
+}
+body.strap-v8-skin .ref-notice {
+  border-color: #ececea !important;
+  border-radius: 14px !important;
+  background: #f7f7f3 !important;
+  color: #34342e !important;
+}
+body.strap-v8-skin .ref-captcha {
+  justify-content: flex-start;
+  min-height: 66px;
+}
+
+/* Onboarding pages inherit the same clean white flow instead of the old
+   lime/black split panel. The route content and controls are not replaced. */
+body.strap-v8-skin .sa {
+  min-height: 100dvh !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+  font-family: "Sora", sans-serif !important;
+}
+body.strap-v8-skin .sa .sa-l {
+  min-height: 0 !important;
+  padding: calc(env(safe-area-inset-top, 0px) + 22px) 22px 18px !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .sa .sa-l .sa-logo {
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .sa .sa-l .sa-dot {
+  border-color: #0a0a0a !important;
+  background: radial-gradient(circle, #e6f53a 0 14%, #0a0a0a 14.5% 72%, transparent 72.5%) !important;
+}
+body.strap-v8-skin .sa .sa-brand-tagline {
+  color: #686860 !important;
+}
+body.strap-v8-skin .sa .sa-r {
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+  border-radius: 0 !important;
+  padding: 18px 22px calc(env(safe-area-inset-bottom, 0px) + 28px) !important;
+}
+body.strap-v8-skin .sa .sa-box,
+body.strap-v8-skin .sa .sa-box h1,
+body.strap-v8-skin .sa .sa-label,
+body.strap-v8-skin .sa .sa-f label {
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .sa .sa-mut,
+body.strap-v8-skin .sa .sa-box p {
+  color: #686860 !important;
+}
+body.strap-v8-skin .sa .sa-in,
+body.strap-v8-skin .sa input.sa-in,
+body.strap-v8-skin .sa select.sa-in,
+body.strap-v8-skin .sa textarea.sa-in {
+  min-height: 52px !important;
+  padding: 10px 2px 12px !important;
+  border: 0 !important;
+  border-bottom: 2px solid #0a0a0a !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #0a0a0a !important;
+  box-shadow: none !important;
+}
+body.strap-v8-skin .sa .sa-in::placeholder {
+  color: rgb(10 10 10 / 42%) !important;
+}
+body.strap-v8-skin .sa .sa-b {
+  min-height: 56px !important;
+  border: 2px solid #0a0a0a !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .sa .sa-b.p {
+  background: #0a0a0a !important;
+  color: #e6f53a !important;
+}
+body.strap-v8-skin .sa .sa-lk,
+body.strap-v8-skin .sa .sa-alt a,
+body.strap-v8-skin .sa .sa-alt button {
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .sa .ob-opt,
+body.strap-v8-skin .sa .ob-panel,
+body.strap-v8-skin .sa .ob-stat,
+body.strap-v8-skin .sa .ob-seg {
+  border-color: #ececea !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .sa .ob-opt[aria-pressed="true"] {
+  border-color: #0a0a0a !important;
+  background: #f7facf !important;
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .sa .ob-seg button[aria-pressed="true"] {
+  background: #e6f53a !important;
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .sa .ob-prog {
+  background: #ececea !important;
+}
+body.strap-v8-skin .sa .ob-prog i {
+  background: #0a0a0a !important;
+}
+body.strap-v8-skin .sa .ob-nav {
+  background: #ffffff !important;
+  border-color: #ececea !important;
+}
+body.strap-v8-skin .sa .ob-sw[aria-checked="true"] {
+  background: #0a0a0a !important;
+}
+body.strap-v8-skin .sa .ob-sw[aria-checked="true"]::after {
+  background: #e6f53a !important;
+}
+@media (min-width: 700px) {
+  body.strap-v8-skin .ref-screen {
+    max-width: 100% !important;
+  }
+  body.strap-v8-skin .ref-hero,
+  body.strap-v8-skin .ref-sheet {
+    max-width: 460px;
+  }
+}
