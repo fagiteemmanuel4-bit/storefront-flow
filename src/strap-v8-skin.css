@@ -1,0 +1,335 @@
+/* Strap V8 visual skin.
+ * Presentation-only layer adapted from the supplied strap-v8 React/static reference.
+ * All route logic, Supabase queries, auth, and mutation handlers remain in the app.
+ */
+:root {
+  --strap-v8-lime: #e6f53a;
+  --strap-v8-black: #0a0a0a;
+  --strap-v8-ink: #141414;
+  --strap-v8-edge: #2b2b2b;
+  --strap-v8-muted: #8d8d86;
+  --font-display: "Sora", "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --background: #f7f7f5;
+  --foreground: #0a0a0a;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --primary: #0a0a0a;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f0;
+  --secondary-foreground: #141414;
+  --muted: #f4f4f0;
+  --muted-foreground: #74746e;
+  --accent: #e6f53a;
+  --accent-foreground: #0a0a0a;
+  --accent-ink: #0a0a0a;
+  --accent-soft: #f7facf;
+  --border: #ececea;
+  --input: #d9d9d2;
+  --ring: #e6f53a;
+  --sidebar: #0a0a0a;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #e6f53a;
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: #202020;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2b2b2b;
+  --sidebar-ring: #e6f53a;
+  --radius: 0.875rem;
+}
+.dark {
+  --background: #0a0a0a;
+  --foreground: #f7f7f5;
+  --surface: #141414;
+  --card: #141414;
+  --card-foreground: #f7f7f5;
+  --popover: #181818;
+  --popover-foreground: #f7f7f5;
+  --primary: #e6f53a;
+  --primary-foreground: #0a0a0a;
+  --secondary: #22221f;
+  --secondary-foreground: #f7f7f5;
+  --muted: #22221f;
+  --muted-foreground: #a5a59e;
+  --accent: #e6f53a;
+  --accent-foreground: #0a0a0a;
+  --accent-ink: #e6f53a;
+  --accent-soft: #252711;
+  --border: #34342e;
+  --input: #44443c;
+  --ring: #e6f53a;
+  --sidebar: #050505;
+  --sidebar-foreground: #f7f7f5;
+  --sidebar-primary: #e6f53a;
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: #202020;
+  --sidebar-accent-foreground: #f7f7f5;
+  --sidebar-border: #2b2b2b;
+  --sidebar-ring: #e6f53a;
+}
+
+/* Typography follows the supplied Sora + Inter pairing. */
+body.strap-v8-skin {
+  font-family: var(--font-sans) !important;
+  background: #f7f7f5;
+  color: #0a0a0a;
+  -webkit-font-smoothing: antialiased;
+}
+body.strap-v8-skin :is(h1,h2,h3,h4,h5,h6,.font-display,.text-display-lg,.text-display-md,.text-title-lg) {
+  font-family: var(--font-display) !important;
+  letter-spacing: -0.04em;
+}
+body.strap-v8-skin :is(button,input,textarea,select,[role="button"]) {
+  font-family: var(--font-sans);
+}
+body.strap-v8-skin .numeric,
+body.strap-v8-skin [data-numeric="true"] {
+  font-family: var(--font-display) !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.025em;
+}
+
+/* The workspace sits on the black frame and opens into a clean white work surface. */
+body.strap-v8-skin .kudi-app-shell {
+  background: #0a0a0a !important;
+  color: #0a0a0a;
+}
+body.strap-v8-skin .kudi-app-shell aside[data-tour="desktop-sidebar"] {
+  background: #0a0a0a !important;
+  border-right: 1px solid #2b2b2b !important;
+  color: #b7b7b0 !important;
+}
+body.strap-v8-skin .kudi-app-shell aside[data-tour="desktop-sidebar"] [data-tour="sidebar-navigation"] > p,
+body.strap-v8-skin .kudi-app-shell aside[data-tour="sidebar-manage"] > p,
+body.strap-v8-skin .kudi-app-shell aside[data-tour="sidebar-more"] > button {
+  color: #8d8d86 !important;
+  letter-spacing: 0.13em;
+}
+body.strap-v8-skin .kudi-app-shell aside[data-tour="desktop-sidebar"] a[aria-current="page"],
+body.strap-v8-skin .kudi-app-shell aside[data-tour="desktop-sidebar"] a[aria-current="page"]:hover {
+  color: #0a0a0a !important;
+  background: #e6f53a !important;
+  border-color: #e6f53a !important;
+  box-shadow: 0 8px 22px -12px rgb(230 245 58 / 55%) !important;
+}
+body.strap-v8-skin .kudi-app-shell aside[data-tour="desktop-sidebar"] a[aria-current="page"] svg {
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .kudi-app-shell aside[data-tour="desktop-sidebar"] [data-tour="sidebar-collapse"]:hover {
+  background: #202020 !important;
+  color: #ffffff !important;
+}
+body.strap-v8-skin .kudi-app-shell aside[data-tour="desktop-sidebar"] [data-tour="store-switcher"] > button {
+  background: #191919 !important;
+  border: 1px solid #2b2b2b !important;
+}
+body.strap-v8-skin .kudi-app-shell aside[data-tour="desktop-sidebar"] [data-tour="store-switcher"] > button:hover {
+  background: #222222 !important;
+}
+body.strap-v8-skin .kudi-app-shell aside[data-tour="desktop-sidebar"] [data-tour="store-switcher"] > button > span:first-child {
+  background: #e6f53a !important;
+  color: #0a0a0a !important;
+}
+body.strap-v8-skin .kudi-app-shell > div {
+  background: #0a0a0a !important;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] {
+  width: 100%;
+  max-width: 1440px;
+  min-height: calc(100dvh - 18px);
+  margin: 0 auto;
+  padding: 22px clamp(16px, 3.5vw, 38px) 120px;
+  border: 1px solid #ececea !important;
+  border-bottom: 0 !important;
+  border-radius: 34px 34px 0 0 !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+  box-shadow: 0 -12px 40px rgb(0 0 0 / 8%) !important;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] > header[data-tour="page-heading"] {
+  border-bottom: 1px solid #ececea !important;
+  padding-bottom: 16px;
+  margin-bottom: 22px !important;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] > header h1 {
+  color: #0a0a0a !important;
+  font-weight: 700;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] > header [data-tour="connection-status"] {
+  border-color: #ececea !important;
+  background: #f7f7f5 !important;
+  color: #56564f !important;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] > header a[href="/dashboard"] {
+  background: #e6f53a !important;
+  border-color: #e6f53a !important;
+  color: #0a0a0a !important;
+  box-shadow: none !important;
+}
+
+/* Cards and page sections: crisp edges, quiet shadows, less ornamental gradient. */
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] :is([data-slot="card"],.surface-card,.storefront-card) {
+  border-color: #ececea !important;
+  border-radius: 24px !important;
+  background-color: #ffffff;
+  box-shadow: 0 12px 28px -20px rgb(10 10 10 / 28%);
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] [class*="bg-gradient"],
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] [class*="linear-gradient"] {
+  background-image: none !important;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] [class*="rounded-[26px]"][class*="border"],
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] [class*="rounded-[28px]"][class*="border"],
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] [class*="rounded-3xl"][class*="border"] {
+  border-color: #ececea !important;
+  border-radius: 24px !important;
+  background-color: #ffffff;
+  box-shadow: 0 12px 28px -20px rgb(10 10 10 / 25%);
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] section[aria-label="Business performance"] > div:first-child {
+  background: #0a0a0a !important;
+  color: #ffffff !important;
+  border: 1px solid #0a0a0a !important;
+  border-radius: 30px !important;
+  box-shadow: 0 22px 40px -24px rgb(10 10 10 / 60%) !important;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] section[aria-label="Business performance"] > div:first-child :is(p,span,svg) {
+  color: #ffffff;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] section[aria-label="Business performance"] > div:first-child p.numeric {
+  color: #e6f53a !important;
+}
+
+/* Buttons and fields keep the reference's firm black outline and lemon action state. */
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] [data-slot="button"] {
+  min-height: 42px;
+  border-radius: 14px !important;
+  font-weight: 650;
+  box-shadow: none;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] :is(button.bg-foreground,button[class*="bg-[#0a0a0a]"],a.bg-foreground) {
+  background: #0a0a0a !important;
+  color: #e6f53a !important;
+  border-color: #0a0a0a !important;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] :is(button.bg-accent, a.bg-accent, [data-slot="button"][data-variant="default"]) {
+  background: #e6f53a !important;
+  color: #0a0a0a !important;
+  border-color: #e6f53a !important;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),textarea,select,[data-slot="input"],[data-slot="select-trigger"],.field) {
+  min-height: 48px;
+  border: 1px solid #d9d9d2 !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+  box-shadow: none !important;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] :is(input,textarea,select):focus,
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] [data-slot="input"]:focus-visible {
+  border-color: #0a0a0a !important;
+  box-shadow: 0 0 0 3px rgb(230 245 58 / 55%) !important;
+  outline: none !important;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] :is(input,textarea)::placeholder {
+  color: #8d8d86 !important;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] thead {
+  background: #f7f7f5;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] th {
+  color: #65655d;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] tr {
+  border-color: #ececea;
+}
+
+/* Floating mobile navigation echoes the compact four-action reference dock. */
+body.strap-v8-skin .strap-mobile-nav-dock {
+  border: 1px solid #ececea !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  box-shadow: 0 18px 40px -12px rgb(10 10 10 / 32%), 0 2px 8px rgb(10 10 10 / 6%) !important;
+  padding: 8px !important;
+}
+body.strap-v8-skin .strap-mobile-nav-dock a[aria-current="page"] {
+  background: #e6f53a !important;
+  color: #0a0a0a !important;
+  box-shadow: none !important;
+}
+body.strap-v8-skin .strap-mobile-nav-dock :is(a,button) {
+  border-radius: 999px !important;
+}
+
+/* Drawers, sheets and dialogs use the same soft white surface and black/lime controls. */
+body.strap-v8-skin [data-slot="dialog-content"],
+body.strap-v8-skin [data-slot="sheet-content"],
+body.strap-v8-skin [role="dialog"] {
+  border-color: #ececea;
+  border-radius: 26px !important;
+}
+body.strap-v8-skin [data-slot="sheet-content"] {
+  background: #ffffff;
+  color: #0a0a0a;
+}
+body.strap-v8-skin [data-sonner-toaster] [data-sonner-toast] {
+  border: 1px solid #ececea !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+  box-shadow: 0 18px 40px -20px rgb(10 10 10 / 35%) !important;
+}
+body.strap-v8-skin :is(a,button):focus-visible {
+  outline-color: #0a0a0a;
+  outline-offset: 3px;
+}
+body.strap-v8-skin :is(button,a).bg-accent:focus-visible,
+body.strap-v8-skin :is(button,a)[class*="bg-[#e6f53a]"]:focus-visible {
+  outline-color: #0a0a0a;
+}
+
+/* Public storefront pages share the same typography and restrained borders. */
+body.strap-v8-skin .storefront-shell {
+  background-color: #f7f7f5;
+}
+body.strap-v8-skin .storefront-card {
+  border-color: #ececea;
+  border-radius: 20px;
+  box-shadow: 0 12px 28px -20px rgb(10 10 10 / 24%);
+}
+
+@media (min-width: 1024px) {
+  body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] {
+    min-height: calc(100dvh - 48px);
+    margin: 0 auto;
+    border-radius: 28px !important;
+    border-bottom: 1px solid #ececea !important;
+    padding: 28px clamp(24px, 3vw, 42px) 40px;
+  }
+}
+@media (max-width: 1023px) {
+  body.strap-v8-skin .kudi-app-shell main[data-tour="main-content"] {
+    min-height: calc(100dvh - 18px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 126px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.strap-v8-skin *,
+  body.strap-v8-skin *::before,
+  body.strap-v8-skin *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
