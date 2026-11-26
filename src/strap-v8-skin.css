@@ -665,3 +665,93 @@ body.strap-v8-skin .ref-screen .sa-dot {
 body.strap-v8-skin .ref-screen .sa-brand-tagline {
   display: none !important;
 }
+
+/* Shared semantic aliases for the V8 workspace skin. */
+:root {
+  --bg-canvas: #f7f7f5;
+  --bg-surface: #ffffff;
+  --bg-elevated: #ffffff;
+  --ink-primary: #0a0a0a;
+  --ink-muted: #74746e;
+  --border-subtle: #ececea;
+  --accent-primary: #e6f53a;
+  --font-metadata: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --space-unit: 4px;
+  --motion-feedback: 160ms;
+  --motion-panel: 300ms;
+}
+.dark {
+  --bg-canvas: #0a0a0a;
+  --bg-surface: #141414;
+  --bg-elevated: #181818;
+  --ink-primary: #f7f7f5;
+  --ink-muted: #a5a59e;
+  --border-subtle: #34342e;
+  --accent-primary: #e6f53a;
+}
+body.strap-v8-skin :is(code,kbd,[data-metadata]) {
+  font-family: var(--font-metadata) !important;
+  font-variant-numeric: tabular-nums;
+}
+body.strap-v8-skin :is(.prose,[data-reading-measure]) {
+  max-width: 64ch;
+}
+body.strap-v8-skin :is(button,a,input,textarea,select,[role="button"]) {
+  transition-duration: var(--motion-feedback);
+}
+body.strap-v8-skin .strap-mobile-nav-dock :is(a,button):not([aria-current="page"]) {
+  color: #202020 !important;
+}
+body.strap-v8-skin.dark .strap-mobile-nav-dock,
+.dark body.strap-v8-skin .strap-mobile-nav-dock {
+  border-color: #34342e !important;
+  background: #141414 !important;
+  box-shadow: 0 18px 42px -12px rgb(0 0 0 / 58%) !important;
+}
+body.strap-v8-skin.dark .strap-mobile-nav-dock :is(a,button):not([aria-current="page"]),
+.dark body.strap-v8-skin .strap-mobile-nav-dock :is(a,button):not([aria-current="page"]) {
+  color: #f7f7f5 !important;
+}
+body.strap-v8-skin [cmdk-overlay] {
+  background: rgb(10 10 10 / 38%) !important;
+  backdrop-filter: blur(12px);
+}
+body.strap-v8-skin [cmdk-dialog] {
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 24px !important;
+  background: var(--bg-elevated) !important;
+  color: var(--ink-primary) !important;
+  box-shadow: 0 28px 84px rgb(0 0 0 / 22%) !important;
+  backdrop-filter: blur(22px);
+}
+body.strap-v8-skin [cmdk-dialog] [cmdk-input] {
+  min-width: 0;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--ink-primary) !important;
+  box-shadow: none !important;
+}
+body.strap-v8-skin [cmdk-dialog] [cmdk-input]::placeholder {
+  color: var(--ink-muted) !important;
+}
+body.strap-v8-skin [cmdk-dialog] [cmdk-item][aria-selected="true"] {
+  background: color-mix(in srgb, var(--accent-primary) 24%, var(--bg-surface)) !important;
+  color: var(--ink-primary) !important;
+}
+body.strap-v8-skin.dark [cmdk-dialog],
+.dark body.strap-v8-skin [cmdk-dialog] {
+  border-color: #34342e !important;
+  background: #181818 !important;
+  color: #f7f7f5 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  body.strap-v8-skin *,
+  body.strap-v8-skin *::before,
+  body.strap-v8-skin *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
