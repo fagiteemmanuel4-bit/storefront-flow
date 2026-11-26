@@ -281,7 +281,7 @@ export function QuickFind({ open, onOpenChange }: QuickFindProps) {
       <div className="flex items-center justify-between gap-3 border-t border-border/80 bg-secondary/30 px-4 py-3 text-[10px] text-muted-foreground sm:px-5 sm:text-[11px]">
         <span className="font-semibold tracking-wide">QUICK FIND</span>
         <span className="hidden sm:inline">
-          ↑↓ Navigate <span className="mx-1 opacity-40">·</span> Enter Open{" "}
+          Ctrl K / ⌘ K <span className="mx-1 opacity-40">·</span> ↑↓ Navigate <span className="mx-1 opacity-40">·</span> Enter Open{" "}
           <span className="mx-1 opacity-40">·</span> Esc Close
         </span>
         <span className="sm:hidden">Enter to open · Esc to close</span>
