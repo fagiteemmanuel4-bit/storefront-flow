@@ -142,91 +142,48 @@ function DashboardPage() {
 
   return (
     <AppShell title="Dashboard">
-      <div className="mx-auto w-full max-w-[1440px] space-y-6 pb-10 sm:space-y-7">
-        <section className="relative isolate overflow-hidden rounded-[28px] border border-border/80 bg-[linear-gradient(135deg,var(--card)_0%,var(--card)_62%,color-mix(in_oklch,var(--color-accent)_8%,var(--card))_100%)] shadow-[0_18px_55px_rgba(15,23,42,.06)] ring-1 ring-foreground/[0.025] sm:rounded-[32px]">
-          <div className="pointer-events-none absolute -right-24 -top-32 -z-10 size-[360px] rounded-full border-[42px] border-accent/[0.055]" />
-          <div className="pointer-events-none absolute -right-10 top-0 -z-10 h-full w-2/3 bg-[radial-gradient(ellipse_at_top_right,color-mix(in_oklch,var(--color-accent)_18%,transparent),transparent_70%)]" />
-          <div className="grid gap-7 p-5 sm:p-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:p-9">
-            <div className="min-w-0">
-              <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-border/80 bg-background/80 px-3.5 py-2 text-[11px] font-bold uppercase tracking-[.11em] text-muted-foreground shadow-sm backdrop-blur sm:text-xs">
-                <span className="relative flex size-2 shrink-0">
-                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-success/50" />
-                  <span className="relative inline-flex size-2 rounded-full bg-success" />
-                </span>
-                {greeting}{" "}
-                <span className="text-border" aria-hidden="true">
-                  /
-                </span>{" "}
-                Business overview
-              </div>
-              <h2 className="max-w-2xl break-words text-[2rem] font-extrabold tracking-[-.045em] text-foreground sm:text-4xl lg:text-[3.25rem] lg:leading-[1.08]">
-                {store?.name ?? "Your store"}
-              </h2>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
-                {branch?.name ?? "All branches"} <span className="mx-1.5">/</span> Here's what's
-                happening today.
-              </p>
+      <div className="strap-dashboard mx-auto w-full max-w-[1440px] space-y-6 pb-10">
+        <section className="strap-dashboard-hero">
+          <div className="strap-dashboard-hero-main">
+            <div className="strap-dashboard-kicker">
+              <span className="strap-dashboard-live-dot" />
+              <span>{greeting}</span>
+              <span className="strap-dashboard-separator">/</span>
+              <span>Daily overview</span>
             </div>
-            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap lg:justify-end">
-              <Link
-                to="/pos"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#c6f432] px-4 text-sm font-bold text-[#101713] shadow-[0_8px_22px_rgba(155,198,35,.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d4ff50] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9ac51c] sm:px-5"
-              >
+            <h2>{store?.name ?? "Your store"}</h2>
+            <p>{branch?.name ?? "All branches"} <span aria-hidden="true">·</span> A clear view of what needs your attention today.</p>
+            <div className="strap-dashboard-actions">
+              <Link to="/pos" className="strap-dashboard-primary-action">
                 <ScanLine className="size-4" /> Start selling
               </Link>
-              <Link
-                to="/products"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-border bg-background px-4 text-sm font-semibold text-foreground transition hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:px-5"
-              >
+              <Link to="/products" className="strap-dashboard-secondary-action">
                 <Plus className="size-4" /> Add product
               </Link>
             </div>
           </div>
-          <div className="grid min-w-0 grid-cols-3 divide-x divide-border/80 border-t border-border/80 bg-background/55 backdrop-blur">
-            <QuickStat
-              icon={<ShoppingBag className="size-4" />}
-              label="Sales today"
-              value={todaySalesQuery.isLoading ? "—" : String(todaySales.length)}
-            />
-            <QuickStat
-              icon={<Boxes className="size-4" />}
-              label="Low stock"
-              value={lowStockQuery.isLoading ? "—" : String(lowStockCount)}
-            />
-            <QuickStat
-              icon={<Bell className="size-4" />}
-              label="To action"
-              value={onlineOrdersQuery.isLoading ? "—" : String(pendingOrders)}
-            />
+          <div className="strap-dashboard-date">
+            <span>YOUR BUSINESS</span>
+            <strong>{new Intl.DateTimeFormat("en-NG", { weekday: "long" }).format(new Date())}</strong>
+            <span>{new Intl.DateTimeFormat("en-NG", { day: "numeric", month: "long", year: "numeric" }).format(new Date())}</span>
           </div>
+
         </section>
 
-        <section
-          aria-label="Business performance"
-          className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
-        >
-          <div className="relative overflow-hidden rounded-[26px] bg-[#c6f432] p-5 text-[#111713] shadow-[0_12px_32px_rgba(115,145,25,.12)] sm:col-span-2 sm:p-6">
-            <div className="absolute -right-10 -top-16 size-48 rounded-full border-[28px] border-black/[0.045]" />
-            <div className="relative flex h-full min-h-[148px] flex-col justify-between gap-6">
-              <div className="flex items-center justify-between gap-3">
-                <p className="flex items-center gap-2 text-sm font-bold text-[#26310d]/75">
-                  <ChartNoAxesCombined className="size-4" /> Revenue today
-                </p>
-                <span className="flex size-10 items-center justify-center rounded-full bg-black/[0.08]">
-                  <TrendingUp className="size-5" />
-                </span>
-              </div>
-              {todaySalesQuery.isLoading ? (
-                <Skeleton className="h-10 w-48 bg-black/10" />
-              ) : (
-                <p className="numeric break-all text-3xl font-extrabold leading-none tracking-tight sm:text-4xl lg:text-[2.65rem]">
-                  {formatMoney(todayRevenue, currency)}
-                </p>
-              )}
-              <p className="text-xs font-semibold text-[#26310d]/70">
-                {todaySales.length} completed sale{todaySales.length === 1 ? "" : "s"} today
-              </p>
+        <section aria-label="Business performance" className="strap-dashboard-performance">
+          <div className="strap-dashboard-revenue">
+            <div className="strap-dashboard-card-topline">
+              <span><ChartNoAxesCombined className="size-4" /> Revenue today</span>
+              <span className="strap-dashboard-icon-mark"><TrendingUp className="size-5" /></span>
             </div>
+            {todaySalesQuery.isLoading ? (
+              <Skeleton className="mt-8 h-11 w-48 bg-black/10" />
+            ) : (
+              <p className="strap-dashboard-revenue-value">{formatMoney(todayRevenue, currency)}</p>
+            )}
+            <p className="strap-dashboard-revenue-note">
+              From {todaySales.length} completed sale{todaySales.length === 1 ? "" : "s"} today
+            </p>
           </div>
           <MetricCard
             icon={<Receipt className="size-4" />}
@@ -250,17 +207,14 @@ function DashboardPage() {
           />
         </section>
 
-        <section className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,.85fr)]">
-          <div className="min-w-0 overflow-hidden rounded-[26px] border border-border bg-surface shadow-sm">
+        <section className="strap-dashboard-content-grid">
+          <div className="strap-dashboard-panel">
             <SectionHeading
-              eyebrow="Activity"
+              eyebrow="Latest activity"
               title="Recent sales"
               description="The latest transactions from your store"
               action={
-                <Link
-                  to="/reports"
-                  className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-xl px-3 text-xs font-bold text-accent-ink transition hover:bg-accent-soft"
-                >
+                <Link to="/reports" className="strap-dashboard-section-action">
                   View reports <ArrowUpRight className="size-4" />
                 </Link>
               }
@@ -272,57 +226,37 @@ function DashboardPage() {
                 <Skeleton className="h-12 w-full" />
               </div>
             ) : sales.length === 0 ? (
-              <EmptyState title="No sales yet" text="Your completed sales will appear here." />
+              <EmptyState title="No sales yet" text="Your completed sales will appear here. Start your first sale whenever you're ready." />
             ) : (
               <>
-                <ul className="divide-y divide-border">
+                <ul className="strap-dashboard-sales-list">
                   {sales.slice(0, 6).map((sale) => (
-                    <li
-                      key={sale.id}
-                      className="flex min-w-0 items-center justify-between gap-3 px-4 py-4 transition hover:bg-secondary/35 sm:px-5"
-                    >
-                      <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-muted-foreground">
-                          <Receipt className="size-4" />
-                        </span>
-                        <div className="min-w-0">
-                          <p className="numeric truncate text-sm font-bold">{sale.reference}</p>
-                          <p className="mt-1 truncate text-xs text-muted-foreground">
-                            {formatDateTime(sale.created_at)} <span className="mx-1">·</span>{" "}
-                            {sale.payment_method}
-                          </p>
-                        </div>
+                    <li key={sale.id}>
+                      <span className="strap-dashboard-row-icon"><Receipt className="size-4" /></span>
+                      <div className="strap-dashboard-sale-detail">
+                        <strong className="numeric">{sale.reference}</strong>
+                        <span>{formatDateTime(sale.created_at)} <span aria-hidden="true">·</span> {sale.payment_method}</span>
                       </div>
-                      <span className="numeric shrink-0 text-right text-sm font-bold sm:text-base">
-                        {formatMoney(Number(sale.total), currency)}
-                      </span>
+                      <strong className="strap-dashboard-sale-total numeric">{formatMoney(Number(sale.total), currency)}</strong>
                     </li>
                   ))}
                 </ul>
-                <div className="border-t border-border px-5 py-3">
-                  <Link
-                    to="/reports"
-                    className="inline-flex min-h-9 items-center gap-2 text-xs font-bold text-muted-foreground transition hover:text-foreground"
-                  >
-                    Open sales report <ArrowRight className="size-3.5" />
-                  </Link>
+                <div className="strap-dashboard-panel-footer">
+                  <Link to="/reports">Open sales report <ArrowRight className="size-3.5" /></Link>
                 </div>
               </>
             )}
           </div>
 
-          <div className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-1">
-            <div className="min-w-0 overflow-hidden rounded-[26px] border border-border bg-surface shadow-sm">
+          <div className="strap-dashboard-side-stack">
+            <div className="strap-dashboard-panel">
               <SectionHeading
                 eyebrow="Inventory"
                 title="Stock alerts"
                 description="Items that may need a restock"
                 action={
-                  <Link
-                    to="/products"
-                    className="inline-flex min-h-10 items-center rounded-xl px-3 text-xs font-bold text-accent-ink transition hover:bg-accent-soft"
-                  >
-                    View stock
+                  <Link to="/products" className="strap-dashboard-section-action">
+                    View stock <ArrowUpRight className="size-4" />
                   </Link>
                 }
               />
@@ -334,42 +268,27 @@ function DashboardPage() {
               ) : lowStockCount === 0 ? (
                 <EmptyState title="All clear" text="No products are below their stock threshold." />
               ) : (
-                <ul className="divide-y divide-border">
+                <ul className="strap-dashboard-stock-list">
                   {lowStockQuery.data?.slice(0, 5).map((row) => (
-                    <li
-                      key={row.products!.id}
-                      className="flex items-center justify-between gap-3 px-5 py-3.5"
-                    >
-                      <span className="min-w-0 truncate text-sm font-semibold">
-                        {row.products!.name}
-                      </span>
-                      <span className="numeric shrink-0 rounded-full bg-warning-soft px-2.5 py-1 text-xs font-bold text-accent-ink">
-                        {row.quantity} left
-                      </span>
+                    <li key={row.products!.id}>
+                      <span>{row.products!.name}</span>
+                      <strong className="numeric">{row.quantity} left</strong>
                     </li>
                   ))}
                 </ul>
               )}
             </div>
 
-            <div className="rounded-[26px] border border-border bg-surface p-5 shadow-sm">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent-ink">
-                    <Globe2 className="size-5" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-[.12em] text-muted-foreground">
-                      Sales channel
-                    </p>
-                    <h3 className="mt-1 font-bold">Online store</h3>
-                  </div>
+            <div className="strap-dashboard-online">
+              <div className="strap-dashboard-online-heading">
+                <span className="strap-dashboard-online-icon"><Globe2 className="size-5" /></span>
+                <div>
+                  <span>Sales channel</span>
+                  <h3>Online store</h3>
                 </div>
-                <span
-                  className={`mt-1 size-2.5 shrink-0 rounded-full ${online?.is_published ? "bg-success" : "bg-warning"}`}
-                />
+                <span className={`strap-dashboard-online-status ${online?.is_published ? "is-live" : "is-setup"}`} />
               </div>
-              <p className="mt-4 text-sm leading-6 text-muted-foreground">
+              <p>
                 {online?.setup_completed
                   ? online.is_published
                     ? pendingOrders
@@ -385,58 +304,30 @@ function DashboardPage() {
                     to: online?.setup_completed ? "/online-store/orders" : "/online-store/setup",
                   })
                 }
-                className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-foreground px-4 text-sm font-semibold text-background transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className="strap-dashboard-online-action"
               >
-                {online?.setup_completed ? "Review orders" : "Set up online store"}{" "}
+                {online?.setup_completed ? "Review orders" : "Set up online store"}
                 <ArrowRight className="size-4" />
               </button>
             </div>
           </div>
         </section>
 
-        <section className="rounded-[26px] border border-border bg-surface p-5 shadow-sm sm:p-6">
+        <section className="strap-dashboard-panel strap-dashboard-shortcuts">
           <SectionHeading
-            eyebrow="Shortcuts"
+            eyebrow="Your workspace"
             title="Quick access"
-            description="Jump straight into the tools you use most"
+            description="The tools you use most, one tap away"
           />
-          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="strap-dashboard-quick-links">
             <QuickLink to="/pos" icon={<ScanLine className="size-5" />} label="New sale" />
             <QuickLink to="/products" icon={<Package className="size-5" />} label="Products" />
             <QuickLink to="/customers" icon={<Users className="size-5" />} label="Customers" />
-            <QuickLink
-              to="/reports"
-              icon={<ChartNoAxesCombined className="size-5" />}
-              label="Reports"
-            />
+            <QuickLink to="/reports" icon={<ChartNoAxesCombined className="size-5" />} label="Reports" />
           </div>
         </section>
       </div>
     </AppShell>
-  );
-}
-
-function QuickStat({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex min-w-0 items-center justify-center gap-2 px-1.5 py-3.5 sm:justify-start sm:gap-3 sm:px-6 sm:py-4">
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-secondary text-muted-foreground">
-        {icon}
-      </span>
-      <div className="min-w-0">
-        <p className="numeric text-lg font-bold leading-none tracking-tight sm:text-xl">{value}</p>
-        <p className="mt-1 truncate text-[9px] font-semibold text-muted-foreground sm:text-xs">
-          {label}
-        </p>
-      </div>
-    </div>
   );
 }
 
@@ -454,28 +345,14 @@ function MetricCard({
   tone?: "default" | "warning";
 }) {
   return (
-    <div className="flex min-h-[148px] min-w-0 flex-col justify-between rounded-[24px] border border-border bg-surface p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-      <div className="flex items-center justify-between gap-2">
-        <p className="flex min-w-0 items-center gap-2 text-xs font-semibold text-muted-foreground sm:text-sm">
-          {icon}
-          <span className="truncate">{label}</span>
-        </p>
-        <span
-          className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${tone === "warning" ? "bg-warning-soft text-accent-ink" : "bg-secondary text-muted-foreground"}`}
-        >
-          {icon}
-        </span>
-      </div>
+    <div className={`strap-dashboard-metric ${tone === "warning" ? "is-warning" : ""}`}>
+      <div className="strap-dashboard-metric-label">{icon}<span>{label}</span></div>
       {value === null ? (
-        <Skeleton className="mt-4 h-9 w-24" />
+        <Skeleton className="mt-5 h-9 w-24" />
       ) : (
-        <p
-          className={`numeric mt-4 text-3xl font-bold tracking-tight ${tone === "warning" ? "text-accent-ink" : "text-foreground"}`}
-        >
-          {value}
-        </p>
+        <strong className="strap-dashboard-metric-value numeric">{value}</strong>
       )}
-      <p className="mt-2 text-xs leading-5 text-muted-foreground">{hint}</p>
+      <p>{hint}</p>
     </div>
   );
 }
@@ -492,13 +369,11 @@ function SectionHeading({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4 sm:px-6">
-      <div className="min-w-0">
-        <p className="text-[10px] font-bold uppercase tracking-[.15em] text-muted-foreground">
-          {eyebrow}
-        </p>
-        <h3 className="mt-1 text-lg font-bold tracking-tight text-foreground">{title}</h3>
-        <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+    <div className="strap-dashboard-section-heading">
+      <div>
+        <span>{eyebrow}</span>
+        <h3>{title}</h3>
+        <p>{description}</p>
       </div>
       {action}
     </div>
@@ -515,24 +390,19 @@ function QuickLink({
   label: string;
 }) {
   return (
-    <Link
-      to={to}
-      className="group flex min-h-[76px] min-w-0 items-center gap-3 rounded-2xl border border-border bg-background p-3 text-sm font-semibold transition hover:border-accent/50 hover:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:p-4"
-    >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-foreground transition group-hover:bg-accent group-hover:text-accent-foreground">
-        {icon}
-      </span>
-      <span className="truncate">{label}</span>
-      <ArrowUpRight className="ml-auto size-4 shrink-0 text-muted-foreground transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+    <Link to={to} className="strap-dashboard-quick-link">
+      <span>{icon}</span>
+      <strong>{label}</strong>
+      <ArrowUpRight className="strap-dashboard-quick-link-arrow size-4" />
     </Link>
   );
 }
 
 function EmptyState({ title, text }: { title: string; text: string }) {
   return (
-    <div className="px-5 py-10 text-center">
-      <p className="text-sm font-semibold">{title}</p>
-      <p className="mx-auto mt-1 max-w-xs text-xs leading-5 text-muted-foreground">{text}</p>
+    <div className="strap-dashboard-empty">
+      <strong>{title}</strong>
+      <p>{text}</p>
     </div>
   );
 }
