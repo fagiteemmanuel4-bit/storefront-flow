@@ -167,23 +167,7 @@ function DashboardPage() {
             <strong>{new Intl.DateTimeFormat("en-NG", { weekday: "long" }).format(new Date())}</strong>
             <span>{new Intl.DateTimeFormat("en-NG", { day: "numeric", month: "long", year: "numeric" }).format(new Date())}</span>
           </div>
-          <div className="strap-dashboard-overview">
-            <QuickStat
-              icon={<ShoppingBag className="size-4" />}
-              label="Sales today"
-              value={todaySalesQuery.isLoading ? "—" : String(todaySales.length)}
-            />
-            <QuickStat
-              icon={<ChartNoAxesCombined className="size-4" />}
-              label="Revenue today"
-              value={todaySalesQuery.isLoading ? "—" : formatMoney(todayRevenue, currency)}
-            />
-            <QuickStat
-              icon={<Bell className="size-4" />}
-              label="Pending orders"
-              value={onlineOrdersQuery.isLoading ? "—" : String(pendingOrders)}
-            />
-          </div>
+
         </section>
 
         <section aria-label="Business performance" className="strap-dashboard-performance">
@@ -344,26 +328,6 @@ function DashboardPage() {
         </section>
       </div>
     </AppShell>
-  );
-}
-
-function QuickStat({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="strap-dashboard-quick-stat">
-      <span className="strap-dashboard-quick-stat-icon">{icon}</span>
-      <div>
-        <strong className="numeric">{value}</strong>
-        <span>{label}</span>
-      </div>
-    </div>
   );
 }
 
