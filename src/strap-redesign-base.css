@@ -165,7 +165,7 @@ h1, h2, h3, h4, h5, h6, .font-display,
   font-family: var(--font-metadata) !important;
   font-variant-numeric: tabular-nums;
 }
-p, .prose, [data-reading-measure] {
+.prose, [data-reading-measure] {
   max-width: 64ch;
 }
 button, a, input, textarea, select {
