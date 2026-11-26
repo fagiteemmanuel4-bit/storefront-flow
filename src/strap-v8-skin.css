@@ -874,44 +874,6 @@ body.strap-v8-skin .strap-dashboard-date strong {
   font: 600 20px/1.25 var(--font-display);
   letter-spacing: -.03em;
 }
-body.strap-v8-skin .strap-dashboard-overview {
-  z-index: 1;
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid #2b2d25;
-  background: #151711;
-}
-body.strap-v8-skin .strap-dashboard-quick-stat {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 12px;
-  padding: 17px clamp(14px, 2.8vw, 32px);
-}
-body.strap-v8-skin .strap-dashboard-quick-stat + .strap-dashboard-quick-stat { border-left: 1px solid #2b2d25; }
-body.strap-v8-skin .strap-dashboard-quick-stat-icon {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  flex: 0 0 auto;
-  place-items: center;
-  border: 1px solid #363a2d;
-  border-radius: 11px;
-  color: #d8ed75;
-}
-body.strap-v8-skin .strap-dashboard-quick-stat > div { display: grid; min-width: 0; gap: 4px; }
-body.strap-v8-skin .strap-dashboard-quick-stat strong {
-  overflow: hidden;
-  color: #fff;
-  font: 600 clamp(14px, 1.7vw, 19px)/1.2 var(--font-metadata);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-body.strap-v8-skin .strap-dashboard-quick-stat > div > span {
-  color: #a3a797;
-  font-size: 11px;
-}
 body.strap-v8-skin .strap-dashboard-performance {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) repeat(3, minmax(0, 1fr));
@@ -1266,11 +1228,6 @@ body.strap-v8-skin .strap-dashboard-empty p { max-width: 42ch; margin: 6px auto 
   body.strap-v8-skin .strap-dashboard-actions { margin-top: 22px; }
   body.strap-v8-skin .strap-dashboard-primary-action,
   body.strap-v8-skin .strap-dashboard-secondary-action { min-height: 44px; padding: 0 13px; font-size: 11px; }
-  body.strap-v8-skin .strap-dashboard-overview { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  body.strap-v8-skin .strap-dashboard-quick-stat { flex-direction: column; align-items: flex-start; gap: 7px; padding: 12px 10px; }
-  body.strap-v8-skin .strap-dashboard-quick-stat-icon { width: 28px; height: 28px; border-radius: 9px; }
-  body.strap-v8-skin .strap-dashboard-quick-stat strong { font-size: 12px; }
-  body.strap-v8-skin .strap-dashboard-quick-stat > div > span { font-size: 9px; }
   body.strap-v8-skin .strap-dashboard-performance { gap: 9px; }
   body.strap-v8-skin .strap-dashboard-revenue,
   body.strap-v8-skin .strap-dashboard-metric { min-height: 148px; border-radius: 16px; padding: 15px; }
