@@ -1109,8 +1109,8 @@ function PosPage() {
             )}
           </div>
         </section>
-        <div className="mt-5 grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(300px,340px)]">
-          <section className="min-w-0">
+        <div className="pos-workspace-grid mt-5 grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(300px,340px)]">
+          <section className="pos-products-section min-w-0">
             <div className="mb-3 flex items-end justify-between gap-3">
               <div>
                 <p className="text-label-caps text-muted-foreground">Products</p>
@@ -1140,7 +1140,7 @@ function PosPage() {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+              <div className="pos-product-grid grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
                 {visible.map((product) => {
                   const out = product.quantity < 1;
                   const low = !out && product.quantity <= product.low_stock_threshold;
@@ -1173,7 +1173,7 @@ function PosPage() {
                         } else addToCart(product);
                       }}
                       className={cn(
-                        "group relative flex min-h-[150px] min-w-0 flex-col items-start overflow-hidden rounded-[20px] border bg-card p-3.5 text-left shadow-sm transition duration-150 sm:min-h-[164px] sm:rounded-[22px] sm:p-4",
+                        "pos-product-card group relative flex min-h-[150px] min-w-0 flex-col items-start overflow-hidden rounded-[20px] border bg-card p-3.5 text-left shadow-sm transition duration-150 sm:min-h-[164px] sm:rounded-[22px] sm:p-4",
                         out
                           ? "cursor-not-allowed border-border bg-secondary/35 opacity-65"
                           : "border-border/80 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
@@ -1182,7 +1182,7 @@ function PosPage() {
                       <span className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-lg bg-accent-soft text-accent-ink opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
                         <Plus className="size-3.5" />
                       </span>
-                      {isFashion && product.image_url && (
+                      {product.image_url && (
                         <span className="mb-3 aspect-[4/3] w-full overflow-hidden rounded-xl bg-secondary">
                           <img
                             src={product.image_url}
@@ -1233,7 +1233,7 @@ function PosPage() {
               </div>
             )}
           </section>
-          <aside className="surface-card sticky top-24 hidden h-fit max-h-[calc(100dvh-7rem)] min-h-0 w-full max-w-[340px] justify-self-end flex-col overflow-hidden rounded-[24px] p-4 shadow-[0_18px_45px_-28px_rgba(28,25,20,.28)] lg:flex">
+          <aside className="pos-checkout-panel surface-card sticky top-24 hidden h-fit max-h-[calc(100dvh-7rem)] min-h-0 w-full max-w-[340px] justify-self-end flex-col overflow-hidden rounded-[24px] p-4 shadow-[0_18px_45px_-28px_rgba(28,25,20,.28)] lg:flex">
             <div className="mb-4 flex shrink-0 items-center justify-between border-b border-border pb-4">
               <div>
                 <p className="text-label-caps text-muted-foreground">Checkout</p>
@@ -1249,7 +1249,7 @@ function PosPage() {
         {cart.length > 0 && (
           <div className="fixed inset-x-3 bottom-[calc(84px+env(safe-area-inset-bottom))] z-40 mx-auto max-w-[430px] sm:inset-x-4 lg:hidden">
             <Button
-              className="h-[68px] w-full rounded-[26px] border-0 bg-[#C6F432] px-5 text-[#101010] shadow-[0_12px_30px_rgba(25,35,10,.20)] hover:bg-[#b9ed28] hover:text-[#101010] active:scale-[.99]"
+              className="pos-mobile-cart-trigger h-[68px] w-full rounded-[26px] border-0 bg-[#C6F432] px-5 text-[#101010] shadow-[0_12px_30px_rgba(25,35,10,.20)] hover:bg-[#b9ed28] hover:text-[#101010] active:scale-[.99]"
               onClick={() => setCartOpen(true)}
             >
               <span className="flex min-w-0 items-center gap-2">
